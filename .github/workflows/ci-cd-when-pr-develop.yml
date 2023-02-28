@@ -48,7 +48,7 @@ jobs:
         run: |
           docker build -t $REPO .
           docker tag $REPO:latest ${{ secrets.DOCKERHUB_USERNAME }}/$REPO:latest
-          docker push $NAME/$REPO:latest
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/$REPO:latest
 
       - name: Deploy to ec2
         uses: appleboy/ssh-action@master
