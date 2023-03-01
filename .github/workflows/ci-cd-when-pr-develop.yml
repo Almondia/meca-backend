@@ -19,6 +19,8 @@ jobs:
         with:
           java-version: '11'
           distribution: 'temurin'
+      - name: Set Docker Container before build and test
+        run: docker-compose -f docker-compose-test.yml up -d
 
       - name: Gradle Caching
         uses: actions/cache@v3
@@ -62,3 +64,6 @@ jobs:
             sudo docker image prune -f
             sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/meca:latest
             docker-compose up -d
+
+      - name: Close Docker Container after build and test
+        run: docker-compose -f docker-compose-test.yml down
