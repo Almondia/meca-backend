@@ -1,11 +1,11 @@
-package com.almondia.meca.common.domain.vo.configuration.jackson;
+package com.almondia.meca.common.configuration.jackson;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 
-import com.almondia.meca.common.domain.vo.configuration.jackson.module.date.LocalDateTimeModule;
-import com.almondia.meca.common.domain.vo.configuration.jackson.module.wrapper.WrapperModule;
+import com.almondia.meca.common.configuration.jackson.module.date.LocalDateTimeModule;
+import com.almondia.meca.common.configuration.jackson.module.wrapper.WrapperModule;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 

@@ -1,4 +1,4 @@
-package com.almondia.meca.common.domain.vo.configuration.jackson.module.wrapper;
+package com.almondia.meca.common.configuration.jackson.module.wrapper;
 
 import java.io.IOException;
 import java.lang.reflect.Field;

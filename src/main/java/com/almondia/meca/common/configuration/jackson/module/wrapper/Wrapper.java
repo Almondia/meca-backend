@@ -1,4 +1,4 @@
-package com.almondia.meca.common.domain.vo.configuration.jackson.module.wrapper;
+package com.almondia.meca.common.configuration.jackson.module.wrapper;
 
 /**
  * Wrapper 클래스는 Jackson을 활용해 원시 타입, 또는 문자열과 같은 타입으로 인식할 수 있도록 직렬화를 수행하는데
