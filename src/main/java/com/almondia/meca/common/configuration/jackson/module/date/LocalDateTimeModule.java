@@ -1,4 +1,4 @@
-package com.almondia.meca.common.domain.vo.configuration.jackson.module.date;
+package com.almondia.meca.common.configuration.jackson.module.date;
 
 import java.time.LocalDateTime;
 

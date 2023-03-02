@@ -1,4 +1,4 @@
-package com.almondia.meca.common.domain.vo.configuration.jackson;
+package com.almondia.meca.common.configuration.jackson;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -18,7 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import com.almondia.meca.common.domain.vo.configuration.jackson.module.wrapper.Wrapper;
+import com.almondia.meca.common.configuration.jackson.module.wrapper.Wrapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 

@@ -1,4 +1,4 @@
-package com.almondia.meca.common.domain.vo.configuration.jackson.module.wrapper;
+package com.almondia.meca.common.configuration.jackson.module.wrapper;
 
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.module.SimpleSerializers;
