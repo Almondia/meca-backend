@@ -2,6 +2,13 @@ package com.almondia.meca.common.domain.vo.configuration.jackson;
 
 import static org.assertj.core.api.Assertions.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,6 +26,7 @@ import lombok.Setter;
 
 /**
  * 1. 직렬화/역직렬화 수행시 snake_case를 기준으로 동작해야 한다
+ * 2. 날짜 데이터도 어노테이션 사용 없이 직렬화/역직렬화가 잘 동작해야 한다
  */
 @ExtendWith(SpringExtension.class)
 @Import({JacksonConfiguration.class})
@@ -43,6 +51,34 @@ class JacksonConfigurationTest {
 		assertThat(dto)
 			.hasFieldOrPropertyWithValue("userName", "hello")
 			.hasFieldOrPropertyWithValue("userAge", 10);
+	}
+
+	@Test
+	@DisplayName("직렬화시 LocalDateTime이 어노테이션 없이 잘 동작해야 함")
+	void shouldSerializeWithoutJacksonAnnotation() throws JsonProcessingException, JSONException {
+		DateForTest dateForTest = new DateForTest(LocalDateTime.now());
+		String valueAsString = objectMapper.writeValueAsString(dateForTest);
+		boolean isISO_LOCAL_DATE_TIME = checkDateTimeFormat(valueAsString);
+		assertThat(isISO_LOCAL_DATE_TIME).isTrue();
+	}
+
+	private boolean checkDateTimeFormat(String valueAsString) throws JSONException {
+		JSONObject jsonObject = new JSONObject(valueAsString);
+		String stringDate = jsonObject.getString("date_time");
+		try {
+			LocalDate date = LocalDate.parse(stringDate, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+			return true;
+		} catch (DateTimeParseException e) {
+			return false;
+		}
+	}
+
+	@Getter
+	@AllArgsConstructor
+	@NoArgsConstructor
+	@Setter
+	static class DateForTest {
+		private LocalDateTime dateTime;
 	}
 
 	@Getter
