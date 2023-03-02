@@ -62,6 +62,16 @@ class JacksonConfigurationTest {
 		assertThat(isISO_LOCAL_DATE_TIME).isTrue();
 	}
 
+	@Test
+	@DisplayName("역직렬화시 입력이 ISO_LOCAL_DATE_TIME인 경우 잘 동작해야 함")
+	void shouldDeserializeWhenInputFormatIsISO_LOCAL_DATE_TIME() throws JsonProcessingException {
+		String jsonString = "{\"date_time\":\"2023-03-02T13:24:27.5431758\"}";
+		DateForTest object = objectMapper.readValue(jsonString, DateForTest.class);
+		assertThat(object)
+			.hasFieldOrPropertyWithValue("dateTime",
+				LocalDateTime.parse("2023-03-02T13:24:27.5431758", DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+	}
+
 	private boolean checkDateTimeFormat(String valueAsString) throws JSONException {
 		JSONObject jsonObject = new JSONObject(valueAsString);
 		String stringDate = jsonObject.getString("date_time");
