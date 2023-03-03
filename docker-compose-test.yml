@@ -9,8 +9,6 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: 1234
       MYSQL_DATABASE: test-db
-      MYSQL_USER: root
-      MYSQL_PASSWORD: 1234
 
     command:
       - --character-set-server=utf8mb4
