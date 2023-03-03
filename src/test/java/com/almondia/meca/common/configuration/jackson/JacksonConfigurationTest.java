@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -20,6 +21,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.almondia.meca.common.configuration.jackson.module.wrapper.Wrapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.AllArgsConstructor;
@@ -33,6 +35,9 @@ import lombok.Setter;
  * 2. 날짜 데이터도 어노테이션 사용 없이 직렬화/역직렬화가 잘 동작해야 한다
  * 3. 원시 래핑 클래스의 래핑은 직렬화시 벗겨서 사용해야 한다.
  * 4. 원시 객체가 역직렬화시 원시 객체 래핑이 되어야 한다.
+ * 5. 원시 래핑 클래스 인스턴스는 static, transient, native, volatile등이 modifier로 붙어 있으면 인식하지 않는다.
+ * 6. 원시 래핑 클래스 인스턴스는 하나만 존재해야 하며 그 이상 존재하는 경우 오류를 출력한다.
+ * 7. 인식할 수 있는 원시 객체 래핑 클래스 내부 변수 타입은 원시 타입, String, UUID 이다.
  */
 @ExtendWith(SpringExtension.class)
 @Import({JacksonConfiguration.class})
@@ -56,9 +61,7 @@ class JacksonConfigurationTest {
 	void shouldReturnClassWhenDeSerializeSnakeCaseKeyJsonStringUsingObjectMapper() throws JsonProcessingException {
 		String input = "{\"user_name\":\"hello\",\"user_age\":10}";
 		Dto dto = objectMapper.readValue(input, Dto.class);
-		assertThat(dto)
-			.hasFieldOrPropertyWithValue("userName", "hello")
-			.hasFieldOrPropertyWithValue("userAge", 10);
+		assertThat(dto).hasFieldOrPropertyWithValue("userName", "hello").hasFieldOrPropertyWithValue("userAge", 10);
 	}
 
 	@Test
@@ -75,9 +78,8 @@ class JacksonConfigurationTest {
 	void shouldDeserializeWhenInputFormatIsISO_LOCAL_DATE_TIME() throws JsonProcessingException {
 		String jsonString = "{\"date_time\":\"2023-03-02T13:24:27.5431758\"}";
 		DateForTest object = objectMapper.readValue(jsonString, DateForTest.class);
-		assertThat(object)
-			.hasFieldOrPropertyWithValue("dateTime",
-				LocalDateTime.parse("2023-03-02T13:24:27.5431758", DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+		assertThat(object).hasFieldOrPropertyWithValue("dateTime",
+			LocalDateTime.parse("2023-03-02T13:24:27.5431758", DateTimeFormatter.ISO_LOCAL_DATE_TIME));
 	}
 
 	@Test
@@ -123,11 +125,44 @@ class JacksonConfigurationTest {
 	}
 
 	@Test
-	@DisplayName("역직렬화시 실수 타입이 정수 원시 래핑 객체로 생성되어야 한다")
+	@DisplayName("역직렬화시 실수 타입이 원시 래핑 객체로 생성되어야 한다")
 	void shouldDeserializeDoubleToDoubleWrapperClass() throws JsonProcessingException {
 		String jsonInput = "10.37";
 		Meter meter = objectMapper.readValue(jsonInput, Meter.class);
 		assertThat(meter).hasFieldOrPropertyWithValue("meter", 10.37);
+	}
+
+	@Test
+	@DisplayName("직렬화시 UUID 타입 래핑 객체가 문자열로 직렬화 되야 함")
+	void shouldSerializeUuidToStringType() throws JsonProcessingException {
+		UUIDWrapper uuidWrapper = new UUIDWrapper(UUID.randomUUID());
+		String value = objectMapper.writeValueAsString(uuidWrapper);
+		assertThat(value).isEqualTo("\"" + uuidWrapper.getUuid() + "\"");
+	}
+
+	@Test
+	@DisplayName("역직렬화시 문자열이 UUID 타입 래핑 객체가 되어야 함")
+	void shouldDeSerializeStringToUuidWrapperClass() throws JsonProcessingException {
+		UUID uuid = UUID.randomUUID();
+		String jsonInput = "\"" + uuid + "\"";
+		UUIDWrapper wrapper = objectMapper.readValue(jsonInput, UUIDWrapper.class);
+		assertThat(wrapper.getUuid()).isEqualTo(uuid);
+	}
+
+	@Test
+	@DisplayName("wrapper 멤버 변수가 한개가 아닌 경우 예외가 발생한다")
+	void shouldThrowStateExceptionWhenInstanceVariableNumbersAreNotOne() {
+		InvalidWrapperClass invalidWrapperClass = new InvalidWrapperClass("hello", 13);
+		assertThatThrownBy(() -> objectMapper.writeValueAsString(invalidWrapperClass)).isInstanceOf(
+			JsonMappingException.class);
+	}
+
+	@Test
+	@DisplayName("static, volatile, transient, native로 이루어진 변수는 직렬화 대상에서 제외")
+	void shouldNotRecognizeWhenVariableModifiersAreStaticOrVolatileOrTransientOrNative() {
+		OnlyNotRecognizedModifierClass onlyNotRecognizedModifierClass = new OnlyNotRecognizedModifierClass();
+		assertThatThrownBy(() -> objectMapper.writeValueAsString(onlyNotRecognizedModifierClass)).isInstanceOf(
+			JsonMappingException.class);
 	}
 
 	private boolean checkDateTimeFormat(String valueAsString) throws JSONException {
@@ -138,6 +173,40 @@ class JacksonConfigurationTest {
 			return true;
 		} catch (DateTimeParseException e) {
 			return false;
+		}
+	}
+
+	@EqualsAndHashCode
+	@NoArgsConstructor
+	@AllArgsConstructor
+	@Getter
+	static class OnlyNotRecognizedModifierClass implements Wrapper {
+		private static final int h = 123;
+		transient int s;
+		volatile String x;
+	}
+
+	@EqualsAndHashCode
+	@NoArgsConstructor
+	@AllArgsConstructor
+	@Getter
+	static class InvalidWrapperClass implements Wrapper {
+		private String name;
+		private int age;
+	}
+
+	@NoArgsConstructor
+	@EqualsAndHashCode
+	@Getter
+	static class UUIDWrapper implements Wrapper {
+		private UUID uuid;
+
+		public UUIDWrapper(UUID uuid) {
+			this.uuid = uuid;
+		}
+
+		public UUIDWrapper(String uuid) {
+			this.uuid = UUID.fromString(uuid);
 		}
 	}
 
