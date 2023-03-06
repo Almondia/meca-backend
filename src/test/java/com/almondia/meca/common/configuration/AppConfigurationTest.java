@@ -15,6 +15,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import com.almondia.meca.auth.oauth.exception.BadWebClientRequestException;
+import com.almondia.meca.auth.oauth.exception.BadWebClientResponseException;
+
 import okhttp3.mockwebserver.Dispatcher;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
@@ -25,6 +28,8 @@ import reactor.test.StepVerifier;
 /**
  * 1. 성공시 정상 응답 테스트
  * 2. timeout 4초 이상 걸릴 시 실패
+ * 3. 4xx 응답인 경우 BadWebClientRequestException로 예외 핸들링
+ * 4. 5xx 응답인 경우 BadWebClientResponseException로 예외 핸들링
  */
 @ExtendWith(SpringExtension.class)
 @Import(AppConfiguration.class)
@@ -70,6 +75,30 @@ class AppConfigurationTest {
 			.verifyError();
 	}
 
+	@Test
+	void throwBadWebClientRequestExceptionWhenStatusCode4xx() {
+		Mono<String> response = webClient.get()
+			.uri(mockWebServer.url("v1/4xx").uri())
+			.retrieve()
+			.bodyToMono(String.class);
+
+		StepVerifier.create(response)
+			.expectErrorMatches(throwable -> throwable instanceof BadWebClientRequestException)
+			.verify();
+	}
+
+	@Test
+	void throwBadWebClientResponseExceptionWhenStatusCode4xx() {
+		Mono<String> response = webClient.get()
+			.uri(mockWebServer.url("v1/5xx").uri())
+			.retrieve()
+			.bodyToMono(String.class);
+
+		StepVerifier.create(response)
+			.expectErrorMatches(throwable -> throwable instanceof BadWebClientResponseException)
+			.verify();
+	}
+
 	private static void setMockServer() {
 		Dispatcher dispatcher = new Dispatcher() {
 			@NotNull
@@ -84,6 +113,14 @@ class AppConfigurationTest {
 						return new MockResponse()
 							.setResponseCode(HttpStatus.OK.value())
 							.setBody("success");
+					case "/v1/4xx":
+						return new MockResponse()
+							.setResponseCode(HttpStatus.BAD_REQUEST.value())
+							.setBody("bad request");
+					case "/v1/5xx":
+						return new MockResponse()
+							.setResponseCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
+							.setBody("server error");
 				}
 				return new MockResponse().setResponseCode(HttpStatus.NOT_FOUND.value());
 			}

@@ -21,6 +21,7 @@ public class AppConfiguration {
 		return WebClient.builder()
 			.clientConnector(new ReactorClientHttpConnector(getHttpClient()))
 			.defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+			.filter(new WebClientExceptionHandler())
 			.build();
 	}
 
