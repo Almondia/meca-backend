@@ -22,6 +22,10 @@ import okhttp3.mockwebserver.RecordedRequest;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
+/**
+ * 1. 성공시 정상 응답 테스트
+ * 2. timeout 4초 이상 걸릴 시 실패
+ */
 @ExtendWith(SpringExtension.class)
 @Import(AppConfiguration.class)
 class AppConfigurationTest {
