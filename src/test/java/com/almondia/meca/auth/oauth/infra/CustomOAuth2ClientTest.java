@@ -3,6 +3,7 @@ package com.almondia.meca.auth.oauth.infra;
 import static org.assertj.core.api.Assertions.*;
 
 import java.io.IOException;
+import java.util.Map;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.AfterEach;
@@ -29,6 +30,7 @@ import reactor.test.StepVerifier;
 
 /**
  * 1. 서버에 access token 요청시 성공하면 CustomTokenResponse 형태로 반환받을 수 있어야 함.
+ * 2. 서버에 user info 요청시 성공하면 Map 형태로 정상적으로 반환하는지 검증.
  */
 class CustomOAuth2ClientTest {
 
@@ -47,7 +49,7 @@ class CustomOAuth2ClientTest {
 		mockWebServer = new MockWebServer();
 		mockWebServer.setDispatcher(makeDispatcher());
 		mockWebServer.start();
-		ClientRegistration kakao = makeClientRegistration("kakao");
+		ClientRegistration kakao = makeClientRegistration();
 		FakeClientRegistrationRepository repository = new FakeClientRegistrationRepository();
 		repository.addRegistration(kakao);
 		webClient = WebClient.builder().build();
@@ -72,15 +74,21 @@ class CustomOAuth2ClientTest {
 	}
 
 	@Test
-	void test() {
+	@DisplayName("서버에 userInfo 요청 성공시 Map<String, Object> 형태로 응답이 잘 되는지 검증")
+	void requestUserInfoTokenSuccessTest() {
+		Mono<Map<String, Object>> response = oauth2Client.requestUserInfo("kakao", makeTokenResponse());
 
+		StepVerifier.create(response)
+			.consumeNextWith(stringObjectMap ->
+				assertThat(stringObjectMap).isNotNull())
+			.verifyComplete();
 	}
 
-	private ClientRegistration makeClientRegistration(String registrationId) {
-		return ClientRegistration.withRegistrationId(registrationId)
+	private ClientRegistration makeClientRegistration() {
+		return ClientRegistration.withRegistrationId("kakao")
 			.clientId(CLIENT_ID)
 			.clientSecret(CLIENT_SECRET)
-			.clientName(registrationId)
+			.clientName("kakao")
 			.tokenUri(mockWebServer.url("/token").uri().toString())
 			.userInfoUri(mockWebServer.url("/user").uri().toString())
 			.scope(SCOPE)
@@ -113,6 +121,12 @@ class CustomOAuth2ClientTest {
 						.setResponseCode(HttpStatus.OK.value())
 						.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
 						.setBody(jsonResponse);
+				}
+				if (path.contains("user")) {
+					return new MockResponse()
+						.setResponseCode(HttpStatus.OK.value())
+						.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+						.setBody("{\"email\":\"hello@naver.com\"}");
 				}
 				return new MockResponse()
 					.setResponseCode(HttpStatus.NOT_FOUND.value());
