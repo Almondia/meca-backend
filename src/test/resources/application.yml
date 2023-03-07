@@ -12,3 +12,58 @@ spring:
         dialect: org.hibernate.dialect.MySQL8Dialect
         show_sql: true
         format_sql: true
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            clientId: ~~~
+            clientSecret: ~~~
+            redirectUri: ~~~
+            authorization-grant-type: ~~~
+            client-authentication-method: ~~~
+            clientName: ~~~
+            scope:
+              - profile
+              - email
+          kakao:
+            client-id: ~~~
+            client-secret: ~~~
+            redirect-uri: ~~~
+            authorization-grant-type: ~~~
+            client-authentication-method: ~~~
+            client-name: ~~~
+            scope:
+              - profile
+              - account_email
+          naver:
+            clientId: ~~~
+            clientSecret: ~~~
+            redirect-uri: ~~~
+            authorization-grant-type: ~~~
+            client-authentication-method: ~~~
+            client-name: ~~~
+            scope:
+              - profile
+              - account_email
+
+        provider:
+          kakao:
+            authorizationUri: ~~~
+            token-uri: ~~~
+            user-info-uri: ~~~
+            user-name-attribute: ~~~
+          naver:
+            authorizationUri: ~~~
+            token-uri: ~~~
+            user-info-uri: ~~~
+            user-name-attribute: ~~~
+          google:
+            authorizationUri: ~~~
+            token-uri: ~~~
+            userInfoUri: ~~~
+            userNameAttribute: ~~~
+
+jwt:
+  secretKey: asdfasdafd13123132asasdfasdfasdfasdfasdfAdqweqasdfasdafd13123132asasdfasdfasdfasdfasdfAdqweqasdfasdafd13123132asasdfasdfasdfasdfasdfAdqweq
+  expirationMs: 86400000
