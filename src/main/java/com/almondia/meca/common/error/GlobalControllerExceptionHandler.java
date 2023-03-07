@@ -19,4 +19,9 @@ public class GlobalControllerExceptionHandler {
 	public ResponseEntity<ErrorResponseDto> handleBadWebClientResponseException(BadWebClientResponseException e) {
 		return ResponseEntity.internalServerError().body(ErrorResponseDto.of(e));
 	}
+
+	@ExceptionHandler(IllegalArgumentException.class)
+	public ResponseEntity<ErrorResponseDto> handleIllegalArgumentException(IllegalArgumentException e) {
+		return ResponseEntity.badRequest().body(ErrorResponseDto.of(e));
+	}
 }

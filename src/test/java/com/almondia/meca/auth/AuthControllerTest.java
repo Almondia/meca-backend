@@ -30,6 +30,7 @@ import com.almondia.meca.member.service.MemberService;
  *  1. 요청 성공시 AccessTokenResponseDto 속성에 담긴 값이 모두 출력되야 하며 snakeCase여야 함 성공 응답은 200
  *  2. oauth api 요청에 문제가 생긴 경우 400 응답
  *  3. oauth api 서버에 문제가 생겨 응답에 지장이 생긴 경우 500 응답
+ *  4. 사용자 입력 오류시 400 반환
  */
 @WebMvcTest({AuthController.class})
 @Import({SecurityConfiguration.class, JacksonConfiguration.class})
@@ -86,6 +87,19 @@ class AuthControllerTest {
 				.param("code", "authorizeCode")
 				.contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isInternalServerError())
+			.andExpect(jsonPath("message").exists());
+	}
+
+	@Test
+	@DisplayName("사용자 입력 오류시 400 반환")
+	void shouldThrow400WhenUserBadRequestTest() throws Exception {
+		Mockito.doThrow(new IllegalArgumentException("bad request"))
+			.when(oauth2Service).requestUserInfo(anyString(), anyString());
+
+		mockMvc.perform(post("/api/v1/oauth/login/{registrationId}", "kakao")
+				.param("code", "authorizeCode")
+				.contentType(MediaType.APPLICATION_JSON))
+			.andExpect(status().isBadRequest())
 			.andExpect(jsonPath("message").exists());
 	}
 }
