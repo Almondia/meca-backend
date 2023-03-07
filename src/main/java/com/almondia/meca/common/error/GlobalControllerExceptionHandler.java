@@ -1,5 +1,6 @@
 package com.almondia.meca.common.error;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -12,7 +13,7 @@ public class GlobalControllerExceptionHandler {
 
 	@ExceptionHandler(BadWebClientRequestException.class)
 	public ResponseEntity<ErrorResponseDto> handleBadWebClientRequestException(BadWebClientRequestException e) {
-		return ResponseEntity.badRequest().body(ErrorResponseDto.of(e));
+		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ErrorResponseDto.of(e));
 	}
 
 	@ExceptionHandler(BadWebClientResponseException.class)
