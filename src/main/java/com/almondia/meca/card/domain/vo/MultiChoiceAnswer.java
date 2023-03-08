@@ -16,7 +16,7 @@ public class MultiChoiceAnswer implements Wrapper {
 	private static final int MAX_NUMBER = 5;
 	private static final int MIN_NUMBER = 1;
 
-	private int number;
+	private Integer number;
 
 	public MultiChoiceAnswer(int number) {
 		validateNumber(number);
