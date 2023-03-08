@@ -5,6 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 
+import com.almondia.meca.card.domain.vo.CardType;
 import com.almondia.meca.card.domain.vo.OxAnswer;
 
 import lombok.AccessLevel;
@@ -23,4 +24,9 @@ public class OxCard extends Card {
 
 	@Enumerated(EnumType.STRING)
 	private OxAnswer oxAnswer;
+
+	@Override
+	public CardType getCardType() {
+		return CardType.OX_QUIZ;
+	}
 }

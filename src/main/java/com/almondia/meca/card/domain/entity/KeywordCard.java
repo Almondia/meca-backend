@@ -4,6 +4,7 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 
+import com.almondia.meca.card.domain.vo.CardType;
 import com.almondia.meca.card.domain.vo.KeywordAnswer;
 
 import lombok.AccessLevel;
@@ -22,4 +23,9 @@ public class KeywordCard extends Card {
 
 	@Embedded
 	private KeywordAnswer keywordAnswer;
+
+	@Override
+	public CardType getCardType() {
+		return CardType.OX_QUIZ;
+	}
 }
