@@ -43,7 +43,8 @@ class CategoryTest {
 		assertThat(entityType).isNotNull();
 		assertThat(entityType.getName()).isEqualTo("Category");
 		assertThat(entityType.getAttributes()).extracting("name")
-			.containsExactlyInAnyOrder("categoryId", "title", "isDeleted", "isShared", "createdAt", "modifiedAt");
+			.containsExactlyInAnyOrder("memberId", "categoryId", "title", "isDeleted", "isShared", "createdAt",
+				"modifiedAt");
 	}
 
 	@Test
@@ -52,6 +53,7 @@ class CategoryTest {
 		JpaRepository<Category, Id> categoryRepository = new SimpleJpaRepository<>(Category.class, entityManager);
 		Category category = Category.builder()
 			.categoryId(Id.generateNextId())
+			.memberId(Id.generateNextId())
 			.title(new Title("title"))
 			.build();
 		categoryRepository.saveAndFlush(category);
@@ -67,6 +69,7 @@ class CategoryTest {
 		JpaRepository<Category, Id> categoryRepository = new SimpleJpaRepository<>(Category.class, entityManager);
 		Category category = Category.builder()
 			.categoryId(Id.generateNextId())
+			.memberId(Id.generateNextId())
 			.title(new Title("title"))
 			.build();
 		Category temp = categoryRepository.save(category);
