@@ -17,16 +17,19 @@ public class GlobalControllerExceptionHandler {
 
 	@ExceptionHandler(BadWebClientRequestException.class)
 	public ResponseEntity<ErrorResponseDto> handleBadWebClientRequestException(BadWebClientRequestException e) {
+		log.error(e.getMessage());
 		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ErrorResponseDto.of(e));
 	}
 
 	@ExceptionHandler(BadWebClientResponseException.class)
 	public ResponseEntity<ErrorResponseDto> handleBadWebClientResponseException(BadWebClientResponseException e) {
+		log.error(e.getMessage());
 		return ResponseEntity.internalServerError().body(ErrorResponseDto.of(e));
 	}
 
 	@ExceptionHandler(IllegalArgumentException.class)
 	public ResponseEntity<ErrorResponseDto> handleIllegalArgumentException(IllegalArgumentException e) {
+		log.error(e.getMessage());
 		return ResponseEntity.badRequest().body(ErrorResponseDto.of(e));
 	}
 
