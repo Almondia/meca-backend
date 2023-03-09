@@ -7,6 +7,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,34 +47,43 @@ class CategoryControllerTest {
 	@Autowired
 	ObjectMapper objectMapper;
 
-	@Test
-	@WithMockMember
-	void test() throws Exception {
-		Mockito.doReturn(CategoryResponseDto
-			.builder()
-			.categoryId(Id.generateNextId())
-			.memberId(Id.generateNextId())
-			.title(new Title("title"))
-			.isDeleted(false)
-			.createdAt(LocalDateTime.now())
-			.modifiedAt(LocalDateTime.now())
-			.build()).when(categoryservice).saveCategory(any(), any());
-		mockMvc.perform(post("/api/v1/categories")
-				.contentType(MediaType.APPLICATION_JSON)
-				.characterEncoding(StandardCharsets.UTF_8)
-				.content(makeCategoryRequestDto()))
-			.andExpect(status().isCreated())
-			.andExpect(jsonPath("category_id").exists())
-			.andExpect(jsonPath("member_id").exists())
-			.andExpect(jsonPath("title").exists())
-			.andExpect(jsonPath("deleted").exists())
-			.andExpect(jsonPath("shared").exists())
-			.andExpect(jsonPath("created_at").exists())
-			.andExpect(jsonPath("modified_at").exists());
+	/**
+	 * 1. 카테고리 등록시 성공하면 201 코드 및 응답 검증
+	 */
+	@Nested
+	@DisplayName("카테고리 등록")
+	class saveCategoryTest {
+		@Test
+		@DisplayName("카테고리 등록시 성공하면 201 코드 및 응답 검증")
+		@WithMockMember
+		void test() throws Exception {
+			Mockito.doReturn(CategoryResponseDto
+				.builder()
+				.categoryId(Id.generateNextId())
+				.memberId(Id.generateNextId())
+				.title(new Title("title"))
+				.isDeleted(false)
+				.createdAt(LocalDateTime.now())
+				.modifiedAt(LocalDateTime.now())
+				.build()).when(categoryservice).saveCategory(any(), any());
+			mockMvc.perform(post("/api/v1/categories")
+					.contentType(MediaType.APPLICATION_JSON)
+					.characterEncoding(StandardCharsets.UTF_8)
+					.content(makeCategoryRequestDto()))
+				.andExpect(status().isCreated())
+				.andExpect(jsonPath("category_id").exists())
+				.andExpect(jsonPath("member_id").exists())
+				.andExpect(jsonPath("title").exists())
+				.andExpect(jsonPath("deleted").exists())
+				.andExpect(jsonPath("shared").exists())
+				.andExpect(jsonPath("created_at").exists())
+				.andExpect(jsonPath("modified_at").exists());
+		}
+
+		private String makeCategoryRequestDto() throws JsonProcessingException {
+			SaveCategoryRequestDto requestDto = SaveCategoryRequestDto.builder().title(new Title("title")).build();
+			return objectMapper.writeValueAsString(requestDto);
+		}
 	}
 
-	private String makeCategoryRequestDto() throws JsonProcessingException {
-		SaveCategoryRequestDto requestDto = SaveCategoryRequestDto.builder().title(new Title("title")).build();
-		return objectMapper.writeValueAsString(requestDto);
-	}
 }
