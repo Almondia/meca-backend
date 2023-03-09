@@ -48,4 +48,8 @@ public class Category extends DateEntity {
 	public void changeShare(boolean isShared) {
 		this.isShared = isShared;
 	}
+
+	public void changeTitle(Title title) {
+		this.title = title;
+	}
 }

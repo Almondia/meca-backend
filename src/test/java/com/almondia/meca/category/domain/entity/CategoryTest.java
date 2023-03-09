@@ -27,6 +27,7 @@ import com.almondia.meca.common.domain.vo.Id;
  * 4. 삭제 메서드 호출시 삭제 상태가 된다
  * 5. 롤백 메서드 호추시 삭제 상태는 false가 된다
  * 6. 공유 변경 메서드를 통해 isShared의 상태를 변경할 수 있다
+ * 7. 타이틀 변경 요청시 해당 타이틀로 변형된다
  */
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -116,6 +117,19 @@ class CategoryTest {
 
 		category.changeShare(true);
 		assertThat(category).hasFieldOrPropertyWithValue("isShared", true);
+	}
+
+	@Test
+	@DisplayName("타이틀 변경 요청시 해당 타이틀로 변형된다")
+	void shouldChangeTitleWhenCallChangeTitleTest() {
+		Category category = Category.builder()
+			.categoryId(Id.generateNextId())
+			.title(new Title("title"))
+			.isDeleted(true)
+			.build();
+		Title newTitle = new Title("x");
+		category.changeTitle(newTitle);
+		assertThat(category).hasFieldOrPropertyWithValue("title", newTitle);
 	}
 
 }
