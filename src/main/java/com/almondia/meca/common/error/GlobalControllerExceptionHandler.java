@@ -2,13 +2,17 @@ package com.almondia.meca.common.error;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.almondia.meca.auth.oauth.exception.BadWebClientRequestException;
 import com.almondia.meca.auth.oauth.exception.BadWebClientResponseException;
 
+import lombok.extern.slf4j.Slf4j;
+
 @RestControllerAdvice
+@Slf4j
 public class GlobalControllerExceptionHandler {
 
 	@ExceptionHandler(BadWebClientRequestException.class)
@@ -24,5 +28,11 @@ public class GlobalControllerExceptionHandler {
 	@ExceptionHandler(IllegalArgumentException.class)
 	public ResponseEntity<ErrorResponseDto> handleIllegalArgumentException(IllegalArgumentException e) {
 		return ResponseEntity.badRequest().body(ErrorResponseDto.of(e));
+	}
+
+	@ExceptionHandler(AccessDeniedException.class)
+	public ResponseEntity<ErrorResponseDto> handleAccessDeniedException(AccessDeniedException e) {
+		log.error(e.getMessage());
+		return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ErrorResponseDto.of(e));
 	}
 }
