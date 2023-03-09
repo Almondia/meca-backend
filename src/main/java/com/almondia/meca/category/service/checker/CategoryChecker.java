@@ -4,7 +4,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Component;
 
 import com.almondia.meca.category.domain.entity.Category;
-import com.almondia.meca.category.repository.CategoryRepository;
+import com.almondia.meca.category.domain.repository.CategoryRepository;
 import com.almondia.meca.common.domain.vo.Id;
 
 import lombok.RequiredArgsConstructor;

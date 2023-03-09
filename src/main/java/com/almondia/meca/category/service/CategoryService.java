@@ -7,7 +7,7 @@ import com.almondia.meca.category.controller.dto.CategoryResponseDto;
 import com.almondia.meca.category.controller.dto.SaveCategoryRequestDto;
 import com.almondia.meca.category.controller.dto.UpdateCategoryRequestDto;
 import com.almondia.meca.category.domain.entity.Category;
-import com.almondia.meca.category.repository.CategoryRepository;
+import com.almondia.meca.category.domain.repository.CategoryRepository;
 import com.almondia.meca.category.service.checker.CategoryChecker;
 import com.almondia.meca.category.service.helper.CategoryFactory;
 import com.almondia.meca.category.service.helper.CategoryMapper;

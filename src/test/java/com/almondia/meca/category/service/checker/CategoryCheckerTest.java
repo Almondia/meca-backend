@@ -11,8 +11,8 @@ import org.springframework.context.annotation.Import;
 import org.springframework.security.access.AccessDeniedException;
 
 import com.almondia.meca.category.domain.entity.Category;
+import com.almondia.meca.category.domain.repository.CategoryRepository;
 import com.almondia.meca.category.domain.vo.Title;
-import com.almondia.meca.category.repository.CategoryRepository;
 import com.almondia.meca.common.domain.vo.Id;
 
 /**

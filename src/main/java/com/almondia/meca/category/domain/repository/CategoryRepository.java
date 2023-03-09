@@ -1,4 +1,4 @@
-package com.almondia.meca.category.repository;
+package com.almondia.meca.category.domain.repository;
 
 import java.util.Optional;
 
