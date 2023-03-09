@@ -11,18 +11,22 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 
+import com.almondia.meca.category.controller.dto.CategoryResponseDto;
 import com.almondia.meca.category.controller.dto.SaveCategoryRequestDto;
+import com.almondia.meca.category.controller.dto.UpdateCategoryRequestDto;
 import com.almondia.meca.category.domain.entity.Category;
 import com.almondia.meca.category.domain.vo.Title;
 import com.almondia.meca.category.repository.CategoryRepository;
+import com.almondia.meca.category.service.checker.CategoryChecker;
 import com.almondia.meca.common.domain.vo.Id;
 
 /**
- * 카테고리 등록시 영속성 및 응답 테스트
+ * 1. 카테고리 등록시 영속성 및 응답 테스트
+ * 2. 카테고리 수정시 수정 여부 테스트
  */
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@Import({CategoryService.class})
+@Import({CategoryService.class, CategoryChecker.class})
 class CategoryServiceTest {
 
 	@Autowired
@@ -39,5 +43,27 @@ class CategoryServiceTest {
 
 		List<Category> all = categoryRepository.findAll();
 		assertThat(all).isNotEmpty();
+	}
+
+	@Test
+	@DisplayName("카테고리 수정시 수정 여부 테스트")
+	void isModifiedWhenCallUpdateCategoryTest() {
+		Id categoryId = Id.generateNextId();
+		Id memberId = Id.generateNextId();
+		saveCategory(categoryId, memberId);
+		CategoryResponseDto category = categoryService.updateCategory(
+			UpdateCategoryRequestDto.builder()
+				.categoryId(categoryId)
+				.title(new Title("new title")).build(), memberId);
+		List<Category> all = categoryRepository.findAll();
+		assertThat(all.get(0).getTitle()).isEqualTo(new Title("new title"));
+	}
+
+	private void saveCategory(Id categoryId, Id memberId) {
+		categoryRepository.save(Category.builder()
+			.categoryId(categoryId)
+			.memberId(memberId)
+			.title(new Title("title"))
+			.build());
 	}
 }
