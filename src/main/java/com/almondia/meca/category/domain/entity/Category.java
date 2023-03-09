@@ -29,6 +29,10 @@ public class Category extends DateEntity {
 	@AttributeOverride(name = "title", column = @Column(name = "title", nullable = false, length = 60))
 	private Title title;
 
+	@Embedded
+	@AttributeOverride(name = "uuid", column = @Column(name = "member_id", nullable = false, columnDefinition = "BINARY(16)"))
+	private Id memberId;
+
 	private boolean isDeleted;
 
 	private boolean isShared;
