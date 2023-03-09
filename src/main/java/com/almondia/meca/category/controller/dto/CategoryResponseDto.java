@@ -7,9 +7,11 @@ import com.almondia.meca.common.domain.vo.Id;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 
 @Builder
 @AllArgsConstructor
+@Getter
 public class CategoryResponseDto {
 
 	private final Id categoryId;
