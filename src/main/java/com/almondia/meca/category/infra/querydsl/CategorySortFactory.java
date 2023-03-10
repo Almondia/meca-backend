@@ -1,6 +1,6 @@
 package com.almondia.meca.category.infra.querydsl;
 
-import com.almondia.meca.common.domain.vo.SortOrder;
+import com.almondia.meca.common.infra.querydsl.SortOrder;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.ComparableExpression;
 
