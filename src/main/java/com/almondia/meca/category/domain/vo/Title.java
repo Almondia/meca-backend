@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Embeddable
 @EqualsAndHashCode
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Title implements Wrapper {
+public class Title implements Wrapper, Comparable<Title> {
 
 	private static final int MAX_LENGTH = 20;
 
@@ -34,5 +34,10 @@ public class Title implements Wrapper {
 	@Override
 	public String toString() {
 		return title;
+	}
+
+	@Override
+	public int compareTo(Title o) {
+		return this.title.compareTo(o.title);
 	}
 }
