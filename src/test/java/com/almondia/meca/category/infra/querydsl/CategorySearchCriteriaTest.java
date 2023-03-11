@@ -29,7 +29,8 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
  * 5. 수정일 종료 설정시 생성 종료일 이전 데이터만 가져온다
  * 6. 공유 데이터 설정시 공유 데이터만 가져와야 한다
  * 7. 삭제 데이터 설정시 삭제 설정된 데이터만 가져와야 한다
- * 8. 2개 이상의 쿼리 옵션 가능 여부 테스트
+ * 8. 일치하는 회원 아이디 설정시 해당 회원 아이디만 조회해야 한다
+ * 9. 2개 이상의 쿼리 옵션 가능 여부 테스트
  */
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -45,25 +46,26 @@ class CategorySearchCriteriaTest {
 	QCategory category = QCategory.category;
 
 	LocalDateTime now = LocalDateTime.now();
+	Id myId = Id.generateNextId();
 
 	@BeforeEach
 	void before() {
 		List<Category> categories = List.of(
 			Category.builder()
 				.categoryId(Id.generateNextId())
-				.memberId(Id.generateNextId())
+				.memberId(myId)
 				.createdAt(now)
 				.modifiedAt(now)
 				.title(new Title("btitle1")).build(),
 			Category.builder()
 				.categoryId(Id.generateNextId())
-				.memberId(Id.generateNextId())
+				.memberId(myId)
 				.createdAt(now.plusHours(4))
 				.modifiedAt(now.plusHours(4))
 				.title(new Title("atitle2")).build(),
 			Category.builder()
 				.categoryId(Id.generateNextId())
-				.memberId(Id.generateNextId())
+				.memberId(myId)
 				.createdAt(now.plusHours(2))
 				.modifiedAt(now.plusHours(2))
 				.title(new Title("ctitle")).build(),
@@ -192,6 +194,23 @@ class CategorySearchCriteriaTest {
 		assertThat(categories)
 			.filteredOn(Category::isDeleted)
 			.hasSize(1);
+	}
+
+	@Test
+	@DisplayName("일치하는 회원 아이디 설정시 해당 회원 아이디만 조회해야 한다")
+	void findWhereEqualMemberId() {
+		CategorySearchCriteria criteria = CategorySearchCriteria.builder()
+			.eqMemberId(myId)
+			.build();
+
+		List<Category> categories = queryFactory.selectFrom(category)
+			.where(criteria.getPredicate())
+			.fetch();
+
+		assertThat(categories)
+			.filteredOn(cate -> cate.getMemberId().equals(myId))
+			.hasSize(3);
+
 	}
 
 	@Test

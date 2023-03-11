@@ -3,6 +3,7 @@ package com.almondia.meca.category.infra.querydsl;
 import java.time.LocalDateTime;
 
 import com.almondia.meca.category.domain.entity.QCategory;
+import com.almondia.meca.common.domain.vo.Id;
 import com.nimbusds.oauth2.sdk.util.StringUtils;
 import com.querydsl.core.types.dsl.BooleanExpression;
 
@@ -24,6 +25,7 @@ public class CategorySearchCriteria {
 	private LocalDateTime endCreatedAt;
 	private LocalDateTime startModifiedAt;
 	private LocalDateTime endModifiedAt;
+	private Id eqMemberId;
 	private boolean eqShared;
 	private boolean eqDeleted;
 
@@ -44,6 +46,9 @@ public class CategorySearchCriteria {
 		}
 		if (endModifiedAt != null) {
 			predicate = predicate.and(category.modifiedAt.loe(endModifiedAt));
+		}
+		if (eqMemberId != null) {
+			predicate = predicate.and(category.memberId.eq(eqMemberId));
 		}
 		return predicate.and(category.isShared.eq(eqShared))
 			.and(category.isDeleted.eq(eqDeleted));
