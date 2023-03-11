@@ -11,6 +11,7 @@ import com.almondia.meca.common.configuration.jwt.JwtProperties;
 import com.almondia.meca.common.domain.vo.Id;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -52,7 +53,7 @@ public class JwtTokenService {
 		try {
 			Jwts.parserBuilder().setSigningKey(getSigningKey()).build().parseClaimsJws(token);
 			return true;
-		} catch (JwtException | IllegalArgumentException | MalformedJwtException e) {
+		} catch (JwtException | IllegalArgumentException | MalformedJwtException | ExpiredJwtException e) {
 			return false;
 		}
 	}
