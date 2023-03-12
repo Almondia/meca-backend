@@ -17,6 +17,7 @@ import com.almondia.meca.category.domain.entity.Category;
 import com.almondia.meca.category.domain.entity.QCategory;
 import com.almondia.meca.category.domain.repository.CategoryRepository;
 import com.almondia.meca.category.domain.vo.Title;
+import com.almondia.meca.common.configuration.jpa.JpaAuditingConfiguration;
 import com.almondia.meca.common.configuration.jpa.QueryDslConfiguration;
 import com.almondia.meca.common.domain.vo.Id;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -34,7 +35,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
  */
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@Import(QueryDslConfiguration.class)
+@Import({QueryDslConfiguration.class, JpaAuditingConfiguration.class})
 class CategorySearchCriteriaTest {
 
 	@Autowired
@@ -48,6 +49,8 @@ class CategorySearchCriteriaTest {
 	LocalDateTime now = LocalDateTime.now();
 	Id myId = Id.generateNextId();
 
+	Id toModifyId = Id.generateNextId();
+
 	@BeforeEach
 	void before() {
 		List<Category> categories = List.of(
@@ -58,7 +61,7 @@ class CategorySearchCriteriaTest {
 				.modifiedAt(now)
 				.title(new Title("btitle1")).build(),
 			Category.builder()
-				.categoryId(Id.generateNextId())
+				.categoryId(toModifyId)
 				.memberId(myId)
 				.createdAt(now.plusHours(4))
 				.modifiedAt(now.plusHours(4))
@@ -129,11 +132,11 @@ class CategorySearchCriteriaTest {
 			.fetch();
 		assertThat(categories)
 			.filteredOn(cate -> cate.getCreatedAt().isBefore(now) || cate.getCreatedAt().isEqual(now))
-			.hasSize(1);
+			.hasSize(0);
 	}
 
 	@Test
-	@DisplayName("수정일 시작 설정시 생성 시작일부터 그 이후 데이터만 가져온다")
+	@DisplayName("수정일 시작 설정시 수정 시작일부터 그 이후 데이터만 가져온다")
 	void findWhereStartModifiedAtTest() {
 		CategorySearchCriteria criteria = CategorySearchCriteria.builder()
 			.startModifiedAt(now)
@@ -144,24 +147,28 @@ class CategorySearchCriteriaTest {
 			.fetch();
 
 		assertThat(categories)
-			.filteredOn(cate -> cate.getModifiedAt().isAfter(now) || cate.getCreatedAt().isEqual(now))
 			.hasSize(3);
 	}
 
 	@Test
-	@DisplayName("수정일 종료 설정시 생성 종료일 이전 데이터만 가져온다")
+	@DisplayName("수정일 종료 설정시 수정 종료일 이전 데이터만 가져온다")
 	void findWhereEndModifiedTest() {
+		LocalDateTime time = LocalDateTime.now();
+		Category toModify = categoryRepository.findById(toModifyId).orElseThrow();
+
 		CategorySearchCriteria criteria = CategorySearchCriteria.builder()
-			.endModifiedAt(now)
+			.endModifiedAt(time)
 			.build();
+
+		toModify.changeTitle(new Title("aaa"));
+		categoryRepository.save(toModify);
 
 		List<Category> categories = queryFactory.selectFrom(category)
 			.where(criteria.getPredicate())
 			.fetch();
 
 		assertThat(categories)
-			.filteredOn(cate -> cate.getModifiedAt().isBefore(now) || cate.getCreatedAt().isEqual(now))
-			.hasSize(1);
+			.hasSize(2);
 	}
 
 	@Test
