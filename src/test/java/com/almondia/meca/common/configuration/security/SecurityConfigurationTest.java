@@ -45,7 +45,7 @@ class SecurityConfigurationTest {
 	void test() throws Exception {
 		mockMvc.perform(get("/api/v1/members/me")
 				.header(HttpHeaders.ORIGIN, "http://localhost:3001"))
-			.andExpect(status().isOk());
+			.andExpect(status().isForbidden());
 	}
 
 	@Test
