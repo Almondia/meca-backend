@@ -17,6 +17,7 @@ import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import org.springframework.test.context.TestPropertySource;
 
 import com.almondia.meca.common.configuration.jpa.JpaAuditingConfiguration;
+import com.almondia.meca.common.configuration.jpa.QueryDslConfiguration;
 import com.almondia.meca.common.domain.vo.Id;
 
 import lombok.AccessLevel;
@@ -35,7 +36,7 @@ import lombok.ToString;
 	"spring.jpa.hibernate.ddl-auto=create-drop"
 })
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@Import({JpaAuditingConfiguration.class})
+@Import({JpaAuditingConfiguration.class, QueryDslConfiguration.class})
 class DateEntityTest {
 
 	@PersistenceContext

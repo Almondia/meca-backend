@@ -18,6 +18,7 @@ import com.almondia.meca.category.domain.entity.Category;
 import com.almondia.meca.category.domain.repository.CategoryRepository;
 import com.almondia.meca.category.domain.vo.Title;
 import com.almondia.meca.category.service.checker.CategoryChecker;
+import com.almondia.meca.common.configuration.jpa.QueryDslConfiguration;
 import com.almondia.meca.common.domain.vo.Id;
 
 /**
@@ -26,7 +27,7 @@ import com.almondia.meca.common.domain.vo.Id;
  */
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@Import({CategoryService.class, CategoryChecker.class})
+@Import({CategoryService.class, CategoryChecker.class, QueryDslConfiguration.class})
 class CategoryServiceTest {
 
 	@Autowired

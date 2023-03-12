@@ -24,6 +24,7 @@ import com.almondia.meca.card.domain.vo.Title;
 import com.almondia.meca.card.repository.KeywordCardRepository;
 import com.almondia.meca.card.repository.MultiChoiceCardRepository;
 import com.almondia.meca.card.repository.OxCardRepository;
+import com.almondia.meca.common.configuration.jpa.QueryDslConfiguration;
 import com.almondia.meca.common.domain.vo.Id;
 
 /**
@@ -33,7 +34,7 @@ import com.almondia.meca.common.domain.vo.Id;
  */
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@Import(CardService.class)
+@Import({CardService.class, QueryDslConfiguration.class})
 class CardServiceTest {
 
 	@Autowired

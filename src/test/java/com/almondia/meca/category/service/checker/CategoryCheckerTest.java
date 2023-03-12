@@ -13,6 +13,7 @@ import org.springframework.security.access.AccessDeniedException;
 import com.almondia.meca.category.domain.entity.Category;
 import com.almondia.meca.category.domain.repository.CategoryRepository;
 import com.almondia.meca.category.domain.vo.Title;
+import com.almondia.meca.common.configuration.jpa.QueryDslConfiguration;
 import com.almondia.meca.common.domain.vo.Id;
 
 /**
@@ -21,7 +22,7 @@ import com.almondia.meca.common.domain.vo.Id;
  */
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@Import(CategoryChecker.class)
+@Import({CategoryChecker.class, QueryDslConfiguration.class})
 class CategoryCheckerTest {
 
 	@Autowired
