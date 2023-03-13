@@ -31,6 +31,10 @@ import com.almondia.meca.common.domain.vo.Id;
  * 2. entity를 생성해서 저장시 createdAt과 modifiedAt이 자동으로 업데이트되며 서로 같음
  * 3. entity 수정시 modifiedAt이 업데이트되며 modifiedAt이 createdAt보다 이후의 날짜여야 함
  * 4. delete, rollback 메서드 사용시 isDeleted 상태가 변경되어야 함
+ * 5. title 변경 메서드  정상 동작 테스트
+ * 6. images 변경 메서드 정상 동작 테스트
+ * 7. question 변경 메서드 정상 동작 테스트
+ * 8. categoryId 변경 메서드 정상 동작 테스트
  */
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -126,5 +130,71 @@ class CardTest {
 			.build();
 		oxCard.rollback();
 		assertThat(oxCard.isDeleted()).isFalse();
+	}
+
+	@Test
+	@DisplayName("title 변경 메서드  정상 동작 테스트")
+	void shouldChangeTitleWhenCallChangeTitleTest() {
+		OxCard oxCard = OxCard.builder()
+			.cardId(Id.generateNextId())
+			.cardType(CardType.OX_QUIZ)
+			.categoryId(Id.generateNextId())
+			.images(List.of(new Image("image1"), new Image("image2")))
+			.title(new Title("title"))
+			.oxAnswer(OxAnswer.O)
+			.isDeleted(true)
+			.build();
+		oxCard.changeTitle(new Title("hello"));
+		assertThat(oxCard).hasFieldOrPropertyWithValue("title", new Title("hello"));
+	}
+
+	@Test
+	@DisplayName("images 변경 메서드 정상 동작 테스트")
+	void shouldChangeImagesWhenCallChangeImagesTest() {
+		OxCard oxCard = OxCard.builder()
+			.cardId(Id.generateNextId())
+			.cardType(CardType.OX_QUIZ)
+			.categoryId(Id.generateNextId())
+			.images(List.of(new Image("image1"), new Image("image2")))
+			.title(new Title("title"))
+			.oxAnswer(OxAnswer.O)
+			.isDeleted(true)
+			.build();
+		oxCard.changeImages("A,B,C,D");
+		assertThat(oxCard.getImages())
+			.contains(new Image("A"), new Image("B"), new Image("C"), new Image("D"));
+	}
+
+	@Test
+	@DisplayName("question 변경 메서드 정상 동작 테스트")
+	void shouldChangeQuestionWhenCallChangeQuestionTest() {
+		OxCard oxCard = OxCard.builder()
+			.cardId(Id.generateNextId())
+			.cardType(CardType.OX_QUIZ)
+			.categoryId(Id.generateNextId())
+			.images(List.of(new Image("image1"), new Image("image2")))
+			.title(new Title("title"))
+			.oxAnswer(OxAnswer.O)
+			.isDeleted(true)
+			.build();
+		oxCard.changeQuestion(new Question("question2"));
+		assertThat(oxCard).hasFieldOrPropertyWithValue("question", new Question("question2"));
+	}
+
+	@Test
+	@DisplayName("categoryId 변경 메서드 정상 동작 테스트")
+	void shouldReturnCategoryIdWhenCallChangeCategoryIdTest() {
+		OxCard oxCard = OxCard.builder()
+			.cardId(Id.generateNextId())
+			.cardType(CardType.OX_QUIZ)
+			.categoryId(Id.generateNextId())
+			.images(List.of(new Image("image1"), new Image("image2")))
+			.title(new Title("title"))
+			.oxAnswer(OxAnswer.O)
+			.isDeleted(true)
+			.build();
+		Id categoryId = Id.generateNextId();
+		oxCard.changeCategoryId(categoryId);
+		assertThat(oxCard).hasFieldOrPropertyWithValue("categoryId", categoryId);
 	}
 }
