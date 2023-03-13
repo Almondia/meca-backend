@@ -49,6 +49,10 @@ public abstract class Card extends DateEntity {
 	@AttributeOverride(name = "uuid", column = @Column(name = "category_id", nullable = false, columnDefinition = "BINARY(16)"))
 	Id categoryId;
 
+	@Embedded
+	@AttributeOverride(name = "uuid", column = @Column(name = "member_id", nullable = false, columnDefinition = "BINARY(16)"))
+	Id memberId;
+	
 	@Column(name = "images", length = 1020)
 	@Convert(converter = ListImageConverter.class)
 	private List<Image> images;

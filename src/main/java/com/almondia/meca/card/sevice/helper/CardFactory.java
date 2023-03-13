@@ -17,23 +17,24 @@ public class CardFactory {
 
 	private static final String SPLIT_WORD = ",";
 
-	public static Card genCard(SaveCardRequestDto saveCardRequestDto) {
+	public static Card genCard(SaveCardRequestDto saveCardRequestDto, Id memberId) {
 		CardType cardType = saveCardRequestDto.getCardType();
 		if (cardType.equals(CardType.OX_QUIZ)) {
-			return genOxCard(saveCardRequestDto);
+			return genOxCard(saveCardRequestDto, memberId);
 		}
 		if (cardType.equals(CardType.KEYWORD)) {
-			return genKeywordCard(saveCardRequestDto);
+			return genKeywordCard(saveCardRequestDto, memberId);
 		}
 		if (cardType.equals(CardType.MULTI_CHOICE)) {
-			return genMultiChoiceCard(saveCardRequestDto);
+			return genMultiChoiceCard(saveCardRequestDto, memberId);
 		}
 		throw new IllegalArgumentException("잘못된 cardType 입니다");
 	}
 
-	private static OxCard genOxCard(SaveCardRequestDto saveCardRequestDto) {
+	private static OxCard genOxCard(SaveCardRequestDto saveCardRequestDto, Id memberId) {
 		return OxCard.builder()
 			.cardId(Id.generateNextId())
+			.memberId(memberId)
 			.question(saveCardRequestDto.getQuestion())
 			.title(saveCardRequestDto.getTitle())
 			.categoryId(saveCardRequestDto.getCategoryId())
@@ -43,9 +44,10 @@ public class CardFactory {
 			.build();
 	}
 
-	private static KeywordCard genKeywordCard(SaveCardRequestDto saveCardRequestDto) {
+	private static KeywordCard genKeywordCard(SaveCardRequestDto saveCardRequestDto, Id memberId) {
 		return KeywordCard.builder()
 			.cardId(Id.generateNextId())
+			.memberId(memberId)
 			.question(saveCardRequestDto.getQuestion())
 			.title(saveCardRequestDto.getTitle())
 			.categoryId(saveCardRequestDto.getCategoryId())
@@ -55,9 +57,10 @@ public class CardFactory {
 			.build();
 	}
 
-	private static MultiChoiceCard genMultiChoiceCard(SaveCardRequestDto saveCardRequestDto) {
+	private static MultiChoiceCard genMultiChoiceCard(SaveCardRequestDto saveCardRequestDto, Id memberId) {
 		return MultiChoiceCard.builder()
 			.cardId(Id.generateNextId())
+			.memberId(memberId)
 			.question(saveCardRequestDto.getQuestion())
 			.title(saveCardRequestDto.getTitle())
 			.categoryId(saveCardRequestDto.getCategoryId())

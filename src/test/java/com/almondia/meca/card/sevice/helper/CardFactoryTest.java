@@ -31,10 +31,11 @@ class CardFactoryTest {
 		Card card = CardFactory.genCard(makeSaveCardRequest()
 			.oxAnswer(OxAnswer.O)
 			.cardType(CardType.OX_QUIZ)
-			.build());
+			.build(), Id.generateNextId());
 		assertThat(card).isInstanceOf(OxCard.class);
 		assertThat(card).hasFieldOrProperty("title")
 			.hasFieldOrProperty("question")
+			.hasFieldOrProperty("memberId")
 			.hasFieldOrProperty("categoryId")
 			.hasFieldOrProperty("images")
 			.hasFieldOrProperty("cardType")
@@ -48,11 +49,12 @@ class CardFactoryTest {
 		Card card = CardFactory.genCard(makeSaveCardRequest()
 			.keywordAnswer(new KeywordAnswer("개발자"))
 			.cardType(CardType.KEYWORD)
-			.build());
+			.build(), Id.generateNextId());
 		assertThat(card).isInstanceOf(KeywordCard.class);
 		assertThat(card).hasFieldOrProperty("title")
 			.hasFieldOrProperty("question")
 			.hasFieldOrProperty("categoryId")
+			.hasFieldOrProperty("memberId")
 			.hasFieldOrProperty("images")
 			.hasFieldOrProperty("cardType")
 			.hasFieldOrProperty("cardId")
@@ -65,11 +67,12 @@ class CardFactoryTest {
 		Card card = CardFactory.genCard(makeSaveCardRequest()
 			.multiChoiceAnswer(new MultiChoiceAnswer(1))
 			.cardType(CardType.MULTI_CHOICE)
-			.build());
+			.build(), Id.generateNextId());
 		assertThat(card).isInstanceOf(MultiChoiceCard.class);
 		assertThat(card).hasFieldOrProperty("title")
 			.hasFieldOrProperty("question")
 			.hasFieldOrProperty("categoryId")
+			.hasFieldOrProperty("memberId")
 			.hasFieldOrProperty("images")
 			.hasFieldOrProperty("cardType")
 			.hasFieldOrProperty("cardId")

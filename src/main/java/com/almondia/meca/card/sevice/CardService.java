@@ -13,6 +13,7 @@ import com.almondia.meca.card.repository.MultiChoiceCardRepository;
 import com.almondia.meca.card.repository.OxCardRepository;
 import com.almondia.meca.card.sevice.helper.CardFactory;
 import com.almondia.meca.card.sevice.helper.CardMapper;
+import com.almondia.meca.common.domain.vo.Id;
 
 import lombok.AllArgsConstructor;
 
@@ -24,8 +25,8 @@ public class CardService {
 	private final KeywordCardRepository keywordCardRepository;
 	private final MultiChoiceCardRepository multiChoiceCardRepository;
 
-	public CardResponseDto saveCard(SaveCardRequestDto saveCardRequestDto) {
-		Card card = CardFactory.genCard(saveCardRequestDto);
+	public CardResponseDto saveCard(SaveCardRequestDto saveCardRequestDto, Id memberId) {
+		Card card = CardFactory.genCard(saveCardRequestDto, memberId);
 		if (card instanceof OxCard) {
 			OxCard oxCard = oxCardRepository.save((OxCard)card);
 			return CardMapper.oxCardToDto(oxCard);

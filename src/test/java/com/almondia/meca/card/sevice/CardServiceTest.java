@@ -52,7 +52,8 @@ class CardServiceTest {
 	@Test
 	@DisplayName("oxCard type정보가 들어가면 oxCard 정보가 저장되는지 검증")
 	void shouldSaveOxCardTest() {
-		cardService.saveCard(makeSaveCardRequest().oxAnswer(OxAnswer.O).cardType(CardType.OX_QUIZ).build());
+		cardService.saveCard(makeSaveCardRequest().oxAnswer(OxAnswer.O).cardType(CardType.OX_QUIZ).build(),
+			Id.generateNextId());
 		List<OxCard> all = oxCardRepository.findAll();
 		assertThat(all).isNotEmpty();
 	}
@@ -60,8 +61,9 @@ class CardServiceTest {
 	@Test
 	@DisplayName("keywordCard type 정보가 들어가면 keywordCard 정보가 저장되는지 검증")
 	void shouldSaveKeywordCardTest() {
-		cardService.saveCard(makeSaveCardRequest().keywordAnswer(new KeywordAnswer("asdf"))
-			.cardType(CardType.KEYWORD).build());
+		cardService.saveCard(makeSaveCardRequest()
+			.keywordAnswer(new KeywordAnswer("asdf"))
+			.cardType(CardType.KEYWORD).build(), Id.generateNextId());
 		List<KeywordCard> all = keywordCardRepository.findAll();
 		assertThat(all).isNotEmpty();
 	}
@@ -70,7 +72,9 @@ class CardServiceTest {
 	@DisplayName("multi choice card type 정보가 들어가면 MultiChoiceCard 정보가 저장되는 지 검증")
 	void shouldSaveMultiCardTest() {
 		cardService.saveCard(
-			makeSaveCardRequest().multiChoiceAnswer(new MultiChoiceAnswer(1)).cardType(CardType.MULTI_CHOICE).build());
+			makeSaveCardRequest().multiChoiceAnswer(new MultiChoiceAnswer(1))
+				.cardType(CardType.MULTI_CHOICE).build(),
+			Id.generateNextId());
 		List<MultiChoiceCard> all = multiChoiceCardRepository.findAll();
 		assertThat(all).isNotEmpty();
 	}

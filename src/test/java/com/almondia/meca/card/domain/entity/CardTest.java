@@ -47,7 +47,8 @@ class CardTest {
 		assertThat(entityType).isNotNull();
 		assertThat(entityType.getName()).isEqualTo("Card");
 		assertThat(entityType.getAttributes()).extracting("name")
-			.containsExactlyInAnyOrder("question", "isDeleted", "cardId", "categoryId", "title", "images", "createdAt",
+			.containsExactlyInAnyOrder("question", "memberId", "isDeleted", "cardId", "categoryId", "title", "images",
+				"createdAt",
 				"modifiedAt");
 	}
 
@@ -60,6 +61,7 @@ class CardTest {
 			.cardType(CardType.OX_QUIZ)
 			.question(new Question("Question"))
 			.categoryId(Id.generateNextId())
+			.memberId(Id.generateNextId())
 			.images(List.of(new Image("image1"), new Image("image2")))
 			.title(new Title("title"))
 			.oxAnswer(OxAnswer.O)
@@ -79,6 +81,7 @@ class CardTest {
 			.cardId(Id.generateNextId())
 			.cardType(CardType.OX_QUIZ)
 			.question(new Question("Question"))
+			.memberId(Id.generateNextId())
 			.categoryId(Id.generateNextId())
 			.images(List.of(new Image("image1"), new Image("image2")))
 			.title(new Title("title"))

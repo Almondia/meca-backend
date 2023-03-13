@@ -29,6 +29,7 @@ import com.almondia.meca.card.sevice.CardService;
 import com.almondia.meca.common.configuration.jackson.JacksonConfiguration;
 import com.almondia.meca.common.configuration.security.filter.JwtAuthenticationFilter;
 import com.almondia.meca.common.domain.vo.Id;
+import com.almondia.meca.mock.security.WithMockMember;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
@@ -52,6 +53,7 @@ class CardControllerTest {
 	ObjectMapper objectMapper;
 
 	@Test
+	@WithMockMember
 	@DisplayName("요청 성공시 201을 리턴하고 카드 정보를 반환한다")
 	void test() throws Exception {
 		SaveCardRequestDto saveCardRequestDto = SaveCardRequestDto.builder()
@@ -62,7 +64,7 @@ class CardControllerTest {
 			.cardType(CardType.OX_QUIZ)
 			.oxAnswer(OxAnswer.O)
 			.build();
-		Mockito.doReturn(makeResponse()).when(cardService).saveCard(any());
+		Mockito.doReturn(makeResponse()).when(cardService).saveCard(any(), any());
 
 		mockMvc.perform(post("/api/v1/cards")
 				.contentType(MediaType.APPLICATION_JSON)
