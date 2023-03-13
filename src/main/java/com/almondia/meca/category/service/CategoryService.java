@@ -8,9 +8,12 @@ import com.almondia.meca.category.controller.dto.SaveCategoryRequestDto;
 import com.almondia.meca.category.controller.dto.UpdateCategoryRequestDto;
 import com.almondia.meca.category.domain.entity.Category;
 import com.almondia.meca.category.domain.repository.CategoryRepository;
+import com.almondia.meca.category.infra.querydsl.CategorySearchCriteria;
+import com.almondia.meca.category.infra.querydsl.CategorySortOption;
 import com.almondia.meca.category.service.checker.CategoryChecker;
 import com.almondia.meca.category.service.helper.CategoryFactory;
 import com.almondia.meca.category.service.helper.CategoryMapper;
+import com.almondia.meca.common.controller.dto.OffsetPage;
 import com.almondia.meca.common.domain.vo.Id;
 
 import lombok.RequiredArgsConstructor;
@@ -39,5 +42,15 @@ public class CategoryService {
 			category.changeShare(updateCategoryRequestDto.getIsShared());
 		}
 		return CategoryMapper.entityToCategoryResponseDto(category);
+	}
+
+	@Transactional(readOnly = true)
+	public OffsetPage<CategoryResponseDto> getOffsetPagingCategoryResponseDto(
+		int offset,
+		int pageSize,
+		CategorySearchCriteria criteria,
+		CategorySortOption sortOption
+	) {
+		return categoryRepository.findCategories(offset, pageSize, criteria, sortOption);
 	}
 }
