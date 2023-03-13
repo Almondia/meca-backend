@@ -7,8 +7,8 @@ import com.querydsl.core.types.dsl.ComparableExpression;
 
 public enum CategorySortField {
 	TITLE("title", QCategory.category.title.title),
-	CREATED_AT("created_at", QCategory.category.createdAt),
-	MODIFIED_AT("modified_at", QCategory.category.modifiedAt);
+	CREATED_AT("createdAt", QCategory.category.createdAt),
+	MODIFIED_AT("modifiedAt", QCategory.category.modifiedAt);
 
 	private final String field;
 	private final ComparableExpression<?> expression;
