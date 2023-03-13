@@ -1,6 +1,8 @@
 package com.almondia.meca.card.domain.entity;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.Column;
@@ -49,6 +51,10 @@ public abstract class Card extends DateEntity {
 	@AttributeOverride(name = "uuid", column = @Column(name = "category_id", nullable = false, columnDefinition = "BINARY(16)"))
 	Id categoryId;
 
+	@Embedded
+	@AttributeOverride(name = "uuid", column = @Column(name = "member_id", nullable = false, columnDefinition = "BINARY(16)"))
+	Id memberId;
+
 	@Column(name = "images", length = 1020)
 	@Convert(converter = ListImageConverter.class)
 	private List<Image> images;
@@ -64,5 +70,23 @@ public abstract class Card extends DateEntity {
 
 	public void rollback() {
 		isDeleted = false;
+	}
+
+	public void changeTitle(Title title) {
+		this.title = title;
+	}
+
+	public void changeImages(String images) {
+		String[] split = images.split(",");
+		this.images = Arrays.stream(split).map(Image::new)
+			.collect(Collectors.toList());
+	}
+
+	public void changeQuestion(Question question) {
+		this.question = question;
+	}
+
+	public void changeCategoryId(Id categoryId) {
+		this.categoryId = categoryId;
 	}
 }
