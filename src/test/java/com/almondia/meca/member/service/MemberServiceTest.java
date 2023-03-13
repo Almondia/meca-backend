@@ -13,6 +13,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 
 import com.almondia.meca.auth.oauth.infra.attribute.OAuth2UserAttribute;
+import com.almondia.meca.common.configuration.jpa.QueryDslConfiguration;
 import com.almondia.meca.common.domain.vo.Id;
 import com.almondia.meca.member.controller.dto.MemberResponseDto;
 import com.almondia.meca.member.domain.entity.Member;
@@ -30,7 +31,7 @@ import com.almondia.meca.member.repository.MemberRepository;
  */
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@Import({MemberService.class})
+@Import({MemberService.class, QueryDslConfiguration.class})
 class MemberServiceTest {
 
 	@Autowired

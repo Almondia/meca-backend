@@ -13,13 +13,14 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 
 import com.almondia.meca.common.configuration.jpa.JpaAuditingConfiguration;
+import com.almondia.meca.common.configuration.jpa.QueryDslConfiguration;
 
 /**
  * 데이터 속성 생성 테스트
  */
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@Import({JpaAuditingConfiguration.class})
+@Import({JpaAuditingConfiguration.class, QueryDslConfiguration.class})
 class KeywordCardTest {
 	@PersistenceContext
 	private EntityManager entityManager;

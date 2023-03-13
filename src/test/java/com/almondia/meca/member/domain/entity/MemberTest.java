@@ -18,6 +18,7 @@ import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import org.springframework.test.context.TestPropertySource;
 
 import com.almondia.meca.common.configuration.jpa.JpaAuditingConfiguration;
+import com.almondia.meca.common.configuration.jpa.QueryDslConfiguration;
 import com.almondia.meca.common.domain.vo.Id;
 import com.almondia.meca.member.domain.vo.Email;
 import com.almondia.meca.member.domain.vo.Name;
@@ -31,7 +32,7 @@ import com.almondia.meca.member.domain.vo.Role;
 @DataJpaTest
 @TestPropertySource(properties = {"spring.jpa.hibernate.ddl-auto=create-drop"})
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@Import({JpaAuditingConfiguration.class})
+@Import({JpaAuditingConfiguration.class, QueryDslConfiguration.class})
 class MemberTest {
 
 	@PersistenceContext
@@ -82,7 +83,8 @@ class MemberTest {
 		memberRepository.save(member);
 		Member temp = memberRepository.findById(member.getMemberId()).orElseThrow();
 		temp.delete();
-		memberRepository.saveAndFlush(temp);
+		entityManager.flush();
+		entityManager.clear();
 		Thread.sleep(100);
 		Member result = memberRepository.findById(member.getMemberId()).orElseThrow();
 		assertThat(result.getModifiedAt()).isAfter(result.getCreatedAt());

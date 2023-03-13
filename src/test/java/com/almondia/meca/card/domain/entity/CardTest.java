@@ -23,6 +23,7 @@ import com.almondia.meca.card.domain.vo.OxAnswer;
 import com.almondia.meca.card.domain.vo.Question;
 import com.almondia.meca.card.domain.vo.Title;
 import com.almondia.meca.common.configuration.jpa.JpaAuditingConfiguration;
+import com.almondia.meca.common.configuration.jpa.QueryDslConfiguration;
 import com.almondia.meca.common.domain.vo.Id;
 
 /**
@@ -33,7 +34,7 @@ import com.almondia.meca.common.domain.vo.Id;
  */
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@Import({JpaAuditingConfiguration.class})
+@Import({JpaAuditingConfiguration.class, QueryDslConfiguration.class})
 class CardTest {
 
 	@PersistenceContext

@@ -12,8 +12,10 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
 
+import com.almondia.meca.common.configuration.jpa.QueryDslConfiguration;
 import com.almondia.meca.common.domain.vo.Id;
 
 import lombok.AllArgsConstructor;
@@ -25,6 +27,7 @@ import lombok.NoArgsConstructor;
 @DataJpaTest
 @TestPropertySource(properties = {"spring.jpa.hibernate.ddl-auto=create-drop"})
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@Import({QueryDslConfiguration.class})
 class OAuthTypeTest {
 
 	@PersistenceContext
