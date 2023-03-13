@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,9 +33,6 @@ import com.almondia.meca.common.domain.vo.Id;
 import com.almondia.meca.mock.security.WithMockMember;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-/**
- * 1. 요청 성공시 201을 리턴하고 카드 정보를 반환한다.
- */
 @WebMvcTest(CardController.class)
 @AutoConfigureMockMvc(addFilters = false)
 @Import({JacksonConfiguration.class})
@@ -52,49 +50,58 @@ class CardControllerTest {
 	@Autowired
 	ObjectMapper objectMapper;
 
-	@Test
-	@WithMockMember
-	@DisplayName("요청 성공시 201을 리턴하고 카드 정보를 반환한다")
-	void test() throws Exception {
-		SaveCardRequestDto saveCardRequestDto = SaveCardRequestDto.builder()
-			.title(new Title("title"))
-			.question(new Question("hello"))
-			.images("A,B,C,D")
-			.categoryId(Id.generateNextId())
-			.cardType(CardType.OX_QUIZ)
-			.oxAnswer(OxAnswer.O)
-			.build();
-		Mockito.doReturn(makeResponse()).when(cardService).saveCard(any(), any());
+	/**
+	 * 1. 요청 성공시 201을 리턴하고 카드 정보를 반환한다.
+	 */
+	@Nested
+	@DisplayName("카드 저장 API 테스트")
+	class saveCardTest {
 
-		mockMvc.perform(post("/api/v1/cards")
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(saveCardRequestDto)))
-			.andExpect(status().isCreated())
-			.andExpect(jsonPath("card_id").exists())
-			.andExpect(jsonPath("title").exists())
-			.andExpect(jsonPath("question").exists())
-			.andExpect(jsonPath("images").exists())
-			.andExpect(jsonPath("category_id").exists())
-			.andExpect(jsonPath("deleted").exists())
-			.andExpect(jsonPath("card_type").exists())
-			.andExpect(jsonPath("created_at").exists())
-			.andExpect(jsonPath("modified_at").exists())
-			.andExpect(jsonPath("title").exists())
-			.andExpect(jsonPath("ox_answer").exists());
+		@Test
+		@WithMockMember
+		@DisplayName("요청 성공시 201을 리턴하고 카드 정보를 반환한다")
+		void test() throws Exception {
+			SaveCardRequestDto saveCardRequestDto = SaveCardRequestDto.builder()
+				.title(new Title("title"))
+				.question(new Question("hello"))
+				.images("A,B,C,D")
+				.categoryId(Id.generateNextId())
+				.cardType(CardType.OX_QUIZ)
+				.oxAnswer(OxAnswer.O)
+				.build();
+			Mockito.doReturn(makeResponse()).when(cardService).saveCard(any(), any());
+
+			mockMvc.perform(post("/api/v1/cards")
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(objectMapper.writeValueAsString(saveCardRequestDto)))
+				.andExpect(status().isCreated())
+				.andExpect(jsonPath("card_id").exists())
+				.andExpect(jsonPath("title").exists())
+				.andExpect(jsonPath("question").exists())
+				.andExpect(jsonPath("images").exists())
+				.andExpect(jsonPath("category_id").exists())
+				.andExpect(jsonPath("deleted").exists())
+				.andExpect(jsonPath("card_type").exists())
+				.andExpect(jsonPath("created_at").exists())
+				.andExpect(jsonPath("modified_at").exists())
+				.andExpect(jsonPath("title").exists())
+				.andExpect(jsonPath("ox_answer").exists());
+		}
+
+		private CardResponseDto makeResponse() {
+			return CardResponseDto.builder()
+				.cardId(Id.generateNextId())
+				.title(new Title("title"))
+				.question(new Question("hello"))
+				.images(List.of(new Image("A"), new Image("B"), new Image("C")))
+				.categoryId(Id.generateNextId())
+				.cardType(CardType.OX_QUIZ)
+				.isDeleted(false)
+				.oxAnswer(OxAnswer.O)
+				.createdAt(LocalDateTime.now())
+				.modifiedAt(LocalDateTime.now())
+				.build();
+		}
 	}
 
-	private CardResponseDto makeResponse() {
-		return CardResponseDto.builder()
-			.cardId(Id.generateNextId())
-			.title(new Title("title"))
-			.question(new Question("hello"))
-			.images(List.of(new Image("A"), new Image("B"), new Image("C")))
-			.categoryId(Id.generateNextId())
-			.cardType(CardType.OX_QUIZ)
-			.isDeleted(false)
-			.oxAnswer(OxAnswer.O)
-			.createdAt(LocalDateTime.now())
-			.modifiedAt(LocalDateTime.now())
-			.build();
-	}
 }
