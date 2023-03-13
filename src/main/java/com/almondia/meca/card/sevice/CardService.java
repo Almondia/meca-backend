@@ -34,17 +34,6 @@ public class CardService {
 	@Transactional
 	public CardResponseDto saveCard(SaveCardRequestDto saveCardRequestDto, Id memberId) {
 		Card card = CardFactory.genCard(saveCardRequestDto, memberId);
-		return saveCardByCardType(card);
-	}
-
-	@Transactional
-	public CardResponseDto updateCard(UpdateCardRequestDto updateCardRequestDto, Id cardId, Id memberId) {
-		categoryChecker.checkAuthority(updateCardRequestDto.getCategoryId(), memberId);
-		Card card = cardChecker.checkAuthority(cardId, memberId, updateCardRequestDto.getCardType());
-		return saveCardByCardType(card);
-	}
-
-	private CardResponseDto saveCardByCardType(Card card) {
 		if (card instanceof OxCard) {
 			OxCard oxCard = oxCardRepository.save((OxCard)card);
 			return CardMapper.oxCardToDto(oxCard);
@@ -58,5 +47,37 @@ public class CardService {
 			return CardMapper.multiChoiceCardToDto(multiChoiceCard);
 		}
 		throw new IllegalArgumentException("지원하는 카드 유형이 아닙니다");
+	}
+
+	@Transactional
+	public CardResponseDto updateCard(UpdateCardRequestDto updateCardRequestDto, Id cardId, Id memberId) {
+		Card card = cardChecker.checkAuthority(cardId, memberId, updateCardRequestDto.getCardType());
+		updateCard(updateCardRequestDto, memberId, card);
+		if (card instanceof OxCard) {
+			return CardMapper.oxCardToDto((OxCard)card);
+		}
+		if (card instanceof KeywordCard) {
+			return CardMapper.keywordCardToDto((KeywordCard)card);
+		}
+		if (card instanceof MultiChoiceCard) {
+			return CardMapper.multiChoiceCardToDto((MultiChoiceCard)card);
+		}
+		throw new IllegalArgumentException("지원하는 카드 유형이 아닙니다");
+	}
+
+	private void updateCard(UpdateCardRequestDto updateCardRequestDto, Id memberId, Card card) {
+		if (updateCardRequestDto.getTitle() != null) {
+			card.changeTitle(updateCardRequestDto.getTitle());
+		}
+		if (updateCardRequestDto.getImages() != null) {
+			card.changeImages(updateCardRequestDto.getImages());
+		}
+		if (updateCardRequestDto.getQuestion() != null) {
+			card.changeQuestion(updateCardRequestDto.getQuestion());
+		}
+		if (updateCardRequestDto.getCategoryId() != null) {
+			categoryChecker.checkAuthority(updateCardRequestDto.getCategoryId(), memberId);
+			card.changeCategoryId(updateCardRequestDto.getCategoryId());
+		}
 	}
 }
