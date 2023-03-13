@@ -83,7 +83,8 @@ class MemberTest {
 		memberRepository.save(member);
 		Member temp = memberRepository.findById(member.getMemberId()).orElseThrow();
 		temp.delete();
-		memberRepository.saveAndFlush(temp);
+		entityManager.flush();
+		entityManager.clear();
 		Thread.sleep(100);
 		Member result = memberRepository.findById(member.getMemberId()).orElseThrow();
 		assertThat(result.getModifiedAt()).isAfter(result.getCreatedAt());
