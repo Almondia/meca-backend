@@ -21,6 +21,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.almondia.meca.card.controller.dto.CardResponseDto;
 import com.almondia.meca.card.controller.dto.SaveCardRequestDto;
+import com.almondia.meca.card.controller.dto.UpdateCardRequestDto;
 import com.almondia.meca.card.domain.vo.CardType;
 import com.almondia.meca.card.domain.vo.Image;
 import com.almondia.meca.card.domain.vo.OxAnswer;
@@ -104,4 +105,57 @@ class CardControllerTest {
 		}
 	}
 
+	/**
+	 * 1. 성공시 200 응답코드와 리턴해야할 값 검증
+	 */
+	@Nested
+	@DisplayName("카드 업데이트 API 테스트")
+	class UpdateCardTest {
+
+		@Test
+		@WithMockMember
+		@DisplayName("성공시 200 응답코드와 리턴해야할 값 검증")
+		void shouldReturn200WhenSuccessTest() throws Exception {
+			UpdateCardRequestDto requestDto = UpdateCardRequestDto.builder()
+				.title(new Title("title"))
+				.cardType(CardType.OX_QUIZ)
+				.question(new Question("question"))
+				.images("A,B,C")
+				.categoryId(Id.generateNextId())
+				.build();
+			Mockito.doReturn(makeResponse())
+				.when(cardService).updateCard(any(), any(), any());
+
+			mockMvc.perform(put("/api/v1/cards/{cardId}", Id.generateNextId().toString())
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(objectMapper.writeValueAsString(requestDto)))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("card_id").exists())
+				.andExpect(jsonPath("title").exists())
+				.andExpect(jsonPath("question").exists())
+				.andExpect(jsonPath("images").exists())
+				.andExpect(jsonPath("category_id").exists())
+				.andExpect(jsonPath("deleted").exists())
+				.andExpect(jsonPath("card_type").exists())
+				.andExpect(jsonPath("created_at").exists())
+				.andExpect(jsonPath("modified_at").exists())
+				.andExpect(jsonPath("title").exists())
+				.andExpect(jsonPath("ox_answer").exists());
+		}
+
+		private CardResponseDto makeResponse() {
+			return CardResponseDto.builder()
+				.cardId(Id.generateNextId())
+				.title(new Title("title"))
+				.question(new Question("hello"))
+				.images(List.of(new Image("A"), new Image("B"), new Image("C")))
+				.categoryId(Id.generateNextId())
+				.cardType(CardType.OX_QUIZ)
+				.isDeleted(false)
+				.oxAnswer(OxAnswer.O)
+				.createdAt(LocalDateTime.now())
+				.modifiedAt(LocalDateTime.now())
+				.build();
+		}
+	}
 }
