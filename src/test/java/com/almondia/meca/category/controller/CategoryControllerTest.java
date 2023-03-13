@@ -2,10 +2,12 @@ package com.almondia.meca.category.controller;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -27,6 +29,8 @@ import com.almondia.meca.category.domain.vo.Title;
 import com.almondia.meca.category.service.CategoryService;
 import com.almondia.meca.common.configuration.jackson.JacksonConfiguration;
 import com.almondia.meca.common.configuration.security.filter.JwtAuthenticationFilter;
+import com.almondia.meca.common.configuration.web.WebMvcConfiguration;
+import com.almondia.meca.common.controller.dto.OffsetPage;
 import com.almondia.meca.common.domain.vo.Id;
 import com.almondia.meca.mock.security.WithMockMember;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -34,7 +38,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @WebMvcTest(CategoryController.class)
 @AutoConfigureMockMvc(addFilters = false)
-@Import({JacksonConfiguration.class})
+@Import({WebMvcConfiguration.class, JacksonConfiguration.class})
 class CategoryControllerTest {
 
 	@Autowired
@@ -141,6 +145,37 @@ class CategoryControllerTest {
 				.title(new Title("title"))
 				.build();
 			return objectMapper.writeValueAsString(updateCategoryRequestDto);
+		}
+	}
+
+	@Nested
+	@DisplayName("오프셋 페이징 카테고리 조회 테스트")
+	class OffsetPagingCategoryTest {
+
+		@Test
+		@DisplayName("카테 고리 페이징 조회 응답 코드 200 및 정상 응답 테스트")
+		@WithMockMember
+		void shouldReturnPageTypeWhenCallPagingSearchTest() throws Exception {
+			CategoryResponseDto content = CategoryResponseDto.builder()
+				.categoryId(Id.generateNextId())
+				.memberId(Id.generateNextId())
+				.title(new Title("title"))
+				.createdAt(LocalDateTime.now())
+				.modifiedAt(LocalDateTime.now())
+				.build();
+			OffsetPage<CategoryResponseDto> response = OffsetPage.of(List.of(content), 0, 1, 1);
+			Mockito.doReturn(response)
+				.when(categoryservice).getOffsetPagingCategoryResponseDto(anyInt(), anyInt(), any(), any());
+
+			final String url = "/api/v1/categories/me?offset=2&pageSize=4&createdAt&startCreatedAt=2023-03-13T10:23";
+			mockMvc.perform(get(url))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("contents").exists())
+				.andExpect(jsonPath("total_pages").exists())
+				.andExpect(jsonPath("total_elements").exists())
+				.andExpect(jsonPath("page_number").exists())
+				.andExpect(jsonPath("page_size").exists())
+				.andDo(print());
 		}
 	}
 }

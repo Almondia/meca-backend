@@ -1,19 +1,28 @@
 package com.almondia.meca.category.controller;
 
+import java.time.LocalDateTime;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.almondia.meca.category.controller.dto.CategoryResponseDto;
 import com.almondia.meca.category.controller.dto.SaveCategoryRequestDto;
 import com.almondia.meca.category.controller.dto.UpdateCategoryRequestDto;
+import com.almondia.meca.category.infra.querydsl.CategorySearchCriteria;
+import com.almondia.meca.category.infra.querydsl.CategorySortField;
+import com.almondia.meca.category.infra.querydsl.CategorySortOption;
 import com.almondia.meca.category.service.CategoryService;
+import com.almondia.meca.common.controller.dto.OffsetPage;
+import com.almondia.meca.common.infra.querydsl.SortOrder;
 import com.almondia.meca.member.domain.entity.Member;
 
 import lombok.RequiredArgsConstructor;
@@ -44,6 +53,34 @@ public class CategoryController {
 	) {
 		CategoryResponseDto responseDto = categoryService.updateCategory(updateCategoryRequestDto,
 			member.getMemberId());
+		return ResponseEntity.ok(responseDto);
+	}
+
+	@GetMapping("/me")
+	@Secured("ROLE_USER")
+	public ResponseEntity<OffsetPage<CategoryResponseDto>> getOffsetPagingCategory(
+		@AuthenticationPrincipal Member member,
+		@RequestParam(name = "offset", defaultValue = "0") int offset,
+		@RequestParam(name = "pageSize", defaultValue = "1000") int pageSize,
+		@RequestParam(name = "sortField", defaultValue = "createdAt") CategorySortField sortField,
+		@RequestParam(name = "sortOrder", defaultValue = "asc") SortOrder sortOrder,
+		@RequestParam(name = "startTitle", required = false) String startTitle,
+		@RequestParam(name = "startCreatedAt", required = false) LocalDateTime startCreatedAt,
+		@RequestParam(name = "endCreatedAt", required = false) LocalDateTime endCreatedAt,
+		@RequestParam(name = "eqShared", defaultValue = "false") Boolean eqShared,
+		@RequestParam(name = "eqDeleted", defaultValue = "false") Boolean eqDeleted
+	) {
+		CategorySearchCriteria categorySearchCriteria = CategorySearchCriteria.builder()
+			.startsWithTitle(startTitle)
+			.startCreatedAt(startCreatedAt)
+			.endCreatedAt(endCreatedAt)
+			.eqMemberId(member.getMemberId())
+			.eqShared(eqShared)
+			.eqDeleted(eqDeleted)
+			.build();
+		CategorySortOption sortOption = CategorySortOption.of(sortField, sortOrder);
+		OffsetPage<CategoryResponseDto> responseDto = categoryService.getOffsetPagingCategoryResponseDto(
+			offset, pageSize, categorySearchCriteria, sortOption);
 		return ResponseEntity.ok(responseDto);
 	}
 }
