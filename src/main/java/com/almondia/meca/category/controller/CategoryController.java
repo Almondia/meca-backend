@@ -67,8 +67,7 @@ public class CategoryController {
 		@RequestParam(name = "startTitle", required = false) String startTitle,
 		@RequestParam(name = "startCreatedAt", required = false) LocalDateTime startCreatedAt,
 		@RequestParam(name = "endCreatedAt", required = false) LocalDateTime endCreatedAt,
-		@RequestParam(name = "eqShared", defaultValue = "false") Boolean eqShared,
-		@RequestParam(name = "eqDeleted", defaultValue = "false") Boolean eqDeleted
+		@RequestParam(name = "eqShared", defaultValue = "false") Boolean eqShared
 	) {
 		CategorySearchCriteria categorySearchCriteria = CategorySearchCriteria.builder()
 			.startsWithTitle(startTitle)
@@ -76,7 +75,6 @@ public class CategoryController {
 			.endCreatedAt(endCreatedAt)
 			.eqMemberId(member.getMemberId())
 			.eqShared(eqShared)
-			.eqDeleted(eqDeleted)
 			.build();
 		SortOption<CategorySortField> sortOption = SortOption.of(sortField, sortOrder);
 		OffsetPage<CategoryResponseDto> responseDto = categoryService.getOffsetPagingCategoryResponseDto(

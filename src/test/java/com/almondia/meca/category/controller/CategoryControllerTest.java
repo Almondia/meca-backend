@@ -167,7 +167,7 @@ class CategoryControllerTest {
 			Mockito.doReturn(response)
 				.when(categoryservice).getOffsetPagingCategoryResponseDto(anyInt(), anyInt(), any(), any());
 
-			final String url = "/api/v1/categories/me?offset=2&pageSize=4&createdAt&startCreatedAt=2023-03-13T10:23";
+			final String url = "/api/v1/categories/me?offset=2&pageSize=4&sortField=createdAt&startCreatedAt=2023-03-13T10:23";
 			mockMvc.perform(get(url))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("contents").exists())
