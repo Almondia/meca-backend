@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import com.almondia.meca.category.controller.dto.CategoryResponseDto;
 import com.almondia.meca.category.domain.entity.QCategory;
 import com.almondia.meca.common.controller.dto.OffsetPage;
+import com.almondia.meca.common.infra.querydsl.SortFactory;
 import com.almondia.meca.common.infra.querydsl.SortField;
 import com.almondia.meca.common.infra.querydsl.SortOption;
 import com.querydsl.core.types.Projections;
@@ -29,7 +30,7 @@ public class CategoryQueryDslRepositoryImpl implements CategoryQueryDslRepositor
 					category.isDeleted, category.isShared, category.createdAt, category.modifiedAt))
 			.from(category)
 			.where(categorySearchCriteria.getPredicate())
-			.orderBy(CategorySortFactory.createOrderSpecifier(sortOption))
+			.orderBy(SortFactory.createOrderSpecifier(sortOption))
 			.offset(offset)
 			.limit(pageSize)
 			.fetch();
