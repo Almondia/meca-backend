@@ -19,9 +19,9 @@ import com.almondia.meca.category.controller.dto.SaveCategoryRequestDto;
 import com.almondia.meca.category.controller.dto.UpdateCategoryRequestDto;
 import com.almondia.meca.category.infra.querydsl.CategorySearchCriteria;
 import com.almondia.meca.category.infra.querydsl.CategorySortField;
-import com.almondia.meca.category.infra.querydsl.CategorySortOption;
 import com.almondia.meca.category.service.CategoryService;
 import com.almondia.meca.common.controller.dto.OffsetPage;
+import com.almondia.meca.common.infra.querydsl.SortOption;
 import com.almondia.meca.common.infra.querydsl.SortOrder;
 import com.almondia.meca.member.domain.entity.Member;
 
@@ -78,7 +78,7 @@ public class CategoryController {
 			.eqShared(eqShared)
 			.eqDeleted(eqDeleted)
 			.build();
-		CategorySortOption sortOption = CategorySortOption.of(sortField, sortOrder);
+		SortOption<CategorySortField> sortOption = SortOption.of(sortField, sortOrder);
 		OffsetPage<CategoryResponseDto> responseDto = categoryService.getOffsetPagingCategoryResponseDto(
 			offset, pageSize, categorySearchCriteria, sortOption);
 		return ResponseEntity.ok(responseDto);

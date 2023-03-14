@@ -7,6 +7,9 @@ import org.springframework.stereotype.Repository;
 import com.almondia.meca.category.controller.dto.CategoryResponseDto;
 import com.almondia.meca.category.domain.entity.QCategory;
 import com.almondia.meca.common.controller.dto.OffsetPage;
+import com.almondia.meca.common.infra.querydsl.SortFactory;
+import com.almondia.meca.common.infra.querydsl.SortField;
+import com.almondia.meca.common.infra.querydsl.SortOption;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
@@ -21,13 +24,13 @@ public class CategoryQueryDslRepositoryImpl implements CategoryQueryDslRepositor
 
 	@Override
 	public OffsetPage<CategoryResponseDto> findCategories(int offset, int pageSize,
-		CategorySearchCriteria categorySearchCriteria, CategorySortOption sortOption) {
+		CategorySearchCriteria categorySearchCriteria, SortOption<? extends SortField> sortOption) {
 		List<CategoryResponseDto> categories = jpaQueryFactory.select(
 				Projections.constructor(CategoryResponseDto.class, category.categoryId, category.memberId, category.title,
 					category.isDeleted, category.isShared, category.createdAt, category.modifiedAt))
 			.from(category)
 			.where(categorySearchCriteria.getPredicate())
-			.orderBy(CategorySortFactory.createOrderSpecifier(sortOption))
+			.orderBy(SortFactory.createOrderSpecifier(sortOption))
 			.offset(offset)
 			.limit(pageSize)
 			.fetch();

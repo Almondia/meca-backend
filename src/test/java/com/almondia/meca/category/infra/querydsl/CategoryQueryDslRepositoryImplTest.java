@@ -19,6 +19,8 @@ import com.almondia.meca.category.domain.vo.Title;
 import com.almondia.meca.common.configuration.jpa.QueryDslConfiguration;
 import com.almondia.meca.common.controller.dto.OffsetPage;
 import com.almondia.meca.common.domain.vo.Id;
+import com.almondia.meca.common.infra.querydsl.SortOption;
+import com.almondia.meca.common.infra.querydsl.SortOrder;
 
 /**
  * 1. 페이징 형태로 잘 출력이 되는지 테스트
@@ -42,7 +44,7 @@ class CategoryQueryDslRepositoryImplTest {
 			1,
 			2,
 			CategorySearchCriteria.builder().build(),
-			CategorySortOption.of("title", "asc"));
+			SortOption.of(CategorySortField.TITLE, SortOrder.ASC));
 		assertThat(page).hasFieldOrPropertyWithValue("pageNumber", 0)
 			.hasFieldOrPropertyWithValue("totalPages", 1)
 			.hasFieldOrPropertyWithValue("pageSize", 2)

@@ -20,6 +20,8 @@ import com.almondia.meca.category.domain.repository.CategoryRepository;
 import com.almondia.meca.category.domain.vo.Title;
 import com.almondia.meca.common.configuration.jpa.QueryDslConfiguration;
 import com.almondia.meca.common.domain.vo.Id;
+import com.almondia.meca.common.infra.querydsl.SortFactory;
+import com.almondia.meca.common.infra.querydsl.SortOption;
 import com.almondia.meca.common.infra.querydsl.SortOrder;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -36,7 +38,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Import(QueryDslConfiguration.class)
-class CategorySortFactoryTest {
+class SortFactoryTest {
 
 	@Autowired
 	JPAQueryFactory queryFactory;
@@ -81,8 +83,8 @@ class CategorySortFactoryTest {
 	@Test
 	@DisplayName("SortFactory가 sortOption을 받았을 때 OrderSpecifier를 옳바르게 리턴하는지 검증")
 	void shouldReturnRightOrderSpecifier() {
-		CategorySortOption sortOption = CategorySortOption.of("title", "desc");
-		OrderSpecifier<?> specifier = CategorySortFactory.createOrderSpecifier(sortOption);
+		SortOption<CategorySortField> sortOption = SortOption.of(CategorySortField.TITLE, SortOrder.DESC);
+		OrderSpecifier<?> specifier = SortFactory.createOrderSpecifier(sortOption);
 		assertThat(specifier.getOrder().name()).isEqualTo("DESC");
 		assertThat(specifier.getTarget().toString()).contains("title");
 	}
@@ -90,8 +92,8 @@ class CategorySortFactoryTest {
 	@Test
 	@DisplayName("Factory로 생성한 객체 title 기준 오름차순 정렬이 실제로 쿼리에서 잘 동작하는지 검증")
 	void orderByTitleAscTest() {
-		CategorySortOption sortOption = CategorySortOption.of(CategorySortField.TITLE, SortOrder.ASC);
-		OrderSpecifier<?> specifier = CategorySortFactory.createOrderSpecifier(sortOption);
+		SortOption<CategorySortField> sortOption = SortOption.of(CategorySortField.TITLE, SortOrder.ASC);
+		OrderSpecifier<?> specifier = SortFactory.createOrderSpecifier(sortOption);
 		List<Category> categories = queryFactory.selectFrom(category)
 			.orderBy(specifier)
 			.fetch();
@@ -101,8 +103,8 @@ class CategorySortFactoryTest {
 	@Test
 	@DisplayName("Factory로 생성한 객체 title 기준 내림차순 정렬이 실제로 쿼리에서 잘 동작하는지 검증")
 	void orderByTitleDescTest() {
-		CategorySortOption sortOption = CategorySortOption.of(CategorySortField.TITLE, SortOrder.DESC);
-		OrderSpecifier<?> specifier = CategorySortFactory.createOrderSpecifier(sortOption);
+		SortOption<CategorySortField> sortOption = SortOption.of(CategorySortField.TITLE, SortOrder.DESC);
+		OrderSpecifier<?> specifier = SortFactory.createOrderSpecifier(sortOption);
 		List<Category> categories = queryFactory.selectFrom(category)
 			.orderBy(specifier)
 			.fetch();
@@ -113,8 +115,8 @@ class CategorySortFactoryTest {
 	@Test
 	@DisplayName("Factory로 생성한 객체 생성일 기준 오름차순 정렬이 실제로 쿼리에서 잘 동작하는지 검증")
 	void orderByCreatedAtAscTest() {
-		CategorySortOption sortOption = CategorySortOption.of(CategorySortField.CREATED_AT, SortOrder.ASC);
-		OrderSpecifier<?> specifier = CategorySortFactory.createOrderSpecifier(sortOption);
+		SortOption<CategorySortField> sortOption = SortOption.of(CategorySortField.CREATED_AT, SortOrder.ASC);
+		OrderSpecifier<?> specifier = SortFactory.createOrderSpecifier(sortOption);
 		List<Category> categories = queryFactory.selectFrom(category)
 			.orderBy(specifier)
 			.fetch();
@@ -125,8 +127,8 @@ class CategorySortFactoryTest {
 	@Test
 	@DisplayName("Factory로 생성한 객체 생성일 기준 내림차순 정렬이 실제로 쿼리에서 잘 동작하는지 검증")
 	void orderByCreatedAtDescTest() {
-		CategorySortOption sortOption = CategorySortOption.of(CategorySortField.CREATED_AT, SortOrder.DESC);
-		OrderSpecifier<?> specifier = CategorySortFactory.createOrderSpecifier(sortOption);
+		SortOption<CategorySortField> sortOption = SortOption.of(CategorySortField.CREATED_AT, SortOrder.DESC);
+		OrderSpecifier<?> specifier = SortFactory.createOrderSpecifier(sortOption);
 		List<Category> categories = queryFactory.selectFrom(category)
 			.orderBy(specifier)
 			.fetch();
@@ -137,8 +139,8 @@ class CategorySortFactoryTest {
 	@Test
 	@DisplayName("Factory로 생성한 객체 수정일 기준 오름차순 정렬이 실제로 쿼리에서 잘 동작하는지 검증")
 	void orderByModifiedAtAscTest() {
-		CategorySortOption sortOption = CategorySortOption.of(CategorySortField.MODIFIED_AT, SortOrder.ASC);
-		OrderSpecifier<?> specifier = CategorySortFactory.createOrderSpecifier(sortOption);
+		SortOption<CategorySortField> sortOption = SortOption.of(CategorySortField.MODIFIED_AT, SortOrder.ASC);
+		OrderSpecifier<?> specifier = SortFactory.createOrderSpecifier(sortOption);
 		List<Category> categories = queryFactory.selectFrom(category)
 			.orderBy(specifier)
 			.fetch();
@@ -148,8 +150,8 @@ class CategorySortFactoryTest {
 	@Test
 	@DisplayName("Factory로 생성한 객체 수정일 기중 내림차순 정렬이 실제로 쿼리에서 잘 동작하는지 검증")
 	void orderByModifiedAtDescTest() {
-		CategorySortOption sortOption = CategorySortOption.of(CategorySortField.MODIFIED_AT, SortOrder.DESC);
-		OrderSpecifier<?> specifier = CategorySortFactory.createOrderSpecifier(sortOption);
+		SortOption<CategorySortField> sortOption = SortOption.of(CategorySortField.MODIFIED_AT, SortOrder.DESC);
+		OrderSpecifier<?> specifier = SortFactory.createOrderSpecifier(sortOption);
 		List<Category> categories = queryFactory.selectFrom(category)
 			.orderBy(specifier)
 			.fetch();

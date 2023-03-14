@@ -3,9 +3,10 @@ package com.almondia.meca.category.infra.querydsl;
 import java.util.Arrays;
 
 import com.almondia.meca.category.domain.entity.QCategory;
+import com.almondia.meca.common.infra.querydsl.SortField;
 import com.querydsl.core.types.dsl.ComparableExpression;
 
-public enum CategorySortField {
+public enum CategorySortField implements SortField {
 	TITLE("title", QCategory.category.title.title),
 	CREATED_AT("createdAt", QCategory.category.createdAt),
 	MODIFIED_AT("modifiedAt", QCategory.category.modifiedAt);
@@ -25,6 +26,7 @@ public enum CategorySortField {
 			.orElseThrow(() -> new IllegalArgumentException("유효하지 않은 정렬 필드: " + field));
 	}
 
+	@Override
 	public ComparableExpression<?> getExpression() {
 		return expression;
 	}

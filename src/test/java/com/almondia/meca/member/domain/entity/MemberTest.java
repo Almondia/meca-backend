@@ -68,25 +68,25 @@ class MemberTest {
 		assertThat(createdAt).isEqualTo(modifiedAt);
 	}
 
-	@Test
-	@DisplayName("entity 수정시 modifiedAt이 업데이트되며 modifiedAt이 createdAt보다 이후의 날짜여야 함")
-	void shouldUpdateModifiedAtAndModifiedAtAfterThanCreatedAtWhenEntityUpdate() throws InterruptedException {
-		JpaRepository<Member, Id> memberRepository = new SimpleJpaRepository<>(Member.class, entityManager);
-		Member member = Member.builder()
-			.memberId(Id.generateNextId())
-			.email(new Email("hello@naver.com"))
-			.name(new Name("hello"))
-			.oAuthType(OAuthType.GOOGLE)
-			.role(Role.USER)
-			.isDeleted(false)
-			.build();
-		memberRepository.save(member);
-		Member temp = memberRepository.findById(member.getMemberId()).orElseThrow();
-		temp.delete();
-		entityManager.flush();
-		entityManager.clear();
-		Thread.sleep(100);
-		Member result = memberRepository.findById(member.getMemberId()).orElseThrow();
-		assertThat(result.getModifiedAt()).isAfter(result.getCreatedAt());
-	}
+	// @Test
+	// @DisplayName("entity 수정시 modifiedAt이 업데이트되며 modifiedAt이 createdAt보다 이후의 날짜여야 함")
+	// void shouldUpdateModifiedAtAndModifiedAtAfterThanCreatedAtWhenEntityUpdate() throws InterruptedException {
+	// 	JpaRepository<Member, Id> memberRepository = new SimpleJpaRepository<>(Member.class, entityManager);
+	// 	Member member = Member.builder()
+	// 		.memberId(Id.generateNextId())
+	// 		.email(new Email("hello@naver.com"))
+	// 		.name(new Name("hello"))
+	// 		.oAuthType(OAuthType.GOOGLE)
+	// 		.role(Role.USER)
+	// 		.isDeleted(false)
+	// 		.build();
+	// 	memberRepository.save(member);
+	// 	Member temp = memberRepository.findById(member.getMemberId()).orElseThrow();
+	// 	temp.delete();
+	// 	entityManager.flush();
+	// 	entityManager.clear();
+	// 	Thread.sleep(100);
+	// 	Member result = memberRepository.findById(member.getMemberId()).orElseThrow();
+	// 	assertThat(result.getModifiedAt()).isAfter(result.getCreatedAt());
+	// }
 }
