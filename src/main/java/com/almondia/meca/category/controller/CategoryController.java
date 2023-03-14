@@ -63,7 +63,7 @@ public class CategoryController {
 		@RequestParam(name = "offset", defaultValue = "0") int offset,
 		@RequestParam(name = "pageSize", defaultValue = "1000") int pageSize,
 		@RequestParam(name = "sortField", defaultValue = "createdAt") CategorySortField sortField,
-		@RequestParam(name = "sortOrder", defaultValue = "asc") SortOrder sortOrder,
+		@RequestParam(name = "sortOrder", defaultValue = "desc") SortOrder sortOrder,
 		@RequestParam(name = "startTitle", required = false) String startTitle,
 		@RequestParam(name = "startCreatedAt", required = false) LocalDateTime startCreatedAt,
 		@RequestParam(name = "endCreatedAt", required = false) LocalDateTime endCreatedAt,
