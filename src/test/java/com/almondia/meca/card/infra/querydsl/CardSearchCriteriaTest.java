@@ -36,6 +36,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
  * 3. 생성일 종료 설정시 생성일 종료일 이전 데이터만 가져온다
  * 4. 수정일 종료 설정시 수정 종료일 이전 데이터만 가져온다
  * 5. 삭제 데이터 설정시 삭제 데이터만 가져와야 한다
+ * 6. cardId 설정시 해당 CardId인 데이터만 가져와야 한다
  */
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -199,5 +200,22 @@ class CardSearchCriteriaTest {
 
 		assertThat(cards)
 			.hasSize(0);
+	}
+
+	@Test
+	@DisplayName("cardId 설정시 해당 CardId인 데이터만 가져와야 한다")
+	void findWhereCardIdTest() {
+		List<Card> all = cardRepository.findAll();
+		CardSearchCriteria criteria = CardSearchCriteria.builder()
+			.eqCardId(all.get(0).getCardId())
+			.build();
+
+		System.out.println(criteria.getPredicate());
+		List<Card> cards = queryFactory.selectFrom(card)
+			.where(criteria.getPredicate())
+			.fetch();
+
+		assertThat(cards)
+			.hasSize(1);
 	}
 }
