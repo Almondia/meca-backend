@@ -7,6 +7,7 @@ import com.almondia.meca.common.infra.querydsl.SortField;
 import com.querydsl.core.types.dsl.ComparableExpression;
 
 public enum CardSortField implements SortField {
+	CARD_ID("cardId", QCard.card.cardId.uuid),
 	TITLE("title", QCard.card.title.title),
 	CREATED_AT("createdAt", QCard.card.createdAt),
 	MODIFIED_AT("modifiedAt", QCard.card.modifiedAt);
