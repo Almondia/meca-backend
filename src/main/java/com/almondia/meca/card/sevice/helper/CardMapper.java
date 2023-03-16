@@ -18,7 +18,7 @@ public class CardMapper {
 			.isDeleted(oxCard.isDeleted())
 			.createdAt(oxCard.getCreatedAt())
 			.modifiedAt(oxCard.getModifiedAt())
-			.oxAnswer(oxCard.getOxAnswer())
+			.answer(oxCard.getOxAnswer().name())
 			.build();
 	}
 
@@ -33,7 +33,7 @@ public class CardMapper {
 			.isDeleted(keywordCard.isDeleted())
 			.createdAt(keywordCard.getCreatedAt())
 			.modifiedAt(keywordCard.getModifiedAt())
-			.keywordAnswer(keywordCard.getKeywordAnswer())
+			.answer(keywordCard.getKeywordAnswer().toString())
 			.build();
 	}
 
@@ -48,7 +48,7 @@ public class CardMapper {
 			.isDeleted(multiChoiceCard.isDeleted())
 			.createdAt(multiChoiceCard.getCreatedAt())
 			.modifiedAt(multiChoiceCard.getModifiedAt())
-			.multiChoiceAnswer(multiChoiceCard.getMultiChoiceAnswer())
+			.answer(multiChoiceCard.getMultiChoiceAnswer().toString())
 			.build();
 	}
 }
