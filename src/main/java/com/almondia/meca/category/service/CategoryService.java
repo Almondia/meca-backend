@@ -34,8 +34,9 @@ public class CategoryService {
 	}
 
 	@Transactional
-	public CategoryResponseDto updateCategory(UpdateCategoryRequestDto updateCategoryRequestDto, Id memberId) {
-		Category category = categoryChecker.checkAuthority(updateCategoryRequestDto.getCategoryId(), memberId);
+	public CategoryResponseDto updateCategory(UpdateCategoryRequestDto updateCategoryRequestDto, Id categoryId,
+		Id memberId) {
+		Category category = categoryChecker.checkAuthority(categoryId, memberId);
 		if (updateCategoryRequestDto.getTitle() != null) {
 			category.changeTitle(updateCategoryRequestDto.getTitle());
 		}

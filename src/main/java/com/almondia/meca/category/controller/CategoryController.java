@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,6 +22,7 @@ import com.almondia.meca.category.infra.querydsl.CategorySearchCriteria;
 import com.almondia.meca.category.infra.querydsl.CategorySortField;
 import com.almondia.meca.category.service.CategoryService;
 import com.almondia.meca.common.controller.dto.OffsetPage;
+import com.almondia.meca.common.domain.vo.Id;
 import com.almondia.meca.common.infra.querydsl.SortOption;
 import com.almondia.meca.common.infra.querydsl.SortOrder;
 import com.almondia.meca.member.domain.entity.Member;
@@ -45,14 +47,15 @@ public class CategoryController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(categoryResponseDto);
 	}
 
-	@PutMapping
+	@PutMapping("/{categoryId}")
 	@Secured("ROLE_USER")
 	public ResponseEntity<CategoryResponseDto> updateCategory(
 		@AuthenticationPrincipal Member member,
+		@PathVariable(value = "categoryId") Id categoryId,
 		@RequestBody UpdateCategoryRequestDto updateCategoryRequestDto
 	) {
 		CategoryResponseDto responseDto = categoryService.updateCategory(updateCategoryRequestDto,
-			member.getMemberId());
+			categoryId, member.getMemberId());
 		return ResponseEntity.ok(responseDto);
 	}
 
