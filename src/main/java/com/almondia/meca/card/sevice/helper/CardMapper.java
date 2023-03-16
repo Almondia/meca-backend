@@ -1,11 +1,28 @@
 package com.almondia.meca.card.sevice.helper;
 
+import java.util.Arrays;
+
 import com.almondia.meca.card.controller.dto.CardResponseDto;
+import com.almondia.meca.card.domain.entity.Card;
 import com.almondia.meca.card.domain.entity.KeywordCard;
 import com.almondia.meca.card.domain.entity.MultiChoiceCard;
 import com.almondia.meca.card.domain.entity.OxCard;
+import com.almondia.meca.card.domain.vo.CardType;
 
 public class CardMapper {
+
+	public static CardResponseDto cardToDto(Card card) {
+		if (card.getCardType().equals(CardType.OX_QUIZ)) {
+			return oxCardToDto((OxCard)card);
+		}
+		if (card.getCardType().equals(CardType.KEYWORD)) {
+			return keywordCardToDto((KeywordCard)card);
+		}
+		if (card.getCardType().equals(CardType.MULTI_CHOICE)) {
+			return multiChoiceCardToDto((MultiChoiceCard)card);
+		}
+		throw new IllegalArgumentException(String.format("카드 타입은 %s 만 가능합니다", Arrays.toString(CardType.values())));
+	}
 
 	public static CardResponseDto oxCardToDto(OxCard oxCard) {
 		return CardResponseDto.builder()
