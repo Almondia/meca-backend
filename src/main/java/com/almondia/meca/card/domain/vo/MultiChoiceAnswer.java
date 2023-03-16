@@ -28,4 +28,9 @@ public class MultiChoiceAnswer implements Wrapper {
 			throw new IllegalArgumentException(String.format("%d부터 %d숫자만 입력 가능합니다", MIN_NUMBER, MAX_NUMBER));
 		}
 	}
+
+	@Override
+	public String toString() {
+		return number.toString();
+	}
 }

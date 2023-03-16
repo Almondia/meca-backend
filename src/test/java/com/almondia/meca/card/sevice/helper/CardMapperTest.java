@@ -38,7 +38,7 @@ class CardMapperTest {
 			.hasFieldOrProperty("isDeleted")
 			.hasFieldOrProperty("createdAt")
 			.hasFieldOrProperty("modifiedAt")
-			.hasFieldOrProperty("oxAnswer");
+			.hasFieldOrProperty("answer");
 	}
 
 	@Test
@@ -54,7 +54,7 @@ class CardMapperTest {
 			.hasFieldOrProperty("isDeleted")
 			.hasFieldOrProperty("createdAt")
 			.hasFieldOrProperty("modifiedAt")
-			.hasFieldOrProperty("keywordAnswer");
+			.hasFieldOrProperty("answer");
 	}
 
 	@Test
@@ -70,7 +70,7 @@ class CardMapperTest {
 			.hasFieldOrProperty("isDeleted")
 			.hasFieldOrProperty("createdAt")
 			.hasFieldOrProperty("modifiedAt")
-			.hasFieldOrProperty("multiChoiceAnswer");
+			.hasFieldOrProperty("answer");
 	}
 
 	private OxCard makeOxCard() {

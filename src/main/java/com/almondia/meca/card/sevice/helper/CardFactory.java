@@ -11,6 +11,9 @@ import com.almondia.meca.card.domain.entity.MultiChoiceCard;
 import com.almondia.meca.card.domain.entity.OxCard;
 import com.almondia.meca.card.domain.vo.CardType;
 import com.almondia.meca.card.domain.vo.Image;
+import com.almondia.meca.card.domain.vo.KeywordAnswer;
+import com.almondia.meca.card.domain.vo.MultiChoiceAnswer;
+import com.almondia.meca.card.domain.vo.OxAnswer;
 import com.almondia.meca.common.domain.vo.Id;
 
 public class CardFactory {
@@ -32,6 +35,7 @@ public class CardFactory {
 	}
 
 	private static OxCard genOxCard(SaveCardRequestDto saveCardRequestDto, Id memberId) {
+		String answer = saveCardRequestDto.getAnswer();
 		return OxCard.builder()
 			.cardId(Id.generateNextId())
 			.memberId(memberId)
@@ -40,11 +44,12 @@ public class CardFactory {
 			.categoryId(saveCardRequestDto.getCategoryId())
 			.cardType(saveCardRequestDto.getCardType())
 			.images(makeImages(saveCardRequestDto.getImages()))
-			.oxAnswer(saveCardRequestDto.getOxAnswer())
+			.oxAnswer(OxAnswer.valueOf(answer.toUpperCase()))
 			.build();
 	}
 
 	private static KeywordCard genKeywordCard(SaveCardRequestDto saveCardRequestDto, Id memberId) {
+		String answer = saveCardRequestDto.getAnswer();
 		return KeywordCard.builder()
 			.cardId(Id.generateNextId())
 			.memberId(memberId)
@@ -53,11 +58,12 @@ public class CardFactory {
 			.categoryId(saveCardRequestDto.getCategoryId())
 			.cardType(saveCardRequestDto.getCardType())
 			.images(makeImages(saveCardRequestDto.getImages()))
-			.keywordAnswer(saveCardRequestDto.getKeywordAnswer())
+			.keywordAnswer(new KeywordAnswer(answer))
 			.build();
 	}
 
 	private static MultiChoiceCard genMultiChoiceCard(SaveCardRequestDto saveCardRequestDto, Id memberId) {
+		String answer = saveCardRequestDto.getAnswer();
 		return MultiChoiceCard.builder()
 			.cardId(Id.generateNextId())
 			.memberId(memberId)
@@ -66,7 +72,7 @@ public class CardFactory {
 			.categoryId(saveCardRequestDto.getCategoryId())
 			.cardType(saveCardRequestDto.getCardType())
 			.images(makeImages(saveCardRequestDto.getImages()))
-			.multiChoiceAnswer(saveCardRequestDto.getMultiChoiceAnswer())
+			.multiChoiceAnswer(new MultiChoiceAnswer(Integer.parseInt(answer)))
 			.build();
 	}
 

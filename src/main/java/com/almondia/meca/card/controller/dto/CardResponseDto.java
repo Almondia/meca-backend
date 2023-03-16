@@ -5,9 +5,6 @@ import java.util.List;
 
 import com.almondia.meca.card.domain.vo.CardType;
 import com.almondia.meca.card.domain.vo.Image;
-import com.almondia.meca.card.domain.vo.KeywordAnswer;
-import com.almondia.meca.card.domain.vo.MultiChoiceAnswer;
-import com.almondia.meca.card.domain.vo.OxAnswer;
 import com.almondia.meca.card.domain.vo.Question;
 import com.almondia.meca.card.domain.vo.Title;
 import com.almondia.meca.common.domain.vo.Id;
@@ -30,7 +27,5 @@ public class CardResponseDto {
 	private final boolean isDeleted;
 	private final LocalDateTime createdAt;
 	private final LocalDateTime modifiedAt;
-	private final OxAnswer oxAnswer;
-	private final KeywordAnswer keywordAnswer;
-	private final MultiChoiceAnswer multiChoiceAnswer;
+	private final String answer;
 }

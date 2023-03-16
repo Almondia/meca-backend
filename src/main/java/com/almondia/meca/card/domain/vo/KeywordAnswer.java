@@ -27,4 +27,9 @@ public class KeywordAnswer implements Wrapper {
 			throw new IllegalArgumentException("%d 초과해서 문자열 길이를 늘릴 수 없습니다");
 		}
 	}
+
+	@Override
+	public String toString() {
+		return keywordAnswer;
+	}
 }
