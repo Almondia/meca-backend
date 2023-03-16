@@ -13,5 +13,6 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
 		registry.addConverter(new StringToSortOrderConverter());
 		registry.addConverter(new StringToCategorySortFieldConverter());
 		registry.addConverter(new StringToLocalDateTimeConverter());
+		registry.addConverter(new StringToIdConverter());
 	}
 }
