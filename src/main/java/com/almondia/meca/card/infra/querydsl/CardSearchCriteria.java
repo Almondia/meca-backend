@@ -31,6 +31,8 @@ public class CardSearchCriteria {
 	private Id eqCategoryId;
 	private boolean eqDeleted;
 	private Id eqCardId;
+	private Id gtCardId;
+	private Id ltCardId;
 
 	public BooleanExpression getPredicate() {
 		BooleanExpression predicate = card.isNotNull();
@@ -56,9 +58,15 @@ public class CardSearchCriteria {
 		if (eqCategoryId != null) {
 			predicate = predicate.and(card.categoryId.eq(eqCategoryId));
 		}
-		predicate.and(card.isDeleted.eq(eqDeleted));
+		predicate = predicate.and(card.isDeleted.eq(eqDeleted));
 		if (eqCardId != null) {
 			predicate = predicate.and(card.cardId.eq(eqCardId));
+		}
+		if (gtCardId != null) {
+			predicate = predicate.and(card.cardId.uuid.gt(gtCardId.getUuid()));
+		}
+		if (ltCardId != null) {
+			predicate = predicate.and(card.cardId.uuid.lt(ltCardId.getUuid()));
 		}
 		return predicate;
 	}

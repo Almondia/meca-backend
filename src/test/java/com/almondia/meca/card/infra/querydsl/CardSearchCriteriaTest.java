@@ -177,7 +177,7 @@ class CardSearchCriteriaTest {
 		CardSearchCriteria criteria = CardSearchCriteria.builder()
 			.eqDeleted(true)
 			.build();
-
+		System.out.println(criteria.getPredicate());
 		List<Card> cards = queryFactory.selectFrom(card)
 			.where(criteria.getPredicate())
 			.fetch();
