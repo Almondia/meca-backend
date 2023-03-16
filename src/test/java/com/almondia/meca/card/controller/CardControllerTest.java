@@ -68,7 +68,7 @@ class CardControllerTest {
 				.images("A,B,C,D")
 				.categoryId(Id.generateNextId())
 				.cardType(CardType.OX_QUIZ)
-				.oxAnswer(OxAnswer.O)
+				.answer(OxAnswer.O.toString())
 				.build();
 			Mockito.doReturn(makeResponse()).when(cardService).saveCard(any(), any());
 

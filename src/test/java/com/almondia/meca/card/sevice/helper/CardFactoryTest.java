@@ -11,8 +11,6 @@ import com.almondia.meca.card.domain.entity.KeywordCard;
 import com.almondia.meca.card.domain.entity.MultiChoiceCard;
 import com.almondia.meca.card.domain.entity.OxCard;
 import com.almondia.meca.card.domain.vo.CardType;
-import com.almondia.meca.card.domain.vo.KeywordAnswer;
-import com.almondia.meca.card.domain.vo.MultiChoiceAnswer;
 import com.almondia.meca.card.domain.vo.OxAnswer;
 import com.almondia.meca.card.domain.vo.Question;
 import com.almondia.meca.card.domain.vo.Title;
@@ -29,7 +27,7 @@ class CardFactoryTest {
 	@DisplayName("OxCard 속성별 인스턴스를 잘 생성했는지 검증")
 	public void newInstanceOxCardTest() {
 		Card card = CardFactory.genCard(makeSaveCardRequest()
-			.oxAnswer(OxAnswer.O)
+			.answer(OxAnswer.O.toString())
 			.cardType(CardType.OX_QUIZ)
 			.build(), Id.generateNextId());
 		assertThat(card).isInstanceOf(OxCard.class);
@@ -47,7 +45,7 @@ class CardFactoryTest {
 	@DisplayName("KeywordCard 속성별 인스턴스를 잘 생성했는지 검증")
 	public void newInstanceKeywordCardTest() {
 		Card card = CardFactory.genCard(makeSaveCardRequest()
-			.keywordAnswer(new KeywordAnswer("개발자"))
+			.answer("개발자")
 			.cardType(CardType.KEYWORD)
 			.build(), Id.generateNextId());
 		assertThat(card).isInstanceOf(KeywordCard.class);
@@ -65,7 +63,7 @@ class CardFactoryTest {
 	@DisplayName("MultiChoiceCard 속성별 인스턴스를 잘 생성했는지 검증")
 	public void newInstanceMultiChoiceCardTest() {
 		Card card = CardFactory.genCard(makeSaveCardRequest()
-			.multiChoiceAnswer(new MultiChoiceAnswer(1))
+			.answer("1")
 			.cardType(CardType.MULTI_CHOICE)
 			.build(), Id.generateNextId());
 		assertThat(card).isInstanceOf(MultiChoiceCard.class);
