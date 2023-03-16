@@ -111,8 +111,8 @@ class CategoryControllerTest {
 					.createdAt(LocalDateTime.now())
 					.modifiedAt(LocalDateTime.now())
 					.build())
-				.when(categoryservice).updateCategory(any(), any());
-			mockMvc.perform(put("/api/v1/categories")
+				.when(categoryservice).updateCategory(any(), any(), any());
+			mockMvc.perform(put("/api/v1/categories/{categoryId}", Id.generateNextId())
 					.contentType(MediaType.APPLICATION_JSON)
 					.characterEncoding(StandardCharsets.UTF_8)
 					.content(makeCategoryRequestDto()))
@@ -131,8 +131,8 @@ class CategoryControllerTest {
 		@DisplayName("권한 오류가 발생시 403 응답 반환")
 		void shouldThrowWhenAuthorizationErrorTest() throws Exception {
 			Mockito.doThrow(new AccessDeniedException("권한 없음"))
-				.when(categoryservice).updateCategory(any(), any());
-			mockMvc.perform(put("/api/v1/categories")
+				.when(categoryservice).updateCategory(any(), any(), any());
+			mockMvc.perform(put("/api/v1/categories/{categoryId}", Id.generateNextId())
 					.contentType(MediaType.APPLICATION_JSON)
 					.characterEncoding(StandardCharsets.UTF_8)
 					.content(makeCategoryRequestDto()))
@@ -141,7 +141,6 @@ class CategoryControllerTest {
 
 		private String makeCategoryRequestDto() throws JsonProcessingException {
 			UpdateCategoryRequestDto updateCategoryRequestDto = UpdateCategoryRequestDto.builder()
-				.categoryId(Id.generateNextId())
 				.title(new Title("title"))
 				.build();
 			return objectMapper.writeValueAsString(updateCategoryRequestDto);

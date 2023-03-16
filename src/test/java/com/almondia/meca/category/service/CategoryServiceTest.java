@@ -53,18 +53,13 @@ class CategoryServiceTest {
 		Id memberId = Id.generateNextId();
 		saveCategory(categoryId, memberId);
 		CategoryResponseDto category = categoryService.updateCategory(
-			UpdateCategoryRequestDto.builder()
-				.categoryId(categoryId)
-				.title(new Title("new title")).build(), memberId);
+			UpdateCategoryRequestDto.builder().title(new Title("new title")).build(), categoryId, memberId);
 		List<Category> all = categoryRepository.findAll();
 		assertThat(all.get(0).getTitle()).isEqualTo(new Title("new title"));
 	}
 
 	private void saveCategory(Id categoryId, Id memberId) {
-		categoryRepository.save(Category.builder()
-			.categoryId(categoryId)
-			.memberId(memberId)
-			.title(new Title("title"))
-			.build());
+		categoryRepository.save(
+			Category.builder().categoryId(categoryId).memberId(memberId).title(new Title("title")).build());
 	}
 }
