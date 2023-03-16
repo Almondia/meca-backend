@@ -1,6 +1,8 @@
 package com.almondia.meca.card.sevice.helper;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import com.almondia.meca.card.controller.dto.CardResponseDto;
 import com.almondia.meca.card.domain.entity.Card;
@@ -8,8 +10,26 @@ import com.almondia.meca.card.domain.entity.KeywordCard;
 import com.almondia.meca.card.domain.entity.MultiChoiceCard;
 import com.almondia.meca.card.domain.entity.OxCard;
 import com.almondia.meca.card.domain.vo.CardType;
+import com.almondia.meca.common.controller.dto.CursorPage;
+import com.almondia.meca.common.domain.vo.Id;
+import com.almondia.meca.common.infra.querydsl.SortOrder;
 
 public class CardMapper {
+
+	public static CursorPage<CardResponseDto> cardsToCursorPagingDto(
+		List<Card> contents,
+		int pageSize,
+		SortOrder sortOrder
+	) {
+		List<CardResponseDto> responses = contents.stream().map(CardMapper::cardToDto).collect(Collectors.toList());
+		Id lastId = responses.isEmpty() ? null : responses.get(responses.size() - 1).getCardId();
+		return CursorPage.<CardResponseDto>builder()
+			.contents(responses)
+			.pageSize(pageSize)
+			.hasNext(lastId)
+			.sortOrder(sortOrder)
+			.build();
+	}
 
 	public static CardResponseDto cardToDto(Card card) {
 		if (card.getCardType().equals(CardType.OX_QUIZ)) {
