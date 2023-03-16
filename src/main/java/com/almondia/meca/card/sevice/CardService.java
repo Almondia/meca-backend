@@ -1,5 +1,7 @@
 package com.almondia.meca.card.sevice;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -10,6 +12,9 @@ import com.almondia.meca.card.domain.entity.Card;
 import com.almondia.meca.card.domain.entity.KeywordCard;
 import com.almondia.meca.card.domain.entity.MultiChoiceCard;
 import com.almondia.meca.card.domain.entity.OxCard;
+import com.almondia.meca.card.infra.querydsl.CardSearchCriteria;
+import com.almondia.meca.card.infra.querydsl.CardSortField;
+import com.almondia.meca.card.repository.CardRepository;
 import com.almondia.meca.card.repository.KeywordCardRepository;
 import com.almondia.meca.card.repository.MultiChoiceCardRepository;
 import com.almondia.meca.card.repository.OxCardRepository;
@@ -18,6 +23,7 @@ import com.almondia.meca.card.sevice.helper.CardFactory;
 import com.almondia.meca.card.sevice.helper.CardMapper;
 import com.almondia.meca.category.service.checker.CategoryChecker;
 import com.almondia.meca.common.domain.vo.Id;
+import com.almondia.meca.common.infra.querydsl.SortOption;
 
 import lombok.AllArgsConstructor;
 
@@ -25,6 +31,7 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class CardService {
 
+	private final CardRepository cardRepository;
 	private final OxCardRepository oxCardRepository;
 	private final KeywordCardRepository keywordCardRepository;
 	private final MultiChoiceCardRepository multiChoiceCardRepository;
@@ -63,6 +70,16 @@ public class CardService {
 			return CardMapper.multiChoiceCardToDto((MultiChoiceCard)card);
 		}
 		throw new IllegalArgumentException("지원하는 카드 유형이 아닙니다");
+	}
+
+	@Transactional(readOnly = true)
+	public CardResponseDto searchCursorPagingCard(
+		int pageSize,
+		CardSearchCriteria cardSearchCriteria,
+		SortOption<CardSortField> sortOption) {
+		List<Card> cursor = cardRepository.findCardByCategoryIdUsingCursorPaging(pageSize,
+			cardSearchCriteria, sortOption);
+		return null;
 	}
 
 	private void updateCard(UpdateCardRequestDto updateCardRequestDto, Id memberId, Card card) {
