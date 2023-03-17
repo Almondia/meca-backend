@@ -22,6 +22,7 @@ import com.almondia.meca.card.sevice.checker.CardChecker;
 import com.almondia.meca.card.sevice.helper.CardFactory;
 import com.almondia.meca.card.sevice.helper.CardMapper;
 import com.almondia.meca.category.service.checker.CategoryChecker;
+import com.almondia.meca.common.controller.dto.CursorPage;
 import com.almondia.meca.common.domain.vo.Id;
 import com.almondia.meca.common.infra.querydsl.SortOption;
 
@@ -73,13 +74,17 @@ public class CardService {
 	}
 
 	@Transactional(readOnly = true)
-	public CardResponseDto searchCursorPagingCard(
+	public CursorPage<CardResponseDto> searchCursorPagingCard(
 		int pageSize,
+		Id categoryId,
 		CardSearchCriteria cardSearchCriteria,
-		SortOption<CardSortField> sortOption) {
+		SortOption<CardSortField> sortOption,
+		Id memberId
+	) {
+		categoryChecker.checkAuthority(categoryId, memberId);
 		List<Card> cursor = cardRepository.findCardByCategoryIdUsingCursorPaging(pageSize,
 			cardSearchCriteria, sortOption);
-		return null;
+		return CardMapper.cardsToCursorPagingDto(cursor, pageSize, sortOption.getSortOrder());
 	}
 
 	private void updateCard(UpdateCardRequestDto updateCardRequestDto, Id memberId, Card card) {

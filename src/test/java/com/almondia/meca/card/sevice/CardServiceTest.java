@@ -21,6 +21,7 @@ import org.springframework.security.access.AccessDeniedException;
 import com.almondia.meca.card.controller.dto.CardResponseDto;
 import com.almondia.meca.card.controller.dto.SaveCardRequestDto;
 import com.almondia.meca.card.controller.dto.UpdateCardRequestDto;
+import com.almondia.meca.card.domain.entity.Card;
 import com.almondia.meca.card.domain.entity.KeywordCard;
 import com.almondia.meca.card.domain.entity.MultiChoiceCard;
 import com.almondia.meca.card.domain.entity.OxCard;
@@ -29,6 +30,9 @@ import com.almondia.meca.card.domain.vo.Image;
 import com.almondia.meca.card.domain.vo.OxAnswer;
 import com.almondia.meca.card.domain.vo.Question;
 import com.almondia.meca.card.domain.vo.Title;
+import com.almondia.meca.card.infra.querydsl.CardSearchCriteria;
+import com.almondia.meca.card.infra.querydsl.CardSortField;
+import com.almondia.meca.card.repository.CardRepository;
 import com.almondia.meca.card.repository.KeywordCardRepository;
 import com.almondia.meca.card.repository.MultiChoiceCardRepository;
 import com.almondia.meca.card.repository.OxCardRepository;
@@ -36,7 +40,11 @@ import com.almondia.meca.card.sevice.checker.CardChecker;
 import com.almondia.meca.category.domain.entity.Category;
 import com.almondia.meca.category.service.checker.CategoryChecker;
 import com.almondia.meca.common.configuration.jpa.QueryDslConfiguration;
+import com.almondia.meca.common.controller.dto.CursorPage;
 import com.almondia.meca.common.domain.vo.Id;
+import com.almondia.meca.common.infra.querydsl.SortOption;
+import com.almondia.meca.common.infra.querydsl.SortOrder;
+import com.almondia.meca.data.CardDataFactory;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -45,6 +53,9 @@ class CardServiceTest {
 
 	@Autowired
 	CardService cardService;
+
+	@Autowired
+	CardRepository cardRepository;
 
 	@Autowired
 	OxCardRepository oxCardRepository;
@@ -180,6 +191,57 @@ class CardServiceTest {
 				.title(new com.almondia.meca.category.domain.vo.Title("category title"))
 				.memberId(memberId)
 				.build());
+		}
+	}
+
+	/**
+	 * 1. 본인이 가진 카테고리가 아닐 시 권한 에러 출력
+	 * 2. 카드 커서 페이징 출력 형태 및 결과 테스트
+	 */
+	@Nested
+	@DisplayName("카드 커서 페이징 조회")
+	class SearchCardCursorPagingTest {
+		CardDataFactory cardDataFactory = new CardDataFactory();
+		Id memberId = cardDataFactory.getMemberId();
+		Id categoryId = cardDataFactory.getCategoryId();
+
+		@BeforeEach
+		void before() {
+			List<Card> testData = cardDataFactory.createTestData();
+			cardRepository.saveAll(testData);
+		}
+
+		@Test
+		@DisplayName("본인이 가진 카테고리가 아닐 시 권한 에러 출력")
+		void shouldThrowAccessDeniedExceptionWhenNotMyCategoryIdHandleTest() {
+
+			assertThatThrownBy(() -> cardService.searchCursorPagingCard(
+				10,
+				categoryId,
+				CardSearchCriteria.builder().build(),
+				SortOption.of(CardSortField.CARD_ID, SortOrder.DESC),
+				Id.generateNextId())).isInstanceOf(AccessDeniedException.class);
+		}
+
+		@Test
+		@DisplayName("카드 커서 페이징 출력 형태 및 결과 테스트")
+		void shouldSuccessWorkTest() {
+			em.persist(Category.builder()
+				.title(new com.almondia.meca.category.domain.vo.Title("title"))
+				.memberId(memberId)
+				.categoryId(categoryId)
+				.build());
+			CursorPage<CardResponseDto> cursorPage = cardService.searchCursorPagingCard(
+				5,
+				categoryId,
+				CardSearchCriteria.builder().build(),
+				SortOption.of(CardSortField.CARD_ID, SortOrder.DESC),
+				memberId);
+			assertThat(cursorPage)
+				.hasFieldOrProperty("contents")
+				.hasFieldOrProperty("pageSize")
+				.hasFieldOrProperty("hasNext")
+				.hasFieldOrProperty("sortOrder");
 		}
 	}
 }
