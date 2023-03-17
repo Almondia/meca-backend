@@ -33,7 +33,9 @@ import com.almondia.meca.card.domain.vo.Title;
 import com.almondia.meca.card.sevice.CardService;
 import com.almondia.meca.common.configuration.jackson.JacksonConfiguration;
 import com.almondia.meca.common.configuration.security.filter.JwtAuthenticationFilter;
+import com.almondia.meca.common.controller.dto.CursorPage;
 import com.almondia.meca.common.domain.vo.Id;
+import com.almondia.meca.common.infra.querydsl.SortOrder;
 import com.almondia.meca.mock.security.WithMockMember;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -58,9 +60,7 @@ class CardControllerTest {
 
 	@BeforeEach
 	void before() {
-		mockMvc = MockMvcBuilders.webAppContextSetup(context)
-			.alwaysDo(print())
-			.build();
+		mockMvc = MockMvcBuilders.webAppContextSetup(context).alwaysDo(print()).build();
 	}
 
 	/**
@@ -84,8 +84,7 @@ class CardControllerTest {
 				.build();
 			Mockito.doReturn(makeResponse()).when(cardService).saveCard(any(), any());
 
-			mockMvc.perform(post("/api/v1/cards")
-					.contentType(MediaType.APPLICATION_JSON)
+			mockMvc.perform(post("/api/v1/cards").contentType(MediaType.APPLICATION_JSON)
 					.content(objectMapper.writeValueAsString(saveCardRequestDto)))
 				.andExpect(status().isCreated())
 				.andExpect(jsonPath("card_id").exists())
@@ -135,12 +134,11 @@ class CardControllerTest {
 				.images("A,B,C")
 				.categoryId(Id.generateNextId())
 				.build();
-			Mockito.doReturn(makeResponse())
-				.when(cardService).updateCard(any(), any(), any());
+			Mockito.doReturn(makeResponse()).when(cardService).updateCard(any(), any(), any());
 
-			mockMvc.perform(put("/api/v1/cards/{cardId}", Id.generateNextId().toString())
-					.contentType(MediaType.APPLICATION_JSON)
-					.content(objectMapper.writeValueAsString(requestDto)))
+			mockMvc.perform(
+					put("/api/v1/cards/{cardId}", Id.generateNextId().toString()).contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(requestDto)))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("card_id").exists())
 				.andExpect(jsonPath("title").exists())
@@ -153,6 +151,45 @@ class CardControllerTest {
 				.andExpect(jsonPath("modified_at").exists())
 				.andExpect(jsonPath("title").exists())
 				.andExpect(jsonPath("answer").exists());
+		}
+
+		private CardResponseDto makeResponse() {
+			return CardResponseDto.builder()
+				.cardId(Id.generateNextId())
+				.title(new Title("title"))
+				.question(new Question("hello"))
+				.images(List.of(new Image("A"), new Image("B"), new Image("C")))
+				.categoryId(Id.generateNextId())
+				.cardType(CardType.OX_QUIZ)
+				.isDeleted(false)
+				.answer(OxAnswer.O.name())
+				.createdAt(LocalDateTime.now())
+				.modifiedAt(LocalDateTime.now())
+				.build();
+		}
+	}
+
+	/**
+	 * 1. 성공시 200 응답코드와 리턴해야할 값 검증
+	 */
+	@Nested
+	@DisplayName("카드 커서 페이징 조회 API")
+	class CardCursorPagingSearchTest {
+
+		@Test
+		@WithMockMember
+		void shouldReturn200WhenSuccessTest() throws Exception {
+			CursorPage<CardResponseDto> cursor = CursorPage.<CardResponseDto>builder()
+				.contents(List.of(makeResponse()))
+				.pageSize(5)
+				.sortOrder(SortOrder.DESC)
+				.build();
+			Mockito.doReturn(cursor).when(cardService).searchCursorPagingCard(anyInt(), any(), any(), any(), any());
+			mockMvc.perform(get("/api/v1/cards/{categoryId}/me?pageSize=100&sortOrder=desc", Id.generateNextId()))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("contents").exists())
+				.andExpect(jsonPath("page_size").exists())
+				.andExpect(jsonPath("sort_order").exists());
 		}
 
 		private CardResponseDto makeResponse() {
