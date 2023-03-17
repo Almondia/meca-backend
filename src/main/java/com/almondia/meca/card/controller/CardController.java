@@ -55,7 +55,7 @@ public class CardController {
 	}
 
 	@Secured("ROLE_USER")
-	@GetMapping("/{categoryId}/me")
+	@GetMapping("/categories/{categoryId}/me")
 	public ResponseEntity<CursorPage<CardResponseDto>> searchPagingCards(
 		@AuthenticationPrincipal Member member,
 		@PathVariable(value = "categoryId") Id categoryId,

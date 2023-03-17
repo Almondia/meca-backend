@@ -185,7 +185,8 @@ class CardControllerTest {
 				.sortOrder(SortOrder.DESC)
 				.build();
 			Mockito.doReturn(cursor).when(cardService).searchCursorPagingCard(anyInt(), any(), any(), any(), any());
-			mockMvc.perform(get("/api/v1/cards/{categoryId}/me?pageSize=100&sortOrder=desc", Id.generateNextId()))
+			mockMvc.perform(
+					get("/api/v1/cards/categories/{categoryId}/me?pageSize=100&sortOrder=desc", Id.generateNextId()))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("contents").exists())
 				.andExpect(jsonPath("page_size").exists())
