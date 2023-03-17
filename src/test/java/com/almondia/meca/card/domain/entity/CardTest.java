@@ -19,6 +19,8 @@ import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 
 import com.almondia.meca.card.domain.vo.CardType;
 import com.almondia.meca.card.domain.vo.Image;
+import com.almondia.meca.card.domain.vo.KeywordAnswer;
+import com.almondia.meca.card.domain.vo.MultiChoiceAnswer;
 import com.almondia.meca.card.domain.vo.OxAnswer;
 import com.almondia.meca.card.domain.vo.Question;
 import com.almondia.meca.card.domain.vo.Title;
@@ -52,8 +54,7 @@ class CardTest {
 		assertThat(entityType.getName()).isEqualTo("Card");
 		assertThat(entityType.getAttributes()).extracting("name")
 			.containsExactlyInAnyOrder("question", "memberId", "isDeleted", "cardId", "categoryId", "title", "images",
-				"createdAt",
-				"modifiedAt");
+				"createdAt", "modifiedAt");
 	}
 
 	@Test
@@ -161,8 +162,7 @@ class CardTest {
 			.isDeleted(true)
 			.build();
 		oxCard.changeImages("A,B,C,D");
-		assertThat(oxCard.getImages())
-			.contains(new Image("A"), new Image("B"), new Image("C"), new Image("D"));
+		assertThat(oxCard.getImages()).contains(new Image("A"), new Image("B"), new Image("C"), new Image("D"));
 	}
 
 	@Test
@@ -196,5 +196,40 @@ class CardTest {
 		Id categoryId = Id.generateNextId();
 		oxCard.changeCategoryId(categoryId);
 		assertThat(oxCard).hasFieldOrPropertyWithValue("categoryId", categoryId);
+	}
+
+	@Test
+	@DisplayName("부모 엔티티인 카드 엔티티에서 하위 타입의 cardType이 예상대로 조회 되는지 테스트")
+	void shouldReturnChildCardTypeWhenCallParentCardTypeTest() {
+		OxCard oxCard = OxCard.builder()
+			.cardId(Id.generateNextId())
+			.cardType(CardType.OX_QUIZ)
+			.categoryId(Id.generateNextId())
+			.images(List.of(new Image("image1"), new Image("image2")))
+			.title(new Title("title"))
+			.oxAnswer(OxAnswer.O)
+			.isDeleted(true)
+			.build();
+		KeywordCard keywordCard = KeywordCard.builder()
+			.cardId(Id.generateNextId())
+			.cardType(CardType.KEYWORD)
+			.categoryId(Id.generateNextId())
+			.images(List.of(new Image("image1"), new Image("image2")))
+			.title(new Title("title"))
+			.keywordAnswer(new KeywordAnswer("keyword"))
+			.isDeleted(true)
+			.build();
+		MultiChoiceCard multiChoiceCard = MultiChoiceCard.builder()
+			.cardId(Id.generateNextId())
+			.cardType(CardType.MULTI_CHOICE)
+			.categoryId(Id.generateNextId())
+			.images(List.of(new Image("image1"), new Image("image2")))
+			.title(new Title("title"))
+			.multiChoiceAnswer(new MultiChoiceAnswer(1))
+			.isDeleted(true)
+			.build();
+		assertThat(((Card)oxCard).getCardType()).isEqualTo(CardType.OX_QUIZ);
+		assertThat(((Card)keywordCard).getCardType()).isEqualTo(CardType.KEYWORD);
+		assertThat(((Card)multiChoiceCard).getCardType()).isEqualTo(CardType.MULTI_CHOICE);
 	}
 }

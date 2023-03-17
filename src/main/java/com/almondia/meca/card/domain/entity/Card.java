@@ -82,6 +82,8 @@ public abstract class Card extends DateEntity {
 			.collect(Collectors.toList());
 	}
 
+	public abstract CardType getCardType();
+
 	public void changeQuestion(Question question) {
 		this.question = question;
 	}

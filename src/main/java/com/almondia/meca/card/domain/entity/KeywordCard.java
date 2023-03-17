@@ -26,6 +26,6 @@ public class KeywordCard extends Card {
 
 	@Override
 	public CardType getCardType() {
-		return CardType.OX_QUIZ;
+		return CardType.KEYWORD;
 	}
 }

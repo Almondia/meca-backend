@@ -11,11 +11,13 @@ import com.github.f4b6a3.ulid.UlidCreator;
 
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Embeddable
 @EqualsAndHashCode
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
 public class Id implements Serializable, Wrapper, Comparable<Id> {
 
 	private static final long serialVersionUID = -2772995063676474658L;

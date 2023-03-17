@@ -26,6 +26,22 @@ import com.almondia.meca.common.domain.vo.Id;
 class CardMapperTest {
 
 	@Test
+	void shouldReturnCardResponseWhenCardTypeOxCardAndCardTest() {
+		CardResponseDto dto = CardMapper.cardToDto(makeOxCard());
+		assertThat(dto)
+			.hasFieldOrProperty("cardId")
+			.hasFieldOrProperty("title")
+			.hasFieldOrProperty("question")
+			.hasFieldOrProperty("categoryId")
+			.hasFieldOrProperty("images")
+			.hasFieldOrProperty("cardType")
+			.hasFieldOrProperty("isDeleted")
+			.hasFieldOrProperty("createdAt")
+			.hasFieldOrProperty("modifiedAt")
+			.hasFieldOrProperty("answer");
+	}
+
+	@Test
 	void mapperOxCardTest() {
 		CardResponseDto dto = CardMapper.oxCardToDto(makeOxCard());
 		assertThat(dto)

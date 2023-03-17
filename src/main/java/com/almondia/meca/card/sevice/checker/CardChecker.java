@@ -21,6 +21,7 @@ public class CardChecker {
 	private final MultiChoiceCardRepository multiChoiceCardRepository;
 
 	public Card checkAuthority(Id cardId, Id memberId, CardType cardType) {
+		validateCardType(cardType);
 		if (cardType.equals(CardType.OX_QUIZ)) {
 			return oxCardRepository.findByCardIdAndMemberId(cardId, memberId)
 				.orElseThrow(() -> new AccessDeniedException(String.format("%s 유저는 해당 카드를 수정할 권한이 없습니다", memberId)));
@@ -31,5 +32,11 @@ public class CardChecker {
 		}
 		return multiChoiceCardRepository.findByCardIdAndMemberId(cardId, memberId)
 			.orElseThrow(() -> new AccessDeniedException(String.format("%s 유저는 해당 카드를 수정할 권한이 없습니다", memberId)));
+	}
+
+	private void validateCardType(CardType cardType) {
+		if (cardType == null) {
+			throw new IllegalArgumentException("card type을 반드시 입력해주세요");
+		}
 	}
 }
