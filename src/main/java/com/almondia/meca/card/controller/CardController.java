@@ -59,7 +59,7 @@ public class CardController {
 	public ResponseEntity<CursorPage<CardResponseDto>> searchPagingCards(
 		@AuthenticationPrincipal Member member,
 		@PathVariable(value = "categoryId") Id categoryId,
-		@RequestParam(value = "lastId", required = false) Id lastId,
+		@RequestParam(value = "hasNext", required = false) Id lastId,
 		@RequestParam(value = "pageSize", defaultValue = "1000") int pageSize,
 		@RequestParam(value = "sortOrder", defaultValue = "desc") SortOrder sortOrder
 	) {
@@ -75,10 +75,10 @@ public class CardController {
 		Id gtLastId = null;
 		Id ltLastId = null;
 		if (sortOrder.equals(SortOrder.ASC)) {
-			ltLastId = lastId;
+			gtLastId = lastId;
 		}
 		if (sortOrder.equals(SortOrder.DESC)) {
-			gtLastId = lastId;
+			ltLastId = lastId;
 		}
 		return CardSearchCriteria.builder()
 			.eqCategoryId(categoryId)
