@@ -38,4 +38,10 @@ public class GlobalControllerExceptionHandler {
 		log.error(e.getMessage());
 		return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ErrorResponseDto.of(e));
 	}
+
+	@ExceptionHandler(RuntimeException.class)
+	public ResponseEntity<ErrorResponseDto> handleRuntimeException(RuntimeException e) {
+		log.error(e.getMessage());
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorResponseDto.of(e));
+	}
 }
