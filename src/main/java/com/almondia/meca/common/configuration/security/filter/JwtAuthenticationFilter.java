@@ -36,21 +36,28 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	@Override
 	protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response,
 		@NonNull FilterChain filterChain) throws ServletException, IOException {
+		try {
+			String accessToken = parseJwtAccessToken(request);
+			if (accessToken != null && !jwtTokenService.isValidToken(accessToken)) {
+				makeErrorResponse(response);
+				return;
+			}
+			if (accessToken != null && jwtTokenService.isValidToken(accessToken)) {
+				String memberId = jwtTokenService.getIdFromToken(accessToken);
+				Member member = memberService.findMember(new Id(memberId));
+				SecurityContextHolder.getContext().setAuthentication(makeToken(member));
+			}
 
-		String accessToken = parseJwtAccessToken(request);
-		if (accessToken != null && !jwtTokenService.isValidToken(accessToken)) {
-			SecurityContextHolder.clearContext();
-			response.setStatus(HttpStatus.UNAUTHORIZED.value());
-			response.sendError(HttpStatus.UNAUTHORIZED.value(), "invalid access token");
-			return;
+			filterChain.doFilter(request, response);
+		} catch (IllegalArgumentException illegalArgumentException) {
+			makeErrorResponse(response);
 		}
-		if (accessToken != null && jwtTokenService.isValidToken(accessToken)) {
-			String memberId = jwtTokenService.getIdFromToken(accessToken);
-			Member member = memberService.findMember(new Id(memberId));
-			SecurityContextHolder.getContext().setAuthentication(makeToken(member));
-		}
+	}
 
-		filterChain.doFilter(request, response);
+	private void makeErrorResponse(HttpServletResponse response) throws IOException {
+		SecurityContextHolder.clearContext();
+		response.setStatus(HttpStatus.UNAUTHORIZED.value());
+		response.sendError(HttpStatus.UNAUTHORIZED.value(), "invalid access token");
 	}
 
 	private UsernamePasswordAuthenticationToken makeToken(Member member) {
