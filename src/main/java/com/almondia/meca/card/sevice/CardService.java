@@ -59,18 +59,9 @@ public class CardService {
 
 	@Transactional
 	public CardResponseDto updateCard(UpdateCardRequestDto updateCardRequestDto, Id cardId, Id memberId) {
-		Card card = cardChecker.checkAuthority(cardId, memberId, updateCardRequestDto.getCardType());
+		Card card = cardChecker.checkAuthority(cardId, memberId);
 		updateCard(updateCardRequestDto, memberId, card);
-		if (card instanceof OxCard) {
-			return CardMapper.oxCardToDto((OxCard)card);
-		}
-		if (card instanceof KeywordCard) {
-			return CardMapper.keywordCardToDto((KeywordCard)card);
-		}
-		if (card instanceof MultiChoiceCard) {
-			return CardMapper.multiChoiceCardToDto((MultiChoiceCard)card);
-		}
-		throw new IllegalArgumentException("지원하는 카드 유형이 아닙니다");
+		return CardMapper.cardToDto(card);
 	}
 
 	@Transactional(readOnly = true)
