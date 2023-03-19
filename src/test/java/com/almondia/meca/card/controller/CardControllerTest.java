@@ -129,7 +129,6 @@ class CardControllerTest {
 		void shouldReturn200WhenSuccessTest() throws Exception {
 			UpdateCardRequestDto requestDto = UpdateCardRequestDto.builder()
 				.title(new Title("title"))
-				.cardType(CardType.OX_QUIZ)
 				.question(new Question("question"))
 				.images("A,B,C")
 				.categoryId(Id.generateNextId())

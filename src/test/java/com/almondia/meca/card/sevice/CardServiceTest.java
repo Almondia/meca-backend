@@ -171,7 +171,6 @@ class CardServiceTest {
 				.images("A,B,C")
 				.question(new Question("question"))
 				.categoryId(categoryId)
-				.cardType(CardType.OX_QUIZ)
 				.build();
 		}
 
