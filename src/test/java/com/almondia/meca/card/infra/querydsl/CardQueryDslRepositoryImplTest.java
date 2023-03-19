@@ -3,8 +3,10 @@ package com.almondia.meca.card.infra.querydsl;
 import static org.assertj.core.api.Assertions.*;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -128,5 +130,18 @@ class CardQueryDslRepositoryImplTest {
 				SortOrder.DESC));
 		assertThat(paging.get(0).getCreatedAt()).isEqualTo(time);
 		assertThat(paging).hasSize(2);
+	}
+
+	@Test
+	@DisplayName("aa")
+	void shouldReturnMapWhenCallFindCardByListOfCardIdTest() {
+		List<Card> cards = cardRepository.findAll();
+		List<Id> cardIds = List.of(cards.get(0).getCardId(), cards.get(1).getCardId(), cards.get(2).getCardId());
+		Map<Id, List<Id>> fetch = cardRepository.findMapByListOfCardIdAndMemberId(cardIds, memberId);
+		long sum = fetch.values()
+			.stream()
+			.mapToLong(Collection::size)
+			.sum();
+		assertThat(sum).isEqualTo(3);
 	}
 }
