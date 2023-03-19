@@ -15,6 +15,7 @@ import com.almondia.meca.card.domain.vo.KeywordAnswer;
 import com.almondia.meca.card.domain.vo.MultiChoiceAnswer;
 import com.almondia.meca.card.domain.vo.OxAnswer;
 import com.almondia.meca.common.domain.vo.Id;
+import com.nimbusds.oauth2.sdk.util.StringUtils;
 
 public class CardFactory {
 
@@ -77,6 +78,9 @@ public class CardFactory {
 	}
 
 	private static List<Image> makeImages(String images) {
+		if (StringUtils.isBlank(images)) {
+			return null;
+		}
 		return Arrays.stream(images.split(SPLIT_WORD)).map(Image::new).collect(Collectors.toList());
 	}
 }

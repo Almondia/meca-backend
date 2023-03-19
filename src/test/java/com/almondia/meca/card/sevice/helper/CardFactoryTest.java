@@ -20,6 +20,7 @@ import com.almondia.meca.common.domain.vo.Id;
  * 1. OxCard 속성별 인스턴스를 잘 생성했는지 검증
  * 2. KeywordCard 속성별 인스턴스를 잘 생성했는지 검증
  * 3. MultiChoiceCard 속성별 인스턴스 잘 생성했는지 검증
+ * 4. images가 null이거나 빈 공백이라도 인스턴스 생성에 지장이 있어서는 안된다
  */
 class CardFactoryTest {
 
@@ -77,11 +78,29 @@ class CardFactoryTest {
 			.hasFieldOrProperty("multiChoiceAnswer");
 	}
 
+	@Test
+	@DisplayName("images가 null이더라도 인스턴스 생성에 지장이 있어서는 안된다")
+	void shouldGenNewInstanceWithoutImagesTest() {
+		SaveCardRequestDto dto = makeSaveCardRequestWithoutImages()
+			.answer("1")
+			.cardType(CardType.MULTI_CHOICE)
+			.build();
+		Card card = CardFactory.genCard(dto, Id.generateNextId());
+		assertThat(card).isInstanceOf(MultiChoiceCard.class);
+	}
+
 	private SaveCardRequestDto.SaveCardRequestDtoBuilder makeSaveCardRequest() {
 		return SaveCardRequestDto.builder()
 			.title(new Title("title"))
 			.question(new Question("question"))
 			.categoryId(Id.generateNextId())
 			.images("A,B,C");
+	}
+
+	private SaveCardRequestDto.SaveCardRequestDtoBuilder makeSaveCardRequestWithoutImages() {
+		return SaveCardRequestDto.builder()
+			.title(new Title("title"))
+			.question(new Question("question"))
+			.categoryId(Id.generateNextId());
 	}
 }
