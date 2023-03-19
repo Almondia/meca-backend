@@ -35,7 +35,7 @@ public class CardHistoryService {
 	private List<CardHistory> getCardHistories(SaveRequestCardHistoryDto saveRequestCardHistoryDto,
 		Map<Id, List<Id>> categoryIdsByCardId) {
 		List<CardHistory> cardHistories = new ArrayList<>();
-		for (CardHistoryDto cardHistoryDto : saveRequestCardHistoryDto.getCardHistoryDtos()) {
+		for (CardHistoryDto cardHistoryDto : saveRequestCardHistoryDto.getCardHistories()) {
 			CardHistory cardHistory = CardHistory.builder()
 				.cardHistoryId(Id.generateNextId())
 				.cardId(cardHistoryDto.getCardId())
@@ -49,7 +49,7 @@ public class CardHistoryService {
 	}
 
 	private Map<Id, List<Id>> checkAuthority(SaveRequestCardHistoryDto saveRequestCardHistoryDto, Id memberId) {
-		List<Id> cardIds = saveRequestCardHistoryDto.getCardHistoryDtos().stream()
+		List<Id> cardIds = saveRequestCardHistoryDto.getCardHistories().stream()
 			.map(CardHistoryDto::getCardId)
 			.collect(Collectors.toList());
 		Map<Id, List<Id>> categoryIdsByCardId = cardRepository.findMapByListOfCardIdAndMemberId(cardIds, memberId);
