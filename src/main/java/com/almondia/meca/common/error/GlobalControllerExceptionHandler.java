@@ -2,6 +2,7 @@ package com.almondia.meca.common.error;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -37,6 +38,12 @@ public class GlobalControllerExceptionHandler {
 	public ResponseEntity<ErrorResponseDto> handleAccessDeniedException(AccessDeniedException e) {
 		log.error(e.getMessage());
 		return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ErrorResponseDto.of(e));
+	}
+
+	@ExceptionHandler(HttpMessageNotReadableException.class)
+	public ResponseEntity<ErrorResponseDto> handleValueInstantiationException(HttpMessageNotReadableException e) {
+		log.error(e.getMessage());
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ErrorResponseDto.of(e));
 	}
 
 	@ExceptionHandler(RuntimeException.class)
