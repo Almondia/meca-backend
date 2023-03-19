@@ -61,7 +61,7 @@ class AuthControllerTest {
 				.param("code", "authorizeCode")
 				.contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.access_token").exists());
+			.andExpect(jsonPath("$.accessToken").exists());
 	}
 
 	@Test

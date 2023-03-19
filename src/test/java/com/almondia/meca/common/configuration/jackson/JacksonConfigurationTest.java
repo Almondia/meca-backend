@@ -31,13 +31,12 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * 1. 직렬화/역직렬화 수행시 snake_case를 기준으로 동작해야 한다
- * 2. 날짜 데이터도 어노테이션 사용 없이 직렬화/역직렬화가 잘 동작해야 한다
- * 3. 원시 래핑 클래스의 래핑은 직렬화시 벗겨서 사용해야 한다.
- * 4. 원시 객체가 역직렬화시 원시 객체 래핑이 되어야 한다.
- * 5. 원시 래핑 클래스 인스턴스는 static, transient, native, volatile등이 modifier로 붙어 있으면 인식하지 않는다.
- * 6. 원시 래핑 클래스 인스턴스는 하나만 존재해야 하며 그 이상 존재하는 경우 오류를 출력한다.
- * 7. 인식할 수 있는 원시 객체 래핑 클래스 내부 변수 타입은 원시 타입, String, UUID 이다.
+ * 1. 날짜 데이터도 어노테이션 사용 없이 직렬화/역직렬화가 잘 동작해야 한다
+ * 2. 원시 래핑 클래스의 래핑은 직렬화시 벗겨서 사용해야 한다.
+ * 3. 원시 객체가 역직렬화시 원시 객체 래핑이 되어야 한다.
+ * 4. 원시 래핑 클래스 인스턴스는 static, transient, native, volatile등이 modifier로 붙어 있으면 인식하지 않는다.
+ * 5. 원시 래핑 클래스 인스턴스는 하나만 존재해야 하며 그 이상 존재하는 경우 오류를 출력한다.
+ * 6. 인식할 수 있는 원시 객체 래핑 클래스 내부 변수 타입은 원시 타입, String, UUID 이다.
  */
 @ExtendWith(SpringExtension.class)
 @Import({JacksonConfiguration.class})
@@ -47,22 +46,6 @@ class JacksonConfigurationTest {
 	static final Pattern DOUBLE = Pattern.compile("^[^0]\\d*\\.\\d*[^0]$");
 	@Autowired
 	ObjectMapper objectMapper;
-
-	@Test
-	@DisplayName("직렬화시 snake case형태의 json string으로 변환해야 함")
-	void shouldReturnSnakeCaseKeyNameWhenSerializeUsingObjectMapper() throws JsonProcessingException {
-		Dto dto = new Dto("hello", 10);
-		String value = objectMapper.writeValueAsString(dto);
-		assertThat(value).contains("user_name", "user_age");
-	}
-
-	@Test
-	@DisplayName("역직렬화시 snake case형태의 json string을 객체로 변환할 수 있어야 함")
-	void shouldReturnClassWhenDeSerializeSnakeCaseKeyJsonStringUsingObjectMapper() throws JsonProcessingException {
-		String input = "{\"user_name\":\"hello\",\"user_age\":10}";
-		Dto dto = objectMapper.readValue(input, Dto.class);
-		assertThat(dto).hasFieldOrPropertyWithValue("userName", "hello").hasFieldOrPropertyWithValue("userAge", 10);
-	}
 
 	@Test
 	@DisplayName("직렬화시 LocalDateTime이 어노테이션 없이 잘 동작해야 함")
@@ -76,7 +59,7 @@ class JacksonConfigurationTest {
 	@Test
 	@DisplayName("역직렬화시 입력이 ISO_LOCAL_DATE_TIME인 경우 잘 동작해야 함")
 	void shouldDeserializeWhenInputFormatIsISO_LOCAL_DATE_TIME() throws JsonProcessingException {
-		String jsonString = "{\"date_time\":\"2023-03-02T13:24:27.5431758\"}";
+		String jsonString = "{\"dateTime\":\"2023-03-02T13:24:27.5431758\"}";
 		DateForTest object = objectMapper.readValue(jsonString, DateForTest.class);
 		assertThat(object).hasFieldOrPropertyWithValue("dateTime",
 			LocalDateTime.parse("2023-03-02T13:24:27.5431758", DateTimeFormatter.ISO_LOCAL_DATE_TIME));
@@ -167,7 +150,7 @@ class JacksonConfigurationTest {
 
 	private boolean checkDateTimeFormat(String valueAsString) throws JSONException {
 		JSONObject jsonObject = new JSONObject(valueAsString);
-		String stringDate = jsonObject.getString("date_time");
+		String stringDate = jsonObject.getString("dateTime");
 		try {
 			LocalDate date = LocalDate.parse(stringDate, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
 			return true;

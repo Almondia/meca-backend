@@ -70,14 +70,14 @@ class MemberControllerTest {
 
 			mockMvc.perform(get("/api/v1/members/me"))
 				.andExpect(status().isOk())
-				.andExpect(jsonPath("member_id").exists())
+				.andExpect(jsonPath("memberId").exists())
 				.andExpect(jsonPath("name").exists())
 				.andExpect(jsonPath("email").exists())
-				.andExpect(jsonPath("oauth_type").exists())
+				.andExpect(jsonPath("oauthType").exists())
 				.andExpect(jsonPath("role").exists())
 				.andExpect(jsonPath("deleted").exists())
-				.andExpect(jsonPath("created_at").exists())
-				.andExpect(jsonPath("modified_at").exists());
+				.andExpect(jsonPath("createdAt").exists())
+				.andExpect(jsonPath("modifiedAt").exists());
 		}
 	}
 
