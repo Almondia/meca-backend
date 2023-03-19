@@ -22,7 +22,10 @@ public class CardMapper {
 		SortOrder sortOrder
 	) {
 		List<CardResponseDto> responses = contents.stream().map(CardMapper::cardToDto).collect(Collectors.toList());
-		Id lastId = responses.isEmpty() ? null : responses.get(responses.size() - 1).getCardId();
+		Id lastId = null;
+		if (contents.size() == pageSize) {
+			lastId = responses.get(responses.size() - 1).getCardId();
+		}
 		return CursorPage.<CardResponseDto>builder()
 			.contents(responses)
 			.pageSize(pageSize)
