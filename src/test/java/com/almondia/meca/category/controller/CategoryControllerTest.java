@@ -77,13 +77,13 @@ class CategoryControllerTest {
 					.characterEncoding(StandardCharsets.UTF_8)
 					.content(makeCategoryRequestDto()))
 				.andExpect(status().isCreated())
-				.andExpect(jsonPath("category_id").exists())
-				.andExpect(jsonPath("member_id").exists())
+				.andExpect(jsonPath("categoryId").exists())
+				.andExpect(jsonPath("memberId").exists())
 				.andExpect(jsonPath("title").exists())
 				.andExpect(jsonPath("deleted").exists())
 				.andExpect(jsonPath("shared").exists())
-				.andExpect(jsonPath("created_at").exists())
-				.andExpect(jsonPath("modified_at").exists());
+				.andExpect(jsonPath("createdAt").exists())
+				.andExpect(jsonPath("modifiedAt").exists());
 		}
 
 		private String makeCategoryRequestDto() throws JsonProcessingException {
@@ -117,13 +117,13 @@ class CategoryControllerTest {
 					.characterEncoding(StandardCharsets.UTF_8)
 					.content(makeCategoryRequestDto()))
 				.andExpect(status().isOk())
-				.andExpect(jsonPath("category_id").exists())
-				.andExpect(jsonPath("member_id").exists())
+				.andExpect(jsonPath("categoryId").exists())
+				.andExpect(jsonPath("memberId").exists())
 				.andExpect(jsonPath("title").exists())
 				.andExpect(jsonPath("deleted").exists())
 				.andExpect(jsonPath("shared").exists())
-				.andExpect(jsonPath("created_at").exists())
-				.andExpect(jsonPath("modified_at").exists());
+				.andExpect(jsonPath("createdAt").exists())
+				.andExpect(jsonPath("modifiedAt").exists());
 		}
 
 		@Test
@@ -170,10 +170,10 @@ class CategoryControllerTest {
 			mockMvc.perform(get(url))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("contents").exists())
-				.andExpect(jsonPath("total_pages").exists())
-				.andExpect(jsonPath("total_elements").exists())
-				.andExpect(jsonPath("page_number").exists())
-				.andExpect(jsonPath("page_size").exists())
+				.andExpect(jsonPath("totalPages").exists())
+				.andExpect(jsonPath("totalElements").exists())
+				.andExpect(jsonPath("pageNumber").exists())
+				.andExpect(jsonPath("pageSize").exists())
 				.andDo(print());
 		}
 	}

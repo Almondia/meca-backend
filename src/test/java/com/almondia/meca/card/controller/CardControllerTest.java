@@ -87,15 +87,15 @@ class CardControllerTest {
 			mockMvc.perform(post("/api/v1/cards").contentType(MediaType.APPLICATION_JSON)
 					.content(objectMapper.writeValueAsString(saveCardRequestDto)))
 				.andExpect(status().isCreated())
-				.andExpect(jsonPath("card_id").exists())
+				.andExpect(jsonPath("cardId").exists())
 				.andExpect(jsonPath("title").exists())
 				.andExpect(jsonPath("question").exists())
 				.andExpect(jsonPath("images").exists())
-				.andExpect(jsonPath("category_id").exists())
+				.andExpect(jsonPath("categoryId").exists())
 				.andExpect(jsonPath("deleted").exists())
-				.andExpect(jsonPath("card_type").exists())
-				.andExpect(jsonPath("created_at").exists())
-				.andExpect(jsonPath("modified_at").exists())
+				.andExpect(jsonPath("cardType").exists())
+				.andExpect(jsonPath("createdAt").exists())
+				.andExpect(jsonPath("modifiedAt").exists())
 				.andExpect(jsonPath("title").exists())
 				.andExpect(jsonPath("answer").exists());
 		}
@@ -140,15 +140,15 @@ class CardControllerTest {
 					put("/api/v1/cards/{cardId}", Id.generateNextId().toString()).contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(requestDto)))
 				.andExpect(status().isOk())
-				.andExpect(jsonPath("card_id").exists())
+				.andExpect(jsonPath("cardId").exists())
 				.andExpect(jsonPath("title").exists())
 				.andExpect(jsonPath("question").exists())
 				.andExpect(jsonPath("images").exists())
-				.andExpect(jsonPath("category_id").exists())
+				.andExpect(jsonPath("categoryId").exists())
 				.andExpect(jsonPath("deleted").exists())
-				.andExpect(jsonPath("card_type").exists())
-				.andExpect(jsonPath("created_at").exists())
-				.andExpect(jsonPath("modified_at").exists())
+				.andExpect(jsonPath("cardType").exists())
+				.andExpect(jsonPath("createdAt").exists())
+				.andExpect(jsonPath("modifiedAt").exists())
 				.andExpect(jsonPath("title").exists())
 				.andExpect(jsonPath("answer").exists());
 		}
@@ -189,8 +189,8 @@ class CardControllerTest {
 					get("/api/v1/cards/categories/{categoryId}/me?pageSize=100&sortOrder=desc", Id.generateNextId()))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("contents").exists())
-				.andExpect(jsonPath("page_size").exists())
-				.andExpect(jsonPath("sort_order").exists());
+				.andExpect(jsonPath("pageSize").exists())
+				.andExpect(jsonPath("sortOrder").exists());
 		}
 
 		private CardResponseDto makeResponse() {
