@@ -12,12 +12,12 @@ import com.almondia.meca.card.domain.entity.Card;
 import com.almondia.meca.card.domain.entity.KeywordCard;
 import com.almondia.meca.card.domain.entity.MultiChoiceCard;
 import com.almondia.meca.card.domain.entity.OxCard;
+import com.almondia.meca.card.domain.repository.CardRepository;
+import com.almondia.meca.card.domain.repository.KeywordCardRepository;
+import com.almondia.meca.card.domain.repository.MultiChoiceCardRepository;
+import com.almondia.meca.card.domain.repository.OxCardRepository;
 import com.almondia.meca.card.infra.querydsl.CardSearchCriteria;
 import com.almondia.meca.card.infra.querydsl.CardSortField;
-import com.almondia.meca.card.repository.CardRepository;
-import com.almondia.meca.card.repository.KeywordCardRepository;
-import com.almondia.meca.card.repository.MultiChoiceCardRepository;
-import com.almondia.meca.card.repository.OxCardRepository;
 import com.almondia.meca.card.sevice.checker.CardChecker;
 import com.almondia.meca.card.sevice.helper.CardFactory;
 import com.almondia.meca.card.sevice.helper.CardMapper;
@@ -59,18 +59,9 @@ public class CardService {
 
 	@Transactional
 	public CardResponseDto updateCard(UpdateCardRequestDto updateCardRequestDto, Id cardId, Id memberId) {
-		Card card = cardChecker.checkAuthority(cardId, memberId, updateCardRequestDto.getCardType());
+		Card card = cardChecker.checkAuthority(cardId, memberId);
 		updateCard(updateCardRequestDto, memberId, card);
-		if (card instanceof OxCard) {
-			return CardMapper.oxCardToDto((OxCard)card);
-		}
-		if (card instanceof KeywordCard) {
-			return CardMapper.keywordCardToDto((KeywordCard)card);
-		}
-		if (card instanceof MultiChoiceCard) {
-			return CardMapper.multiChoiceCardToDto((MultiChoiceCard)card);
-		}
-		throw new IllegalArgumentException("지원하는 카드 유형이 아닙니다");
+		return CardMapper.cardToDto(card);
 	}
 
 	@Transactional(readOnly = true)

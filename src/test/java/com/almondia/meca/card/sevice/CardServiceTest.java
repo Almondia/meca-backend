@@ -25,6 +25,10 @@ import com.almondia.meca.card.domain.entity.Card;
 import com.almondia.meca.card.domain.entity.KeywordCard;
 import com.almondia.meca.card.domain.entity.MultiChoiceCard;
 import com.almondia.meca.card.domain.entity.OxCard;
+import com.almondia.meca.card.domain.repository.CardRepository;
+import com.almondia.meca.card.domain.repository.KeywordCardRepository;
+import com.almondia.meca.card.domain.repository.MultiChoiceCardRepository;
+import com.almondia.meca.card.domain.repository.OxCardRepository;
 import com.almondia.meca.card.domain.vo.CardType;
 import com.almondia.meca.card.domain.vo.Image;
 import com.almondia.meca.card.domain.vo.OxAnswer;
@@ -32,10 +36,6 @@ import com.almondia.meca.card.domain.vo.Question;
 import com.almondia.meca.card.domain.vo.Title;
 import com.almondia.meca.card.infra.querydsl.CardSearchCriteria;
 import com.almondia.meca.card.infra.querydsl.CardSortField;
-import com.almondia.meca.card.repository.CardRepository;
-import com.almondia.meca.card.repository.KeywordCardRepository;
-import com.almondia.meca.card.repository.MultiChoiceCardRepository;
-import com.almondia.meca.card.repository.OxCardRepository;
 import com.almondia.meca.card.sevice.checker.CardChecker;
 import com.almondia.meca.category.domain.entity.Category;
 import com.almondia.meca.category.service.checker.CategoryChecker;
@@ -171,7 +171,6 @@ class CardServiceTest {
 				.images("A,B,C")
 				.question(new Question("question"))
 				.categoryId(categoryId)
-				.cardType(CardType.OX_QUIZ)
 				.build();
 		}
 
