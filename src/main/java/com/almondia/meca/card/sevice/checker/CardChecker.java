@@ -4,10 +4,10 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Component;
 
 import com.almondia.meca.card.domain.entity.Card;
+import com.almondia.meca.card.domain.repository.KeywordCardRepository;
+import com.almondia.meca.card.domain.repository.MultiChoiceCardRepository;
+import com.almondia.meca.card.domain.repository.OxCardRepository;
 import com.almondia.meca.card.domain.vo.CardType;
-import com.almondia.meca.card.repository.KeywordCardRepository;
-import com.almondia.meca.card.repository.MultiChoiceCardRepository;
-import com.almondia.meca.card.repository.OxCardRepository;
 import com.almondia.meca.common.domain.vo.Id;
 
 import lombok.RequiredArgsConstructor;

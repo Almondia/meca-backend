@@ -1,4 +1,4 @@
-package com.almondia.meca.card.repository;
+package com.almondia.meca.card.domain.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
