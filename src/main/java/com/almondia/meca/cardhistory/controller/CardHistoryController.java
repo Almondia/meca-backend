@@ -28,6 +28,6 @@ public class CardHistoryController {
 		@AuthenticationPrincipal Member member,
 		@RequestBody SaveRequestCardHistoryDto saveRequestCardHistoryDto) {
 		cardHistoryService.saveHistories(saveRequestCardHistoryDto, member.getMemberId());
-		return ResponseEntity.status(HttpStatus.OK).build();
+		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 }

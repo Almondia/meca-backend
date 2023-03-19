@@ -77,7 +77,7 @@ class CardHistoryControllerTest {
 					.contentType(MediaType.APPLICATION_JSON)
 					.characterEncoding(StandardCharsets.UTF_8)
 					.content(objectMapper.writeValueAsString(saveRequestCardHistoryDto)))
-				.andExpect(status().isOk());
+				.andExpect(status().isCreated());
 		}
 	}
 }
