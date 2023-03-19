@@ -40,7 +40,7 @@ class CardCheckerTest {
 		Id categoryId = Id.generateNextId();
 		Id memberId = Id.generateNextId();
 		saveCard(cardId, categoryId, memberId);
-		Card card = cardChecker.checkAuthority(cardId, memberId, CardType.OX_QUIZ);
+		Card card = cardChecker.checkAuthority(cardId, memberId);
 		assertThat(card).isInstanceOf(Card.class);
 	}
 
@@ -52,7 +52,7 @@ class CardCheckerTest {
 		Id memberId = Id.generateNextId();
 		saveCard(cardId, categoryId, memberId);
 		assertThatThrownBy(
-			() -> cardChecker.checkAuthority(cardId, Id.generateNextId(), CardType.OX_QUIZ)).isInstanceOf(
+			() -> cardChecker.checkAuthority(cardId, Id.generateNextId())).isInstanceOf(
 			AccessDeniedException.class);
 	}
 
