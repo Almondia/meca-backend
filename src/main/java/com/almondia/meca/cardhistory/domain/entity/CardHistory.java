@@ -52,7 +52,17 @@ public class CardHistory {
 	@AttributeOverride(name = "score", column = @Column(name = "score", nullable = false))
 	private Score score;
 
+	private boolean isDeleted;
+
 	@CreatedDate
 	private LocalDateTime createdAt;
+
+	public void delete() {
+		isDeleted = true;
+	}
+
+	public void rollback() {
+		isDeleted = false;
+	}
 
 }
