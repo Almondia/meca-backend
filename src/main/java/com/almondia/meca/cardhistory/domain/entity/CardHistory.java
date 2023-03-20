@@ -34,24 +34,25 @@ public class CardHistory {
 
 	@EmbeddedId
 	@AttributeOverride(name = "uuid", column = @Column(name = "card_history_id", nullable = false, columnDefinition = "BINARY(16)"))
-	Id cardHistoryId;
+	private Id cardHistoryId;
 
 	@Embedded
 	@AttributeOverride(name = "uuid", column = @Column(name = "card_id", nullable = false, columnDefinition = "BINARY(16)"))
-	Id cardId;
+	private Id cardId;
 
 	@Embedded
 	@AttributeOverride(name = "uuid", column = @Column(name = "category_id", nullable = false, columnDefinition = "BINARY(16)"))
-	Id categoryId;
+	private Id categoryId;
 
 	@Embedded
 	@AttributeOverride(name = "answer", column = @Column(name = "user_answer", nullable = false, length = 25))
-	Answer userAnswer;
+	private Answer userAnswer;
 
 	@Embedded
 	@AttributeOverride(name = "score", column = @Column(name = "score", nullable = false))
-	Score score;
+	private Score score;
 
 	@CreatedDate
-	LocalDateTime createdAt;
+	private LocalDateTime createdAt;
+
 }
