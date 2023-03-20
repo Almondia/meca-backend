@@ -177,4 +177,17 @@ class CategoryControllerTest {
 				.andDo(print());
 		}
 	}
+
+	@Nested
+	@DisplayName("카테고리 삭제")
+	class DeleteCategoryTest {
+
+		@Test
+		@WithMockMember
+		@DisplayName("카테고리 삭제 성공시 응답 200")
+		void shouldReturnStatus200WhenSuccessTest() throws Exception {
+			mockMvc.perform(delete("/api/v1/categories/{categoryId}", Id.generateNextId()))
+				.andExpect(status().isOk());
+		}
+	}
 }
