@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.security.access.AccessDeniedException;
 
 import com.almondia.meca.category.controller.dto.CategoryResponseDto;
 import com.almondia.meca.category.controller.dto.SaveCategoryRequestDto;
@@ -56,6 +57,13 @@ class CategoryServiceTest {
 			UpdateCategoryRequestDto.builder().title(new Title("new title")).build(), categoryId, memberId);
 		List<Category> all = categoryRepository.findAll();
 		assertThat(all.get(0).getTitle()).isEqualTo(new Title("new title"));
+	}
+
+	@Test
+	@DisplayName("카테고리 삭제시 권한 테스트")
+	void checkAuthorityWheDeleteCategoryTest() {
+		assertThatThrownBy(() -> categoryService.deleteCategory(Id.generateNextId(), Id.generateNextId())).isInstanceOf(
+			AccessDeniedException.class);
 	}
 
 	private void saveCategory(Id categoryId, Id memberId) {

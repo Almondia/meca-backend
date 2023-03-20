@@ -1,8 +1,15 @@
 package com.almondia.meca.category.service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.almondia.meca.card.domain.entity.Card;
+import com.almondia.meca.card.domain.repository.CardRepository;
+import com.almondia.meca.cardhistory.domain.entity.CardHistory;
+import com.almondia.meca.cardhistory.domain.repository.CardHistoryRepository;
 import com.almondia.meca.category.controller.dto.CategoryResponseDto;
 import com.almondia.meca.category.controller.dto.SaveCategoryRequestDto;
 import com.almondia.meca.category.controller.dto.UpdateCategoryRequestDto;
@@ -24,6 +31,8 @@ import lombok.RequiredArgsConstructor;
 public class CategoryService {
 
 	private final CategoryRepository categoryRepository;
+	private final CardRepository cardRepository;
+	private final CardHistoryRepository cardHistoryRepository;
 	private final CategoryChecker categoryChecker;
 
 	@Transactional
@@ -54,5 +63,16 @@ public class CategoryService {
 		SortOption<? extends SortField> sortOption
 	) {
 		return categoryRepository.findCategories(offset, pageSize, criteria, sortOption);
+	}
+
+	@Transactional
+	public void deleteCategory(Id categoryId, Id memberId) {
+		Category category = categoryChecker.checkAuthority(categoryId, memberId);
+		List<Card> cards = cardRepository.findByCategoryId(categoryId);
+		List<Id> cardIds = cards.stream().map(Card::getCardId).collect(Collectors.toList());
+		List<CardHistory> cardHistories = cardHistoryRepository.findByCardIdIn(cardIds);
+		cardHistories.forEach(CardHistory::delete);
+		cards.forEach(Card::delete);
+		category.delete();
 	}
 }
