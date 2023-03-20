@@ -22,6 +22,8 @@ import com.almondia.meca.common.domain.vo.Id;
 
 /**
  * 1. 데이터 속성 생성 테스트
+ * 2. delete 수행시 isDeleted = true
+ * 3. rollbeck 수행시 isDeleted = false
  */
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -38,7 +40,8 @@ class CardHistoryTest {
 		assertThat(entityType).isNotNull();
 		assertThat(entityType.getName()).isEqualTo("CardHistory");
 		assertThat(entityType.getAttributes()).extracting("name")
-			.containsExactlyInAnyOrder("categoryId", "cardId", "cardHistoryId", "score", "userAnswer", "createdAt");
+			.containsExactlyInAnyOrder("isDeleted", "categoryId", "cardId", "cardHistoryId", "score", "userAnswer",
+				"createdAt");
 	}
 
 	@Test
@@ -55,4 +58,34 @@ class CardHistoryTest {
 		LocalDateTime createdAt = cardHistory.getCreatedAt();
 		assertThat(createdAt).isNotNull();
 	}
+
+	@Test
+	@DisplayName("delete 수행시 isDeleted = true")
+	void shouldChangeTrueWhenCallDeleteTest() {
+		CardHistory cardHistory = CardHistory.builder()
+			.cardHistoryId(Id.generateNextId())
+			.cardId(Id.generateNextId())
+			.categoryId(Id.generateNextId())
+			.score(new Score(100))
+			.userAnswer(new Answer("answer"))
+			.build();
+		cardHistory.delete();
+		assertThat(cardHistory).hasFieldOrPropertyWithValue("isDeleted", true);
+	}
+
+	@Test
+	@DisplayName("rollbeck 수행시 isDeleted = false")
+	void shouldChangeFalseWhenCallRollbackTest() {
+		CardHistory cardHistory = CardHistory.builder()
+			.cardHistoryId(Id.generateNextId())
+			.cardId(Id.generateNextId())
+			.categoryId(Id.generateNextId())
+			.score(new Score(100))
+			.userAnswer(new Answer("answer"))
+			.isDeleted(false)
+			.build();
+		cardHistory.rollback();
+		assertThat(cardHistory).hasFieldOrPropertyWithValue("isDeleted", false);
+	}
+
 }

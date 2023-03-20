@@ -207,4 +207,20 @@ class CardControllerTest {
 				.build();
 		}
 	}
+
+	/**
+	 * 1. 정상 동작시 200 응답 테스트
+	 */
+	@Nested
+	@DisplayName("카드 삭제 API")
+	class DeleteCardTest {
+
+		@Test
+		@DisplayName("정상 동작시 200 응답 테스트")
+		@WithMockMember
+		void shouldReturnOkWhenCallSuccessTest() throws Exception {
+			mockMvc.perform(delete("/api/v1/cards/{cardId}", Id.generateNextId()))
+				.andExpect(status().isOk());
+		}
+	}
 }
