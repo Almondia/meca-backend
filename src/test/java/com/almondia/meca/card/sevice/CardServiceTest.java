@@ -243,4 +243,19 @@ class CardServiceTest {
 				.hasFieldOrProperty("sortOrder");
 		}
 	}
+
+	/**
+	 * 1. 권한 체크를 수행하는지 테스트
+	 */
+	@Nested
+	@DisplayName("카드 삭제")
+	class CardDeleteTest {
+
+		@Test
+		@DisplayName("권한 체크를 수행하는지 테스트")
+		void checkAuthorityTest() {
+			assertThatThrownBy(() -> cardService.deleteCard(Id.generateNextId(), Id.generateNextId())).isInstanceOf(
+				AccessDeniedException.class);
+		}
+	}
 }

@@ -21,6 +21,8 @@ import com.almondia.meca.card.infra.querydsl.CardSortField;
 import com.almondia.meca.card.sevice.checker.CardChecker;
 import com.almondia.meca.card.sevice.helper.CardFactory;
 import com.almondia.meca.card.sevice.helper.CardMapper;
+import com.almondia.meca.cardhistory.domain.entity.CardHistory;
+import com.almondia.meca.cardhistory.domain.repository.CardHistoryRepository;
 import com.almondia.meca.category.service.checker.CategoryChecker;
 import com.almondia.meca.common.controller.dto.CursorPage;
 import com.almondia.meca.common.domain.vo.Id;
@@ -32,6 +34,7 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class CardService {
 
+	private final CardHistoryRepository cardHistoryRepository;
 	private final CardRepository cardRepository;
 	private final OxCardRepository oxCardRepository;
 	private final KeywordCardRepository keywordCardRepository;
@@ -76,6 +79,14 @@ public class CardService {
 		List<Card> cursor = cardRepository.findCardByCategoryIdUsingCursorPaging(pageSize,
 			cardSearchCriteria, sortOption);
 		return CardMapper.cardsToCursorPagingDto(cursor, pageSize, sortOption.getSortOrder());
+	}
+
+	@Transactional
+	public void deleteCard(Id cardId, Id memberId) {
+		Card card = cardChecker.checkAuthority(cardId, memberId);
+		card.delete();
+		List<CardHistory> cardHistories = cardHistoryRepository.findByCardId(cardId);
+		cardHistories.forEach(CardHistory::delete);
 	}
 
 	private void updateCard(UpdateCardRequestDto updateCardRequestDto, Id memberId, Card card) {
