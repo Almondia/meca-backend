@@ -13,6 +13,7 @@ import com.almondia.meca.common.domain.vo.Id;
  * 1. jjwt 라이브러리를 활용한 토큰 생성 및 검증 테스트
  * 2. 토큰 검증 메서드는 예외를 출력하면 안된다.
  * 3. token을 통해 성공적으로 ID 문자열 값을 가져와야 한다
+ * 4. jwt 규격보다 적거나 많은 토큰 입력시 isValid에서 캐치해서 false를 반환해야 한다
  */
 class JwtTokenServiceTest {
 
@@ -50,6 +51,14 @@ class JwtTokenServiceTest {
 		String token = tokenService.createToken(id);
 		String id2 = tokenService.getIdFromToken(token);
 		assertThat(id2).isEqualTo(id.toString());
+	}
+
+	@Test
+	@DisplayName("jwt 규격보다 적거나 많은 토큰 입력시 isValid에서 캐치해서 false를 반환해야 한다")
+	void shouldCatchSignatureExceptionWhenWrongFormatTest() {
+		String accessToken = "eyJhbGciOiJIUzUxMiJ9.eyJpZCI6IjAxODZmOWY0LWZiMWItMjUzZS05NDZmLWFlNTIwMzYxZDIzMCIsImV4cCI6MTY3OTMxNzIyN30.CVGh73wqCer2RoTQlpUCYS4URzmKpM7bF3y-jc261hh-5tmjOU76LThRWJ80_JYiFNHPhSC8UiEoxg0Ma8j5";
+		boolean validToken = tokenService.isValidToken(accessToken);
+		assertThat(validToken).isFalse();
 	}
 
 }
