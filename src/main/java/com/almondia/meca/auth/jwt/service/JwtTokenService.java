@@ -17,6 +17,7 @@ import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -53,7 +54,8 @@ public class JwtTokenService {
 		try {
 			Jwts.parserBuilder().setSigningKey(getSigningKey()).build().parseClaimsJws(token);
 			return true;
-		} catch (JwtException | IllegalArgumentException | MalformedJwtException | ExpiredJwtException e) {
+		} catch (JwtException | SignatureException | IllegalArgumentException | MalformedJwtException |
+				 ExpiredJwtException e) {
 			return false;
 		}
 	}
