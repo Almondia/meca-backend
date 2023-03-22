@@ -38,7 +38,7 @@ public class Member extends DateEntity {
 	private Name name;
 
 	@Embedded
-	@AttributeOverride(name = "email", column = @Column(name = "email", nullable = false, columnDefinition = "VARCHAR(255)"))
+	@AttributeOverride(name = "email", column = @Column(name = "email", columnDefinition = "VARCHAR(255)"))
 	private Email email;
 
 	@Column(name = "o_auth_type", nullable = false, columnDefinition = "VARCHAR(10)")
