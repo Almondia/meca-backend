@@ -49,10 +49,10 @@ class AuthControllerTest {
 	Oauth2Service oauth2Service;
 
 	@Test
-	@DisplayName("요청 성공시 AccessTokenResponseDto 속성에 담긴 값이 모두 출력되야 하며 snakeCase여야 함 성공 응답은 200")
+	@DisplayName("요청 성공시 AccessTokenResponseDto 속성에 담긴 값이 모두 출력되야 하며 camel case여야 함 성공 응답은 200")
 	void shouldReturnAccessTokenResponseDtoAllPropertiesAndResponseStatusUsingSnakeCaseTest() throws Exception {
 		Mockito.doReturn(Member.builder().memberId(Id.generateNextId()).build()).when(memberService).save(any());
-		Mockito.doReturn(OAuth2UserAttribute.of("hello", "hello@naver.com", OAuthType.GOOGLE))
+		Mockito.doReturn(OAuth2UserAttribute.of("id", "hello", "hello@naver.com", OAuthType.GOOGLE))
 			.when(oauth2Service)
 			.requestUserInfo(eq("kakao"), anyString());
 		Mockito.doReturn("access token").when(jwtTokenService).createToken(any());

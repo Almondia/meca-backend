@@ -43,7 +43,7 @@ class MemberServiceTest {
 	@Test
 	@DisplayName("save 요청시 oauth2UserAttribute 정보가 db에 저장된다")
 	void shouldSaveDbTestWhenCallSaveOAuthAttributeTest() {
-		OAuth2UserAttribute oAuth2UserAttribute = new OAuth2UserAttribute("hello", "marrin1101@naver.com",
+		OAuth2UserAttribute oAuth2UserAttribute = new OAuth2UserAttribute("id", "hello", "marrin1101@naver.com",
 			OAuthType.NAVER);
 		memberService.save(oAuth2UserAttribute);
 		List<Member> all = memberRepository.findAll();
