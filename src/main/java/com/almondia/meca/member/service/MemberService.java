@@ -21,6 +21,7 @@ public class MemberService {
 
 	private final MemberRepository memberRepository;
 
+	@Transactional
 	public Member save(OAuth2UserAttribute oauth2UserAttribute) {
 		Email email = oauth2UserAttribute.getEmail() == null ? null : new Email(oauth2UserAttribute.getEmail());
 		Member member = Member.builder()
