@@ -27,7 +27,7 @@ import com.almondia.meca.member.domain.vo.OAuthType;
 import com.almondia.meca.member.service.MemberService;
 
 /**
- *  1. 요청 성공시 AccessTokenResponseDto 속성에 담긴 값이 모두 출력되야 하며 snakeCase여야 함 성공 응답은 200
+ *  1. 요청 성공시 AccessTokenResponseDto 속성에 담긴 값이 모두 출력되야 하며 CamelCase여야 함 성공 응답은 200
  *  2. oauth api 요청에 문제가 생긴 경우 401 응답
  *  3. oauth api 서버에 문제가 생겨 응답에 지장이 생긴 경우 500 응답
  *  4. 사용자 입력 오류시 400 반환
@@ -49,8 +49,8 @@ class AuthControllerTest {
 	Oauth2Service oauth2Service;
 
 	@Test
-	@DisplayName("요청 성공시 AccessTokenResponseDto 속성에 담긴 값이 모두 출력되야 하며 camel case여야 함 성공 응답은 200")
-	void shouldReturnAccessTokenResponseDtoAllPropertiesAndResponseStatusUsingSnakeCaseTest() throws Exception {
+	@DisplayName("요청 성공시 첫 로그인인 경우 AccessTokenResponseDto 속성에 담긴 값이 모두 출력되야 하며 camel case여야 함 성공 응답은 201")
+	void shouldReturnAccessTokenResponseDtoAllPropertiesAndResponseStatusUsingCamelCaseTest() throws Exception {
 		Mockito.doReturn(Member.builder().memberId(Id.generateNextId()).build()).when(memberService).save(any());
 		Mockito.doReturn(OAuth2UserAttribute.of("id", "hello", "hello@naver.com", OAuthType.GOOGLE))
 			.when(oauth2Service)
@@ -60,8 +60,26 @@ class AuthControllerTest {
 		mockMvc.perform(post("/api/v1/oauth/login/{registrationId}", "kakao")
 				.param("code", "authorizeCode")
 				.contentType(MediaType.APPLICATION_JSON))
+			.andExpect(status().isCreated())
+			.andExpect(jsonPath("$.accessToken").exists());
+	}
+
+	@Test
+	@DisplayName("한번 로그인한 적이 있는 경우 AccessTokenResponseDto를 출력하며 성공 응답은 200")
+	void shouldReturnAccessTokenAndStatus200WhenDuplicateLogin() throws Exception {
+		Mockito.doReturn(Member.builder().memberId(Id.generateNextId()).build())
+			.when(memberService)
+			.findMemberByOAuthId(any());
+		Mockito.doReturn(OAuth2UserAttribute.of("id", "hello", "hello@naver.com", OAuthType.GOOGLE))
+			.when(oauth2Service)
+			.requestUserInfo(eq("kakao"), anyString());
+		Mockito.doReturn("access token").when(jwtTokenService).createToken(any());
+		mockMvc.perform(post("/api/v1/oauth/login/{registrationId}", "kakao")
+				.param("code", "authorizeCode")
+				.contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.accessToken").exists());
+
 	}
 
 	@Test
