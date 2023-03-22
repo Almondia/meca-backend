@@ -45,7 +45,7 @@ class MemberTest {
 		assertThat(entityType).isNotNull();
 		assertThat(entityType.getName()).isEqualTo("Member");
 		assertThat(entityType.getAttributes()).extracting("name")
-			.containsExactlyInAnyOrder("memberId", "name", "email", "oAuthType", "createdAt", "modifiedAt",
+			.containsExactlyInAnyOrder("oAuthId", "memberId", "name", "email", "oAuthType", "createdAt", "modifiedAt",
 				"role", "isDeleted");
 	}
 
@@ -55,6 +55,7 @@ class MemberTest {
 		JpaRepository<Member, Id> memberRepository = new SimpleJpaRepository<>(Member.class, entityManager);
 		Member member = Member.builder()
 			.memberId(Id.generateNextId())
+			.oAuthId("id")
 			.email(new Email("hello@naver.com"))
 			.name(new Name("hello"))
 			.oAuthType(OAuthType.GOOGLE)
