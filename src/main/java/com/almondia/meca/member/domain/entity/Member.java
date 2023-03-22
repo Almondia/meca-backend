@@ -30,7 +30,7 @@ public class Member extends DateEntity {
 	@AttributeOverride(name = "uuid", column = @Column(name = "member_id", nullable = false, columnDefinition = "BINARY(16)"))
 	private Id memberId;
 
-	@Column(name = "oauth_id", nullable = false, length = 40, unique = true)
+	@Column(name = "oauth_id", nullable = false, unique = true)
 	private String oauthId;
 
 	@Embedded
