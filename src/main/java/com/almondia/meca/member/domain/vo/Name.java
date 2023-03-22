@@ -1,8 +1,5 @@
 package com.almondia.meca.member.domain.vo;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import javax.persistence.Embeddable;
 
 import com.almondia.meca.common.configuration.jackson.module.wrapper.Wrapper;
@@ -16,7 +13,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Name implements Wrapper {
 
-	private static final Pattern NAME_PATTERN = Pattern.compile("^[a-zA-Z가-힣\\s]{1,20}$");
+	private static final int MAX_LENGTH = 20;
+	private static final int MIN_LENGTH = 1;
 	private String name;
 
 	public Name(String name) {
@@ -29,9 +27,8 @@ public class Name implements Wrapper {
 		if (name.isBlank()) {
 			throw new IllegalArgumentException("빈 공백을 입력할 수 없습니다");
 		}
-		Matcher matcher = NAME_PATTERN.matcher(name);
-		if (!matcher.find()) {
-			throw new IllegalArgumentException("이름은 영문 또는 한글 1 ~ 20 사이만 입력 가능합니다");
+		if (name.length() > MAX_LENGTH || name.length() < MIN_LENGTH) {
+			throw new IllegalArgumentException("이름은 1 ~ 20 사이만 입력 가능합니다");
 		}
 	}
 
