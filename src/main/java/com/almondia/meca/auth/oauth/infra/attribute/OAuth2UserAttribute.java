@@ -11,11 +11,12 @@ import lombok.ToString;
 @ToString
 public class OAuth2UserAttribute {
 
+	private final String oAuthId;
 	private final String name;
 	private final String email;
 	private final OAuthType oauthType;
 
-	public static OAuth2UserAttribute of(String name, String email, OAuthType oauthType) {
-		return new OAuth2UserAttribute(name, email, oauthType);
+	public static OAuth2UserAttribute of(String oAuthId, String name, String email, OAuthType oauthType) {
+		return new OAuth2UserAttribute(oAuthId, name, email, oauthType);
 	}
 }

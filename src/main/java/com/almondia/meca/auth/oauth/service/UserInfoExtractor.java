@@ -14,9 +14,13 @@ public enum UserInfoExtractor {
 		public OAuth2UserAttribute extract(Map<String, Object> userInfoJson) {
 			JSONObject userInfo = new JSONObject(userInfoJson);
 			JSONObject response = userInfo.getJSONObject("response");
+			String oAuthId = response.getString("id");
 			String name = response.getString("name");
-			String email = response.getString("email");
-			return OAuth2UserAttribute.of(name, email, OAuthType.NAVER);
+			String email = null;
+			if (response.has("email")) {
+				email = response.getString("email");
+			}
+			return OAuth2UserAttribute.of(oAuthId, name, email, OAuthType.NAVER);
 		}
 	},
 	KAKAO("kakao") {
@@ -25,18 +29,26 @@ public enum UserInfoExtractor {
 			JSONObject userInfo = new JSONObject(userInfoJson);
 			JSONObject properties = userInfo.getJSONObject("properties");
 			JSONObject kakaoAccount = userInfo.getJSONObject("kakao_account");
+			String oAuthId = String.valueOf(userInfoJson.get("id"));
 			String name = properties.getString("nickname");
-			String email = kakaoAccount.getString("email");
-			return OAuth2UserAttribute.of(name, email, OAuthType.KAKAO);
+			String email = null;
+			if (kakaoAccount.has("email")) {
+				email = kakaoAccount.getString("email");
+			}
+			return OAuth2UserAttribute.of(oAuthId, name, email, OAuthType.KAKAO);
 		}
 	},
 	GOOGLE("google") {
 		@Override
 		public OAuth2UserAttribute extract(Map<String, Object> userInfoJson) {
 			JSONObject userInfo = new JSONObject(userInfoJson);
-			String email = userInfo.getString("email");
+			String oAuthId = userInfo.getString("sub");
+			String email = null;
+			if (userInfo.has("email")) {
+				email = userInfo.getString("email");
+			}
 			String name = userInfo.getString("name");
-			return OAuth2UserAttribute.of(name, email, OAuthType.GOOGLE);
+			return OAuth2UserAttribute.of(oAuthId, name, email, OAuthType.GOOGLE);
 		}
 	};
 
