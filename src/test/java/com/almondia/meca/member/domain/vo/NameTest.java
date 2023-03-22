@@ -4,12 +4,10 @@ import static org.assertj.core.api.Assertions.*;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
 
 /**
  * 1. toString 시 내부 객체의 정보를 보여준다.
- * 2. 영문자, 또는 한글 1 ~ 20까지 허용한다.
+ * 2. 문자열 길이는 1 ~ 20까지 허용한다
  * 3. 빈 공백을 입력으로 할 수 없다.
  */
 class NameTest {
@@ -27,11 +25,9 @@ class NameTest {
 		assertThat(name.toString()).isEqualTo("최 번개");
 	}
 
-	@ParameterizedTest
-	@CsvSource({
-		"as1", "12", "aaasdfaasdsdsdsdsdsdaa", "가1",
-	})
-	void shouldThrowIllegalArgumentExceptionWhenInvalidInput(String input) {
-		assertThatThrownBy(() -> new Name(input)).isInstanceOf(IllegalArgumentException.class);
+	@Test
+	@DisplayName("문자열 길이는 1 ~ 20까지 허용한다")
+	void shouldThrowIllegalArgumentExceptionWhenInvalidInput() {
+		assertThatThrownBy(() -> new Name("a".repeat(21))).isInstanceOf(IllegalArgumentException.class);
 	}
 }

@@ -21,11 +21,12 @@ public class MemberService {
 
 	private final MemberRepository memberRepository;
 
+	@Transactional
 	public Member save(OAuth2UserAttribute oauth2UserAttribute) {
 		Email email = oauth2UserAttribute.getEmail() == null ? null : new Email(oauth2UserAttribute.getEmail());
 		Member member = Member.builder()
 			.memberId(Id.generateNextId())
-			.oAuthId(oauth2UserAttribute.getOAuthId())
+			.oauthId(oauth2UserAttribute.getOAuthId())
 			.name(new Name(oauth2UserAttribute.getName()))
 			.oAuthType(oauth2UserAttribute.getOauthType())
 			.email(email)
@@ -39,6 +40,11 @@ public class MemberService {
 	public Member findMember(Id memberId) {
 		return memberRepository.findById(memberId)
 			.orElseThrow(() -> new IllegalArgumentException("회원을 찾을 수 없습니다"));
+	}
+
+	@Transactional(readOnly = true)
+	public Member findMemberByOAuthId(String oauthId) {
+		return memberRepository.findByOauthId(oauthId).orElse(null);
 	}
 
 	@Transactional(readOnly = true)

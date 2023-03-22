@@ -1,5 +1,6 @@
 package com.almondia.meca.auth;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,11 +32,15 @@ public class AuthController {
 	public ResponseEntity<AccessTokenResponseDto> getUserInfo(
 		@PathVariable("registrationId") String registrationId,
 		@RequestParam("code") String authorizationCode) {
-
+		HttpStatus statusResponse = HttpStatus.OK;
 		OAuth2UserAttribute oauth2UserAttribute = oauth2Service.requestUserInfo(registrationId,
 			authorizationCode);
-		Member member = memberService.save(oauth2UserAttribute);
+		Member member = memberService.findMemberByOAuthId(oauth2UserAttribute.getOAuthId());
+		if (member == null) {
+			member = memberService.save(oauth2UserAttribute);
+			statusResponse = HttpStatus.CREATED;
+		}
 		String accessToken = jwtTokenService.createToken(member.getMemberId());
-		return ResponseEntity.ok(AccessTokenResponseDto.of(accessToken));
+		return ResponseEntity.status(statusResponse).body(AccessTokenResponseDto.of(accessToken));
 	}
 }
