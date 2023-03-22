@@ -63,6 +63,7 @@ class MemberServiceTest {
 		Id id = Id.generateNextId();
 		Member member = Member.builder()
 			.memberId(id)
+			.oAuthId("id")
 			.oAuthType(OAuthType.KAKAO)
 			.name(new Name("hello"))
 			.email(new Email("hello@naver.com"))
@@ -83,6 +84,7 @@ class MemberServiceTest {
 		Id id = Id.generateNextId();
 		Member member = Member.builder()
 			.memberId(id)
+			.oAuthId("id")
 			.oAuthType(OAuthType.KAKAO)
 			.name(new Name("hello"))
 			.email(new Email("hello@naver.com"))

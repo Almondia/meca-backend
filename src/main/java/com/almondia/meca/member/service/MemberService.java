@@ -22,11 +22,13 @@ public class MemberService {
 	private final MemberRepository memberRepository;
 
 	public Member save(OAuth2UserAttribute oauth2UserAttribute) {
+		Email email = oauth2UserAttribute.getEmail() == null ? null : new Email(oauth2UserAttribute.getEmail());
 		Member member = Member.builder()
 			.memberId(Id.generateNextId())
+			.oAuthId(oauth2UserAttribute.getOAuthId())
 			.name(new Name(oauth2UserAttribute.getName()))
 			.oAuthType(oauth2UserAttribute.getOauthType())
-			.email(new Email(oauth2UserAttribute.getEmail()))
+			.email(email)
 			.role(Role.USER)
 			.build();
 		memberRepository.save(member);
