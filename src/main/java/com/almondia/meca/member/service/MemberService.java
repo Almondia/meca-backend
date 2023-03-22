@@ -25,7 +25,7 @@ public class MemberService {
 		Email email = oauth2UserAttribute.getEmail() == null ? null : new Email(oauth2UserAttribute.getEmail());
 		Member member = Member.builder()
 			.memberId(Id.generateNextId())
-			.oAuthId(oauth2UserAttribute.getOAuthId())
+			.oauthId(oauth2UserAttribute.getOAuthId())
 			.name(new Name(oauth2UserAttribute.getName()))
 			.oAuthType(oauth2UserAttribute.getOauthType())
 			.email(email)
