@@ -43,12 +43,16 @@ public class GlobalControllerExceptionHandler {
 	@ExceptionHandler(HttpMessageNotReadableException.class)
 	public ResponseEntity<ErrorResponseDto> handleValueInstantiationException(HttpMessageNotReadableException e) {
 		log.error(e.getMessage());
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ErrorResponseDto.of(e));
+		if (e.getRootCause() != null) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ErrorResponseDto.of(e.getRootCause()));
+		}
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ErrorResponseDto.ofErrorMessage("사용자 입력 오류"));
 	}
 
 	@ExceptionHandler(RuntimeException.class)
 	public ResponseEntity<ErrorResponseDto> handleRuntimeException(RuntimeException e) {
 		log.error(e.getMessage());
-		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorResponseDto.of(e));
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+			.body(ErrorResponseDto.ofErrorMessage("내부 서버 오류"));
 	}
 }
