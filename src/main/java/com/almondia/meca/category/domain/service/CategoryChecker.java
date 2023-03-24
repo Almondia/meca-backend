@@ -1,4 +1,4 @@
-package com.almondia.meca.category.service.checker;
+package com.almondia.meca.category.domain.service;
 
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Component;
