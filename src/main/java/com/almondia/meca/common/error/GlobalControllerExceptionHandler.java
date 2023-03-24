@@ -6,6 +6,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import com.almondia.meca.auth.oauth.exception.BadWebClientRequestException;
 import com.almondia.meca.auth.oauth.exception.BadWebClientResponseException;
@@ -42,6 +43,16 @@ public class GlobalControllerExceptionHandler {
 
 	@ExceptionHandler(HttpMessageNotReadableException.class)
 	public ResponseEntity<ErrorResponseDto> handleValueInstantiationException(HttpMessageNotReadableException e) {
+		log.error(e.getMessage());
+		if (e.getRootCause() != null) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ErrorResponseDto.of(e.getRootCause()));
+		}
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ErrorResponseDto.ofErrorMessage("사용자 입력 오류"));
+	}
+
+	@ExceptionHandler(MethodArgumentTypeMismatchException.class)
+	public ResponseEntity<ErrorResponseDto> handleMethodArgumentTYpeMismatchException(
+		MethodArgumentTypeMismatchException e) {
 		log.error(e.getMessage());
 		if (e.getRootCause() != null) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ErrorResponseDto.of(e.getRootCause()));
