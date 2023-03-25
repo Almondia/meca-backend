@@ -23,6 +23,6 @@ public class CategoryWithHistoryResponseDto {
 	private final boolean isShared;
 	private final LocalDateTime createdAt;
 	private final LocalDateTime modifiedAt;
-	private final int scoreAvg;
-	private final int solveCount;
+	private final double scoreAvg;
+	private final long solveCount;
 }
