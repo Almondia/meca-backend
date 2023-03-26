@@ -1,4 +1,4 @@
-package com.almondia.meca.card.sevice.helper;
+package com.almondia.meca.card.application.helper;
 
 import java.util.Arrays;
 import java.util.List;

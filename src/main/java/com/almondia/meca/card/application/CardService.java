@@ -1,10 +1,12 @@
-package com.almondia.meca.card.sevice;
+package com.almondia.meca.card.application;
 
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.almondia.meca.card.application.helper.CardFactory;
+import com.almondia.meca.card.application.helper.CardMapper;
 import com.almondia.meca.card.controller.dto.CardResponseDto;
 import com.almondia.meca.card.controller.dto.SaveCardRequestDto;
 import com.almondia.meca.card.controller.dto.UpdateCardRequestDto;
@@ -19,8 +21,6 @@ import com.almondia.meca.card.domain.repository.OxCardRepository;
 import com.almondia.meca.card.domain.service.CardChecker;
 import com.almondia.meca.card.infra.querydsl.CardSearchCriteria;
 import com.almondia.meca.card.infra.querydsl.CardSortField;
-import com.almondia.meca.card.sevice.helper.CardFactory;
-import com.almondia.meca.card.sevice.helper.CardMapper;
 import com.almondia.meca.cardhistory.domain.entity.CardHistory;
 import com.almondia.meca.cardhistory.domain.repository.CardHistoryRepository;
 import com.almondia.meca.category.domain.service.CategoryChecker;

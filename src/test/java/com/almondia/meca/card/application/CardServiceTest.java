@@ -1,4 +1,4 @@
-package com.almondia.meca.card.sevice;
+package com.almondia.meca.card.application;
 
 import static org.assertj.core.api.Assertions.*;
 
