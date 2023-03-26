@@ -12,8 +12,8 @@ import com.almondia.meca.auth.dto.AccessTokenResponseDto;
 import com.almondia.meca.auth.jwt.service.JwtTokenService;
 import com.almondia.meca.auth.oauth.infra.attribute.OAuth2UserAttribute;
 import com.almondia.meca.auth.oauth.service.Oauth2Service;
+import com.almondia.meca.member.application.MemberService;
 import com.almondia.meca.member.domain.entity.Member;
-import com.almondia.meca.member.service.MemberService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

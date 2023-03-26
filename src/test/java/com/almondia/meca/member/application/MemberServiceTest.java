@@ -1,4 +1,4 @@
-package com.almondia.meca.member.service;
+package com.almondia.meca.member.application;
 
 import static org.assertj.core.api.Assertions.*;
 

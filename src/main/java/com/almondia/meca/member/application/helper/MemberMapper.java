@@ -1,10 +1,10 @@
-package com.almondia.meca.member.service.helper;
+package com.almondia.meca.member.application.helper;
 
 import com.almondia.meca.member.controller.dto.MemberResponseDto;
 import com.almondia.meca.member.domain.entity.Member;
 
 public class MemberMapper {
-	
+
 	public static MemberResponseDto fromEntityToDto(Member member) {
 		return MemberResponseDto.builder()
 			.memberId(member.getMemberId())

@@ -19,8 +19,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.almondia.meca.auth.jwt.service.JwtTokenService;
 import com.almondia.meca.common.domain.vo.Id;
+import com.almondia.meca.member.application.MemberService;
 import com.almondia.meca.member.domain.entity.Member;
-import com.almondia.meca.member.service.MemberService;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;

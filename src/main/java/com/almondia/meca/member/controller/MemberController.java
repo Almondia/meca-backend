@@ -7,9 +7,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.almondia.meca.member.application.MemberService;
 import com.almondia.meca.member.controller.dto.MemberResponseDto;
 import com.almondia.meca.member.domain.entity.Member;
-import com.almondia.meca.member.service.MemberService;
 
 import lombok.RequiredArgsConstructor;
 

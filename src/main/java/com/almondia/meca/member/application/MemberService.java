@@ -1,17 +1,17 @@
-package com.almondia.meca.member.service;
+package com.almondia.meca.member.application;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.almondia.meca.auth.oauth.infra.attribute.OAuth2UserAttribute;
 import com.almondia.meca.common.domain.vo.Id;
+import com.almondia.meca.member.application.helper.MemberMapper;
 import com.almondia.meca.member.controller.dto.MemberResponseDto;
 import com.almondia.meca.member.domain.entity.Member;
 import com.almondia.meca.member.domain.vo.Email;
 import com.almondia.meca.member.domain.vo.Name;
 import com.almondia.meca.member.domain.vo.Role;
 import com.almondia.meca.member.repository.MemberRepository;
-import com.almondia.meca.member.service.helper.MemberMapper;
 
 import lombok.RequiredArgsConstructor;
 
