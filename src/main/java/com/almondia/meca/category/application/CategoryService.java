@@ -1,4 +1,4 @@
-package com.almondia.meca.category.service;
+package com.almondia.meca.category.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -10,6 +10,8 @@ import com.almondia.meca.card.domain.entity.Card;
 import com.almondia.meca.card.domain.repository.CardRepository;
 import com.almondia.meca.cardhistory.domain.entity.CardHistory;
 import com.almondia.meca.cardhistory.domain.repository.CardHistoryRepository;
+import com.almondia.meca.category.application.helper.CategoryFactory;
+import com.almondia.meca.category.application.helper.CategoryMapper;
 import com.almondia.meca.category.controller.dto.CategoryResponseDto;
 import com.almondia.meca.category.controller.dto.CategoryWithHistoryResponseDto;
 import com.almondia.meca.category.controller.dto.SaveCategoryRequestDto;
@@ -18,8 +20,6 @@ import com.almondia.meca.category.domain.entity.Category;
 import com.almondia.meca.category.domain.repository.CategoryRepository;
 import com.almondia.meca.category.domain.service.CategoryChecker;
 import com.almondia.meca.category.infra.querydsl.CategorySearchCriteria;
-import com.almondia.meca.category.service.helper.CategoryFactory;
-import com.almondia.meca.category.service.helper.CategoryMapper;
 import com.almondia.meca.common.controller.dto.CursorPage;
 import com.almondia.meca.common.controller.dto.OffsetPage;
 import com.almondia.meca.common.domain.vo.Id;

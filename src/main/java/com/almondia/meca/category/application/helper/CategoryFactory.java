@@ -1,4 +1,4 @@
-package com.almondia.meca.category.service.helper;
+package com.almondia.meca.category.application.helper;
 
 import com.almondia.meca.category.controller.dto.SaveCategoryRequestDto;
 import com.almondia.meca.category.domain.entity.Category;
