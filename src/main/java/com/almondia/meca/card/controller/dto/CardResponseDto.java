@@ -24,7 +24,6 @@ public class CardResponseDto {
 	private final List<Image> images;
 	private final Id categoryId;
 	private final CardType cardType;
-	private final boolean isDeleted;
 	private final LocalDateTime createdAt;
 	private final LocalDateTime modifiedAt;
 	private final String answer;

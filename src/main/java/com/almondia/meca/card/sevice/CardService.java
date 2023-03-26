@@ -89,6 +89,11 @@ public class CardService {
 		cardHistories.forEach(CardHistory::delete);
 	}
 
+	public CardResponseDto findCardById(Id cardId, Id memberId) {
+		Card card = cardChecker.checkAuthority(cardId, memberId);
+		return CardMapper.cardToDto(card);
+	}
+
 	private void updateCard(UpdateCardRequestDto updateCardRequestDto, Id memberId, Card card) {
 		if (updateCardRequestDto.getTitle() != null) {
 			card.changeTitle(updateCardRequestDto.getTitle());

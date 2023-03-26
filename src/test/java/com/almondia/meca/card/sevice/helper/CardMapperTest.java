@@ -35,7 +35,6 @@ class CardMapperTest {
 			.hasFieldOrProperty("categoryId")
 			.hasFieldOrProperty("images")
 			.hasFieldOrProperty("cardType")
-			.hasFieldOrProperty("isDeleted")
 			.hasFieldOrProperty("createdAt")
 			.hasFieldOrProperty("modifiedAt")
 			.hasFieldOrProperty("answer");
@@ -51,7 +50,6 @@ class CardMapperTest {
 			.hasFieldOrProperty("categoryId")
 			.hasFieldOrProperty("images")
 			.hasFieldOrProperty("cardType")
-			.hasFieldOrProperty("isDeleted")
 			.hasFieldOrProperty("createdAt")
 			.hasFieldOrProperty("modifiedAt")
 			.hasFieldOrProperty("answer");
@@ -67,7 +65,6 @@ class CardMapperTest {
 			.hasFieldOrProperty("categoryId")
 			.hasFieldOrProperty("images")
 			.hasFieldOrProperty("cardType")
-			.hasFieldOrProperty("isDeleted")
 			.hasFieldOrProperty("createdAt")
 			.hasFieldOrProperty("modifiedAt")
 			.hasFieldOrProperty("answer");
@@ -83,7 +80,6 @@ class CardMapperTest {
 			.hasFieldOrProperty("categoryId")
 			.hasFieldOrProperty("images")
 			.hasFieldOrProperty("cardType")
-			.hasFieldOrProperty("isDeleted")
 			.hasFieldOrProperty("createdAt")
 			.hasFieldOrProperty("modifiedAt")
 			.hasFieldOrProperty("answer");

@@ -31,6 +31,7 @@ import com.almondia.meca.card.domain.repository.MultiChoiceCardRepository;
 import com.almondia.meca.card.domain.repository.OxCardRepository;
 import com.almondia.meca.card.domain.vo.CardType;
 import com.almondia.meca.card.domain.vo.Image;
+import com.almondia.meca.card.domain.vo.MultiChoiceAnswer;
 import com.almondia.meca.card.domain.vo.OxAnswer;
 import com.almondia.meca.card.domain.vo.Question;
 import com.almondia.meca.card.domain.vo.Title;
@@ -256,6 +257,48 @@ class CardServiceTest {
 		void checkAuthorityTest() {
 			assertThatThrownBy(() -> cardService.deleteCard(Id.generateNextId(), Id.generateNextId())).isInstanceOf(
 				AccessDeniedException.class);
+		}
+	}
+
+	/**
+	 * 1. 권한 체크 수행 여부 테스트
+	 * 2. 종류별 카드 타입 변환이 잘 이루어지는지 확인
+	 */
+	@Nested
+	@DisplayName("회원 카드 단일 조회")
+	class SearchCardOneTest {
+
+		Id memberId = Id.generateNextId();
+		Id categoryId = Id.generateNextId();
+		Id cardId1 = Id.generateNextId();
+
+		@Test
+		@DisplayName("권한 체크 수행 여부 테스트")
+		void checkAuthorityTest() {
+			assertThatThrownBy(() -> cardService.findCardById(Id.generateNextId(), Id.generateNextId()))
+				.isInstanceOf(AccessDeniedException.class);
+		}
+
+		@Test
+		@DisplayName("종류별 카드 타입 변환이 결과에 잘 반영 되는지 확인")
+		void returnCardResponseType() {
+			initDataSetting();
+			CardResponseDto card = cardService.findCardById(cardId1, memberId);
+			assertThat(card.getCardType()).isEqualTo(CardType.MULTI_CHOICE);
+		}
+
+		private void initDataSetting() {
+			cardRepository.saveAll(List.of(
+				MultiChoiceCard.builder()
+					.cardId(cardId1)
+					.title(new Title("title3"))
+					.cardType(CardType.MULTI_CHOICE)
+					.categoryId(categoryId)
+					.memberId(memberId)
+					.question(new Question("question"))
+					.multiChoiceAnswer(new MultiChoiceAnswer(1))
+					.build()
+			));
 		}
 	}
 }

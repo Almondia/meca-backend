@@ -72,6 +72,16 @@ public class CardController {
 	}
 
 	@Secured("ROLE_USER")
+	@GetMapping("/{cardId}/me")
+	public ResponseEntity<CardResponseDto> findCardByCardId(
+		@AuthenticationPrincipal Member member,
+		@PathVariable(value = "cardId") Id cardId
+	) {
+		CardResponseDto responseDto = cardService.findCardById(cardId, member.getMemberId());
+		return ResponseEntity.ok(responseDto);
+	}
+
+	@Secured("ROLE_USER")
 	@DeleteMapping("/{cardId}")
 	public ResponseEntity<String> deleteCard(
 		@AuthenticationPrincipal Member member,
