@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.almondia.meca.cardhistory.application.CardHistoryService;
 import com.almondia.meca.cardhistory.controller.dto.SaveRequestCardHistoryDto;
-import com.almondia.meca.cardhistory.service.CardHistoryService;
 import com.almondia.meca.member.domain.entity.Member;
 
 import lombok.RequiredArgsConstructor;

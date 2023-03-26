@@ -1,4 +1,4 @@
-package com.almondia.meca.cardhistory.service.helper;
+package com.almondia.meca.cardhistory.application.helper;
 
 import com.almondia.meca.cardhistory.controller.dto.CardHistoryDto;
 import com.almondia.meca.cardhistory.domain.entity.CardHistory;

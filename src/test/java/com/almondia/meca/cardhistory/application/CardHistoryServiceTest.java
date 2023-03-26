@@ -1,4 +1,4 @@
-package com.almondia.meca.cardhistory.service;
+package com.almondia.meca.cardhistory.application;
 
 import static org.assertj.core.api.Assertions.*;
 

@@ -1,4 +1,4 @@
-package com.almondia.meca.cardhistory.service;
+package com.almondia.meca.cardhistory.application;
 
 import java.util.ArrayList;
 import java.util.Collection;
