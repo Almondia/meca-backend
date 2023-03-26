@@ -23,6 +23,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.almondia.meca.category.controller.dto.CategoryResponseDto;
+import com.almondia.meca.category.controller.dto.CategoryWithHistoryResponseDto;
 import com.almondia.meca.category.controller.dto.SaveCategoryRequestDto;
 import com.almondia.meca.category.controller.dto.UpdateCategoryRequestDto;
 import com.almondia.meca.category.domain.vo.Title;
@@ -30,8 +31,9 @@ import com.almondia.meca.category.service.CategoryService;
 import com.almondia.meca.common.configuration.jackson.JacksonConfiguration;
 import com.almondia.meca.common.configuration.security.filter.JwtAuthenticationFilter;
 import com.almondia.meca.common.configuration.web.WebMvcConfiguration;
-import com.almondia.meca.common.controller.dto.OffsetPage;
+import com.almondia.meca.common.controller.dto.CursorPage;
 import com.almondia.meca.common.domain.vo.Id;
+import com.almondia.meca.common.infra.querydsl.SortOrder;
 import com.almondia.meca.mock.security.WithMockMember;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -155,25 +157,29 @@ class CategoryControllerTest {
 		@DisplayName("카테 고리 페이징 조회 응답 코드 200 및 정상 응답 테스트")
 		@WithMockMember
 		void shouldReturnPageTypeWhenCallPagingSearchTest() throws Exception {
-			CategoryResponseDto content = CategoryResponseDto.builder()
+			CategoryWithHistoryResponseDto content = CategoryWithHistoryResponseDto.builder()
 				.categoryId(Id.generateNextId())
 				.memberId(Id.generateNextId())
 				.title(new Title("title"))
 				.createdAt(LocalDateTime.now())
 				.modifiedAt(LocalDateTime.now())
+				.scoreAvg(12.3)
+				.solveCount(10)
 				.build();
-			OffsetPage<CategoryResponseDto> response = OffsetPage.of(List.of(content), 0, 1, 1);
+			CursorPage<CategoryWithHistoryResponseDto> response = CursorPage.<CategoryWithHistoryResponseDto>builder()
+				.contents(List.of(content))
+				.pageSize(1).hasNext(Id.generateNextId())
+				.sortOrder(SortOrder.DESC)
+				.build();
 			Mockito.doReturn(response)
-				.when(categoryservice).getOffsetPagingCategoryResponseDto(anyInt(), anyInt(), any(), any());
+				.when(categoryservice).findCursorPagingCategoryWithHistoryResponse(anyInt(), any(), any());
 
 			final String url = "/api/v1/categories/me?offset=2&pageSize=4&sortField=createdAt&startCreatedAt=2023-03-13T10:23";
 			mockMvc.perform(get(url))
 				.andExpect(status().isOk())
-				.andExpect(jsonPath("contents").exists())
-				.andExpect(jsonPath("totalPages").exists())
-				.andExpect(jsonPath("totalElements").exists())
-				.andExpect(jsonPath("pageNumber").exists())
 				.andExpect(jsonPath("pageSize").exists())
+				.andExpect(jsonPath("hasNext").exists())
+				.andExpect(jsonPath("sortOrder").exists())
 				.andDo(print());
 		}
 	}
