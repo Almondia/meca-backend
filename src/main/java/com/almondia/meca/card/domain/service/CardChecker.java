@@ -1,4 +1,4 @@
-package com.almondia.meca.card.sevice.checker;
+package com.almondia.meca.card.domain.service;
 
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Component;
