@@ -20,12 +20,12 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.almondia.meca.common.configuration.jackson.JacksonConfiguration;
 import com.almondia.meca.common.configuration.security.filter.JwtAuthenticationFilter;
 import com.almondia.meca.common.domain.vo.Id;
+import com.almondia.meca.member.application.MemberService;
 import com.almondia.meca.member.controller.dto.MemberResponseDto;
 import com.almondia.meca.member.domain.vo.Email;
 import com.almondia.meca.member.domain.vo.Name;
 import com.almondia.meca.member.domain.vo.OAuthType;
 import com.almondia.meca.member.domain.vo.Role;
-import com.almondia.meca.member.service.MemberService;
 import com.almondia.meca.mock.security.WithMockMember;
 import com.fasterxml.jackson.databind.ObjectMapper;
 

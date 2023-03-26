@@ -16,7 +16,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import com.almondia.meca.member.service.MemberService;
+import com.almondia.meca.member.application.MemberService;
 import com.almondia.meca.mock.security.WithMockMember;
 
 @SpringBootTest

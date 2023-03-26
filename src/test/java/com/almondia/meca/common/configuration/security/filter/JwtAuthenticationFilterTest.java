@@ -19,12 +19,12 @@ import org.springframework.http.HttpStatus;
 
 import com.almondia.meca.auth.jwt.service.JwtTokenService;
 import com.almondia.meca.common.domain.vo.Id;
+import com.almondia.meca.member.application.MemberService;
 import com.almondia.meca.member.domain.entity.Member;
 import com.almondia.meca.member.domain.vo.Email;
 import com.almondia.meca.member.domain.vo.Name;
 import com.almondia.meca.member.domain.vo.OAuthType;
 import com.almondia.meca.member.domain.vo.Role;
-import com.almondia.meca.member.service.MemberService;
 
 /**
  * 1. 해당 필터는 access token이 입력되지 않았다면 그냥 통과한다

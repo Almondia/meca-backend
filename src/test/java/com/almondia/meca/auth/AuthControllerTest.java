@@ -22,9 +22,9 @@ import com.almondia.meca.auth.oauth.service.Oauth2Service;
 import com.almondia.meca.common.configuration.jackson.JacksonConfiguration;
 import com.almondia.meca.common.configuration.security.SecurityConfiguration;
 import com.almondia.meca.common.domain.vo.Id;
+import com.almondia.meca.member.application.MemberService;
 import com.almondia.meca.member.domain.entity.Member;
 import com.almondia.meca.member.domain.vo.OAuthType;
-import com.almondia.meca.member.service.MemberService;
 
 /**
  *  1. 요청 성공시 AccessTokenResponseDto 속성에 담긴 값이 모두 출력되야 하며 CamelCase여야 함 성공 응답은 200
