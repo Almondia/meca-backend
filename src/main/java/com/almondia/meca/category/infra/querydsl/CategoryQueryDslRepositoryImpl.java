@@ -63,10 +63,10 @@ public class CategoryQueryDslRepositoryImpl implements CategoryQueryDslRepositor
 			.from(category)
 			.leftJoin(cardHistory)
 			.on(category.categoryId.eq(cardHistory.categoryId))
-			.where()
+			.where(cursorPagingExpression(memberId, lastCategoryId))
 			.groupBy(category.categoryId)
 			.orderBy(category.categoryId.uuid.desc())
-			.limit(pageSize)
+			.limit(pageSize + 1)
 			.fetch();
 
 		return makeCursorPage(pageSize, response);
@@ -85,12 +85,13 @@ public class CategoryQueryDslRepositoryImpl implements CategoryQueryDslRepositor
 	private CursorPage<CategoryWithHistoryResponseDto> makeCursorPage(int pageSize,
 		List<CategoryWithHistoryResponseDto> response) {
 		Id hasNext = null;
-		if (response.size() == pageSize) {
-			hasNext = response.get(pageSize - 1).getCategoryId();
+		if (response.size() == pageSize + 1) {
+			hasNext = response.get(pageSize).getCategoryId();
+			response.remove(response.size() - 1);
 		}
 		return CursorPage.<CategoryWithHistoryResponseDto>builder()
 			.contents(response)
-			.pageSize(pageSize)
+			.pageSize(response.size())
 			.hasNext(hasNext)
 			.sortOrder(SortOrder.DESC)
 			.build();
