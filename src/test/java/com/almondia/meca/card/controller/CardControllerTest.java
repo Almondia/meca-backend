@@ -223,4 +223,35 @@ class CardControllerTest {
 				.andExpect(status().isOk());
 		}
 	}
+
+	/**
+	 * 정상 동작시 200 응답 및 응답 포맷 테스트
+	 */
+	@Nested
+	@DisplayName("회원 카드 단일 조회 API")
+	class SearchCardOneTest {
+
+		@Test
+		@WithMockMember
+		@DisplayName("정상 동작시 200 응답 및 응답 포맷 테스트")
+		void shouldReturn200OKAndResponseFormatTest() throws Exception {
+			CardResponseDto responseDto = CardResponseDto.builder()
+				.cardId(Id.generateNextId())
+				.question(new Question("question"))
+				.cardType(CardType.OX_QUIZ)
+				.answer("O")
+				.images(List.of(new Image("A"), new Image("B"), new Image("C")))
+				.title(new Title("title1"))
+				.build();
+			Mockito.doReturn(responseDto).when(cardService).findCardById(any(), any());
+			mockMvc.perform(get("/api/v1/cards/{cardId}/me", Id.generateNextId()))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("cardId").exists())
+				.andExpect(jsonPath("question").exists())
+				.andExpect(jsonPath("cardType").exists())
+				.andExpect(jsonPath("answer").exists())
+				.andExpect(jsonPath("images").exists())
+				.andExpect(jsonPath("title").exists());
+		}
+	}
 }
