@@ -17,8 +17,8 @@ import com.almondia.meca.category.controller.dto.SaveCategoryRequestDto;
 import com.almondia.meca.category.controller.dto.UpdateCategoryRequestDto;
 import com.almondia.meca.category.domain.entity.Category;
 import com.almondia.meca.category.domain.repository.CategoryRepository;
+import com.almondia.meca.category.domain.service.CategoryChecker;
 import com.almondia.meca.category.domain.vo.Title;
-import com.almondia.meca.category.service.checker.CategoryChecker;
 import com.almondia.meca.common.configuration.jpa.QueryDslConfiguration;
 import com.almondia.meca.common.domain.vo.Id;
 

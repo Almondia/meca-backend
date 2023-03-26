@@ -1,7 +1,5 @@
 package com.almondia.meca.category.controller;
 
-import java.time.LocalDateTime;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -17,15 +15,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.almondia.meca.category.controller.dto.CategoryResponseDto;
+import com.almondia.meca.category.controller.dto.CategoryWithHistoryResponseDto;
 import com.almondia.meca.category.controller.dto.SaveCategoryRequestDto;
 import com.almondia.meca.category.controller.dto.UpdateCategoryRequestDto;
-import com.almondia.meca.category.infra.querydsl.CategorySearchCriteria;
-import com.almondia.meca.category.infra.querydsl.CategorySortField;
 import com.almondia.meca.category.service.CategoryService;
-import com.almondia.meca.common.controller.dto.OffsetPage;
+import com.almondia.meca.common.controller.dto.CursorPage;
 import com.almondia.meca.common.domain.vo.Id;
-import com.almondia.meca.common.infra.querydsl.SortOption;
-import com.almondia.meca.common.infra.querydsl.SortOrder;
 import com.almondia.meca.member.domain.entity.Member;
 
 import lombok.RequiredArgsConstructor;
@@ -60,29 +55,41 @@ public class CategoryController {
 		return ResponseEntity.ok(responseDto);
 	}
 
+	// @GetMapping("/me")
+	// @Secured("ROLE_USER")
+	// public ResponseEntity<OffsetPage<CategoryResponseDto>> getOffsetPagingCategory(
+	// 	@AuthenticationPrincipal Member member,
+	// 	@RequestParam(name = "offset", defaultValue = "0") int offset,
+	// 	@RequestParam(name = "pageSize", defaultValue = "1000") int pageSize,
+	// 	@RequestParam(name = "sortField", defaultValue = "createdAt") CategorySortField sortField,
+	// 	@RequestParam(name = "sortOrder", defaultValue = "desc") SortOrder sortOrder,
+	// 	@RequestParam(name = "startTitle", required = false) String startTitle,
+	// 	@RequestParam(name = "startCreatedAt", required = false) LocalDateTime startCreatedAt,
+	// 	@RequestParam(name = "endCreatedAt", required = false) LocalDateTime endCreatedAt,
+	// 	@RequestParam(name = "eqShared", defaultValue = "false") Boolean eqShared
+	// ) {
+	// 	CategorySearchCriteria categorySearchCriteria = CategorySearchCriteria.builder()
+	// 		.startsWithTitle(startTitle)
+	// 		.startCreatedAt(startCreatedAt)
+	// 		.endCreatedAt(endCreatedAt)
+	// 		.eqMemberId(member.getMemberId())
+	// 		.eqShared(eqShared)
+	// 		.build();
+	// 	SortOption<CategorySortField> sortOption = SortOption.of(sortField, sortOrder);
+	// 	OffsetPage<CategoryResponseDto> responseDto = categoryService.getOffsetPagingCategoryResponseDto(
+	// 		offset, pageSize, categorySearchCriteria, sortOption);
+	// 	return ResponseEntity.ok(responseDto);
+	// }
+
 	@GetMapping("/me")
 	@Secured("ROLE_USER")
-	public ResponseEntity<OffsetPage<CategoryResponseDto>> getOffsetPagingCategory(
+	public ResponseEntity<CursorPage<CategoryWithHistoryResponseDto>> getCursorPagingCategory(
 		@AuthenticationPrincipal Member member,
-		@RequestParam(name = "offset", defaultValue = "0") int offset,
-		@RequestParam(name = "pageSize", defaultValue = "1000") int pageSize,
-		@RequestParam(name = "sortField", defaultValue = "createdAt") CategorySortField sortField,
-		@RequestParam(name = "sortOrder", defaultValue = "desc") SortOrder sortOrder,
-		@RequestParam(name = "startTitle", required = false) String startTitle,
-		@RequestParam(name = "startCreatedAt", required = false) LocalDateTime startCreatedAt,
-		@RequestParam(name = "endCreatedAt", required = false) LocalDateTime endCreatedAt,
-		@RequestParam(name = "eqShared", defaultValue = "false") Boolean eqShared
+		@RequestParam(value = "hasNext", required = false) Id hasNext,
+		@RequestParam(value = "pageSize") int pageSize
 	) {
-		CategorySearchCriteria categorySearchCriteria = CategorySearchCriteria.builder()
-			.startsWithTitle(startTitle)
-			.startCreatedAt(startCreatedAt)
-			.endCreatedAt(endCreatedAt)
-			.eqMemberId(member.getMemberId())
-			.eqShared(eqShared)
-			.build();
-		SortOption<CategorySortField> sortOption = SortOption.of(sortField, sortOrder);
-		OffsetPage<CategoryResponseDto> responseDto = categoryService.getOffsetPagingCategoryResponseDto(
-			offset, pageSize, categorySearchCriteria, sortOption);
+		CursorPage<CategoryWithHistoryResponseDto> responseDto = categoryService.findCursorPagingCategoryWithHistoryResponse(
+			pageSize, member.getMemberId(), hasNext);
 		return ResponseEntity.ok(responseDto);
 	}
 
