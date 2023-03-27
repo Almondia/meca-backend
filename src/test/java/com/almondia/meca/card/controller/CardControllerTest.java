@@ -23,6 +23,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.almondia.meca.card.application.CardService;
+import com.almondia.meca.card.application.CardSimulationService;
 import com.almondia.meca.card.controller.dto.CardResponseDto;
 import com.almondia.meca.card.controller.dto.SaveCardRequestDto;
 import com.almondia.meca.card.controller.dto.UpdateCardRequestDto;
@@ -45,6 +46,9 @@ class CardControllerTest {
 
 	@MockBean
 	CardService cardService;
+
+	@MockBean
+	CardSimulationService cardSimulationService;
 
 	@MockBean
 	JwtAuthenticationFilter jwtAuthenticationFilter;
@@ -247,6 +251,38 @@ class CardControllerTest {
 				.andExpect(jsonPath("answer").exists())
 				.andExpect(jsonPath("images").exists())
 				.andExpect(jsonPath("title").exists());
+		}
+	}
+
+	/**
+	 *  1. 정상 동작시 200 응답 및 응답 포맷 테스트
+	 */
+	@Nested
+	@DisplayName("카드 시뮬레이션 테스트")
+	class CardSimulationTest {
+
+		@Test
+		@WithMockMember
+		@DisplayName("정상 동작시 200 응답 및 응답 포맷 테스트")
+		void cardSimulationTest() throws Exception {
+			CardResponseDto responseDto = CardResponseDto.builder()
+				.cardId(Id.generateNextId())
+				.question(new Question("question"))
+				.cardType(CardType.OX_QUIZ)
+				.answer("O")
+				.images(List.of(new Image("A"), new Image("B"), new Image("C")))
+				.title(new Title("title1"))
+				.build();
+			Mockito.doReturn(List.of(responseDto)).when(cardSimulationService).simulateRandom(any(), any(), anyInt());
+			mockMvc.perform(
+					get("/api/v1/cards/categories/{categoryId}/simulation?limit=3&algorithm=random", Id.generateNextId()))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$[0].cardId").exists())
+				.andExpect(jsonPath("$[0].question").exists())
+				.andExpect(jsonPath("$[0].cardType").exists())
+				.andExpect(jsonPath("$[0].answer").exists())
+				.andExpect(jsonPath("$[0].images").exists())
+				.andExpect(jsonPath("$[0].title").exists());
 		}
 	}
 }
