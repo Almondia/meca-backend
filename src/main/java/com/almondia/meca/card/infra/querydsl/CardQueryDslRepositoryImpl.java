@@ -57,7 +57,8 @@ public class CardQueryDslRepositoryImpl implements CardQueryDslRepository {
 	public List<Card> findCardByCategoryIdScoreAsc(Id categoryId, int limit) {
 		return queryFactory.selectFrom(card)
 			.leftJoin(cardHistory).on(card.cardId.eq(cardHistory.cardId))
-			.orderBy(cardHistory.score.score.asc())
+			.groupBy(card)
+			.orderBy(cardHistory.score.score.avg().asc())
 			.limit(limit)
 			.fetch();
 	}
