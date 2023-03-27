@@ -35,8 +35,9 @@ import com.almondia.meca.common.infra.querydsl.SortOrder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 /**
- * 1. lastId가 없다면 그냥 처음부터 limit 까지 조회
- * 2. lastId가 있다면 lastId부터 limit까지 조회
+ * 1. findCardByCategoryIdUsingCursorPaging lastId가 없다면 그냥 처음부터 limit 까지 조회
+ * 2. findCardByCategoryIdUsingCursorPaging lastId가 있다면 lastId부터 limit까지 조회
+ * 3. findMapByListOfCardIdAndMemberId시 element는 가져온 카드 쿼리가 같아야 한다
  */
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -105,7 +106,7 @@ class CardQueryDslRepositoryImplTest {
 	}
 
 	@Test
-	@DisplayName("lastId가 없다면 그냥 처음부터 limit 까지 조회")
+	@DisplayName("findCardByCategoryIdUsingCursorPaging lastId가 없다면 그냥 처음부터 limit 까지 조회")
 	void shouldReturnFirstToLimitSizeWhenNoInputLastIdTest() {
 		CardSearchCriteria criteria = CardSearchCriteria.builder()
 			.build();
@@ -116,7 +117,7 @@ class CardQueryDslRepositoryImplTest {
 	}
 
 	@Test
-	@DisplayName("lastId가 있다면 lastId부터 limit까지 조회")
+	@DisplayName("findCardByCategoryIdUsingCursorPaging lastId가 있다면 lastId부터 limit까지 조회")
 	void shouldReturnIndexToLimitSizeWhenNoInputLastIdTest() {
 		List<Card> all = cardRepository.findAll();
 		all.sort(Comparator.comparing(Card::getCreatedAt, Comparator.reverseOrder()));
@@ -133,7 +134,7 @@ class CardQueryDslRepositoryImplTest {
 	}
 
 	@Test
-	@DisplayName("aa")
+	@DisplayName("findMapByListOfCardIdAndMemberId시 element는 가져온 카드 쿼리가 같아야 한다")
 	void shouldReturnMapWhenCallFindCardByListOfCardIdTest() {
 		List<Card> cards = cardRepository.findAll();
 		List<Id> cardIds = List.of(cards.get(0).getCardId(), cards.get(1).getCardId(), cards.get(2).getCardId());
