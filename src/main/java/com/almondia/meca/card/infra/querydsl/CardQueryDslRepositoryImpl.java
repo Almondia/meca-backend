@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import com.almondia.meca.card.domain.entity.Card;
 import com.almondia.meca.card.domain.entity.QCard;
+import com.almondia.meca.cardhistory.domain.entity.QCardHistory;
 import com.almondia.meca.common.domain.vo.Id;
 import com.almondia.meca.common.infra.querydsl.SortFactory;
 import com.almondia.meca.common.infra.querydsl.SortOption;
@@ -20,6 +21,8 @@ import lombok.RequiredArgsConstructor;
 public class CardQueryDslRepositoryImpl implements CardQueryDslRepository {
 
 	private static final QCard card = QCard.card;
+	private static final QCardHistory cardHistory = QCardHistory.cardHistory;
+
 	private final JPAQueryFactory queryFactory;
 
 	@Override
@@ -48,5 +51,15 @@ public class CardQueryDslRepositoryImpl implements CardQueryDslRepository {
 				tuple -> tuple.get(card.cardId),
 				Collectors.mapping(tuple -> tuple.get(card.categoryId), Collectors.toList())
 			));
+	}
+
+	@Override
+	public List<Card> findCardByCategoryIdScoreAsc(Id categoryId, int limit) {
+		return queryFactory.selectFrom(card)
+			.leftJoin(cardHistory).on(card.cardId.eq(cardHistory.cardId))
+			.groupBy(card)
+			.orderBy(cardHistory.score.score.avg().asc())
+			.limit(limit)
+			.fetch();
 	}
 }

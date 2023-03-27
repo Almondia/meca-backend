@@ -13,4 +13,6 @@ public interface CardQueryDslRepository {
 		CardSearchCriteria criteria, SortOption<CardSortField> sortOption);
 
 	Map<Id, List<Id>> findMapByListOfCardIdAndMemberId(List<Id> cardIds, Id memberId);
+
+	List<Card> findCardByCategoryIdScoreAsc(Id categoryId, int limit);
 }

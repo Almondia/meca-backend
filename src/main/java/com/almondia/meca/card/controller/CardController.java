@@ -1,5 +1,7 @@
 package com.almondia.meca.card.controller;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.almondia.meca.card.application.CardService;
+import com.almondia.meca.card.application.CardSimulationService;
 import com.almondia.meca.card.controller.dto.CardResponseDto;
 import com.almondia.meca.card.controller.dto.SaveCardRequestDto;
 import com.almondia.meca.card.controller.dto.UpdateCardRequestDto;
@@ -34,6 +37,7 @@ import lombok.RequiredArgsConstructor;
 public class CardController {
 
 	private final CardService cardService;
+	private final CardSimulationService cardSimulationService;
 
 	@Secured("ROLE_USER")
 	@PostMapping
@@ -79,6 +83,26 @@ public class CardController {
 	) {
 		CardResponseDto responseDto = cardService.findCardById(cardId, member.getMemberId());
 		return ResponseEntity.ok(responseDto);
+	}
+
+	@Secured("ROLE_USER")
+	@GetMapping("/categories/{categoryId}/simulation")
+	public ResponseEntity<List<CardResponseDto>> findCardByCardIdResponseDto(
+		@AuthenticationPrincipal Member member,
+		@PathVariable(value = "categoryId") Id categoryId,
+		@RequestParam(value = "algorithm") String algorithm,
+		@RequestParam(value = "limit") int limit
+	) {
+		if (algorithm.equals("random")) {
+			List<CardResponseDto> random = cardSimulationService.simulateRandom(categoryId,
+				member.getMemberId(), limit);
+			return ResponseEntity.ok(random);
+		}
+		if (algorithm.equals("score")) {
+			List<CardResponseDto> scores = cardSimulationService.simulateScore(categoryId, member.getMemberId(), limit);
+			return ResponseEntity.ok(scores);
+		}
+		throw new IllegalArgumentException("algorithm: random, score 중 하나를 입력해주세요");
 	}
 
 	@Secured("ROLE_USER")
