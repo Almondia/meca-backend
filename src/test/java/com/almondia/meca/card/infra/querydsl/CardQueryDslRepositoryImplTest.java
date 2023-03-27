@@ -145,4 +145,13 @@ class CardQueryDslRepositoryImplTest {
 			.sum();
 		assertThat(sum).isEqualTo(3);
 	}
+
+	@Test
+	@DisplayName("findCardsWithHistoryByCategoryIdScoreAsc")
+	void test() {
+		List<Card> cards = cardRepository.findCardByCategoryIdScoreAsc(
+			categoryId, 5);
+		assertThat(cards).hasSize(5);
+	}
+
 }
