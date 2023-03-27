@@ -34,7 +34,7 @@ class CardSimulationServiceTest {
 
 	@Test
 	@DisplayName("simulateRandom 권한 체크 테스트")
-	void checkAuthorityTest() {
+	void randomCheckAuthorityTest() {
 		Mockito.doReturn(Optional.empty()).when(categoryRepository).findByCategoryIdAndMemberId(any(), any());
 		assertThatThrownBy(
 			() -> cardSimulationService.simulateRandom(Id.generateNextId(), Id.generateNextId(), 100)).isInstanceOf(
@@ -43,7 +43,7 @@ class CardSimulationServiceTest {
 
 	@Test
 	@DisplayName("simulateRandom 응답 테스트")
-	void responseTest() {
+	void randomResponseTest() {
 		List<Card> testData = new CardDataFactory().createTestData();
 		Mockito.doReturn(Optional.of(Category.builder().build()))
 			.when(categoryRepository)
@@ -54,5 +54,29 @@ class CardSimulationServiceTest {
 		List<CardResponseDto> randoms = cardSimulationService.simulateRandom(Id.generateNextId(), Id.generateNextId(),
 			limit);
 		assertThat(randoms).doesNotHaveDuplicates().hasSize(3);
+	}
+
+	@Test
+	@DisplayName("simulateScore 권한 체크")
+	void scoreCheckAuthorityTest() {
+		Mockito.doReturn(Optional.empty()).when(categoryRepository).findByCategoryIdAndMemberId(any(), any());
+		assertThatThrownBy(
+			() -> cardSimulationService.simulateScore(Id.generateNextId(), Id.generateNextId(), 100)).isInstanceOf(
+			AccessDeniedException.class);
+	}
+
+	@Test
+	@DisplayName("simulateScore 정상 응답 테스트")
+	void scoreResponseTest() {
+		List<Card> testData = new CardDataFactory().createTestData();
+		Mockito.doReturn(Optional.of(Category.builder().build()))
+			.when(categoryRepository)
+			.findByCategoryIdAndMemberId(any(), any());
+		Mockito.doReturn(testData.subList(0, 3)).when(cardRepository).findCardByCategoryIdScoreAsc(any(), anyInt());
+		final int limit = 3;
+
+		List<CardResponseDto> scores = cardSimulationService.simulateScore(Id.generateNextId(), Id.generateNextId(),
+			limit);
+		assertThat(scores).doesNotHaveDuplicates().hasSize(3);
 	}
 }
