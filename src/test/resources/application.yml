@@ -64,6 +64,14 @@ spring:
             token-uri: ~~~
             userInfoUri: ~~~
             userNameAttribute: ~~~
+
+aws:
+  s3:
+    bucket: ~~~~
+    accessKey: ~~~
+    secretKey: ~~~~~~
+    region: ~~~~~~~
+
 logging:
   level:
     org:
