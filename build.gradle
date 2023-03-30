@@ -23,9 +23,12 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-web'
 
+    // aws S3
+    implementation 'com.amazonaws:aws-java-sdk-s3:1.12.429'
+    testImplementation 'io.findify:s3mock_2.13:0.2.6'
+
     // querydsl
     implementation 'com.querydsl:querydsl-jpa'
-
     annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jpa"
     annotationProcessor "jakarta.persistence:jakarta.persistence-api"
     annotationProcessor "jakarta.annotation:jakarta.annotation-api"
