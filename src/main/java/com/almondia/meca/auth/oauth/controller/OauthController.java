@@ -1,4 +1,4 @@
-package com.almondia.meca.auth.oauth;
+package com.almondia.meca.auth.oauth.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.almondia.meca.auth.dto.AccessTokenResponseDto;
 import com.almondia.meca.auth.jwt.service.JwtTokenService;
+import com.almondia.meca.auth.oauth.controller.dto.AccessTokenResponseDto;
 import com.almondia.meca.auth.oauth.infra.attribute.OAuth2UserAttribute;
 import com.almondia.meca.auth.oauth.service.Oauth2Service;
 import com.almondia.meca.member.application.MemberService;

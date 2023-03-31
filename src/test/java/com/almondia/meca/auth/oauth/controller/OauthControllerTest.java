@@ -1,4 +1,4 @@
-package com.almondia.meca.auth.oauth;
+package com.almondia.meca.auth.oauth.controller;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
