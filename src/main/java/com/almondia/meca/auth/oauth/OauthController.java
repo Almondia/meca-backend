@@ -1,4 +1,4 @@
-package com.almondia.meca.auth;
+package com.almondia.meca.auth.oauth;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @RequestMapping("/api/v1/oauth")
 @Slf4j
-public class AuthController {
+public class OauthController {
 
 	private final Oauth2Service oauth2Service;
 	private final MemberService memberService;

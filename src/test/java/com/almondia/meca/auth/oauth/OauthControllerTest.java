@@ -1,4 +1,4 @@
-package com.almondia.meca.auth;
+package com.almondia.meca.auth.oauth;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -32,9 +32,9 @@ import com.almondia.meca.member.domain.vo.OAuthType;
  *  3. oauth api 서버에 문제가 생겨 응답에 지장이 생긴 경우 500 응답
  *  4. 사용자 입력 오류시 400 반환
  */
-@WebMvcTest({AuthController.class})
+@WebMvcTest({OauthController.class})
 @Import({SecurityConfiguration.class, JacksonConfiguration.class})
-class AuthControllerTest {
+class OauthControllerTest {
 
 	@Autowired
 	MockMvc mockMvc;
