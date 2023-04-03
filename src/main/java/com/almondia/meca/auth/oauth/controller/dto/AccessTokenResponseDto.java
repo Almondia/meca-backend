@@ -1,4 +1,4 @@
-package com.almondia.meca.auth.dto;
+package com.almondia.meca.auth.oauth.controller.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
