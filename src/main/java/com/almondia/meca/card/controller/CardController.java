@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.almondia.meca.card.application.CardService;
 import com.almondia.meca.card.application.CardSimulationService;
+import com.almondia.meca.card.controller.dto.CardCountResponseDto;
 import com.almondia.meca.card.controller.dto.CardResponseDto;
 import com.almondia.meca.card.controller.dto.SaveCardRequestDto;
 import com.almondia.meca.card.controller.dto.UpdateCardRequestDto;
@@ -103,6 +104,16 @@ public class CardController {
 			return ResponseEntity.ok(scores);
 		}
 		throw new IllegalArgumentException("algorithm: random, score 중 하나를 입력해주세요");
+	}
+
+	@Secured("ROLE_USER")
+	@GetMapping("/categories/{categoryId}/me/count")
+	public ResponseEntity<CardCountResponseDto> countCards(
+		@AuthenticationPrincipal Member member,
+		@PathVariable(value = "categoryId") Id categoryId
+	) {
+		long count = cardService.findCardsCountByCategoryId(categoryId, member.getMemberId());
+		return ResponseEntity.ok(new CardCountResponseDto(count));
 	}
 
 	@Secured("ROLE_USER")

@@ -154,4 +154,11 @@ class CardQueryDslRepositoryImplTest {
 		assertThat(cards).hasSize(5);
 	}
 
+	@Test
+	@DisplayName("countCardsByCategoryId 카드 총 조회")
+	void shouldReturnCountWhenCallCountCardsByCategoryIdTest() {
+		long count = cardRepository.countCardsByCategoryId(categoryId);
+		assertThat(count).isEqualTo(5);
+	}
+
 }

@@ -89,12 +89,19 @@ public class CardService {
 		cardHistories.forEach(CardHistory::delete);
 	}
 
+	@Transactional(readOnly = true)
 	public CardResponseDto findCardById(Id cardId, Id memberId) {
 		Card card = cardChecker.checkAuthority(cardId, memberId);
 		if (card.isDeleted()) {
 			throw new IllegalArgumentException("삭제된 카드입니다");
 		}
 		return CardMapper.cardToDto(card);
+	}
+
+	@Transactional(readOnly = true)
+	public long findCardsCountByCategoryId(Id categoryId, Id memberId) {
+		categoryChecker.checkAuthority(categoryId, memberId);
+		return cardRepository.countCardsByCategoryId(categoryId);
 	}
 
 	private void updateCard(UpdateCardRequestDto updateCardRequestDto, Id memberId, Card card) {

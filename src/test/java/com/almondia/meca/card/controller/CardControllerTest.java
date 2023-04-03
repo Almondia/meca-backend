@@ -285,4 +285,20 @@ class CardControllerTest {
 				.andExpect(jsonPath("$[0].title").exists());
 		}
 	}
+
+	@Nested
+	@DisplayName("카테고리 별 카드 갯수 조회 API")
+	class FindCardCountByCategoryTest {
+
+		@Test
+		@WithMockMember
+		@DisplayName("정상 동작시 200 응답 및 응답 포맷 테스트")
+		void shouldReturn200OKAndResponseFormatTest() throws Exception {
+			Mockito.doReturn(1L)
+				.when(cardService).findCardsCountByCategoryId(any(), any());
+			mockMvc.perform(get("/api/v1/cards//categories/{categoryId}/me/count", Id.generateNextId()))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("count").exists());
+		}
+	}
 }
