@@ -312,4 +312,52 @@ class CardServiceTest {
 			));
 		}
 	}
+
+	/**
+	 * 1. 권한이 없는데 접근한 경우
+	 * 2. 카테고리별 카드 총 조회 API
+	 */
+	@Nested
+	@DisplayName("카테고리별 카드 총 조회 API")
+	class SearchCardsCountByCategoryIdTest {
+
+		Id cardId1 = Id.generateNextId();
+		Id categoryId = Id.generateNextId();
+		Id memberId = Id.generateNextId();
+
+		@Test
+		@DisplayName("권한이 없는데 접근한 경우")
+		void shouldThrowExceptionWhenNotMyCategoryTest() {
+			initDataSetting();
+			assertThatThrownBy(() -> cardService.findCardsCountByCategoryId(Id.generateNextId(), Id.generateNextId()))
+				.isInstanceOf(AccessDeniedException.class);
+		}
+
+		@Test
+		@DisplayName("카테고리별 카드 총 조회 API")
+		void shouldReturnCardsCountByCategoryIdTest() {
+			initDataSetting();
+			assertThat(cardService.findCardsCountByCategoryId(categoryId, memberId)).isEqualTo(1);
+		}
+
+		private void initDataSetting() {
+			cardRepository.saveAll(List.of(
+				MultiChoiceCard.builder()
+					.cardId(cardId1)
+					.title(new Title("title3"))
+					.cardType(CardType.MULTI_CHOICE)
+					.categoryId(categoryId)
+					.memberId(memberId)
+					.question(new Question("question"))
+					.multiChoiceAnswer(new MultiChoiceAnswer(1))
+					.build()
+			));
+
+			em.persist(Category.builder()
+				.title(new com.almondia.meca.category.domain.vo.Title("title"))
+				.memberId(memberId)
+				.categoryId(categoryId)
+				.build());
+		}
+	}
 }
