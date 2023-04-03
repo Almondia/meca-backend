@@ -91,6 +91,9 @@ public class CardService {
 
 	public CardResponseDto findCardById(Id cardId, Id memberId) {
 		Card card = cardChecker.checkAuthority(cardId, memberId);
+		if (card.isDeleted()) {
+			throw new IllegalArgumentException("삭제된 카드입니다");
+		}
 		return CardMapper.cardToDto(card);
 	}
 

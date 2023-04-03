@@ -263,6 +263,7 @@ class CardServiceTest {
 	/**
 	 * 1. 권한 체크 수행 여부 테스트
 	 * 2. 종류별 카드 타입 변환이 잘 이루어지는지 확인
+	 * 3. 카드가 존재하지 않을 경우 예외 발생
 	 */
 	@Nested
 	@DisplayName("회원 카드 단일 조회")
@@ -285,6 +286,16 @@ class CardServiceTest {
 			initDataSetting();
 			CardResponseDto card = cardService.findCardById(cardId1, memberId);
 			assertThat(card.getCardType()).isEqualTo(CardType.MULTI_CHOICE);
+		}
+
+		@Test
+		@DisplayName("카드가 존재하지 않을 경우 예외 발생")
+		void shouldThrowExceptionWhenCardIsDeleted() {
+			initDataSetting();
+			Card card = cardRepository.findById(cardId1).orElseThrow();
+			card.delete();
+			assertThatThrownBy(() -> cardService.findCardById(cardId1, memberId))
+				.isInstanceOf(IllegalArgumentException.class);
 		}
 
 		private void initDataSetting() {
