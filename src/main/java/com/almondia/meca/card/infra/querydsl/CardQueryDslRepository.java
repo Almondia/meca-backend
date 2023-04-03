@@ -15,4 +15,6 @@ public interface CardQueryDslRepository {
 	Map<Id, List<Id>> findMapByListOfCardIdAndMemberId(List<Id> cardIds, Id memberId);
 
 	List<Card> findCardByCategoryIdScoreAsc(Id categoryId, int limit);
+
+	long countCardsByCategoryId(Id categoryId);
 }

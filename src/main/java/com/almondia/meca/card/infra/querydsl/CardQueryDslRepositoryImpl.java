@@ -62,4 +62,14 @@ public class CardQueryDslRepositoryImpl implements CardQueryDslRepository {
 			.limit(limit)
 			.fetch();
 	}
+
+	@Override
+	public long countCardsByCategoryId(Id categoryId) {
+		Long count = queryFactory.select(card.count())
+			.from(card)
+			.where(card.isDeleted.eq(false)
+				.and(card.categoryId.eq(categoryId)))
+			.fetchOne();
+		return count == null ? 0 : count;
+	}
 }
