@@ -61,4 +61,16 @@ class PreSignedControllerTest {
 			.andExpect(jsonPath("url").exists())
 			.andExpect(jsonPath("expirationDate").exists());
 	}
+
+	@Test
+	@DisplayName("응답 성공시 Multi Download PresignedUrl를 리턴해야함")
+	@WithMockMember
+	void successResponseOkAndGetMultiDownloadUrlTest() throws Exception {
+		URL url = UriComponentsBuilder.fromUriString("https://www.abc.com").build().toUri().toURL();
+		Mockito.doReturn(url).when(s3PreSignedUrlRequest).requestGetPreSignedUrl(any(), any());
+		mockMvc.perform(get("/api/v1/presign/images/download/all?objectKey=abc&objectKey=def"))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("urls").exists())
+			.andExpect(jsonPath("expirationDate").exists());
+	}
 }

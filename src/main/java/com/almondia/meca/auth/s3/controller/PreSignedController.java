@@ -2,7 +2,9 @@ package com.almondia.meca.auth.s3.controller;
 
 import java.time.Instant;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.almondia.meca.auth.s3.controller.dto.DownloadPreSignedUrlResponseDto;
+import com.almondia.meca.auth.s3.controller.dto.MultiDownloadPreSignedUrlResponseDto;
 import com.almondia.meca.auth.s3.controller.dto.UploadPreSignedUrlResponseDto;
 import com.almondia.meca.auth.s3.domain.vo.ImageExtension;
 import com.almondia.meca.auth.s3.domain.vo.Purpose;
@@ -49,6 +52,18 @@ public class PreSignedController {
 		Date expirationDate = Date.from(Instant.now().plusSeconds(300L));
 		String url = s3PreSignedUrlRequest.requestGetPreSignedUrl(objectKey, expirationDate).toString();
 		return ResponseEntity.ok(new DownloadPreSignedUrlResponseDto(url, expirationDate));
+	}
+
+	@GetMapping("/images/download/all")
+	@Secured("ROLE_USER")
+	public ResponseEntity<MultiDownloadPreSignedUrlResponseDto> getAllDownloadPreSignedUrl(
+		@RequestParam(name = "objectKey") List<String> objectKeys
+	) {
+		Date expirationDate = Date.from(Instant.now().plusSeconds(300L));
+		List<String> urls = objectKeys.stream()
+			.map(objectKey -> s3PreSignedUrlRequest.requestGetPreSignedUrl(objectKey, expirationDate).toString())
+			.collect(Collectors.toList());
+		return ResponseEntity.ok(new MultiDownloadPreSignedUrlResponseDto(urls, expirationDate));
 	}
 
 	private String makeObjectKey(Member member, Purpose purpose, ImageExtension extension) {
