@@ -17,7 +17,7 @@ public enum ImageExtension {
 
 	public static ImageExtension fromString(String extension) {
 		for (ImageExtension imageExtension : ImageExtension.values()) {
-			if (imageExtension.extension.equals(extension)) {
+			if (imageExtension.extension.equalsIgnoreCase(extension)) {
 				return imageExtension;
 			}
 		}
