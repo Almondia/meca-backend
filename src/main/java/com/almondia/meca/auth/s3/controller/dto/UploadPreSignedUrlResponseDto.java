@@ -7,13 +7,13 @@ import java.util.Date;
 import lombok.Getter;
 
 @Getter
-public class PreSignedUrlResponseDto {
+public class UploadPreSignedUrlResponseDto {
 
 	private final String url;
 	private final LocalDateTime expirationDate;
 	private final String objectKey;
 
-	public PreSignedUrlResponseDto(String url, Date date, String objectKey) {
+	public UploadPreSignedUrlResponseDto(String url, Date date, String objectKey) {
 		this.url = url;
 		this.expirationDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
 		this.objectKey = objectKey;
