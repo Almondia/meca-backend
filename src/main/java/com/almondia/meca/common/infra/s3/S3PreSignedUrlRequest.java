@@ -26,4 +26,12 @@ public class S3PreSignedUrlRequest {
 				.withExpiration(expiration);
 		return s3Client.generatePresignedUrl(generatePresignedUrlRequest);
 	}
+
+	public URL requestGetPreSignedUrl(String objectKey, Date expiration) {
+		GeneratePresignedUrlRequest generatePresignedUrlRequest =
+			new GeneratePresignedUrlRequest(s3Properties.getBucket(), objectKey)
+				.withMethod(HttpMethod.GET)
+				.withExpiration(expiration);
+		return s3Client.generatePresignedUrl(generatePresignedUrlRequest);
+	}
 }
