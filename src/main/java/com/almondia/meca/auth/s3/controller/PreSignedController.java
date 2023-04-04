@@ -27,7 +27,7 @@ public class PreSignedController {
 
 	private final S3PreSignedUrlRequest s3PreSignedUrlRequest;
 
-	@GetMapping("/s3/post")
+	@GetMapping("/images/put")
 	@Secured("ROLE_USER")
 	public ResponseEntity<PreSignedUrlResponseDto> getPostPreSignedUrl(
 		@AuthenticationPrincipal Member member,
@@ -37,7 +37,7 @@ public class PreSignedController {
 		String objectKey = makeObjectKey(member, purpose, extension);
 		Date expirationDate = Date.from(Instant.now().plusSeconds(300L));
 		String url = s3PreSignedUrlRequest.requestPutPreSignedUrl(objectKey, expirationDate).toString();
-		return ResponseEntity.ok(new PreSignedUrlResponseDto(url, expirationDate));
+		return ResponseEntity.ok(new PreSignedUrlResponseDto(url, expirationDate, objectKey));
 	}
 
 	private String makeObjectKey(Member member, Purpose purpose, ImageExtension extension) {
