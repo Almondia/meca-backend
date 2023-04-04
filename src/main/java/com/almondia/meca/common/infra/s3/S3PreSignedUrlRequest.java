@@ -19,10 +19,10 @@ public class S3PreSignedUrlRequest {
 	private final AmazonS3Client s3Client;
 	private final S3Properties s3Properties;
 
-	public URL requestPostPreSignedUrl(String objectKey, Date expiration) {
+	public URL requestPutPreSignedUrl(String objectKey, Date expiration) {
 		GeneratePresignedUrlRequest generatePresignedUrlRequest =
 			new GeneratePresignedUrlRequest(s3Properties.getBucket(), objectKey)
-				.withMethod(HttpMethod.POST)
+				.withMethod(HttpMethod.PUT)
 				.withExpiration(expiration);
 		return s3Client.generatePresignedUrl(generatePresignedUrlRequest);
 	}

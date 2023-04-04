@@ -36,7 +36,7 @@ public class PreSignedController {
 		String objectKey =
 			member.getMemberId().toString() + "/" + purpose.getDetails() + "/" + UUID.randomUUID() + "." + extension;
 		Date expirationDate = Date.from(Instant.now().plusSeconds(300L));
-		String url = s3PreSignedUrlRequest.requestPostPreSignedUrl(objectKey, expirationDate).toString();
+		String url = s3PreSignedUrlRequest.requestPutPreSignedUrl(objectKey, expirationDate).toString();
 		return ResponseEntity.ok(new PreSignedUrlResponseDto(url, expirationDate));
 	}
 }
