@@ -43,7 +43,7 @@ class PreSignedControllerTest {
 	void successResponseOkAndGetUrlTest() throws Exception {
 		URL url = UriComponentsBuilder.fromUriString("https://www.abc.com").build().toUri().toURL();
 		Mockito.doReturn(url).when(s3PreSignedUrlRequest).requestPutPreSignedUrl(any(), any());
-		mockMvc.perform(get("/api/v1/presign/images/put?purpose=thumbnail&extension=jpg"))
+		mockMvc.perform(get("/api/v1/presign/images/upload?purpose=thumbnail&extension=jpg"))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("url").exists())
 			.andExpect(jsonPath("expirationDate").exists())

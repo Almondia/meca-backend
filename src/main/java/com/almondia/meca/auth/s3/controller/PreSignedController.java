@@ -27,7 +27,7 @@ public class PreSignedController {
 
 	private final S3PreSignedUrlRequest s3PreSignedUrlRequest;
 
-	@GetMapping("/images/put")
+	@GetMapping("/images/upload")
 	@Secured("ROLE_USER")
 	public ResponseEntity<PreSignedUrlResponseDto> getPostPreSignedUrl(
 		@AuthenticationPrincipal Member member,
