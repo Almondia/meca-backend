@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.almondia.meca.auth.s3.controller.dto.PreSignedUrlResponseDto;
+import com.almondia.meca.auth.s3.domain.vo.ImageExtension;
 import com.almondia.meca.auth.s3.domain.vo.Purpose;
 import com.almondia.meca.common.infra.s3.S3PreSignedUrlRequest;
 import com.almondia.meca.member.domain.entity.Member;
@@ -31,12 +32,16 @@ public class PreSignedController {
 	public ResponseEntity<PreSignedUrlResponseDto> getPostPreSignedUrl(
 		@AuthenticationPrincipal Member member,
 		@RequestParam(name = "purpose") Purpose purpose,
-		@RequestParam(name = "extension") String extension
+		@RequestParam(name = "extension") ImageExtension extension
 	) {
-		String objectKey =
-			member.getMemberId().toString() + "/" + purpose.getDetails() + "/" + UUID.randomUUID() + "." + extension;
+		String objectKey = makeObjectKey(member, purpose, extension);
 		Date expirationDate = Date.from(Instant.now().plusSeconds(300L));
 		String url = s3PreSignedUrlRequest.requestPutPreSignedUrl(objectKey, expirationDate).toString();
 		return ResponseEntity.ok(new PreSignedUrlResponseDto(url, expirationDate));
+	}
+
+	private String makeObjectKey(Member member, Purpose purpose, ImageExtension extension) {
+		return member.getMemberId().toString() + "/" + purpose.getDetails() + "/" + UUID.randomUUID() + "."
+			+ extension.getExtension();
 	}
 }

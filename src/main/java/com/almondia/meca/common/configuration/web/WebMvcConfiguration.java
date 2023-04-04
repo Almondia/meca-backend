@@ -15,5 +15,6 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
 		registry.addConverter(new StringToLocalDateTimeConverter());
 		registry.addConverter(new StringToIdConverter());
 		registry.addConverter(new StringToPurposeConverter());
+		registry.addConverter(new StringToImageExtensionConverter());
 	}
 }
