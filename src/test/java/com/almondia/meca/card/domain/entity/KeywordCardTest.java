@@ -32,7 +32,8 @@ class KeywordCardTest {
 		assertThat(entityType).isNotNull();
 		assertThat(entityType.getName()).isEqualTo("KeywordCard");
 		assertThat(entityType.getAttributes()).extracting("name")
-			.containsExactlyInAnyOrder("memberId", "question", "isDeleted", "cardId", "categoryId", "title", "images",
+			.containsExactlyInAnyOrder("editText", "memberId", "question", "isDeleted", "cardId", "categoryId", "title",
+				"images",
 				"createdAt",
 				"modifiedAt", "keywordAnswer");
 	}

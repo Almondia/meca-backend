@@ -18,6 +18,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 
 import com.almondia.meca.card.domain.vo.CardType;
+import com.almondia.meca.card.domain.vo.EditText;
 import com.almondia.meca.card.domain.vo.Image;
 import com.almondia.meca.card.domain.vo.KeywordAnswer;
 import com.almondia.meca.card.domain.vo.MultiChoiceAnswer;
@@ -37,6 +38,7 @@ import com.almondia.meca.common.domain.vo.Id;
  * 6. images 변경 메서드 정상 동작 테스트
  * 7. question 변경 메서드 정상 동작 테스트
  * 8. categoryId 변경 메서드 정상 동작 테스트
+ * 9. changeEditText 동작 테스트
  */
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -53,7 +55,8 @@ class CardTest {
 		assertThat(entityType).isNotNull();
 		assertThat(entityType.getName()).isEqualTo("Card");
 		assertThat(entityType.getAttributes()).extracting("name")
-			.containsExactlyInAnyOrder("question", "memberId", "isDeleted", "cardId", "categoryId", "title", "images",
+			.containsExactlyInAnyOrder("editText", "question", "memberId", "isDeleted", "cardId", "categoryId", "title",
+				"images",
 				"createdAt", "modifiedAt");
 	}
 
@@ -231,5 +234,21 @@ class CardTest {
 		assertThat(((Card)oxCard).getCardType()).isEqualTo(CardType.OX_QUIZ);
 		assertThat(((Card)keywordCard).getCardType()).isEqualTo(CardType.KEYWORD);
 		assertThat(((Card)multiChoiceCard).getCardType()).isEqualTo(CardType.MULTI_CHOICE);
+	}
+
+	@Test
+	@DisplayName("changeEditText 메서드 정상 동작 테스트")
+	void changeEditTextTest() {
+		OxCard oxCard = OxCard.builder()
+			.cardId(Id.generateNextId())
+			.cardType(CardType.OX_QUIZ)
+			.categoryId(Id.generateNextId())
+			.images(List.of(new Image("image1"), new Image("image2")))
+			.title(new Title("title"))
+			.oxAnswer(OxAnswer.O)
+			.isDeleted(true)
+			.build();
+		oxCard.changeEditText(new EditText("hello"));
+		assertThat(oxCard).hasFieldOrPropertyWithValue("editText", new EditText("hello"));
 	}
 }
