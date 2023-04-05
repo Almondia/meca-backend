@@ -31,6 +31,7 @@ import com.almondia.meca.card.domain.repository.MultiChoiceCardRepository;
 import com.almondia.meca.card.domain.repository.OxCardRepository;
 import com.almondia.meca.card.domain.service.CardChecker;
 import com.almondia.meca.card.domain.vo.CardType;
+import com.almondia.meca.card.domain.vo.EditText;
 import com.almondia.meca.card.domain.vo.Image;
 import com.almondia.meca.card.domain.vo.MultiChoiceAnswer;
 import com.almondia.meca.card.domain.vo.OxAnswer;
@@ -74,6 +75,7 @@ class CardServiceTest {
 	 * 1. oxCard type정보가 들어가면 oxCard 정보가 저장되는지 검증
 	 * 2. keywordCard type 정보가 들어가면 keywordCard 정보가 저장되는지 검증
 	 * 3. multi choice card type 정보가 들어가면 MultiChoiceCard 정보가 저장되는 지 검증
+	 * 4. 요청시 editText 속성이 null이더라도 정삭 동작해야 함
 	 */
 	@Nested
 	@DisplayName("카드 저장 테스트")
@@ -108,12 +110,32 @@ class CardServiceTest {
 			assertThat(all).isNotEmpty();
 		}
 
+		@Test
+		@DisplayName("요청시 editText 속성이 null이더라도 정삭 동작해야 함")
+		void shouldSaveCardWithNullEditTextTest() {
+			cardService.saveCard(
+				makeSaveCardRequestWithoutEditText()
+					.editText(null)
+					.answer(OxAnswer.O.toString())
+					.cardType(CardType.OX_QUIZ).build(),
+				Id.generateNextId());
+			List<Card> all = cardRepository.findAll();
+			assertThat(all).isNotEmpty();
+		}
+
 		private SaveCardRequestDto.SaveCardRequestDtoBuilder makeSaveCardRequest() {
 			return SaveCardRequestDto.builder()
 				.title(new Title("title"))
 				.question(new Question("question"))
 				.categoryId(Id.generateNextId())
-				.images("A,B,C");
+				.editText(new EditText("hello"));
+		}
+
+		private SaveCardRequestDto.SaveCardRequestDtoBuilder makeSaveCardRequestWithoutEditText() {
+			return SaveCardRequestDto.builder()
+				.title(new Title("title"))
+				.question(new Question("question"))
+				.categoryId(Id.generateNextId());
 		}
 	}
 
