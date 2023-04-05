@@ -28,7 +28,7 @@ import com.almondia.meca.card.controller.dto.CardResponseDto;
 import com.almondia.meca.card.controller.dto.SaveCardRequestDto;
 import com.almondia.meca.card.controller.dto.UpdateCardRequestDto;
 import com.almondia.meca.card.domain.vo.CardType;
-import com.almondia.meca.card.domain.vo.Image;
+import com.almondia.meca.card.domain.vo.EditText;
 import com.almondia.meca.card.domain.vo.OxAnswer;
 import com.almondia.meca.card.domain.vo.Question;
 import com.almondia.meca.card.domain.vo.Title;
@@ -81,7 +81,7 @@ class CardControllerTest {
 			SaveCardRequestDto saveCardRequestDto = SaveCardRequestDto.builder()
 				.title(new Title("title"))
 				.question(new Question("hello"))
-				.images("A,B,C,D")
+				.editText(new EditText("hello"))
 				.categoryId(Id.generateNextId())
 				.cardType(CardType.OX_QUIZ)
 				.answer(OxAnswer.O.toString())
@@ -94,7 +94,7 @@ class CardControllerTest {
 				.andExpect(jsonPath("cardId").exists())
 				.andExpect(jsonPath("title").exists())
 				.andExpect(jsonPath("question").exists())
-				.andExpect(jsonPath("images").exists())
+				.andExpect(jsonPath("editText").exists())
 				.andExpect(jsonPath("categoryId").exists())
 				.andExpect(jsonPath("cardType").exists())
 				.andExpect(jsonPath("createdAt").exists())
@@ -108,10 +108,10 @@ class CardControllerTest {
 				.cardId(Id.generateNextId())
 				.title(new Title("title"))
 				.question(new Question("hello"))
-				.images(List.of(new Image("A"), new Image("B"), new Image("C")))
 				.categoryId(Id.generateNextId())
 				.cardType(CardType.OX_QUIZ)
 				.answer(OxAnswer.O.name())
+				.editText(new EditText("hello"))
 				.createdAt(LocalDateTime.now())
 				.modifiedAt(LocalDateTime.now())
 				.build();
@@ -144,7 +144,7 @@ class CardControllerTest {
 				.andExpect(jsonPath("cardId").exists())
 				.andExpect(jsonPath("title").exists())
 				.andExpect(jsonPath("question").exists())
-				.andExpect(jsonPath("images").exists())
+				.andExpect(jsonPath("editText").exists())
 				.andExpect(jsonPath("categoryId").exists())
 				.andExpect(jsonPath("cardType").exists())
 				.andExpect(jsonPath("createdAt").exists())
@@ -158,10 +158,10 @@ class CardControllerTest {
 				.cardId(Id.generateNextId())
 				.title(new Title("title"))
 				.question(new Question("hello"))
-				.images(List.of(new Image("A"), new Image("B"), new Image("C")))
 				.categoryId(Id.generateNextId())
 				.cardType(CardType.OX_QUIZ)
 				.answer(OxAnswer.O.name())
+				.editText(new EditText("hello"))
 				.createdAt(LocalDateTime.now())
 				.modifiedAt(LocalDateTime.now())
 				.build();
@@ -197,10 +197,10 @@ class CardControllerTest {
 				.cardId(Id.generateNextId())
 				.title(new Title("title"))
 				.question(new Question("hello"))
-				.images(List.of(new Image("A"), new Image("B"), new Image("C")))
 				.categoryId(Id.generateNextId())
 				.cardType(CardType.OX_QUIZ)
 				.answer(OxAnswer.O.name())
+				.editText(new EditText("hello"))
 				.createdAt(LocalDateTime.now())
 				.modifiedAt(LocalDateTime.now())
 				.build();
@@ -239,7 +239,7 @@ class CardControllerTest {
 				.question(new Question("question"))
 				.cardType(CardType.OX_QUIZ)
 				.answer("O")
-				.images(List.of(new Image("A"), new Image("B"), new Image("C")))
+				.editText(new EditText("hello"))
 				.title(new Title("title1"))
 				.build();
 			Mockito.doReturn(responseDto).when(cardService).findCardById(any(), any());
@@ -249,7 +249,7 @@ class CardControllerTest {
 				.andExpect(jsonPath("question").exists())
 				.andExpect(jsonPath("cardType").exists())
 				.andExpect(jsonPath("answer").exists())
-				.andExpect(jsonPath("images").exists())
+				.andExpect(jsonPath("editText").exists())
 				.andExpect(jsonPath("title").exists());
 		}
 	}
@@ -270,7 +270,7 @@ class CardControllerTest {
 				.question(new Question("question"))
 				.cardType(CardType.OX_QUIZ)
 				.answer("O")
-				.images(List.of(new Image("A"), new Image("B"), new Image("C")))
+				.editText(new EditText("hello"))
 				.title(new Title("title1"))
 				.build();
 			Mockito.doReturn(List.of(responseDto)).when(cardSimulationService).simulateRandom(any(), any(), anyInt());
@@ -281,7 +281,7 @@ class CardControllerTest {
 				.andExpect(jsonPath("$[0].question").exists())
 				.andExpect(jsonPath("$[0].cardType").exists())
 				.andExpect(jsonPath("$[0].answer").exists())
-				.andExpect(jsonPath("$[0].images").exists())
+				.andExpect(jsonPath("$[0].editText").exists())
 				.andExpect(jsonPath("$[0].title").exists());
 		}
 	}
