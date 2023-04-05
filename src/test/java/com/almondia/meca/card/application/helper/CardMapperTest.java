@@ -3,7 +3,6 @@ package com.almondia.meca.card.application.helper;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.*;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
@@ -12,7 +11,7 @@ import com.almondia.meca.card.domain.entity.KeywordCard;
 import com.almondia.meca.card.domain.entity.MultiChoiceCard;
 import com.almondia.meca.card.domain.entity.OxCard;
 import com.almondia.meca.card.domain.vo.CardType;
-import com.almondia.meca.card.domain.vo.Image;
+import com.almondia.meca.card.domain.vo.EditText;
 import com.almondia.meca.card.domain.vo.KeywordAnswer;
 import com.almondia.meca.card.domain.vo.MultiChoiceAnswer;
 import com.almondia.meca.card.domain.vo.OxAnswer;
@@ -33,7 +32,7 @@ class CardMapperTest {
 			.hasFieldOrProperty("title")
 			.hasFieldOrProperty("question")
 			.hasFieldOrProperty("categoryId")
-			.hasFieldOrProperty("images")
+			.hasFieldOrProperty("editText")
 			.hasFieldOrProperty("cardType")
 			.hasFieldOrProperty("createdAt")
 			.hasFieldOrProperty("modifiedAt")
@@ -48,7 +47,7 @@ class CardMapperTest {
 			.hasFieldOrProperty("title")
 			.hasFieldOrProperty("question")
 			.hasFieldOrProperty("categoryId")
-			.hasFieldOrProperty("images")
+			.hasFieldOrProperty("editText")
 			.hasFieldOrProperty("cardType")
 			.hasFieldOrProperty("createdAt")
 			.hasFieldOrProperty("modifiedAt")
@@ -63,7 +62,7 @@ class CardMapperTest {
 			.hasFieldOrProperty("title")
 			.hasFieldOrProperty("question")
 			.hasFieldOrProperty("categoryId")
-			.hasFieldOrProperty("images")
+			.hasFieldOrProperty("editText")
 			.hasFieldOrProperty("cardType")
 			.hasFieldOrProperty("createdAt")
 			.hasFieldOrProperty("modifiedAt")
@@ -78,7 +77,7 @@ class CardMapperTest {
 			.hasFieldOrProperty("title")
 			.hasFieldOrProperty("question")
 			.hasFieldOrProperty("categoryId")
-			.hasFieldOrProperty("images")
+			.hasFieldOrProperty("editText")
 			.hasFieldOrProperty("cardType")
 			.hasFieldOrProperty("createdAt")
 			.hasFieldOrProperty("modifiedAt")
@@ -90,7 +89,7 @@ class CardMapperTest {
 			.cardId(Id.generateNextId())
 			.title(new Title("title"))
 			.question(new Question("question"))
-			.images(List.of(new Image("A"), new Image("B"), new Image("C")))
+			.editText(new EditText("editText"))
 			.categoryId(Id.generateNextId())
 			.cardType(CardType.OX_QUIZ)
 			.isDeleted(false)
@@ -105,7 +104,7 @@ class CardMapperTest {
 			.cardId(Id.generateNextId())
 			.title(new Title("title"))
 			.question(new Question("question"))
-			.images(List.of(new Image("A"), new Image("B"), new Image("C")))
+			.editText(new EditText("editText"))
 			.categoryId(Id.generateNextId())
 			.cardType(CardType.OX_QUIZ)
 			.isDeleted(false)
@@ -120,7 +119,7 @@ class CardMapperTest {
 			.cardId(Id.generateNextId())
 			.title(new Title("title"))
 			.question(new Question("question"))
-			.images(List.of(new Image("A"), new Image("B"), new Image("C")))
+			.editText(new EditText("editText"))
 			.categoryId(Id.generateNextId())
 			.cardType(CardType.OX_QUIZ)
 			.isDeleted(false)
