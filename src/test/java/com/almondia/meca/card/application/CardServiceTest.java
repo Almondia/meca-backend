@@ -33,6 +33,7 @@ import com.almondia.meca.card.domain.service.CardChecker;
 import com.almondia.meca.card.domain.vo.CardType;
 import com.almondia.meca.card.domain.vo.EditText;
 import com.almondia.meca.card.domain.vo.Image;
+import com.almondia.meca.card.domain.vo.KeywordAnswer;
 import com.almondia.meca.card.domain.vo.MultiChoiceAnswer;
 import com.almondia.meca.card.domain.vo.OxAnswer;
 import com.almondia.meca.card.domain.vo.Question;
@@ -87,6 +88,10 @@ class CardServiceTest {
 				Id.generateNextId());
 			List<OxCard> all = oxCardRepository.findAll();
 			assertThat(all).isNotEmpty();
+			assertThat(all.get(0))
+				.hasFieldOrPropertyWithValue("oxAnswer", OxAnswer.O)
+				.hasFieldOrPropertyWithValue("question", new Question("question"))
+				.hasFieldOrPropertyWithValue("title", new Title("title"));
 		}
 
 		@Test
@@ -97,6 +102,10 @@ class CardServiceTest {
 				.cardType(CardType.KEYWORD).build(), Id.generateNextId());
 			List<KeywordCard> all = keywordCardRepository.findAll();
 			assertThat(all).isNotEmpty();
+			assertThat(all.get(0))
+				.hasFieldOrPropertyWithValue("keywordAnswer", new KeywordAnswer("asdf"))
+				.hasFieldOrPropertyWithValue("question", new Question("question"))
+				.hasFieldOrPropertyWithValue("title", new Title("title"));
 		}
 
 		@Test
@@ -108,6 +117,10 @@ class CardServiceTest {
 				Id.generateNextId());
 			List<MultiChoiceCard> all = multiChoiceCardRepository.findAll();
 			assertThat(all).isNotEmpty();
+			assertThat(all.get(0))
+				.hasFieldOrPropertyWithValue("multiChoiceAnswer", new MultiChoiceAnswer(1))
+				.hasFieldOrPropertyWithValue("question", new Question("question"))
+				.hasFieldOrPropertyWithValue("title", new Title("title"));
 		}
 
 		@Test

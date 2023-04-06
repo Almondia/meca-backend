@@ -11,13 +11,7 @@ import com.almondia.meca.card.controller.dto.CardResponseDto;
 import com.almondia.meca.card.controller.dto.SaveCardRequestDto;
 import com.almondia.meca.card.controller.dto.UpdateCardRequestDto;
 import com.almondia.meca.card.domain.entity.Card;
-import com.almondia.meca.card.domain.entity.KeywordCard;
-import com.almondia.meca.card.domain.entity.MultiChoiceCard;
-import com.almondia.meca.card.domain.entity.OxCard;
 import com.almondia.meca.card.domain.repository.CardRepository;
-import com.almondia.meca.card.domain.repository.KeywordCardRepository;
-import com.almondia.meca.card.domain.repository.MultiChoiceCardRepository;
-import com.almondia.meca.card.domain.repository.OxCardRepository;
 import com.almondia.meca.card.domain.service.CardChecker;
 import com.almondia.meca.card.infra.querydsl.CardSearchCriteria;
 import com.almondia.meca.card.infra.querydsl.CardSortField;
@@ -36,28 +30,14 @@ public class CardService {
 
 	private final CardHistoryRepository cardHistoryRepository;
 	private final CardRepository cardRepository;
-	private final OxCardRepository oxCardRepository;
-	private final KeywordCardRepository keywordCardRepository;
-	private final MultiChoiceCardRepository multiChoiceCardRepository;
 	private final CategoryChecker categoryChecker;
 	private final CardChecker cardChecker;
 
 	@Transactional
 	public CardResponseDto saveCard(SaveCardRequestDto saveCardRequestDto, Id memberId) {
 		Card card = CardFactory.genCard(saveCardRequestDto, memberId);
-		if (card instanceof OxCard) {
-			OxCard oxCard = oxCardRepository.save((OxCard)card);
-			return CardMapper.oxCardToDto(oxCard);
-		}
-		if (card instanceof KeywordCard) {
-			KeywordCard keywordCard = keywordCardRepository.save((KeywordCard)card);
-			return CardMapper.keywordCardToDto(keywordCard);
-		}
-		if (card instanceof MultiChoiceCard) {
-			MultiChoiceCard multiChoiceCard = multiChoiceCardRepository.save((MultiChoiceCard)card);
-			return CardMapper.multiChoiceCardToDto(multiChoiceCard);
-		}
-		throw new IllegalArgumentException("지원하는 카드 유형이 아닙니다");
+		cardRepository.save(card);
+		return CardMapper.cardToDto(card);
 	}
 
 	@Transactional
