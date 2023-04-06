@@ -88,8 +88,8 @@ public class CardService {
 		if (updateCardRequestDto.getTitle() != null) {
 			card.changeTitle(updateCardRequestDto.getTitle());
 		}
-		if (updateCardRequestDto.getEditText() != null) {
-			card.changeEditText(updateCardRequestDto.getEditText());
+		if (updateCardRequestDto.getDescription() != null) {
+			card.changeEditText(updateCardRequestDto.getDescription());
 		}
 		if (updateCardRequestDto.getQuestion() != null) {
 			card.changeQuestion(updateCardRequestDto.getQuestion());

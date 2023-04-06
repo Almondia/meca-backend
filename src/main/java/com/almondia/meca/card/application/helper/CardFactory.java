@@ -6,7 +6,7 @@ import com.almondia.meca.card.domain.entity.KeywordCard;
 import com.almondia.meca.card.domain.entity.MultiChoiceCard;
 import com.almondia.meca.card.domain.entity.OxCard;
 import com.almondia.meca.card.domain.vo.CardType;
-import com.almondia.meca.card.domain.vo.EditText;
+import com.almondia.meca.card.domain.vo.Description;
 import com.almondia.meca.card.domain.vo.KeywordAnswer;
 import com.almondia.meca.card.domain.vo.MultiChoiceAnswer;
 import com.almondia.meca.card.domain.vo.OxAnswer;
@@ -30,7 +30,7 @@ public class CardFactory {
 
 	private static OxCard genOxCard(SaveCardRequestDto saveCardRequestDto, Id memberId) {
 		String answer = saveCardRequestDto.getAnswer();
-		EditText editText = saveCardRequestDto.getEditText();
+		Description description = saveCardRequestDto.getDescription();
 		return OxCard.builder()
 			.cardId(Id.generateNextId())
 			.memberId(memberId)
@@ -39,13 +39,13 @@ public class CardFactory {
 			.categoryId(saveCardRequestDto.getCategoryId())
 			.cardType(saveCardRequestDto.getCardType())
 			.oxAnswer(OxAnswer.valueOf(answer.toUpperCase()))
-			.editText(editText)
+			.description(description)
 			.build();
 	}
 
 	private static KeywordCard genKeywordCard(SaveCardRequestDto saveCardRequestDto, Id memberId) {
 		String answer = saveCardRequestDto.getAnswer();
-		EditText editText = saveCardRequestDto.getEditText();
+		Description description = saveCardRequestDto.getDescription();
 		return KeywordCard.builder()
 			.cardId(Id.generateNextId())
 			.memberId(memberId)
@@ -53,14 +53,14 @@ public class CardFactory {
 			.title(saveCardRequestDto.getTitle())
 			.categoryId(saveCardRequestDto.getCategoryId())
 			.cardType(saveCardRequestDto.getCardType())
-			.editText(editText)
+			.description(description)
 			.keywordAnswer(new KeywordAnswer(answer))
 			.build();
 	}
 
 	private static MultiChoiceCard genMultiChoiceCard(SaveCardRequestDto saveCardRequestDto, Id memberId) {
 		String answer = saveCardRequestDto.getAnswer();
-		EditText editText = saveCardRequestDto.getEditText();
+		Description description = saveCardRequestDto.getDescription();
 		return MultiChoiceCard.builder()
 			.cardId(Id.generateNextId())
 			.memberId(memberId)
@@ -68,7 +68,7 @@ public class CardFactory {
 			.title(saveCardRequestDto.getTitle())
 			.categoryId(saveCardRequestDto.getCategoryId())
 			.cardType(saveCardRequestDto.getCardType())
-			.editText(editText)
+			.description(description)
 			.multiChoiceAnswer(new MultiChoiceAnswer(Integer.parseInt(answer)))
 			.build();
 	}
