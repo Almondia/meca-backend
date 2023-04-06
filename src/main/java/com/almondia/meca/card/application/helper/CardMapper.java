@@ -52,12 +52,12 @@ public class CardMapper {
 			.cardId(oxCard.getCardId())
 			.title(oxCard.getTitle())
 			.question(oxCard.getQuestion())
-			.images(oxCard.getImages())
 			.categoryId(oxCard.getCategoryId())
 			.cardType(oxCard.getCardType())
 			.createdAt(oxCard.getCreatedAt())
 			.modifiedAt(oxCard.getModifiedAt())
 			.answer(oxCard.getOxAnswer().name())
+			.editText(oxCard.getEditText())
 			.build();
 	}
 
@@ -66,12 +66,12 @@ public class CardMapper {
 			.cardId(keywordCard.getCardId())
 			.title(keywordCard.getTitle())
 			.question(keywordCard.getQuestion())
-			.images(keywordCard.getImages())
 			.categoryId(keywordCard.getCategoryId())
 			.cardType(keywordCard.getCardType())
 			.createdAt(keywordCard.getCreatedAt())
 			.modifiedAt(keywordCard.getModifiedAt())
 			.answer(keywordCard.getKeywordAnswer().toString())
+			.editText(keywordCard.getEditText())
 			.build();
 	}
 
@@ -80,12 +80,12 @@ public class CardMapper {
 			.cardId(multiChoiceCard.getCardId())
 			.title(multiChoiceCard.getTitle())
 			.question(multiChoiceCard.getQuestion())
-			.images(multiChoiceCard.getImages())
 			.categoryId(multiChoiceCard.getCategoryId())
 			.cardType(multiChoiceCard.getCardType())
 			.createdAt(multiChoiceCard.getCreatedAt())
 			.modifiedAt(multiChoiceCard.getModifiedAt())
 			.answer(multiChoiceCard.getMultiChoiceAnswer().toString())
+			.editText(multiChoiceCard.getEditText())
 			.build();
 	}
 }

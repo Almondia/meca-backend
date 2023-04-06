@@ -1,5 +1,6 @@
 package com.almondia.meca.card.controller.dto;
 
+import com.almondia.meca.card.domain.vo.EditText;
 import com.almondia.meca.card.domain.vo.Question;
 import com.almondia.meca.card.domain.vo.Title;
 import com.almondia.meca.common.domain.vo.Id;
@@ -17,8 +18,8 @@ import lombok.ToString;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString
 public class UpdateCardRequestDto {
-	Title title;
-	String images;
-	Question question;
-	Id categoryId;
+	private Title title;
+	private Question question;
+	private Id categoryId;
+	private EditText editText;
 }

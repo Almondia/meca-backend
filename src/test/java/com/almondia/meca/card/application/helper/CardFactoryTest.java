@@ -11,6 +11,7 @@ import com.almondia.meca.card.domain.entity.KeywordCard;
 import com.almondia.meca.card.domain.entity.MultiChoiceCard;
 import com.almondia.meca.card.domain.entity.OxCard;
 import com.almondia.meca.card.domain.vo.CardType;
+import com.almondia.meca.card.domain.vo.EditText;
 import com.almondia.meca.card.domain.vo.OxAnswer;
 import com.almondia.meca.card.domain.vo.Question;
 import com.almondia.meca.card.domain.vo.Title;
@@ -20,7 +21,7 @@ import com.almondia.meca.common.domain.vo.Id;
  * 1. OxCard 속성별 인스턴스를 잘 생성했는지 검증
  * 2. KeywordCard 속성별 인스턴스를 잘 생성했는지 검증
  * 3. MultiChoiceCard 속성별 인스턴스 잘 생성했는지 검증
- * 4. images가 null이거나 빈 공백이라도 인스턴스 생성에 지장이 있어서는 안된다
+ * 4. EditText가 null이더라도, 인스턴스 생성을 할 수 있어야 한다
  */
 class CardFactoryTest {
 
@@ -78,26 +79,32 @@ class CardFactoryTest {
 			.hasFieldOrProperty("multiChoiceAnswer");
 	}
 
-	@Test
-	@DisplayName("images가 null이더라도 인스턴스 생성에 지장이 있어서는 안된다")
-	void shouldGenNewInstanceWithoutImagesTest() {
-		SaveCardRequestDto dto = makeSaveCardRequestWithoutImages()
-			.answer("1")
-			.cardType(CardType.MULTI_CHOICE)
-			.build();
-		Card card = CardFactory.genCard(dto, Id.generateNextId());
-		assertThat(card).isInstanceOf(MultiChoiceCard.class);
-	}
-
 	private SaveCardRequestDto.SaveCardRequestDtoBuilder makeSaveCardRequest() {
 		return SaveCardRequestDto.builder()
 			.title(new Title("title"))
 			.question(new Question("question"))
 			.categoryId(Id.generateNextId())
-			.images("A,B,C");
+			.editText(new EditText("editText"));
 	}
 
-	private SaveCardRequestDto.SaveCardRequestDtoBuilder makeSaveCardRequestWithoutImages() {
+	@Test
+	@DisplayName("EditText가 null이더라도, 인스턴스 생성을 할 수 있어야 한다")
+	void shouldCreateInstanceWithoutEditText() {
+		Card card = CardFactory.genCard(makeSaveCardRequestWithoutEditText()
+			.cardType(CardType.OX_QUIZ)
+			.answer(OxAnswer.O.toString())
+			.build(), Id.generateNextId());
+		assertThat(card).isInstanceOf(OxCard.class);
+		assertThat(card).hasFieldOrProperty("title")
+			.hasFieldOrProperty("question")
+			.hasFieldOrProperty("memberId")
+			.hasFieldOrProperty("categoryId")
+			.hasFieldOrProperty("cardType")
+			.hasFieldOrProperty("cardId")
+			.hasFieldOrProperty("oxAnswer");
+	}
+
+	private SaveCardRequestDto.SaveCardRequestDtoBuilder makeSaveCardRequestWithoutEditText() {
 		return SaveCardRequestDto.builder()
 			.title(new Title("title"))
 			.question(new Question("question"))

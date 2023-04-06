@@ -17,6 +17,7 @@ import javax.persistence.Transient;
 
 import com.almondia.meca.card.domain.converter.ListImageConverter;
 import com.almondia.meca.card.domain.vo.CardType;
+import com.almondia.meca.card.domain.vo.EditText;
 import com.almondia.meca.card.domain.vo.Image;
 import com.almondia.meca.card.domain.vo.Question;
 import com.almondia.meca.card.domain.vo.Title;
@@ -59,6 +60,9 @@ public abstract class Card extends DateEntity {
 	@Convert(converter = ListImageConverter.class)
 	private List<Image> images;
 
+	@Column(name = "edit_text", length = 2_1000)
+	private EditText editText;
+
 	@Transient
 	private CardType cardType;
 
@@ -80,6 +84,10 @@ public abstract class Card extends DateEntity {
 		String[] split = images.split(",");
 		this.images = Arrays.stream(split).map(Image::new)
 			.collect(Collectors.toList());
+	}
+
+	public void changeEditText(EditText editText) {
+		this.editText = editText;
 	}
 
 	public abstract CardType getCardType();

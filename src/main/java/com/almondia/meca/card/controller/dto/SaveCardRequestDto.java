@@ -1,6 +1,7 @@
 package com.almondia.meca.card.controller.dto;
 
 import com.almondia.meca.card.domain.vo.CardType;
+import com.almondia.meca.card.domain.vo.EditText;
 import com.almondia.meca.card.domain.vo.Question;
 import com.almondia.meca.card.domain.vo.Title;
 import com.almondia.meca.common.domain.vo.Id;
@@ -22,7 +23,7 @@ public class SaveCardRequestDto {
 	private Title title;
 	private Question question;
 	private Id categoryId;
-	private String images;
 	private CardType cardType;
 	private String answer;
+	private EditText editText;
 }
