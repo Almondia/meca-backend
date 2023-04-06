@@ -10,27 +10,27 @@ import org.junit.jupiter.api.Test;
  * 3. editText는 빈 공백을 허용하지 않는다
  * 4. equalsandhashcode 테스트
  */
-class EditTextTest {
+class DescriptionTest {
 
 	@Test
 	void editTextLengthIsOver2_1000Test() {
-		assertThrows(IllegalArgumentException.class, () -> new EditText("a".repeat(2_1001)));
+		assertThrows(IllegalArgumentException.class, () -> new Description("a".repeat(2_1001)));
 	}
 
 	@Test
 	void editTextLengthIsNotOver2_1000Test() {
-		assertDoesNotThrow(() -> new EditText("a".repeat(2_1000)));
+		assertDoesNotThrow(() -> new Description("a".repeat(2_1000)));
 	}
 
 	@Test
 	void editTextIsBlankTest() {
-		assertThrows(IllegalArgumentException.class, () -> new EditText(" "));
+		assertThrows(IllegalArgumentException.class, () -> new Description(" "));
 	}
 
 	@Test
 	void equalsAndHashCodeTest() {
-		EditText editText1 = new EditText("a");
-		EditText editText2 = new EditText("a");
-		assertEquals(editText1, editText2);
+		Description description1 = new Description("a");
+		Description description2 = new Description("a");
+		assertEquals(description1, description2);
 	}
 }

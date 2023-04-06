@@ -32,7 +32,8 @@ class OxCardTest {
 		assertThat(entityType).isNotNull();
 		assertThat(entityType.getName()).isEqualTo("OxCard");
 		assertThat(entityType.getAttributes()).extracting("name")
-			.containsExactlyInAnyOrder("editText", "memberId", "question", "isDeleted", "cardId", "categoryId", "title",
+			.containsExactlyInAnyOrder("description", "memberId", "question", "isDeleted", "cardId", "categoryId",
+				"title",
 				"images",
 				"createdAt",
 				"modifiedAt", "oxAnswer");

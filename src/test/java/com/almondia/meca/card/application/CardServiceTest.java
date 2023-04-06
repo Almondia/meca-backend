@@ -31,7 +31,7 @@ import com.almondia.meca.card.domain.repository.MultiChoiceCardRepository;
 import com.almondia.meca.card.domain.repository.OxCardRepository;
 import com.almondia.meca.card.domain.service.CardChecker;
 import com.almondia.meca.card.domain.vo.CardType;
-import com.almondia.meca.card.domain.vo.EditText;
+import com.almondia.meca.card.domain.vo.Description;
 import com.almondia.meca.card.domain.vo.Image;
 import com.almondia.meca.card.domain.vo.KeywordAnswer;
 import com.almondia.meca.card.domain.vo.MultiChoiceAnswer;
@@ -128,7 +128,7 @@ class CardServiceTest {
 		void shouldSaveCardWithNullEditTextTest() {
 			cardService.saveCard(
 				makeSaveCardRequestWithoutEditText()
-					.editText(null)
+					.description(null)
 					.answer(OxAnswer.O.toString())
 					.cardType(CardType.OX_QUIZ).build(),
 				Id.generateNextId());
@@ -141,7 +141,7 @@ class CardServiceTest {
 				.title(new Title("title"))
 				.question(new Question("question"))
 				.categoryId(Id.generateNextId())
-				.editText(new EditText("hello"));
+				.description(new Description("hello"));
 		}
 
 		private SaveCardRequestDto.SaveCardRequestDtoBuilder makeSaveCardRequestWithoutEditText() {
@@ -216,7 +216,7 @@ class CardServiceTest {
 			assertThat(all.get(0))
 				.hasFieldOrPropertyWithValue("title", new Title("title2"))
 				.hasFieldOrPropertyWithValue("question", new Question("question"))
-				.hasFieldOrPropertyWithValue("editText", new EditText("edit text"));
+				.hasFieldOrPropertyWithValue("description", new Description("edit text"));
 		}
 
 		@Test
@@ -231,14 +231,14 @@ class CardServiceTest {
 			assertThat(all.get(0))
 				.hasFieldOrPropertyWithValue("title", new Title("title"))
 				.hasFieldOrPropertyWithValue("question", new Question("question2"))
-				.hasFieldOrPropertyWithValue("editText", new EditText("edit text"));
+				.hasFieldOrPropertyWithValue("description", new Description("edit text"));
 		}
 
 		@Test
 		@DisplayName("editText만 요청한 경우 editText만 수정해야됨")
 		void shouldUpdateEditTextOnlyTest() {
 			UpdateCardRequestDto updateCardRequestDto = UpdateCardRequestDto.builder()
-				.editText(new EditText("edit text2"))
+				.description(new Description("edit text2"))
 				.build();
 			cardService.updateCard(updateCardRequestDto, cardId, memberId);
 			List<Card> all = cardRepository.findAll();
@@ -246,13 +246,13 @@ class CardServiceTest {
 			assertThat(all.get(0))
 				.hasFieldOrPropertyWithValue("title", new Title("title"))
 				.hasFieldOrPropertyWithValue("question", new Question("question"))
-				.hasFieldOrPropertyWithValue("editText", new EditText("edit text2"));
+				.hasFieldOrPropertyWithValue("description", new Description("edit text2"));
 		}
 
 		private UpdateCardRequestDto makeUpdateCardRequest(Id categoryId) {
 			return UpdateCardRequestDto.builder()
 				.title(new Title("title"))
-				.editText(new EditText("edit text"))
+				.description(new Description("edit text"))
 				.question(new Question("question"))
 				.categoryId(categoryId)
 				.build();
@@ -268,7 +268,7 @@ class CardServiceTest {
 				.cardType(CardType.OX_QUIZ)
 				.question(new Question("question"))
 				.oxAnswer(OxAnswer.O)
-				.editText(new EditText("edit text"))
+				.description(new Description("edit text"))
 				.build());
 			em.persist(Category.builder()
 				.categoryId(categoryId)

@@ -11,15 +11,15 @@ import lombok.NoArgsConstructor;
 @Embeddable
 @EqualsAndHashCode
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class EditText implements Wrapper {
+public class Description implements Wrapper {
 
 	private static final int MAX_LENGTH = 2_1000;
 
-	private String editText;
+	private String description;
 
-	public EditText(String editText) {
-		validateEditText(editText);
-		this.editText = editText;
+	public Description(String description) {
+		validateEditText(description);
+		this.description = description;
 	}
 
 	private void validateEditText(String editText) {
@@ -33,6 +33,6 @@ public class EditText implements Wrapper {
 
 	@Override
 	public String toString() {
-		return editText;
+		return description;
 	}
 }

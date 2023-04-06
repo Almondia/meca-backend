@@ -11,7 +11,7 @@ import com.almondia.meca.card.domain.entity.KeywordCard;
 import com.almondia.meca.card.domain.entity.MultiChoiceCard;
 import com.almondia.meca.card.domain.entity.OxCard;
 import com.almondia.meca.card.domain.vo.CardType;
-import com.almondia.meca.card.domain.vo.EditText;
+import com.almondia.meca.card.domain.vo.Description;
 import com.almondia.meca.card.domain.vo.OxAnswer;
 import com.almondia.meca.card.domain.vo.Question;
 import com.almondia.meca.card.domain.vo.Title;
@@ -84,7 +84,7 @@ class CardFactoryTest {
 			.title(new Title("title"))
 			.question(new Question("question"))
 			.categoryId(Id.generateNextId())
-			.editText(new EditText("editText"));
+			.description(new Description("editText"));
 	}
 
 	@Test

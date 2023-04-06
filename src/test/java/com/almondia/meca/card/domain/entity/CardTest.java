@@ -18,7 +18,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 
 import com.almondia.meca.card.domain.vo.CardType;
-import com.almondia.meca.card.domain.vo.EditText;
+import com.almondia.meca.card.domain.vo.Description;
 import com.almondia.meca.card.domain.vo.Image;
 import com.almondia.meca.card.domain.vo.KeywordAnswer;
 import com.almondia.meca.card.domain.vo.MultiChoiceAnswer;
@@ -55,7 +55,8 @@ class CardTest {
 		assertThat(entityType).isNotNull();
 		assertThat(entityType.getName()).isEqualTo("Card");
 		assertThat(entityType.getAttributes()).extracting("name")
-			.containsExactlyInAnyOrder("editText", "question", "memberId", "isDeleted", "cardId", "categoryId", "title",
+			.containsExactlyInAnyOrder("description", "question", "memberId", "isDeleted", "cardId", "categoryId",
+				"title",
 				"images",
 				"createdAt", "modifiedAt");
 	}
@@ -248,7 +249,7 @@ class CardTest {
 			.oxAnswer(OxAnswer.O)
 			.isDeleted(true)
 			.build();
-		oxCard.changeEditText(new EditText("hello"));
-		assertThat(oxCard).hasFieldOrPropertyWithValue("editText", new EditText("hello"));
+		oxCard.changeEditText(new Description("hello"));
+		assertThat(oxCard).hasFieldOrPropertyWithValue("description", new Description("hello"));
 	}
 }

@@ -1,6 +1,6 @@
 package com.almondia.meca.card.controller.dto;
 
-import com.almondia.meca.card.domain.vo.EditText;
+import com.almondia.meca.card.domain.vo.Description;
 import com.almondia.meca.card.domain.vo.Question;
 import com.almondia.meca.card.domain.vo.Title;
 import com.almondia.meca.common.domain.vo.Id;
@@ -21,5 +21,5 @@ public class UpdateCardRequestDto {
 	private Title title;
 	private Question question;
 	private Id categoryId;
-	private EditText editText;
+	private Description description;
 }
