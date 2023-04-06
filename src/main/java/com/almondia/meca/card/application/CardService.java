@@ -36,8 +36,8 @@ public class CardService {
 	@Transactional
 	public CardResponseDto saveCard(SaveCardRequestDto saveCardRequestDto, Id memberId) {
 		Card card = CardFactory.genCard(saveCardRequestDto, memberId);
-		cardRepository.save(card);
-		return CardMapper.cardToDto(card);
+		Card savedCard = cardRepository.save(card);
+		return CardMapper.cardToDto(savedCard);
 	}
 
 	@Transactional
