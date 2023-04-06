@@ -3,7 +3,6 @@ package com.almondia.meca.auth.s3.controller;
 import java.time.Instant;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.http.ResponseEntity;
@@ -36,9 +35,10 @@ public class PreSignedController {
 	public ResponseEntity<UploadPreSignedUrlResponseDto> getUploadPreSignedUrl(
 		@AuthenticationPrincipal Member member,
 		@RequestParam(name = "purpose") Purpose purpose,
-		@RequestParam(name = "extension") ImageExtension extension
+		@RequestParam(name = "extension") ImageExtension extension,
+		@RequestParam(name = "fileName") String fileName
 	) {
-		String objectKey = makeObjectKey(member, purpose, extension);
+		String objectKey = makeObjectKey(member, purpose, extension, fileName);
 		Date expirationDate = Date.from(Instant.now().plusSeconds(300L));
 		String url = s3PreSignedUrlRequest.requestPutPreSignedUrl(objectKey, expirationDate).toString();
 		return ResponseEntity.ok(new UploadPreSignedUrlResponseDto(url, expirationDate, objectKey));
@@ -66,8 +66,8 @@ public class PreSignedController {
 		return ResponseEntity.ok(new MultiDownloadPreSignedUrlResponseDto(urls, expirationDate));
 	}
 
-	private String makeObjectKey(Member member, Purpose purpose, ImageExtension extension) {
-		return member.getMemberId().toString() + "/" + purpose.getDetails() + "/" + UUID.randomUUID() + "."
+	private String makeObjectKey(Member member, Purpose purpose, ImageExtension extension, String fileName) {
+		return member.getMemberId().toString() + "/" + purpose.getDetails() + "/" + fileName + "."
 			+ extension.getExtension();
 	}
 }
