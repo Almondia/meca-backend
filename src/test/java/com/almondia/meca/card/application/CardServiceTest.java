@@ -204,7 +204,7 @@ class CardServiceTest {
 		private UpdateCardRequestDto makeUpdateCardRequest(Id categoryId) {
 			return UpdateCardRequestDto.builder()
 				.title(new Title("title"))
-				.images("A,B,C")
+				.editText(new EditText("edit text"))
 				.question(new Question("question"))
 				.categoryId(categoryId)
 				.build();

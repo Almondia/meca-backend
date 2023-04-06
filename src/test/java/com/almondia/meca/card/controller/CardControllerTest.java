@@ -132,7 +132,7 @@ class CardControllerTest {
 			UpdateCardRequestDto requestDto = UpdateCardRequestDto.builder()
 				.title(new Title("title"))
 				.question(new Question("question"))
-				.images("A,B,C")
+				.editText(new EditText("editText"))
 				.categoryId(Id.generateNextId())
 				.build();
 			Mockito.doReturn(makeResponse()).when(cardService).updateCard(any(), any(), any());
