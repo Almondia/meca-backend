@@ -36,6 +36,7 @@ class CardMapperTest {
 			.hasFieldOrProperty("cardType")
 			.hasFieldOrProperty("createdAt")
 			.hasFieldOrProperty("modifiedAt")
+			.hasFieldOrProperty("editText")
 			.hasFieldOrProperty("answer");
 	}
 
@@ -51,6 +52,7 @@ class CardMapperTest {
 			.hasFieldOrProperty("cardType")
 			.hasFieldOrProperty("createdAt")
 			.hasFieldOrProperty("modifiedAt")
+			.hasFieldOrProperty("editText")
 			.hasFieldOrProperty("answer");
 	}
 
@@ -66,6 +68,7 @@ class CardMapperTest {
 			.hasFieldOrProperty("cardType")
 			.hasFieldOrProperty("createdAt")
 			.hasFieldOrProperty("modifiedAt")
+			.hasFieldOrProperty("editText")
 			.hasFieldOrProperty("answer");
 	}
 
@@ -81,6 +84,7 @@ class CardMapperTest {
 			.hasFieldOrProperty("cardType")
 			.hasFieldOrProperty("createdAt")
 			.hasFieldOrProperty("modifiedAt")
+			.hasFieldOrProperty("editText")
 			.hasFieldOrProperty("answer");
 	}
 

@@ -57,6 +57,7 @@ public class CardMapper {
 			.createdAt(oxCard.getCreatedAt())
 			.modifiedAt(oxCard.getModifiedAt())
 			.answer(oxCard.getOxAnswer().name())
+			.editText(oxCard.getEditText())
 			.build();
 	}
 
@@ -70,6 +71,7 @@ public class CardMapper {
 			.createdAt(keywordCard.getCreatedAt())
 			.modifiedAt(keywordCard.getModifiedAt())
 			.answer(keywordCard.getKeywordAnswer().toString())
+			.editText(keywordCard.getEditText())
 			.build();
 	}
 
@@ -83,6 +85,7 @@ public class CardMapper {
 			.createdAt(multiChoiceCard.getCreatedAt())
 			.modifiedAt(multiChoiceCard.getModifiedAt())
 			.answer(multiChoiceCard.getMultiChoiceAnswer().toString())
+			.editText(multiChoiceCard.getEditText())
 			.build();
 	}
 }
