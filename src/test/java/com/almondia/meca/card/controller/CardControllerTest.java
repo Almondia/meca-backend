@@ -24,6 +24,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import com.almondia.meca.card.application.CardService;
 import com.almondia.meca.card.application.CardSimulationService;
+import com.almondia.meca.card.controller.dto.CardCursorPageWithCategory;
 import com.almondia.meca.card.controller.dto.CardResponseDto;
 import com.almondia.meca.card.controller.dto.SaveCardRequestDto;
 import com.almondia.meca.card.controller.dto.UpdateCardRequestDto;
@@ -32,9 +33,9 @@ import com.almondia.meca.card.domain.vo.Description;
 import com.almondia.meca.card.domain.vo.OxAnswer;
 import com.almondia.meca.card.domain.vo.Question;
 import com.almondia.meca.card.domain.vo.Title;
+import com.almondia.meca.category.domain.entity.Category;
 import com.almondia.meca.common.configuration.jackson.JacksonConfiguration;
 import com.almondia.meca.common.configuration.security.filter.JwtAuthenticationFilter;
-import com.almondia.meca.common.controller.dto.CursorPage;
 import com.almondia.meca.common.domain.vo.Id;
 import com.almondia.meca.common.infra.querydsl.SortOrder;
 import com.almondia.meca.mock.security.WithMockMember;
@@ -178,18 +179,23 @@ class CardControllerTest {
 		@Test
 		@WithMockMember
 		void shouldReturn200WhenSuccessTest() throws Exception {
-			CursorPage<CardResponseDto> cursor = CursorPage.<CardResponseDto>builder()
-				.contents(List.of(makeResponse()))
-				.pageSize(5)
-				.sortOrder(SortOrder.DESC)
-				.build();
-			Mockito.doReturn(cursor).when(cardService).searchCursorPagingCard(anyInt(), any(), any(), any(), any());
+			List<CardResponseDto> contents = List.of(makeResponse());
+			CardCursorPageWithCategory cardCursorPageWithCategory = new CardCursorPageWithCategory(contents,
+				Id.generateNextId(), 5, SortOrder.DESC);
+			cardCursorPageWithCategory.setCategory(Category.builder()
+				.categoryId(Id.generateNextId())
+				.title(new com.almondia.meca.category.domain.vo.Title("title"))
+				.build());
+			Mockito.doReturn(cardCursorPageWithCategory)
+				.when(cardService)
+				.searchCursorPagingCard(anyInt(), any(), any(), any(), any());
 			mockMvc.perform(
 					get("/api/v1/cards/categories/{categoryId}/me?pageSize=100&sortOrder=desc", Id.generateNextId()))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("contents").exists())
 				.andExpect(jsonPath("pageSize").exists())
-				.andExpect(jsonPath("sortOrder").exists());
+				.andExpect(jsonPath("sortOrder").exists())
+				.andExpect(jsonPath("category").exists());
 		}
 
 		private CardResponseDto makeResponse() {
