@@ -156,6 +156,9 @@ class CardServiceTest {
 	 * 1. 카드 업데이트시 업데이트가 성공적으로 반영되었는지 테스트
 	 * 2. 본인의 카테고리가 아닌 남의 카테고리로 카드 카테고리 업데이트시 권한 에러
 	 * 3. 본인의 카드가 아닌 다른 카드 ID를 가지고 요청한 경우 권한 에러
+	 * 4. title만 요청한 경우 title만 수정해야됨
+	 * 5. question만 요청한 경우 question만 수정해야됨
+	 * 6. editText만 요청한 경우 editText만 수정해야됨
 	 */
 	@Nested
 	@DisplayName("카드 업데이트 테스트")
@@ -201,6 +204,51 @@ class CardServiceTest {
 			}).isInstanceOf(AccessDeniedException.class);
 		}
 
+		@Test
+		@DisplayName("title만 요청한 경우 title만 수정해야됨")
+		void shouldUpdateTitleOnlyTest() {
+			UpdateCardRequestDto updateCardRequestDto = UpdateCardRequestDto.builder()
+				.title(new Title("title2"))
+				.build();
+			cardService.updateCard(updateCardRequestDto, cardId, memberId);
+			List<Card> all = cardRepository.findAll();
+			assertThat(all).isNotEmpty();
+			assertThat(all.get(0))
+				.hasFieldOrPropertyWithValue("title", new Title("title2"))
+				.hasFieldOrPropertyWithValue("question", new Question("question"))
+				.hasFieldOrPropertyWithValue("editText", new EditText("edit text"));
+		}
+
+		@Test
+		@DisplayName("question만 요청한 경우 question만 수정해야됨")
+		void shouldUpdateQuestionOnlyTest() {
+			UpdateCardRequestDto updateCardRequestDto = UpdateCardRequestDto.builder()
+				.question(new Question("question2"))
+				.build();
+			cardService.updateCard(updateCardRequestDto, cardId, memberId);
+			List<Card> all = cardRepository.findAll();
+			assertThat(all).isNotEmpty();
+			assertThat(all.get(0))
+				.hasFieldOrPropertyWithValue("title", new Title("title"))
+				.hasFieldOrPropertyWithValue("question", new Question("question2"))
+				.hasFieldOrPropertyWithValue("editText", new EditText("edit text"));
+		}
+
+		@Test
+		@DisplayName("editText만 요청한 경우 editText만 수정해야됨")
+		void shouldUpdateEditTextOnlyTest() {
+			UpdateCardRequestDto updateCardRequestDto = UpdateCardRequestDto.builder()
+				.editText(new EditText("edit text2"))
+				.build();
+			cardService.updateCard(updateCardRequestDto, cardId, memberId);
+			List<Card> all = cardRepository.findAll();
+			assertThat(all).isNotEmpty();
+			assertThat(all.get(0))
+				.hasFieldOrPropertyWithValue("title", new Title("title"))
+				.hasFieldOrPropertyWithValue("question", new Question("question"))
+				.hasFieldOrPropertyWithValue("editText", new EditText("edit text2"));
+		}
+
 		private UpdateCardRequestDto makeUpdateCardRequest(Id categoryId) {
 			return UpdateCardRequestDto.builder()
 				.title(new Title("title"))
@@ -220,6 +268,7 @@ class CardServiceTest {
 				.cardType(CardType.OX_QUIZ)
 				.question(new Question("question"))
 				.oxAnswer(OxAnswer.O)
+				.editText(new EditText("edit text"))
 				.build());
 			em.persist(Category.builder()
 				.categoryId(categoryId)
