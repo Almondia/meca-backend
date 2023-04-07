@@ -22,15 +22,6 @@ public class Title implements Wrapper, Comparable<Title> {
 		this.title = title;
 	}
 
-	private void validateTitle(String title) {
-		if (title.length() > MAX_LENGTH) {
-			throw new IllegalArgumentException(String.format("%d를 초과해서 제목을 지을 수 없습니다", MAX_LENGTH));
-		}
-		if (title.isBlank()) {
-			throw new IllegalArgumentException("타이틀을 비우거나 공백만으로 초기화 할 수 없습니다");
-		}
-	}
-
 	@Override
 	public String toString() {
 		return title;
@@ -39,5 +30,22 @@ public class Title implements Wrapper, Comparable<Title> {
 	@Override
 	public int compareTo(Title o) {
 		return this.title.compareTo(o.title);
+	}
+
+	public static Title of(String title) {
+		return new Title(title);
+	}
+
+	public static Title valueOf(String title) {
+		return new Title(title);
+	}
+
+	private void validateTitle(String title) {
+		if (title.length() > MAX_LENGTH) {
+			throw new IllegalArgumentException(String.format("%d를 초과해서 제목을 지을 수 없습니다", MAX_LENGTH));
+		}
+		if (title.isBlank()) {
+			throw new IllegalArgumentException("타이틀을 비우거나 공백만으로 초기화 할 수 없습니다");
+		}
 	}
 }

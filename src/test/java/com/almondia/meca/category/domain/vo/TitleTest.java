@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Test;
  * 1. title 문자 길이는 20을 초과할 수 없다
  * 2. 빈 공백만으로 title을 초기화 할 수 없다
  * 3. 문자열을 기준으로 크기 비교가 가능하다
+ * 4. of 메서드를 통해 초기화 할 수 있다
+ * 5. valueOf 메서드를 통해 초기화 할 수 있다
  */
 class TitleTest {
 
@@ -32,4 +34,17 @@ class TitleTest {
 		assertThat(title1).isLessThanOrEqualTo(title2);
 	}
 
+	@Test
+	@DisplayName("of 메서드를 통해 초기화 할 수 있다")
+	void shouldInitializeByOfMethodTest() {
+		Title title = Title.of("title");
+		assertThat(title).isNotNull();
+	}
+
+	@Test
+	@DisplayName("valueOf 메서드를 통해 초기화 할 수 있다")
+	void shouldInitializeByValueOfMethodTest() {
+		Title title = Title.valueOf("title");
+		assertThat(title).isNotNull();
+	}
 }
