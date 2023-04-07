@@ -19,4 +19,16 @@ public class CategoryTestHelper {
 			.modifiedAt(LocalDateTime.now())
 			.build();
 	}
+
+	public static Category generateSharedCategory(String title, Id memberId, Id categoryId) {
+		return Category.builder()
+			.categoryId(categoryId)
+			.memberId(memberId)
+			.title(Title.of(title))
+			.isDeleted(false)
+			.isShared(true)
+			.createdAt(LocalDateTime.now())
+			.modifiedAt(LocalDateTime.now())
+			.build();
+	}
 }
