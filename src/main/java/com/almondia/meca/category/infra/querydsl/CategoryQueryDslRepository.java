@@ -18,4 +18,6 @@ public interface CategoryQueryDslRepository {
 
 	CursorPage<CategoryWithHistoryResponseDto> findCategoryWithStatisticsByMemberId(int pageSize, Id memberId,
 		Id lastCategoryId);
+
+	CursorPage<CategoryResponseDto> findCategoryShared(int pageSize, Id lastCategoryId);
 }

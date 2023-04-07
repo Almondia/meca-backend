@@ -12,6 +12,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 
+import com.almondia.meca.category.controller.dto.CategoryResponseDto;
 import com.almondia.meca.category.controller.dto.CategoryWithHistoryResponseDto;
 import com.almondia.meca.category.domain.repository.CategoryRepository;
 import com.almondia.meca.common.configuration.jpa.QueryDslConfiguration;
@@ -204,6 +205,125 @@ class CategoryQueryDslRepositoryImplTest {
 			assertThat(result).isNotNull();
 			assertThat(result.getContents()).isNotEmpty();
 			assertThat(result.getContents().get(0).getCategoryId()).isEqualTo(lastCategoryId);
+		}
+	}
+
+	/**
+	 * 1. 카테고리가 없는 경우 contents가 비어있어야 함
+	 * 2. 카테고리가 있는 경우 contents가 있어야 함
+	 * 3. 카테고리가 있는 경우, pageSize가 0인 경우 contents가 비어 있어야 함
+	 * 4. 조회후 다음 페이징 index가 있는 경우 hasNext에 다음 카테고리 id가 존재해야 함
+	 * 5. 조회후 다음 페이징 index가 없는 경우 hasNext에 null이 존재해야 함
+	 * 6. shared가 false인 카테고리는 조회하면 안된다
+	 */
+	@Nested
+	@DisplayName("findCategoryShared 테스트")
+	class FindCategorySharedTest {
+
+		@Test
+		@DisplayName("카테고리가 없는 경우 contents가 비어있어야 함")
+		void shouldReturnEmptyContentsWhenNotExistCategoryTest() {
+			// given
+			int pageSize = 1;
+
+			// when
+			CursorPage<CategoryResponseDto> result = categoryRepository.findCategoryShared(
+				pageSize,
+				null);
+
+			// then
+			assertThat(result).isNotNull();
+			assertThat(result.getContents()).isEmpty();
+		}
+
+		@Test
+		@DisplayName("카테고리가 있는 경우 contents가 있어야 함")
+		void shouldReturnContentsWhenExistCategoryTest() {
+			// given
+			int pageSize = 1;
+			em.persist(CategoryTestHelper.generateSharedCategory("title1", Id.generateNextId(), Id.generateNextId()));
+
+			// when
+			CursorPage<CategoryResponseDto> result = categoryRepository.findCategoryShared(
+				pageSize,
+				null);
+
+			// then
+			assertThat(result).isNotNull();
+			assertThat(result.getContents()).isNotEmpty();
+		}
+
+		@Test
+		@DisplayName("카테고리가 있는 경우, pageSize가 0인 경우 contents가 비어 있어야 함")
+		void shouldReturnEmptyContentsWhenExistCategoryAndPageSizeIsZeroTest() {
+			// given
+			int pageSize = 0;
+			em.persist(CategoryTestHelper.generateSharedCategory("title1", Id.generateNextId(), Id.generateNextId()));
+
+			// when
+			CursorPage<CategoryResponseDto> result = categoryRepository.findCategoryShared(
+				pageSize,
+				null);
+
+			// then
+			assertThat(result).isNotNull();
+			assertThat(result.getContents()).isEmpty();
+		}
+
+		@Test
+		@DisplayName("조회후 다음 페이징 index가 있는 경우 hasNext에 다음 카테고리 id가 존재해야 함")
+		void shouldReturnHasNextWhenExistNextPageTest() {
+			// given
+			int pageSize = 1;
+			em.persist(CategoryTestHelper.generateSharedCategory("title1", Id.generateNextId(), Id.generateNextId()));
+			em.persist(CategoryTestHelper.generateSharedCategory("title2", Id.generateNextId(), Id.generateNextId()));
+
+			// when
+			CursorPage<CategoryResponseDto> result = categoryRepository.findCategoryShared(
+				pageSize,
+				null);
+
+			// then
+			assertThat(result).isNotNull();
+			assertThat(result.getContents()).isNotEmpty();
+			assertThat(result.getHasNext()).isNotNull();
+		}
+
+		@Test
+		@DisplayName("조회후 다음 페이징 index가 없는 경우 hasNext에 null이 존재해야 함")
+		void shouldReturnHasNextWhenExistNextPageButPageSizeIsLessThanCategoryCountTest() {
+			// given
+			int pageSize = 3;
+			em.persist(CategoryTestHelper.generateSharedCategory("title1", Id.generateNextId(), Id.generateNextId()));
+			em.persist(CategoryTestHelper.generateSharedCategory("title2", Id.generateNextId(), Id.generateNextId()));
+
+			// when
+			CursorPage<CategoryResponseDto> result = categoryRepository.findCategoryShared(
+				pageSize,
+				null);
+
+			// then
+			assertThat(result).isNotNull();
+			assertThat(result.getContents()).isNotEmpty();
+			assertThat(result.getHasNext()).isNull();
+		}
+
+		@Test
+		@DisplayName("share가 false인 카테고리는 조회하면 안된다")
+		void shouldNotReturnCategoryWhenCategoryIsNotSharedTest() {
+			// given
+			Id memberId = Id.generateNextId();
+			int pageSize = 3;
+			em.persist(CategoryTestHelper.generateUnSharedCategory("title1", memberId, Id.generateNextId()));
+
+			// when
+			CursorPage<CategoryResponseDto> result = categoryRepository.findCategoryShared(
+				pageSize,
+				null);
+
+			// then
+			assertThat(result).isNotNull();
+			assertThat(result.getContents()).isEmpty();
 		}
 	}
 
