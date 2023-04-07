@@ -86,4 +86,10 @@ public class CategoryService {
 		return categoryRepository.findCategoryWithStatisticsByMemberId(
 			pageSize, memberId, lastCategoryId);
 	}
+
+	public CursorPage<CategoryResponseDto> findCursorPagingCategoryResponseDto(
+		int pageSize,
+		Id lastCategoryId) {
+		return null;
+	}
 }

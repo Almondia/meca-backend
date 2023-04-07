@@ -83,7 +83,7 @@ public class CategoryController {
 
 	@GetMapping("/me")
 	@Secured("ROLE_USER")
-	public ResponseEntity<CursorPage<CategoryWithHistoryResponseDto>> getCursorPagingCategory(
+	public ResponseEntity<CursorPage<CategoryWithHistoryResponseDto>> getCursorPagingCategoryMe(
 		@AuthenticationPrincipal Member member,
 		@RequestParam(value = "hasNext", required = false) Id hasNext,
 		@RequestParam(value = "pageSize") int pageSize
@@ -101,5 +101,15 @@ public class CategoryController {
 	) {
 		categoryService.deleteCategory(categoryId, member.getMemberId());
 		return ResponseEntity.ok().body("");
+	}
+
+	@GetMapping("/share")
+	public ResponseEntity<CursorPage<CategoryResponseDto>> getCursorPagingCategoryShare(
+		@RequestParam(value = "hasNext", required = false) Id hasNext,
+		@RequestParam(value = "pageSize") int pageSize
+	) {
+		CursorPage<CategoryResponseDto> responseDto = categoryService.findCursorPagingCategoryResponseDto(
+			pageSize, hasNext);
+		return ResponseEntity.ok(responseDto);
 	}
 }
