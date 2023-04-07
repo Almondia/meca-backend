@@ -87,9 +87,10 @@ public class CategoryService {
 			pageSize, memberId, lastCategoryId);
 	}
 
+	@Transactional(readOnly = true)
 	public CursorPage<CategoryResponseDto> findCursorPagingCategoryResponseDto(
 		int pageSize,
 		Id lastCategoryId) {
-		return null;
+		return categoryRepository.findCategoryShared(pageSize, lastCategoryId);
 	}
 }
