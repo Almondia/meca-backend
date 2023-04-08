@@ -45,7 +45,8 @@ class CategoryTest {
 		assertThat(entityType).isNotNull();
 		assertThat(entityType.getName()).isEqualTo("Category");
 		assertThat(entityType.getAttributes()).extracting("name")
-			.containsExactlyInAnyOrder("memberId", "categoryId", "title", "isDeleted", "isShared", "createdAt",
+			.containsExactlyInAnyOrder("memberId", "categoryId", "title", "thumbnail", "isDeleted", "isShared",
+				"createdAt",
 				"modifiedAt");
 	}
 
