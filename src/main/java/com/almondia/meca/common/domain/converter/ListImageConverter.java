@@ -1,4 +1,4 @@
-package com.almondia.meca.card.domain.converter;
+package com.almondia.meca.common.domain.converter;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 
-import com.almondia.meca.card.domain.vo.Image;
+import com.almondia.meca.common.domain.vo.Image;
 
 @Converter
 public class ListImageConverter implements AttributeConverter<List<Image>, String> {

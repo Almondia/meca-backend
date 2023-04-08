@@ -15,14 +15,14 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Transient;
 
-import com.almondia.meca.card.domain.converter.ListImageConverter;
 import com.almondia.meca.card.domain.vo.CardType;
 import com.almondia.meca.card.domain.vo.Description;
-import com.almondia.meca.card.domain.vo.Image;
 import com.almondia.meca.card.domain.vo.Question;
 import com.almondia.meca.card.domain.vo.Title;
+import com.almondia.meca.common.domain.converter.ListImageConverter;
 import com.almondia.meca.common.domain.entity.DateEntity;
 import com.almondia.meca.common.domain.vo.Id;
+import com.almondia.meca.common.domain.vo.Image;
 
 import lombok.AccessLevel;
 import lombok.Getter;

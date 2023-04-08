@@ -1,4 +1,4 @@
-package com.almondia.meca.card.domain.vo;
+package com.almondia.meca.common.domain.vo;
 
 import javax.persistence.Embeddable;
 

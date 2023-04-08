@@ -19,7 +19,6 @@ import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 
 import com.almondia.meca.card.domain.vo.CardType;
 import com.almondia.meca.card.domain.vo.Description;
-import com.almondia.meca.card.domain.vo.Image;
 import com.almondia.meca.card.domain.vo.KeywordAnswer;
 import com.almondia.meca.card.domain.vo.MultiChoiceAnswer;
 import com.almondia.meca.card.domain.vo.OxAnswer;
@@ -28,6 +27,7 @@ import com.almondia.meca.card.domain.vo.Title;
 import com.almondia.meca.common.configuration.jpa.JpaAuditingConfiguration;
 import com.almondia.meca.common.configuration.jpa.QueryDslConfiguration;
 import com.almondia.meca.common.domain.vo.Id;
+import com.almondia.meca.common.domain.vo.Image;
 
 /**
  * 1. 데이터 속성 생성 테스트
