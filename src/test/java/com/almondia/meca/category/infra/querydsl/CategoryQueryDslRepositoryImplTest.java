@@ -2,230 +2,328 @@ package com.almondia.meca.category.infra.querydsl;
 
 import static org.assertj.core.api.Assertions.*;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import javax.persistence.EntityManager;
 
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 
-import com.almondia.meca.card.domain.entity.Card;
-import com.almondia.meca.card.domain.entity.OxCard;
-import com.almondia.meca.card.domain.repository.CardRepository;
-import com.almondia.meca.card.domain.vo.CardType;
-import com.almondia.meca.card.domain.vo.OxAnswer;
-import com.almondia.meca.card.domain.vo.Question;
-import com.almondia.meca.cardhistory.domain.entity.CardHistory;
-import com.almondia.meca.cardhistory.domain.repository.CardHistoryRepository;
-import com.almondia.meca.cardhistory.domain.vo.Answer;
-import com.almondia.meca.cardhistory.domain.vo.Score;
 import com.almondia.meca.category.controller.dto.CategoryResponseDto;
 import com.almondia.meca.category.controller.dto.CategoryWithHistoryResponseDto;
-import com.almondia.meca.category.domain.entity.Category;
 import com.almondia.meca.category.domain.repository.CategoryRepository;
-import com.almondia.meca.category.domain.vo.Title;
 import com.almondia.meca.common.configuration.jpa.QueryDslConfiguration;
 import com.almondia.meca.common.controller.dto.CursorPage;
-import com.almondia.meca.common.controller.dto.OffsetPage;
 import com.almondia.meca.common.domain.vo.Id;
-import com.almondia.meca.common.infra.querydsl.SortOption;
-import com.almondia.meca.common.infra.querydsl.SortOrder;
+import com.almondia.meca.helper.CategoryTestHelper;
 
-/**
- * 1. 페이징 형태로 잘 출력이 되는지 테스트
- */
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Import(QueryDslConfiguration.class)
 class CategoryQueryDslRepositoryImplTest {
 
-	Id memberId = Id.generateNextId();
-	List<Id> categoryIds;
-	List<Id> cardIds;
-
 	@Autowired
 	CategoryRepository categoryRepository;
 
 	@Autowired
-	CardHistoryRepository cardHistoryRepository;
+	EntityManager em;
 
-	@Autowired
-	CardRepository cardRepository;
+	/**
+	 * 1. 카테고리가 없는 경우 contents가 비어있어야 함
+	 * 2. 카테고리가 있는 경우 contents가 있어야 함
+	 * 3. 카테고리가 있는 경우, pageSize가 0인 경우 contents가 비어 있어야 함
+	 * 4. 조회후 다음 페이징 index가 있는 경우 hasNext에 다음 카테고리 id가 존재해야 함
+	 * 5. 조회후 다음 페이징 index가 없는 경우 hasNext에 null이 존재해야 함
+	 * 6. 조회후 pageSize보다 적은 카테고리를 조회한 경우 hasNext는 null이어야 함
+	 * 7. share가 true인 카테고리는 조회하면 안된다
+	 * 8. lastCategoryId를 입력받은 경우, lastCategoryId보다 작은 카테고리는 조회하지 않는다
+	 */
+	@Nested
+	@DisplayName("findCategoryWithStatisticsByMemberId 메서드 테스트")
+	class findCategoryWithStatisticsByMemberIdTest {
 
-	@BeforeEach
-	void before() {
-		initIds();
-		inputCategoryData();
-		inputCardData();
-		inputCardHistoryData();
-	}
+		@Test
+		@DisplayName("카테고리가 없는 경우 contents가 비어있어야 함")
+		void shouldReturnEmptyCursorPageWhenNotExistCategoryTest() {
+			// given
+			Id memberId = Id.generateNextId();
+			Id lastCategoryId = Id.generateNextId();
+			int pageSize = 10;
 
-	@Test
-	void test() {
-		OffsetPage<CategoryResponseDto> page = categoryRepository.findCategories(
-			1,
-			2,
-			CategorySearchCriteria.builder().build(),
-			SortOption.of(CategorySortField.TITLE, SortOrder.ASC));
-		assertThat(page).hasFieldOrPropertyWithValue("pageNumber", 0)
-			.hasFieldOrPropertyWithValue("totalPages", 1)
-			.hasFieldOrPropertyWithValue("pageSize", 2)
-			.hasFieldOrPropertyWithValue("totalElements", 4);
-	}
+			// when
+			CursorPage<CategoryWithHistoryResponseDto> result = categoryRepository.findCategoryWithStatisticsByMemberId(
+				pageSize,
+				memberId,
+				lastCategoryId);
 
-	@Test
-	void findCategoryWithStatisticsByMemberIdTest() {
-		CursorPage<CategoryWithHistoryResponseDto> cursorPage = categoryRepository.findCategoryWithStatisticsByMemberId(
-			4,
-			memberId,
-			null
-		);
-		assertThat(cursorPage)
-			.hasFieldOrProperty("hasNext")
-			.hasFieldOrProperty("pageSize")
-			.hasFieldOrProperty("sortOrder");
-	}
-
-	private void inputCategoryData() {
-		List<Category> categories = List.of(
-			Category.builder()
-				.categoryId(categoryIds.get(0))
-				.memberId(memberId)
-				.createdAt(LocalDateTime.now())
-				.modifiedAt(LocalDateTime.now())
-				.title(new Title("btitle1")).build(),
-			Category.builder()
-				.categoryId(categoryIds.get(1))
-				.memberId(memberId)
-				.createdAt(LocalDateTime.now().plusHours(4))
-				.modifiedAt(LocalDateTime.now().plusHours(4))
-				.title(new Title("atitle2")).build(),
-			Category.builder()
-				.categoryId(categoryIds.get(2))
-				.memberId(memberId)
-				.createdAt(LocalDateTime.now().plusHours(2))
-				.modifiedAt(LocalDateTime.now().plusHours(2))
-				.title(new Title("ctitle")).build(),
-			Category.builder()
-				.categoryId(categoryIds.get(3))
-				.memberId(memberId)
-				.createdAt(LocalDateTime.now().plusHours(3))
-				.modifiedAt(LocalDateTime.now().plusHours(3))
-				.title(new Title("dTitle"))
-				.isShared(true).build());
-
-		categoryRepository.saveAllAndFlush(categories);
-	}
-
-	private void inputCardData() {
-		List<Card> cards = List.of(
-			OxCard.builder()
-				.cardId(cardIds.get(0))
-				.title(new com.almondia.meca.card.domain.vo.Title("title"))
-				.categoryId(categoryIds.get(0))
-				.cardType(CardType.OX_QUIZ)
-				.isDeleted(false)
-				.memberId(memberId)
-				.question(new Question("question"))
-				.oxAnswer(OxAnswer.O)
-				.build(),
-			OxCard.builder()
-				.cardId(cardIds.get(1))
-				.title(new com.almondia.meca.card.domain.vo.Title("title"))
-				.categoryId(categoryIds.get(0))
-				.cardType(CardType.OX_QUIZ)
-				.isDeleted(false)
-				.memberId(memberId)
-				.question(new Question("question"))
-				.oxAnswer(OxAnswer.O)
-				.build(),
-			OxCard.builder()
-				.cardId(cardIds.get(2))
-				.title(new com.almondia.meca.card.domain.vo.Title("title"))
-				.categoryId(categoryIds.get(1))
-				.cardType(CardType.OX_QUIZ)
-				.isDeleted(false)
-				.memberId(memberId)
-				.question(new Question("question"))
-				.oxAnswer(OxAnswer.O)
-				.build(),
-			OxCard.builder()
-				.cardId(cardIds.get(3))
-				.title(new com.almondia.meca.card.domain.vo.Title("title"))
-				.categoryId(categoryIds.get(1))
-				.cardType(CardType.OX_QUIZ)
-				.isDeleted(false)
-				.memberId(memberId)
-				.question(new Question("question"))
-				.oxAnswer(OxAnswer.O)
-				.build(),
-			OxCard.builder()
-				.cardId(cardIds.get(4))
-				.title(new com.almondia.meca.card.domain.vo.Title("title"))
-				.categoryId(categoryIds.get(2))
-				.cardType(CardType.OX_QUIZ)
-				.isDeleted(false)
-				.memberId(memberId)
-				.question(new Question("question"))
-				.oxAnswer(OxAnswer.O)
-				.build()
-		);
-		cardRepository.saveAll(cards);
-	}
-
-	private void inputCardHistoryData() {
-		List<CardHistory> cardHistories = List.of(
-			CardHistory.builder()
-				.cardHistoryId(Id.generateNextId())
-				.cardId(cardIds.get(0))
-				.score(new Score(100))
-				.categoryId(categoryIds.get(0))
-				.userAnswer(new Answer("O"))
-				.build(),
-			CardHistory.builder()
-				.cardHistoryId(Id.generateNextId())
-				.cardId(cardIds.get(0))
-				.score(new Score(50))
-				.userAnswer(new Answer("O"))
-				.categoryId(categoryIds.get(0))
-				.build(),
-			CardHistory.builder()
-				.cardHistoryId(Id.generateNextId())
-				.cardId(cardIds.get(0))
-				.score(new Score(0))
-				.userAnswer(new Answer("O"))
-				.categoryId(categoryIds.get(0))
-				.build(),
-			CardHistory.builder()
-				.cardHistoryId(Id.generateNextId())
-				.cardId(cardIds.get(1))
-				.score(new Score(50))
-				.userAnswer(new Answer("O"))
-				.categoryId(categoryIds.get(0))
-				.build(),
-			CardHistory.builder()
-				.cardHistoryId(Id.generateNextId())
-				.cardId(cardIds.get(2))
-				.score(new Score(20))
-				.userAnswer(new Answer("O"))
-				.categoryId(categoryIds.get(1))
-				.build()
-		);
-		cardHistoryRepository.saveAll(cardHistories);
-	}
-
-	private void initIds() {
-		categoryIds = new ArrayList<>();
-		cardIds = new ArrayList<>();
-		for (int i = 0; i < 4; ++i) {
-			categoryIds.add(Id.generateNextId());
+			// then
+			assertThat(result).isNotNull();
+			assertThat(result.getContents()).isEmpty();
 		}
-		for (int i = 0; i < 5; ++i) {
-			cardIds.add(Id.generateNextId());
+
+		@Test
+		@DisplayName("카테고리가 있는 경우")
+		void shouldReturnCursorPageWhenExistCategoryTest() {
+			// given
+			Id memberId = Id.generateNextId();
+			Id lastCategoryId = Id.generateNextId();
+			int pageSize = 10;
+			em.persist(CategoryTestHelper.generateUnSharedCategory("title", memberId, lastCategoryId));
+
+			// when
+			CursorPage<CategoryWithHistoryResponseDto> result = categoryRepository.findCategoryWithStatisticsByMemberId(
+				pageSize,
+				memberId,
+				lastCategoryId);
+
+			// then
+			assertThat(result).isNotNull();
+			assertThat(result.getContents()).isNotEmpty();
+		}
+
+		@Test
+		@DisplayName("카테고리가 있는 경우, pageSize가 0인 경우")
+		void shouldReturnCursorPageWhenExistCategoryAndPageSizeIsZeroTest() {
+			// given
+			Id memberId = Id.generateNextId();
+			Id lastCategoryId = Id.generateNextId();
+			int pageSize = 0;
+			em.persist(CategoryTestHelper.generateUnSharedCategory("title", memberId, lastCategoryId));
+
+			// when
+			CursorPage<CategoryWithHistoryResponseDto> result = categoryRepository.findCategoryWithStatisticsByMemberId(
+				pageSize,
+				memberId,
+				lastCategoryId);
+
+			// then
+			assertThat(result).isNotNull();
+			assertThat(result.getContents()).isEmpty();
+		}
+
+		@Test
+		@DisplayName("조회후 다음 페이징 index가 있는 경우 hasNext에 다음 카테고리 id가 존재해야 함")
+		void shouldReturnHasNextWhenExistNextPageTest() {
+			// given
+			Id memberId = Id.generateNextId();
+			int pageSize = 1;
+			em.persist(CategoryTestHelper.generateUnSharedCategory("title1", memberId, Id.generateNextId()));
+			em.persist(CategoryTestHelper.generateUnSharedCategory("title2", memberId, Id.generateNextId()));
+
+			// when
+			CursorPage<CategoryWithHistoryResponseDto> result = categoryRepository.findCategoryWithStatisticsByMemberId(
+				pageSize,
+				memberId,
+				null);
+
+			// then
+			assertThat(result).isNotNull();
+			assertThat(result.getContents()).isNotEmpty();
+			assertThat(result.getHasNext()).isNotNull();
+		}
+
+		@Test
+		@DisplayName("조회후 다음 페이징 index가 없는 경우 hasNext에 null이 존재해야 함")
+		void shouldReturnHasNextWhenNotExistNextPageTest() {
+			// given
+			Id memberId = Id.generateNextId();
+			int pageSize = 1;
+			em.persist(CategoryTestHelper.generateUnSharedCategory("title1", memberId, Id.generateNextId()));
+
+			// when
+			CursorPage<CategoryWithHistoryResponseDto> result = categoryRepository.findCategoryWithStatisticsByMemberId(
+				pageSize,
+				memberId,
+				null);
+
+			// then
+			assertThat(result).isNotNull();
+			assertThat(result.getContents()).isNotEmpty();
+			assertThat(result.getHasNext()).isNull();
+		}
+
+		@Test
+		@DisplayName("조회후 pageSize보다 적은 카테고리를 조회한 경우 hasNext는 null이어야 함")
+		void shouldReturnHasNextWhenExistNextPageButPageSizeIsLessThanCategoryCountTest() {
+			// given
+			Id memberId = Id.generateNextId();
+			int pageSize = 3;
+			em.persist(CategoryTestHelper.generateUnSharedCategory("title1", memberId, Id.generateNextId()));
+			em.persist(CategoryTestHelper.generateUnSharedCategory("title2", memberId, Id.generateNextId()));
+
+			// when
+			CursorPage<CategoryWithHistoryResponseDto> result = categoryRepository.findCategoryWithStatisticsByMemberId(
+				pageSize,
+				memberId,
+				null);
+
+			// then
+			assertThat(result).isNotNull();
+			assertThat(result.getContents()).isNotEmpty();
+			assertThat(result.getHasNext()).isNull();
+		}
+
+		@Test
+		@DisplayName("share가 true인 카테고리는 조회하면 안된다")
+		void shouldNotReturnCategoryWhenCategoryIsSharedTest() {
+			// given
+			Id memberId = Id.generateNextId();
+			int pageSize = 3;
+			em.persist(CategoryTestHelper.generateSharedCategory("title1", memberId, Id.generateNextId()));
+
+			// when
+			CursorPage<CategoryWithHistoryResponseDto> result = categoryRepository.findCategoryWithStatisticsByMemberId(
+				pageSize,
+				memberId,
+				null);
+
+			// then
+			assertThat(result).isNotNull();
+			assertThat(result.getContents()).isEmpty();
+		}
+
+		@Test
+		@DisplayName("lastCategoryId를 입력받은 경우, lastCategoryId보다 작은 카테고리는 조회하지 않는다")
+		void shouldNotReturnCategoryWhenLastCategoryIdIsNotNullTest() {
+			// given
+			Id memberId = Id.generateNextId();
+			Id lastCategoryId = Id.generateNextId();
+			int pageSize = 3;
+			em.persist(CategoryTestHelper.generateUnSharedCategory("title1", memberId, lastCategoryId));
+			em.persist(CategoryTestHelper.generateUnSharedCategory("title2", memberId, Id.generateNextId()));
+
+			// when
+			CursorPage<CategoryWithHistoryResponseDto> result = categoryRepository.findCategoryWithStatisticsByMemberId(
+				pageSize,
+				memberId,
+				lastCategoryId);
+
+			// then
+			assertThat(result).isNotNull();
+			assertThat(result.getContents()).isNotEmpty();
+			assertThat(result.getContents().get(0).getCategoryId()).isEqualTo(lastCategoryId);
+		}
+	}
+
+	/**
+	 * 1. 카테고리가 없는 경우 contents가 비어있어야 함
+	 * 2. 카테고리가 있는 경우 contents가 있어야 함
+	 * 3. 카테고리가 있는 경우, pageSize가 0인 경우 contents가 비어 있어야 함
+	 * 4. 조회후 다음 페이징 index가 있는 경우 hasNext에 다음 카테고리 id가 존재해야 함
+	 * 5. 조회후 다음 페이징 index가 없는 경우 hasNext에 null이 존재해야 함
+	 * 6. shared가 false인 카테고리는 조회하면 안된다
+	 */
+	@Nested
+	@DisplayName("findCategoryShared 테스트")
+	class FindCategorySharedTest {
+
+		@Test
+		@DisplayName("카테고리가 없는 경우 contents가 비어있어야 함")
+		void shouldReturnEmptyContentsWhenNotExistCategoryTest() {
+			// given
+			int pageSize = 1;
+
+			// when
+			CursorPage<CategoryResponseDto> result = categoryRepository.findCategoryShared(
+				pageSize,
+				null);
+
+			// then
+			assertThat(result).isNotNull();
+			assertThat(result.getContents()).isEmpty();
+		}
+
+		@Test
+		@DisplayName("카테고리가 있는 경우 contents가 있어야 함")
+		void shouldReturnContentsWhenExistCategoryTest() {
+			// given
+			int pageSize = 1;
+			em.persist(CategoryTestHelper.generateSharedCategory("title1", Id.generateNextId(), Id.generateNextId()));
+
+			// when
+			CursorPage<CategoryResponseDto> result = categoryRepository.findCategoryShared(
+				pageSize,
+				null);
+
+			// then
+			assertThat(result).isNotNull();
+			assertThat(result.getContents()).isNotEmpty();
+		}
+
+		@Test
+		@DisplayName("카테고리가 있는 경우, pageSize가 0인 경우 contents가 비어 있어야 함")
+		void shouldReturnEmptyContentsWhenExistCategoryAndPageSizeIsZeroTest() {
+			// given
+			int pageSize = 0;
+			em.persist(CategoryTestHelper.generateSharedCategory("title1", Id.generateNextId(), Id.generateNextId()));
+
+			// when
+			CursorPage<CategoryResponseDto> result = categoryRepository.findCategoryShared(
+				pageSize,
+				null);
+
+			// then
+			assertThat(result).isNotNull();
+			assertThat(result.getContents()).isEmpty();
+		}
+
+		@Test
+		@DisplayName("조회후 다음 페이징 index가 있는 경우 hasNext에 다음 카테고리 id가 존재해야 함")
+		void shouldReturnHasNextWhenExistNextPageTest() {
+			// given
+			int pageSize = 1;
+			em.persist(CategoryTestHelper.generateSharedCategory("title1", Id.generateNextId(), Id.generateNextId()));
+			em.persist(CategoryTestHelper.generateSharedCategory("title2", Id.generateNextId(), Id.generateNextId()));
+
+			// when
+			CursorPage<CategoryResponseDto> result = categoryRepository.findCategoryShared(
+				pageSize,
+				null);
+
+			// then
+			assertThat(result).isNotNull();
+			assertThat(result.getContents()).isNotEmpty();
+			assertThat(result.getHasNext()).isNotNull();
+		}
+
+		@Test
+		@DisplayName("조회후 다음 페이징 index가 없는 경우 hasNext에 null이 존재해야 함")
+		void shouldReturnHasNextWhenExistNextPageButPageSizeIsLessThanCategoryCountTest() {
+			// given
+			int pageSize = 3;
+			em.persist(CategoryTestHelper.generateSharedCategory("title1", Id.generateNextId(), Id.generateNextId()));
+			em.persist(CategoryTestHelper.generateSharedCategory("title2", Id.generateNextId(), Id.generateNextId()));
+
+			// when
+			CursorPage<CategoryResponseDto> result = categoryRepository.findCategoryShared(
+				pageSize,
+				null);
+
+			// then
+			assertThat(result).isNotNull();
+			assertThat(result.getContents()).isNotEmpty();
+			assertThat(result.getHasNext()).isNull();
+		}
+
+		@Test
+		@DisplayName("share가 false인 카테고리는 조회하면 안된다")
+		void shouldNotReturnCategoryWhenCategoryIsNotSharedTest() {
+			// given
+			Id memberId = Id.generateNextId();
+			int pageSize = 3;
+			em.persist(CategoryTestHelper.generateUnSharedCategory("title1", memberId, Id.generateNextId()));
+
+			// when
+			CursorPage<CategoryResponseDto> result = categoryRepository.findCategoryShared(
+				pageSize,
+				null);
+
+			// then
+			assertThat(result).isNotNull();
+			assertThat(result.getContents()).isEmpty();
 		}
 	}
 

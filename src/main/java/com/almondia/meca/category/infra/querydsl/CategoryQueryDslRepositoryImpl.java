@@ -63,12 +63,26 @@ public class CategoryQueryDslRepositoryImpl implements CategoryQueryDslRepositor
 			.from(category)
 			.leftJoin(cardHistory)
 			.on(category.categoryId.eq(cardHistory.categoryId))
-			.where(cursorPagingExpression(memberId, lastCategoryId))
+			.where(cursorPagingExpression(memberId, lastCategoryId)
+				.and(category.isShared.eq(false)))
 			.groupBy(category.categoryId)
 			.orderBy(category.categoryId.uuid.desc())
 			.limit(pageSize + 1)
 			.fetch();
 
+		return makeCursorPageWithHistory(pageSize, response);
+	}
+
+	@Override
+	public CursorPage<CategoryResponseDto> findCategoryShared(int pageSize, Id lastCategoryId) {
+		List<CategoryResponseDto> response = jpaQueryFactory.select(
+				Projections.constructor(CategoryResponseDto.class, category.categoryId, category.memberId, category.title,
+					category.isDeleted, category.isShared, category.createdAt, category.modifiedAt))
+			.from(category)
+			.where(category.isShared.eq(true))
+			.orderBy(category.categoryId.uuid.desc())
+			.limit(pageSize + 1)
+			.fetch();
 		return makeCursorPage(pageSize, response);
 	}
 
@@ -82,7 +96,7 @@ public class CategoryQueryDslRepositoryImpl implements CategoryQueryDslRepositor
 			.and(loe);
 	}
 
-	private CursorPage<CategoryWithHistoryResponseDto> makeCursorPage(int pageSize,
+	private CursorPage<CategoryWithHistoryResponseDto> makeCursorPageWithHistory(int pageSize,
 		List<CategoryWithHistoryResponseDto> response) {
 		Id hasNext = null;
 		if (response.size() == pageSize + 1) {
@@ -90,6 +104,20 @@ public class CategoryQueryDslRepositoryImpl implements CategoryQueryDslRepositor
 			response.remove(response.size() - 1);
 		}
 		return CursorPage.<CategoryWithHistoryResponseDto>builder()
+			.contents(response)
+			.pageSize(response.size())
+			.hasNext(hasNext)
+			.sortOrder(SortOrder.DESC)
+			.build();
+	}
+
+	private CursorPage<CategoryResponseDto> makeCursorPage(int pageSize, List<CategoryResponseDto> response) {
+		Id hasNext = null;
+		if (response.size() == pageSize + 1) {
+			hasNext = response.get(pageSize).getCategoryId();
+			response.remove(response.size() - 1);
+		}
+		return CursorPage.<CategoryResponseDto>builder()
 			.contents(response)
 			.pageSize(response.size())
 			.hasNext(hasNext)

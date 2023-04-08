@@ -196,4 +196,38 @@ class CategoryControllerTest {
 				.andExpect(status().isOk());
 		}
 	}
+
+	@Nested
+	@DisplayName("카테고리 공유 커서 페이징")
+	class SearchShareCategoryTest {
+
+		@Test
+		@DisplayName("카테고리 공유 커서 페이징 성공시 응답 200 및 정상 응답")
+		void shouldReturnStatus200AndResponseWhenSuccessTest() throws Exception {
+			CursorPage<CategoryResponseDto> cursorPage = CursorPage.<CategoryResponseDto>builder()
+				.pageSize(2)
+				.contents(List.of(makeRandomCategoryResponseDto(), makeRandomCategoryResponseDto()))
+				.hasNext(Id.generateNextId())
+				.sortOrder(SortOrder.DESC)
+				.build();
+			Mockito.doReturn(cursorPage).when(categoryservice).findCursorPagingCategoryResponseDto(anyInt(), any());
+			mockMvc.perform(get("/api/v1/categories/share?pageSize=2"))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("pageSize").exists())
+				.andExpect(jsonPath("hasNext").exists())
+				.andExpect(jsonPath("sortOrder").exists())
+				.andExpect(jsonPath("contents").exists())
+				.andDo(print());
+		}
+	}
+
+	private CategoryResponseDto makeRandomCategoryResponseDto() {
+		return CategoryResponseDto.builder()
+			.categoryId(Id.generateNextId())
+			.memberId(Id.generateNextId())
+			.title(new Title("title"))
+			.createdAt(LocalDateTime.now())
+			.modifiedAt(LocalDateTime.now())
+			.build();
+	}
 }
