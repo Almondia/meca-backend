@@ -33,6 +33,7 @@ import com.almondia.meca.common.configuration.security.filter.JwtAuthenticationF
 import com.almondia.meca.common.configuration.web.WebMvcConfiguration;
 import com.almondia.meca.common.controller.dto.CursorPage;
 import com.almondia.meca.common.domain.vo.Id;
+import com.almondia.meca.common.domain.vo.Image;
 import com.almondia.meca.common.infra.querydsl.SortOrder;
 import com.almondia.meca.mock.security.WithMockMember;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -69,7 +70,8 @@ class CategoryControllerTest {
 				.builder()
 				.categoryId(Id.generateNextId())
 				.memberId(Id.generateNextId())
-				.title(new Title("title"))
+				.thumbnail(new Image("https://aws.s3.com"))
+				.title(Title.of("title"))
 				.isDeleted(false)
 				.createdAt(LocalDateTime.now())
 				.modifiedAt(LocalDateTime.now())
@@ -82,6 +84,7 @@ class CategoryControllerTest {
 				.andExpect(jsonPath("categoryId").exists())
 				.andExpect(jsonPath("memberId").exists())
 				.andExpect(jsonPath("title").exists())
+				.andExpect(jsonPath("thumbnail").exists())
 				.andExpect(jsonPath("deleted").exists())
 				.andExpect(jsonPath("shared").exists())
 				.andExpect(jsonPath("createdAt").exists())
@@ -89,7 +92,8 @@ class CategoryControllerTest {
 		}
 
 		private String makeCategoryRequestDto() throws JsonProcessingException {
-			SaveCategoryRequestDto requestDto = SaveCategoryRequestDto.builder().title(new Title("title")).build();
+			SaveCategoryRequestDto requestDto = SaveCategoryRequestDto.builder().title(Title.of("title"))
+				.thumbnail(new Image("https://aws.s3.com")).build();
 			return objectMapper.writeValueAsString(requestDto);
 		}
 	}
