@@ -10,6 +10,7 @@ public class CategoryMapper {
 			.categoryId(category.getCategoryId())
 			.memberId(category.getMemberId())
 			.title(category.getTitle())
+			.thumbnail(category.getThumbnail())
 			.isDeleted(category.isDeleted())
 			.isShared(category.isShared())
 			.createdAt(category.getCreatedAt())
