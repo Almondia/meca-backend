@@ -76,8 +76,15 @@ public class CategoryQueryDslRepositoryImpl implements CategoryQueryDslRepositor
 	@Override
 	public CursorPage<CategoryResponseDto> findCategoryShared(int pageSize, Id lastCategoryId) {
 		List<CategoryResponseDto> response = jpaQueryFactory.select(
-				Projections.constructor(CategoryResponseDto.class, category.categoryId, category.memberId, category.title,
-					category.isDeleted, category.isShared, category.createdAt, category.modifiedAt))
+				Projections.constructor(CategoryResponseDto.class,
+					category.categoryId,
+					category.memberId,
+					category.thumbnail,
+					category.title,
+					category.isDeleted,
+					category.isShared,
+					category.createdAt,
+					category.modifiedAt))
 			.from(category)
 			.where(category.isShared.eq(true))
 			.orderBy(category.categoryId.uuid.desc())
