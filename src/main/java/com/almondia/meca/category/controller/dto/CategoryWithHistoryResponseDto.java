@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 import com.almondia.meca.category.domain.vo.Title;
 import com.almondia.meca.common.domain.vo.Id;
+import com.almondia.meca.common.domain.vo.Image;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,6 +19,7 @@ public class CategoryWithHistoryResponseDto {
 
 	private final Id categoryId;
 	private final Id memberId;
+	private final Image thumbnail;
 	private final Title title;
 	private final boolean isDeleted;
 	private final boolean isShared;

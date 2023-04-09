@@ -154,7 +154,7 @@ class CategoryControllerTest {
 	}
 
 	@Nested
-	@DisplayName("오프셋 페이징 카테고리 조회 테스트")
+	@DisplayName("커서 페이징 카테고리 조회 테스트")
 	class OffsetPagingCategoryTest {
 
 		@Test
@@ -165,6 +165,7 @@ class CategoryControllerTest {
 				.categoryId(Id.generateNextId())
 				.memberId(Id.generateNextId())
 				.title(new Title("title"))
+				.thumbnail(Image.of("https://aws.s3.com"))
 				.createdAt(LocalDateTime.now())
 				.modifiedAt(LocalDateTime.now())
 				.scoreAvg(12.3)
@@ -178,7 +179,7 @@ class CategoryControllerTest {
 			Mockito.doReturn(response)
 				.when(categoryservice).findCursorPagingCategoryWithHistoryResponse(anyInt(), any(), any());
 
-			final String url = "/api/v1/categories/me?offset=2&pageSize=4&sortField=createdAt&startCreatedAt=2023-03-13T10:23";
+			final String url = "/api/v1/categories/me?pageSize=4&sortField=createdAt&startCreatedAt=2023-03-13T10:23";
 			mockMvc.perform(get(url))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("pageSize").exists())

@@ -52,6 +52,7 @@ public class CategoryQueryDslRepositoryImpl implements CategoryQueryDslRepositor
 				CategoryWithHistoryResponseDto.class,
 				category.categoryId,
 				category.memberId,
+				category.thumbnail,
 				category.title,
 				category.isDeleted,
 				category.isShared,
