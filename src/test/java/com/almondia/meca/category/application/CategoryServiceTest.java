@@ -283,4 +283,71 @@ class CategoryServiceTest {
 		}
 	}
 
+	/**
+	 * 1. 카테고리 삭제 테스트
+	 * 2. 삭제 요청한 카테고리가 존재하지 않는 경우 예외가 발생하는지 테스트
+	 * 3. 삭제 요청한 카테고리의 소유자가 아닌 경우 예외가 발생하는지 테스트
+	 */
+	@Nested
+	@DisplayName("카테고리 삭제 테스트")
+	@DataJpaTest
+	@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+	@Import({CategoryService.class, QueryDslConfiguration.class})
+	class DeleteCategoryTest {
+
+		@Autowired
+		private CategoryRepository categoryRepository;
+
+		@Autowired
+		private CategoryService categoryService;
+
+		@MockBean
+		private CategoryChecker categoryChecker;
+
+		@MockBean
+		private CardHistoryRepository cardHistoryRepository;
+
+		@Test
+		@DisplayName("카테고리 삭제 동작 테스트")
+		void deleteCategoryTest() {
+			// given
+			Category category = CategoryTestHelper.generateUnSharedCategory("title", Id.generateNextId(),
+				Id.generateNextId());
+			Category savedCategory = categoryRepository.save(category);
+			Mockito.doReturn(savedCategory).when(categoryChecker).checkAuthority(any(), any());
+
+			// when
+			categoryService.deleteCategory(category.getCategoryId(), category.getMemberId());
+
+			// then
+			assertThat(categoryRepository.findAll().stream().filter(cate -> !cate.isDeleted())).isEmpty();
+		}
+
+		@Test
+		@DisplayName("삭제 요청한 카테고리가 존재하지 않는 경우 예외가 발생하는지 테스트")
+		void deleteCategoryWithNotExistedCategoryTest() {
+			// given
+			Mockito.doThrow(IllegalArgumentException.class)
+				.when(categoryChecker)
+				.checkAuthority(any(), any());
+
+			// when
+			assertThatThrownBy(() -> categoryService.deleteCategory(Id.generateNextId(), Id.generateNextId()))
+				.isInstanceOf(IllegalArgumentException.class);
+		}
+
+		@Test
+		@DisplayName("삭제 요청한 카테고리의 소유자가 아닌 경우 예외가 발생하는지 테스트")
+		void deleteCategoryWithNotOwnerTest() {
+			// given
+			Mockito.doThrow(AccessDeniedException.class)
+				.when(categoryChecker)
+				.checkAuthority(any(), any());
+
+			// when
+			assertThatThrownBy(() -> categoryService.deleteCategory(Id.generateNextId(), Id.generateNextId()))
+				.isInstanceOf(AccessDeniedException.class);
+		}
+	}
+
 }
