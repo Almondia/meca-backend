@@ -57,4 +57,8 @@ public class Category extends DateEntity {
 	public void changeTitle(Title title) {
 		this.title = title;
 	}
+
+	public void changeThumbnail(Image thumbnail) {
+		this.thumbnail = thumbnail;
+	}
 }

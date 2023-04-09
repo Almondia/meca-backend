@@ -20,6 +20,7 @@ import com.almondia.meca.category.domain.vo.Title;
 import com.almondia.meca.common.configuration.jpa.JpaAuditingConfiguration;
 import com.almondia.meca.common.configuration.jpa.QueryDslConfiguration;
 import com.almondia.meca.common.domain.vo.Id;
+import com.almondia.meca.common.domain.vo.Image;
 
 /**
  * 1. 엔티티 속성이 에러 없이 필요한 속성이 잘 생성 되었는지 테스트
@@ -29,6 +30,7 @@ import com.almondia.meca.common.domain.vo.Id;
  * 5. 롤백 메서드 호추시 삭제 상태는 false가 된다
  * 6. 공유 변경 메서드를 통해 isShared의 상태를 변경할 수 있다
  * 7. 타이틀 변경 요청시 해당 타이틀로 변형된다
+ * 8. thumbnail 변경 요청시 해당 thumbnail로 변형된다
  */
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -132,6 +134,19 @@ class CategoryTest {
 		Title newTitle = new Title("x");
 		category.changeTitle(newTitle);
 		assertThat(category).hasFieldOrPropertyWithValue("title", newTitle);
+	}
+
+	@Test
+	@DisplayName("thumbnail 변경 요청시 해당 thumbnail로 변형된다")
+	void shouldChangeThumbnailWhenCallChangeThumbnailTest() {
+		Category category = Category.builder()
+			.categoryId(Id.generateNextId())
+			.title(new Title("title"))
+			.isDeleted(true)
+			.build();
+		Image newThumbnail = new Image("x");
+		category.changeThumbnail(newThumbnail);
+		assertThat(category).hasFieldOrPropertyWithValue("thumbnail", newThumbnail);
 	}
 
 }
