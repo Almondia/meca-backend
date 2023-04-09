@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import com.almondia.meca.category.domain.vo.Title;
 import com.almondia.meca.common.domain.entity.DateEntity;
 import com.almondia.meca.common.domain.vo.Id;
+import com.almondia.meca.common.domain.vo.Image;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -33,6 +34,10 @@ public class Category extends DateEntity {
 	@AttributeOverride(name = "uuid", column = @Column(name = "member_id", nullable = false, columnDefinition = "BINARY(16)"))
 	private Id memberId;
 
+	@Embedded
+	@AttributeOverride(name = "image", column = @Column(name = "thumbnail"))
+	private Image thumbnail;
+
 	private boolean isDeleted;
 
 	private boolean isShared;
@@ -51,5 +56,9 @@ public class Category extends DateEntity {
 
 	public void changeTitle(Title title) {
 		this.title = title;
+	}
+
+	public void changeThumbnail(Image thumbnail) {
+		this.thumbnail = thumbnail;
 	}
 }
