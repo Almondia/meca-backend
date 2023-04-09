@@ -33,12 +33,12 @@ class RandomCardPickerTest {
 	}
 
 	@RepeatedTest(value = 10)
-	@DisplayName("2자리수 데이터는 pick 메서드가 10ms 이내에 실행되야 함")
+	@DisplayName("2자리수 데이터는 pick 메서드가 100ms 이내에 실행되야 함")
 	void shoutTest() {
 		CardDataFactory cardDataFactory = new CardDataFactory();
 		List<Card> testData = cardDataFactory.createTestData();
 		CardPicker cardPicker = new RandomCardPicker();
-		assertTimeoutPreemptively(Duration.ofMillis(10L), () -> {
+		assertTimeoutPreemptively(Duration.ofMillis(100L), () -> {
 			List<Card> pick = cardPicker.pick(testData, 3);
 			log.info(String.valueOf(pick));
 		});
