@@ -51,6 +51,9 @@ public class CategoryService {
 		if (updateCategoryRequestDto.getTitle() != null) {
 			category.changeTitle(updateCategoryRequestDto.getTitle());
 		}
+		if (updateCategoryRequestDto.getThumbnail() != null) {
+			category.changeThumbnail(updateCategoryRequestDto.getThumbnail());
+		}
 		if (updateCategoryRequestDto.getIsShared() != null) {
 			category.changeShare(updateCategoryRequestDto.getIsShared());
 		}
