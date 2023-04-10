@@ -60,7 +60,8 @@ public abstract class Card extends DateEntity {
 	@Convert(converter = ListImageConverter.class)
 	private List<Image> images;
 
-	@Column(name = "description", length = 2_1000)
+	@Embedded
+	@AttributeOverride(name = "description", column = @Column(name = "description", nullable = false, length = 2_1000))
 	private Description description;
 
 	@Transient
