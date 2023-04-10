@@ -23,9 +23,12 @@ public class CardCursorPageWithCategory extends CursorPage<CardResponseDto> {
 		this.category = CategoryResponseDto.builder()
 			.categoryId(category.getCategoryId())
 			.title(category.getTitle())
+			.thumbnail(category.getThumbnail())
 			.createdAt(category.getCreatedAt())
 			.modifiedAt(category.getModifiedAt())
 			.memberId(category.getMemberId())
+			.isShared(category.isShared())
+			.isDeleted(category.isDeleted())
 			.build();
 	}
 }

@@ -87,7 +87,8 @@ public class CategoryQueryDslRepositoryImpl implements CategoryQueryDslRepositor
 					category.createdAt,
 					category.modifiedAt))
 			.from(category)
-			.where(category.isShared.eq(true))
+			.where(cursorPagingExpression(null, lastCategoryId)
+				.and(category.isShared.eq(true)))
 			.orderBy(category.categoryId.uuid.desc())
 			.limit(pageSize + 1)
 			.fetch();
@@ -96,11 +97,12 @@ public class CategoryQueryDslRepositoryImpl implements CategoryQueryDslRepositor
 
 	private BooleanExpression cursorPagingExpression(Id memberId, Id lastCategoryId) {
 		BooleanExpression loe = null;
+		BooleanExpression eqMember = memberId == null ? null : category.memberId.eq(memberId);
 		if (lastCategoryId != null) {
 			loe = category.categoryId.uuid.loe(lastCategoryId.getUuid());
 		}
-		return category.memberId.eq(memberId)
-			.and(category.isDeleted.eq(false))
+		return category.isDeleted.eq(false)
+			.and(eqMember)
 			.and(loe);
 	}
 
@@ -127,7 +129,7 @@ public class CategoryQueryDslRepositoryImpl implements CategoryQueryDslRepositor
 		}
 		return CursorPage.<CategoryResponseDto>builder()
 			.contents(response)
-			.pageSize(response.size())
+			.pageSize(pageSize)
 			.hasNext(hasNext)
 			.sortOrder(SortOrder.DESC)
 			.build();
