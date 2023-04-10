@@ -61,7 +61,7 @@ public abstract class Card extends DateEntity {
 	private List<Image> images;
 
 	@Embedded
-	@AttributeOverride(name = "description", column = @Column(name = "description", nullable = false, length = 2_1000))
+	@AttributeOverride(name = "description", column = @Column(name = "description", length = 2_1000, columnDefinition = "TEXT"))
 	private Description description;
 
 	@Transient
