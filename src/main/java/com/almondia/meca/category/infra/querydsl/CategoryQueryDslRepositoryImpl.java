@@ -127,7 +127,7 @@ public class CategoryQueryDslRepositoryImpl implements CategoryQueryDslRepositor
 		}
 		return CursorPage.<CategoryResponseDto>builder()
 			.contents(response)
-			.pageSize(response.size())
+			.pageSize(pageSize)
 			.hasNext(hasNext)
 			.sortOrder(SortOrder.DESC)
 			.build();
