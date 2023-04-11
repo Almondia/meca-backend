@@ -27,7 +27,9 @@ import com.almondia.meca.card.application.CardSimulationService;
 import com.almondia.meca.card.controller.dto.CardCursorPageWithCategory;
 import com.almondia.meca.card.controller.dto.CardResponseDto;
 import com.almondia.meca.card.controller.dto.SaveCardRequestDto;
+import com.almondia.meca.card.controller.dto.SharedCardResponseDto;
 import com.almondia.meca.card.controller.dto.UpdateCardRequestDto;
+import com.almondia.meca.card.domain.entity.OxCard;
 import com.almondia.meca.card.domain.vo.CardType;
 import com.almondia.meca.card.domain.vo.Description;
 import com.almondia.meca.card.domain.vo.OxAnswer;
@@ -38,6 +40,11 @@ import com.almondia.meca.common.configuration.jackson.JacksonConfiguration;
 import com.almondia.meca.common.configuration.security.filter.JwtAuthenticationFilter;
 import com.almondia.meca.common.domain.vo.Id;
 import com.almondia.meca.common.infra.querydsl.SortOrder;
+import com.almondia.meca.member.domain.entity.Member;
+import com.almondia.meca.member.domain.vo.Email;
+import com.almondia.meca.member.domain.vo.Name;
+import com.almondia.meca.member.domain.vo.OAuthType;
+import com.almondia.meca.member.domain.vo.Role;
 import com.almondia.meca.mock.security.WithMockMember;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -305,6 +312,51 @@ class CardControllerTest {
 			mockMvc.perform(get("/api/v1/cards//categories/{categoryId}/me/count", Id.generateNextId()))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("count").exists());
+		}
+	}
+
+	@Nested
+	@DisplayName("공유 카드 단일 조회 API")
+	class FindSharedCardTest {
+
+		@Test
+		@DisplayName("정상 동작시 200 응답 및 응답 포맷 테스트")
+		void shouldReturn200OkAndResponseFormatTest() throws Exception {
+			OxCard card = OxCard.builder()
+				.cardId(Id.generateNextId())
+				.categoryId(Id.generateNextId())
+				.memberId(Id.generateNextId())
+				.title(new Title("title"))
+				.question(new Question("question"))
+				.oxAnswer(OxAnswer.O)
+				.description(new Description("description"))
+				.build();
+			Member member = Member.builder()
+				.memberId(Id.generateNextId())
+				.email(new Email("abc@gamil.com"))
+				.name(new Name("nickname"))
+				.oAuthType(OAuthType.KAKAO)
+				.oauthId("id")
+				.role(Role.USER)
+				.build();
+			Mockito.doReturn(new SharedCardResponseDto(card, member))
+				.when(cardService).findSharedCard(any());
+
+			mockMvc.perform(get("/api/v1/cards/{cardId}/share", Id.generateNextId()))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.cardInfo.cardId").exists())
+				.andExpect(jsonPath("$.cardInfo.categoryId").exists())
+				.andExpect(jsonPath("$.cardInfo.title").exists())
+				.andExpect(jsonPath("$.cardInfo.question").exists())
+				.andExpect(jsonPath("$.cardInfo.cardType").exists())
+				.andExpect(jsonPath("$.cardInfo.answer").exists())
+				.andExpect(jsonPath("$.cardInfo.description").exists())
+				.andExpect(jsonPath("$.cardInfo.title").exists())
+				.andExpect(jsonPath("$.memberInfo.memberId").exists())
+				.andExpect(jsonPath("$.memberInfo.email").exists())
+				.andExpect(jsonPath("$.memberInfo.name").exists())
+				.andExpect(jsonPath("$.memberInfo.oauthType").exists())
+				.andExpect(jsonPath("$.memberInfo.role").exists());
 		}
 	}
 }
