@@ -77,16 +77,20 @@ public class CardController {
 		return ResponseEntity.ok(responseDto);
 	}
 
-	// @GetMapping("/categories/{categoryId}/share")
-	// public ResponseEntity<CursorPage<CardResponseDto>> searchSharedCardPaging(
-	// 	@PathVariable("categoryId") Id categoryId,
-	// 	@RequestParam(value = "hasNext", required = false) Id lastId,
-	// 	@RequestParam(value = "pageSize", defaultValue = "1000") int pageSize,
-	// 	@RequestParam(value = "sortOrder", defaultValue = "desc") SortOrder sortOrder
-	// ) {
-	// 	CardSearchCriteria criteria = makeCursorCriteria(categoryId, lastId, sortOrder);
-	//
-	// }
+	@GetMapping("/categories/{categoryId}/share")
+	public ResponseEntity<CursorPage<CardResponseDto>> searchSharedCardPaging(
+		@PathVariable("categoryId") Id categoryId,
+		@RequestParam(value = "hasNext", required = false) Id lastId,
+		@RequestParam(value = "pageSize", defaultValue = "1000") int pageSize,
+		@RequestParam(value = "sortOrder", defaultValue = "desc") SortOrder sortOrder
+	) {
+		CardSearchCriteria criteria = makeCursorCriteria(categoryId, lastId, sortOrder);
+
+		CursorPage<CardResponseDto> responseDto = cardService.searchCursorPagingSharedCard(pageSize, categoryId,
+			criteria,
+			SortOption.of(CardSortField.CARD_ID, sortOrder));
+		return ResponseEntity.ok(responseDto);
+	}
 
 	@Secured("ROLE_USER")
 	@GetMapping("/{cardId}/me")

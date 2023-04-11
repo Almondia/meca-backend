@@ -359,4 +359,45 @@ class CardControllerTest {
 				.andExpect(jsonPath("$.memberInfo.role").exists());
 		}
 	}
+
+	@Nested
+	@DisplayName("공유 카테고리의 카드 커서 페이징 조회 API")
+	class SharedCardCursorPagingTest {
+
+		@Test
+		@DisplayName("정상 동작시 200 응답 및 응답 포맷 테스트")
+		void shouldReturn200OkAndResponseFormatTest() throws Exception {
+			List<CardResponseDto> contents = List.of(makeResponse());
+			CardCursorPageWithCategory cardCursorPageWithCategory = new CardCursorPageWithCategory(contents,
+				Id.generateNextId(), 5, SortOrder.DESC);
+			cardCursorPageWithCategory.setCategory(Category.builder()
+				.categoryId(Id.generateNextId())
+				.title(new com.almondia.meca.category.domain.vo.Title("title"))
+				.build());
+			Mockito.doReturn(cardCursorPageWithCategory)
+				.when(cardService)
+				.searchCursorPagingSharedCard(anyInt(), any(), any(), any());
+			mockMvc.perform(
+					get("/api/v1/cards/categories/{categoryId}/share?pageSize=100&sortOrder=desc", Id.generateNextId()))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("contents").exists())
+				.andExpect(jsonPath("pageSize").exists())
+				.andExpect(jsonPath("sortOrder").exists())
+				.andExpect(jsonPath("category").exists());
+		}
+
+		private CardResponseDto makeResponse() {
+			return CardResponseDto.builder()
+				.cardId(Id.generateNextId())
+				.title(new Title("title"))
+				.question(new Question("hello"))
+				.categoryId(Id.generateNextId())
+				.cardType(CardType.OX_QUIZ)
+				.answer(OxAnswer.O.name())
+				.description(new Description("hello"))
+				.createdAt(LocalDateTime.now())
+				.modifiedAt(LocalDateTime.now())
+				.build();
+		}
+	}
 }
