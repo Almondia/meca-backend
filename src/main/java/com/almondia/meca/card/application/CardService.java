@@ -10,6 +10,7 @@ import com.almondia.meca.card.application.helper.CardMapper;
 import com.almondia.meca.card.controller.dto.CardCursorPageWithCategory;
 import com.almondia.meca.card.controller.dto.CardResponseDto;
 import com.almondia.meca.card.controller.dto.SaveCardRequestDto;
+import com.almondia.meca.card.controller.dto.SharedCardResponseDto;
 import com.almondia.meca.card.controller.dto.UpdateCardRequestDto;
 import com.almondia.meca.card.domain.entity.Card;
 import com.almondia.meca.card.domain.repository.CardRepository;
@@ -81,6 +82,11 @@ public class CardService {
 			throw new IllegalArgumentException("삭제된 카드입니다");
 		}
 		return CardMapper.cardToDto(card);
+	}
+
+	@Transactional(readOnly = true)
+	public SharedCardResponseDto findSharedCard(Id cardId) {
+		return cardRepository.findSharedCard(cardId);
 	}
 
 	@Transactional(readOnly = true)
