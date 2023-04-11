@@ -2,6 +2,7 @@ package com.almondia.meca.card.application;
 
 import java.util.List;
 
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +21,7 @@ import com.almondia.meca.card.infra.querydsl.CardSortField;
 import com.almondia.meca.cardhistory.domain.entity.CardHistory;
 import com.almondia.meca.cardhistory.domain.repository.CardHistoryRepository;
 import com.almondia.meca.category.domain.entity.Category;
+import com.almondia.meca.category.domain.repository.CategoryRepository;
 import com.almondia.meca.category.domain.service.CategoryChecker;
 import com.almondia.meca.common.controller.dto.CursorPage;
 import com.almondia.meca.common.domain.vo.Id;
@@ -33,6 +35,7 @@ public class CardService {
 
 	private final CardHistoryRepository cardHistoryRepository;
 	private final CardRepository cardRepository;
+	private final CategoryRepository categoryRepository;
 	private final CategoryChecker categoryChecker;
 	private final CardChecker cardChecker;
 
@@ -109,5 +112,22 @@ public class CardService {
 			categoryChecker.checkAuthority(updateCardRequestDto.getCategoryId(), memberId);
 			card.changeCategoryId(updateCardRequestDto.getCategoryId());
 		}
+	}
+
+	@Transactional(readOnly = true)
+	public CursorPage<CardResponseDto> searchCursorPagingSharedCard(int pageSize, Id categoryId,
+		CardSearchCriteria criteria, SortOption<CardSortField> sortOption
+	) {
+		Category category = categoryRepository.findById(categoryId)
+			.orElseThrow(() -> new IllegalArgumentException("카테고리가 존재하지 않습니다"));
+		if (!category.isShared()) {
+			throw new AccessDeniedException("공유되지 않은 카테고리에 접근할 수 없습니다");
+		}
+		List<Card> cursor = cardRepository.findCardByCategoryIdUsingCursorPaging(pageSize,
+			criteria, sortOption);
+		CardCursorPageWithCategory cardCursorPageWithCategory = CardMapper.cardsToCursorPagingDto(cursor, pageSize,
+			sortOption.getSortOrder());
+		cardCursorPageWithCategory.setCategory(category);
+		return cardCursorPageWithCategory;
 	}
 }
