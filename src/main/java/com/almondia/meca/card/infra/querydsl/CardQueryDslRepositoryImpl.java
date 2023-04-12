@@ -7,6 +7,9 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Repository;
 
+import com.almondia.meca.card.application.helper.CardMapper;
+import com.almondia.meca.card.controller.dto.CardCursorPageWithCategory;
+import com.almondia.meca.card.controller.dto.CardResponseDto;
 import com.almondia.meca.card.controller.dto.SharedCardResponseDto;
 import com.almondia.meca.card.domain.entity.Card;
 import com.almondia.meca.card.domain.entity.QCard;
@@ -33,16 +36,29 @@ public class CardQueryDslRepositoryImpl implements CardQueryDslRepository {
 	private final JPAQueryFactory queryFactory;
 
 	@Override
-	public List<Card> findCardByCategoryIdUsingCursorPaging(
+	public CardCursorPageWithCategory findCardByCategoryIdUsingCursorPaging(
 		int pageSize,
 		CardSearchCriteria criteria,
 		SortOption<CardSortField> sortOption
 	) {
-		return queryFactory.selectFrom(card)
+		List<CardResponseDto> contents = queryFactory.selectFrom(card)
 			.where(criteria.getPredicate())
 			.orderBy(SortFactory.createOrderSpecifier(sortOption))
-			.limit(pageSize)
-			.fetch();
+			.limit(pageSize + 1)
+			.fetch()
+			.stream()
+			.map(CardMapper::cardToDto)
+			.collect(Collectors.toList());
+
+		Id hasNext = getHasNext(pageSize, contents);
+		if (hasNext != null)
+			contents.remove(pageSize);
+		return new CardCursorPageWithCategory(
+			contents,
+			hasNext,
+			pageSize,
+			sortOption.getSortOrder()
+		);
 	}
 
 	@Override
@@ -97,5 +113,13 @@ public class CardQueryDslRepositoryImpl implements CardQueryDslRepository {
 				.and(category.isShared.eq(true)))
 			.fetchOne();
 		return Optional.ofNullable(sharedCardResponseDto);
+	}
+
+	private Id getHasNext(int pageSize, List<CardResponseDto> contents) {
+		Id hasNext = null;
+		if (contents.size() > pageSize) {
+			hasNext = contents.get(pageSize).getCardId();
+		}
+		return hasNext;
 	}
 }

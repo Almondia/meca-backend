@@ -62,12 +62,10 @@ public class CardService {
 		Id memberId
 	) {
 		Category category = categoryChecker.checkAuthority(categoryId, memberId);
-		List<Card> cursor = cardRepository.findCardByCategoryIdUsingCursorPaging(pageSize,
+		CardCursorPageWithCategory cursor = cardRepository.findCardByCategoryIdUsingCursorPaging(pageSize,
 			cardSearchCriteria, sortOption);
-		CardCursorPageWithCategory cardCursorPageWithCategory = CardMapper.cardsToCursorPagingDto(cursor, pageSize,
-			sortOption.getSortOrder());
-		cardCursorPageWithCategory.setCategory(category);
-		return cardCursorPageWithCategory;
+		cursor.setCategory(category);
+		return cursor;
 	}
 
 	@Transactional
@@ -124,11 +122,9 @@ public class CardService {
 		if (!category.isShared()) {
 			throw new AccessDeniedException("공유되지 않은 카테고리에 접근할 수 없습니다");
 		}
-		List<Card> cursor = cardRepository.findCardByCategoryIdUsingCursorPaging(pageSize,
+		CardCursorPageWithCategory cursor = cardRepository.findCardByCategoryIdUsingCursorPaging(pageSize,
 			criteria, sortOption);
-		CardCursorPageWithCategory cardCursorPageWithCategory = CardMapper.cardsToCursorPagingDto(cursor, pageSize,
-			sortOption.getSortOrder());
-		cardCursorPageWithCategory.setCategory(category);
-		return cardCursorPageWithCategory;
+		cursor.setCategory(category);
+		return cursor;
 	}
 }
