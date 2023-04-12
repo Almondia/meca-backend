@@ -10,6 +10,7 @@ import javax.persistence.Enumerated;
 
 import com.almondia.meca.common.domain.entity.DateEntity;
 import com.almondia.meca.common.domain.vo.Id;
+import com.almondia.meca.common.domain.vo.Image;
 import com.almondia.meca.member.domain.vo.Email;
 import com.almondia.meca.member.domain.vo.Name;
 import com.almondia.meca.member.domain.vo.OAuthType;
@@ -40,6 +41,10 @@ public class Member extends DateEntity {
 	@Embedded
 	@AttributeOverride(name = "email", column = @Column(name = "email", columnDefinition = "VARCHAR(255)"))
 	private Email email;
+
+	@Embedded
+	@AttributeOverride(name = "image", column = @Column(name = "profile", columnDefinition = "VARCHAR(255)"))
+	private Image profile;
 
 	@Column(name = "o_auth_type", nullable = false, columnDefinition = "VARCHAR(10)")
 	private OAuthType oAuthType;
