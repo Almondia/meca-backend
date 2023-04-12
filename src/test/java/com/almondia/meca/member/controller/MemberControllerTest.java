@@ -20,6 +20,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.almondia.meca.common.configuration.jackson.JacksonConfiguration;
 import com.almondia.meca.common.configuration.security.filter.JwtAuthenticationFilter;
 import com.almondia.meca.common.domain.vo.Id;
+import com.almondia.meca.common.domain.vo.Image;
 import com.almondia.meca.member.application.MemberService;
 import com.almondia.meca.member.controller.dto.MemberResponseDto;
 import com.almondia.meca.member.domain.vo.Email;
@@ -61,6 +62,7 @@ class MemberControllerTest {
 				.memberId(Id.generateNextId())
 				.name(new Name("name"))
 				.email(new Email("email@naver.com"))
+				.profile(new Image("profile"))
 				.oAuthType(OAuthType.KAKAO)
 				.role(Role.USER)
 				.isDeleted(false)
@@ -73,6 +75,7 @@ class MemberControllerTest {
 				.andExpect(jsonPath("memberId").exists())
 				.andExpect(jsonPath("name").exists())
 				.andExpect(jsonPath("email").exists())
+				.andExpect(jsonPath("profile").exists())
 				.andExpect(jsonPath("oauthType").exists())
 				.andExpect(jsonPath("role").exists())
 				.andExpect(jsonPath("deleted").exists())
