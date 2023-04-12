@@ -3,6 +3,7 @@ package com.almondia.meca.card.infra.querydsl;
 import static org.assertj.core.api.Assertions.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.persistence.EntityManager;
@@ -301,6 +302,54 @@ class CardQueryDslRepositoryImplTest {
 			assertThat(cards).isNotEmpty();
 			assertThat(cards.size()).isEqualTo(1);
 			assertThat(cards.get(0).getCardId()).isEqualTo(cardId2);
+		}
+	}
+
+	/**
+	 * 1. 카드가 존재하지 않으면 빈 맵을 리턴해야 한다
+	 * 2. 카드가 존재하나 memberId가 일치하지 않으면 빈 맵을 리턴해야 한다
+	 */
+	@Nested
+	@DisplayName("findMapByListOfCardIdAndMemberId 테스트")
+	class FindMapByListOfCardIdAndMemberIdTest {
+
+		Id memberId = Id.generateNextId();
+		Id categoryId = Id.generateNextId();
+		Id cardId = Id.generateNextId();
+
+		@Test
+		@DisplayName("카드가 존재하지 않으면 빈 맵을 리턴해야 한다")
+		void shouldReturnEmptyMapWhenCallFindMapByListOfCardIdAndMemberIdTest() {
+			// given
+			Member member = MemberTestHelper.generateMember(memberId);
+			Category category = CategoryTestHelper.generateUnSharedCategory("title", memberId, categoryId);
+			entityManager.persist(member);
+			entityManager.persist(category);
+
+			// when
+			Map<Id, List<Id>> cardMap = cardRepository.findMapByListOfCardIdAndMemberId(List.of(cardId), memberId);
+
+			// then
+			assertThat(cardMap).isEmpty();
+		}
+
+		@Test
+		@DisplayName("카드가 존재하나 memberId가 일치하지 않으면 빈 맵을 리턴해야 한다")
+		void shouldReturnEmptyMapWhenCallFindMapByListOfCardIdAndMemberIdTest2() {
+			// given
+			Member member = MemberTestHelper.generateMember(memberId);
+			Category category = CategoryTestHelper.generateUnSharedCategory("title", memberId, categoryId);
+			OxCard card = CardTestHelper.genOxCard(Id.generateNextId(), Id.generateNextId(), cardId);
+			entityManager.persist(member);
+			entityManager.persist(category);
+			entityManager.persist(card);
+
+			// when
+			Map<Id, List<Id>> cardMap = cardRepository.findMapByListOfCardIdAndMemberId(List.of(cardId),
+				Id.generateNextId());
+
+			// then
+			assertThat(cardMap).isEmpty();
 		}
 	}
 
