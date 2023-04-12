@@ -151,4 +151,45 @@ class CardQueryDslRepositoryImplTest {
 		}
 	}
 
+	/**
+	 * 1. 카테고리 내의 카드가 존재하지 않으면 0을 리턴해야 한다
+	 * 2. 카테고리 내의 카드가 존재하면 카드 개수를 리턴해야 한다
+	 */
+	@Nested
+	@DisplayName("countCardsByCategoryId 테스트")
+	class CountCardsByCategoryId {
+
+		Id categoryId = Id.generateNextId();
+		Id memberId = Id.generateNextId();
+		Id cardId = Id.generateNextId();
+
+		@Test
+		@DisplayName("카테고리 내의 카드가 존재하지 않으면 0을 리턴해야 한다")
+		void shouldReturnZeroWhenCallCountCardsByCategoryIdTest() {
+			// when
+			long count = cardRepository.countCardsByCategoryId(categoryId);
+
+			// then
+			assertThat(count).isEqualTo(0);
+		}
+
+		@Test
+		@DisplayName("카테고리 내의 카드가 존재하면 카드 개수를 리턴해야 한다")
+		void shouldReturnCardCountWhenCallCountCardsByCategoryIdTest() {
+			// given
+			Member member = MemberTestHelper.generateMember(memberId);
+			Category category = CategoryTestHelper.generateUnSharedCategory("title", memberId, categoryId);
+			OxCard card = CardTestHelper.genOxCard(memberId, categoryId, cardId);
+			entityManager.persist(member);
+			entityManager.persist(category);
+			entityManager.persist(card);
+
+			// when
+			long count = cardRepository.countCardsByCategoryId(categoryId);
+
+			// then
+			assertThat(count).isEqualTo(1);
+		}
+	}
+
 }
