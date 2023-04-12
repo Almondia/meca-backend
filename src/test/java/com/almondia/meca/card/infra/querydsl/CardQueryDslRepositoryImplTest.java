@@ -29,6 +29,8 @@ import com.almondia.meca.card.domain.vo.MultiChoiceAnswer;
 import com.almondia.meca.card.domain.vo.OxAnswer;
 import com.almondia.meca.card.domain.vo.Question;
 import com.almondia.meca.card.domain.vo.Title;
+import com.almondia.meca.category.domain.entity.Category;
+import com.almondia.meca.category.domain.repository.CategoryRepository;
 import com.almondia.meca.common.configuration.jpa.JpaAuditingConfiguration;
 import com.almondia.meca.common.configuration.jpa.QueryDslConfiguration;
 import com.almondia.meca.common.domain.vo.Id;
@@ -60,6 +62,9 @@ class CardQueryDslRepositoryImplTest {
 
 	@Autowired
 	MemberRepository memberRepository;
+
+	@Autowired
+	CategoryRepository categoryRepository;
 
 	Id categoryId = Id.generateNextId();
 	Id memberId = Id.generateNextId();
@@ -162,6 +167,8 @@ class CardQueryDslRepositoryImplTest {
 	void test2() {
 		Id cardId = Id.generateNextId();
 		Id memberId = Id.generateNextId();
+		Id categoryId = Id.generateNextId();
+
 		memberRepository.save(Member.builder()
 			.memberId(memberId)
 			.email(new Email("email@naver.com"))
@@ -171,16 +178,25 @@ class CardQueryDslRepositoryImplTest {
 			.role(Role.USER)
 			.build());
 
+		categoryRepository.save(Category.builder()
+			.categoryId(categoryId)
+			.memberId(memberId)
+			.title(new com.almondia.meca.category.domain.vo.Title("title"))
+			.isDeleted(false)
+			.isShared(true)
+			.build());
+
 		cardRepository.save(OxCard.builder()
 			.memberId(memberId)
-			.categoryId(Id.generateNextId())
+			.categoryId(categoryId)
 			.cardId(cardId)
 			.oxAnswer(OxAnswer.O)
 			.title(new Title("title"))
 			.question(new Question("question"))
 			.description(new Description("description"))
 			.build());
-		SharedCardResponseDto sharedCard = cardRepository.findSharedCard(cardId);
+
+		SharedCardResponseDto sharedCard = cardRepository.findSharedCard(cardId).orElseThrow();
 		assertThat(sharedCard.getCardInfo()).isNotNull();
 		assertThat(sharedCard.getMemberInfo()).isNotNull();
 	}

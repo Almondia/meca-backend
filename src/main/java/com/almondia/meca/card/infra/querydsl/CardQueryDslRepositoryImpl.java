@@ -2,6 +2,7 @@ package com.almondia.meca.card.infra.querydsl;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Repository;
@@ -10,6 +11,7 @@ import com.almondia.meca.card.controller.dto.SharedCardResponseDto;
 import com.almondia.meca.card.domain.entity.Card;
 import com.almondia.meca.card.domain.entity.QCard;
 import com.almondia.meca.cardhistory.domain.entity.QCardHistory;
+import com.almondia.meca.category.domain.entity.QCategory;
 import com.almondia.meca.common.domain.vo.Id;
 import com.almondia.meca.common.infra.querydsl.SortFactory;
 import com.almondia.meca.common.infra.querydsl.SortOption;
@@ -26,6 +28,7 @@ public class CardQueryDslRepositoryImpl implements CardQueryDslRepository {
 	private static final QCard card = QCard.card;
 	private static final QCardHistory cardHistory = QCardHistory.cardHistory;
 	private static final QMember member = QMember.member;
+	private static final QCategory category = QCategory.category;
 
 	private final JPAQueryFactory queryFactory;
 
@@ -78,8 +81,8 @@ public class CardQueryDslRepositoryImpl implements CardQueryDslRepository {
 	}
 
 	@Override
-	public SharedCardResponseDto findSharedCard(Id cardId) {
-		return queryFactory.select(Projections.constructor(
+	public Optional<SharedCardResponseDto> findSharedCard(Id cardId) {
+		SharedCardResponseDto sharedCardResponseDto = queryFactory.select(Projections.constructor(
 				SharedCardResponseDto.class,
 				card,
 				member
@@ -87,7 +90,12 @@ public class CardQueryDslRepositoryImpl implements CardQueryDslRepository {
 			.from(card)
 			.innerJoin(member)
 			.on(card.memberId.eq(member.memberId))
-			.where(card.cardId.eq(cardId))
+			.innerJoin(category)
+			.on(card.categoryId.eq(category.categoryId))
+			.where(card.cardId.eq(cardId)
+				.and(card.isDeleted.eq(false))
+				.and(category.isShared.eq(true)))
 			.fetchOne();
+		return Optional.ofNullable(sharedCardResponseDto);
 	}
 }

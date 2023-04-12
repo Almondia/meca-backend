@@ -2,6 +2,7 @@ package com.almondia.meca.card.infra.querydsl;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import com.almondia.meca.card.controller.dto.SharedCardResponseDto;
 import com.almondia.meca.card.domain.entity.Card;
@@ -19,5 +20,5 @@ public interface CardQueryDslRepository {
 
 	long countCardsByCategoryId(Id categoryId);
 
-	SharedCardResponseDto findSharedCard(Id cardId);
+	Optional<SharedCardResponseDto> findSharedCard(Id cardId);
 }
