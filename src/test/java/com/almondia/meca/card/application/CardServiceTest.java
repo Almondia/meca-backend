@@ -444,4 +444,10 @@ class CardServiceTest {
 				.build());
 		}
 	}
+
+	@Nested
+	@DisplayName("공유 카테고리의 카드 목록 페이징 조회")
+	class SharedCardCursorPagingTest {
+
+	}
 }

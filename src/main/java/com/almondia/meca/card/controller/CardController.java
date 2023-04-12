@@ -21,6 +21,7 @@ import com.almondia.meca.card.application.CardSimulationService;
 import com.almondia.meca.card.controller.dto.CardCountResponseDto;
 import com.almondia.meca.card.controller.dto.CardResponseDto;
 import com.almondia.meca.card.controller.dto.SaveCardRequestDto;
+import com.almondia.meca.card.controller.dto.SharedCardResponseDto;
 import com.almondia.meca.card.controller.dto.UpdateCardRequestDto;
 import com.almondia.meca.card.infra.querydsl.CardSearchCriteria;
 import com.almondia.meca.card.infra.querydsl.CardSortField;
@@ -76,6 +77,21 @@ public class CardController {
 		return ResponseEntity.ok(responseDto);
 	}
 
+	@GetMapping("/categories/{categoryId}/share")
+	public ResponseEntity<CursorPage<CardResponseDto>> searchSharedCardPaging(
+		@PathVariable("categoryId") Id categoryId,
+		@RequestParam(value = "hasNext", required = false) Id lastId,
+		@RequestParam(value = "pageSize", defaultValue = "1000") int pageSize,
+		@RequestParam(value = "sortOrder", defaultValue = "desc") SortOrder sortOrder
+	) {
+		CardSearchCriteria criteria = makeCursorCriteria(categoryId, lastId, sortOrder);
+
+		CursorPage<CardResponseDto> responseDto = cardService.searchCursorPagingSharedCard(pageSize, categoryId,
+			criteria,
+			SortOption.of(CardSortField.CARD_ID, sortOrder));
+		return ResponseEntity.ok(responseDto);
+	}
+
 	@Secured("ROLE_USER")
 	@GetMapping("/{cardId}/me")
 	public ResponseEntity<CardResponseDto> findCardByCardId(
@@ -83,6 +99,14 @@ public class CardController {
 		@PathVariable(value = "cardId") Id cardId
 	) {
 		CardResponseDto responseDto = cardService.findCardById(cardId, member.getMemberId());
+		return ResponseEntity.ok(responseDto);
+	}
+
+	@GetMapping("/{cardId}/share")
+	public ResponseEntity<SharedCardResponseDto> findCardByCardId(
+		@PathVariable(value = "cardId") Id cardId
+	) {
+		SharedCardResponseDto responseDto = cardService.findSharedCard(cardId);
 		return ResponseEntity.ok(responseDto);
 	}
 

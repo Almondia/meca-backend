@@ -1,33 +1,15 @@
 package com.almondia.meca.card.application.helper;
 
 import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 
-import com.almondia.meca.card.controller.dto.CardCursorPageWithCategory;
 import com.almondia.meca.card.controller.dto.CardResponseDto;
 import com.almondia.meca.card.domain.entity.Card;
 import com.almondia.meca.card.domain.entity.KeywordCard;
 import com.almondia.meca.card.domain.entity.MultiChoiceCard;
 import com.almondia.meca.card.domain.entity.OxCard;
 import com.almondia.meca.card.domain.vo.CardType;
-import com.almondia.meca.common.domain.vo.Id;
-import com.almondia.meca.common.infra.querydsl.SortOrder;
 
 public class CardMapper {
-
-	public static CardCursorPageWithCategory cardsToCursorPagingDto(
-		List<Card> contents,
-		int pageSize,
-		SortOrder sortOrder
-	) {
-		List<CardResponseDto> responses = contents.stream().map(CardMapper::cardToDto).collect(Collectors.toList());
-		Id lastId = null;
-		if (contents.size() == pageSize) {
-			lastId = responses.get(responses.size() - 1).getCardId();
-		}
-		return new CardCursorPageWithCategory(responses, lastId, pageSize, sortOrder);
-	}
 
 	public static CardResponseDto cardToDto(Card card) {
 		if (card.getCardType().equals(CardType.OX_QUIZ)) {
