@@ -87,7 +87,7 @@ public class CardService {
 
 	@Transactional(readOnly = true)
 	public SharedCardResponseDto findSharedCard(Id cardId) {
-		return cardRepository.findSharedCard(cardId)
+		return cardRepository.findCardInSharedCategory(cardId)
 			.orElseThrow(() -> new IllegalArgumentException("공유된 카테고리의 카드가 존재하지 않습니다"));
 	}
 

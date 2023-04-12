@@ -62,7 +62,7 @@ public class CardQueryDslRepositoryImpl implements CardQueryDslRepository {
 	}
 
 	@Override
-	public Optional<SharedCardResponseDto> findSharedCard(Id cardId) {
+	public Optional<SharedCardResponseDto> findCardInSharedCategory(Id cardId) {
 		SharedCardResponseDto sharedCardResponseDto = queryFactory.select(Projections.constructor(
 				SharedCardResponseDto.class,
 				card,

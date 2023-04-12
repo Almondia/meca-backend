@@ -15,7 +15,7 @@ public interface CardQueryDslRepository {
 	CardCursorPageWithCategory findCardByCategoryIdUsingCursorPaging(int pageSize,
 		CardSearchCriteria criteria, SortOption<CardSortField> sortOption);
 
-	Optional<SharedCardResponseDto> findSharedCard(Id cardId);
+	Optional<SharedCardResponseDto> findCardInSharedCategory(Id cardId);
 
 	long countCardsByCategoryId(Id categoryId);
 
