@@ -62,41 +62,6 @@ public class CardQueryDslRepositoryImpl implements CardQueryDslRepository {
 	}
 
 	@Override
-	public Map<Id, List<Id>> findMapByListOfCardIdAndMemberId(List<Id> cardIds, Id memberId) {
-		return queryFactory
-			.select(card.cardId, card.categoryId)
-			.from(card)
-			.where(card.cardId.in(cardIds)
-				.and(card.memberId.eq(memberId)))
-			.fetch()
-			.stream()
-			.collect(Collectors.groupingBy(
-				tuple -> tuple.get(card.cardId),
-				Collectors.mapping(tuple -> tuple.get(card.categoryId), Collectors.toList())
-			));
-	}
-
-	@Override
-	public List<Card> findCardByCategoryIdScoreAsc(Id categoryId, int limit) {
-		return queryFactory.selectFrom(card)
-			.leftJoin(cardHistory).on(card.cardId.eq(cardHistory.cardId))
-			.groupBy(card)
-			.orderBy(cardHistory.score.score.avg().asc())
-			.limit(limit)
-			.fetch();
-	}
-
-	@Override
-	public long countCardsByCategoryId(Id categoryId) {
-		Long count = queryFactory.select(card.count())
-			.from(card)
-			.where(card.isDeleted.eq(false)
-				.and(card.categoryId.eq(categoryId)))
-			.fetchOne();
-		return count == null ? 0 : count;
-	}
-
-	@Override
 	public Optional<SharedCardResponseDto> findSharedCard(Id cardId) {
 		SharedCardResponseDto sharedCardResponseDto = queryFactory.select(Projections.constructor(
 				SharedCardResponseDto.class,
@@ -113,6 +78,41 @@ public class CardQueryDslRepositoryImpl implements CardQueryDslRepository {
 				.and(category.isShared.eq(true)))
 			.fetchOne();
 		return Optional.ofNullable(sharedCardResponseDto);
+	}
+
+	@Override
+	public long countCardsByCategoryId(Id categoryId) {
+		Long count = queryFactory.select(card.count())
+			.from(card)
+			.where(card.isDeleted.eq(false)
+				.and(card.categoryId.eq(categoryId)))
+			.fetchOne();
+		return count == null ? 0 : count;
+	}
+
+	@Override
+	public List<Card> findCardByCategoryIdScoreAsc(Id categoryId, int limit) {
+		return queryFactory.selectFrom(card)
+			.leftJoin(cardHistory).on(card.cardId.eq(cardHistory.cardId))
+			.groupBy(card)
+			.orderBy(cardHistory.score.score.avg().asc())
+			.limit(limit)
+			.fetch();
+	}
+
+	@Override
+	public Map<Id, List<Id>> findMapByListOfCardIdAndMemberId(List<Id> cardIds, Id memberId) {
+		return queryFactory
+			.select(card.cardId, card.categoryId)
+			.from(card)
+			.where(card.cardId.in(cardIds)
+				.and(card.memberId.eq(memberId)))
+			.fetch()
+			.stream()
+			.collect(Collectors.groupingBy(
+				tuple -> tuple.get(card.cardId),
+				Collectors.mapping(tuple -> tuple.get(card.categoryId), Collectors.toList())
+			));
 	}
 
 	private Id getHasNext(int pageSize, List<CardResponseDto> contents) {

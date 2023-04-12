@@ -15,11 +15,11 @@ public interface CardQueryDslRepository {
 	CardCursorPageWithCategory findCardByCategoryIdUsingCursorPaging(int pageSize,
 		CardSearchCriteria criteria, SortOption<CardSortField> sortOption);
 
-	Map<Id, List<Id>> findMapByListOfCardIdAndMemberId(List<Id> cardIds, Id memberId);
-
-	List<Card> findCardByCategoryIdScoreAsc(Id categoryId, int limit);
+	Optional<SharedCardResponseDto> findSharedCard(Id cardId);
 
 	long countCardsByCategoryId(Id categoryId);
 
-	Optional<SharedCardResponseDto> findSharedCard(Id cardId);
+	List<Card> findCardByCategoryIdScoreAsc(Id categoryId, int limit);
+
+	Map<Id, List<Id>> findMapByListOfCardIdAndMemberId(List<Id> cardIds, Id memberId);
 }
