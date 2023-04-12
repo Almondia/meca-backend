@@ -2,6 +2,7 @@ package com.almondia.meca.card.infra.querydsl;
 
 import static org.assertj.core.api.Assertions.*;
 
+import java.util.List;
 import java.util.Optional;
 
 import javax.persistence.EntityManager;
@@ -16,14 +17,17 @@ import org.springframework.context.annotation.Import;
 
 import com.almondia.meca.card.controller.dto.CardCursorPageWithCategory;
 import com.almondia.meca.card.controller.dto.SharedCardResponseDto;
+import com.almondia.meca.card.domain.entity.Card;
 import com.almondia.meca.card.domain.entity.OxCard;
 import com.almondia.meca.card.domain.repository.CardRepository;
+import com.almondia.meca.cardhistory.domain.entity.CardHistory;
 import com.almondia.meca.category.domain.entity.Category;
 import com.almondia.meca.common.configuration.jpa.JpaAuditingConfiguration;
 import com.almondia.meca.common.configuration.jpa.QueryDslConfiguration;
 import com.almondia.meca.common.domain.vo.Id;
 import com.almondia.meca.common.infra.querydsl.SortOption;
 import com.almondia.meca.common.infra.querydsl.SortOrder;
+import com.almondia.meca.helper.CardHistoryTestHelper;
 import com.almondia.meca.helper.CardTestHelper;
 import com.almondia.meca.helper.CategoryTestHelper;
 import com.almondia.meca.helper.MemberTestHelper;
@@ -189,6 +193,114 @@ class CardQueryDslRepositoryImplTest {
 
 			// then
 			assertThat(count).isEqualTo(1);
+		}
+	}
+
+	/**
+	 * 1. 카테고리 내의 카드가 존재하지 않으면 빈 리스트를 리턴해야 한다
+	 * 2. 카드가 존재하나 히스토리가 존재하지 않는 경우에도 빈 리스트를 리턴해서는 안된다
+	 * 3. 카테고리 내의 카드가 존재하면 score가 오름차순으로 정렬된 카드 리스트를 limit 갯수만큼 리턴해야 한다
+	 * 4. 카드 히스토리가 없는 카드가 카드히스토리가 존재하는 카드보다 앞에 존재해야 함
+	 */
+	@Nested
+	@DisplayName("findCardByCategoryIdScoreAsc 테스트")
+	class FindCardByCategoryIdScoreAscTest {
+
+		Id categoryId = Id.generateNextId();
+		Id memberId = Id.generateNextId();
+		Member member = MemberTestHelper.generateMember(memberId);
+
+		@Test
+		@DisplayName("카테고리 내의 카드가 존재하지 않으면 빈 리스트를 리턴해야 한다")
+		void shouldReturnEmptyListWhenCallFindCardByCategoryIdScoreAscTest() {
+			// given
+			Category category = CategoryTestHelper.generateUnSharedCategory("title", memberId, categoryId);
+			entityManager.persist(member);
+			entityManager.persist(category);
+
+			// when
+			List<Card> cards = cardRepository.findCardByCategoryIdScoreAsc(categoryId, 1);
+
+			// then
+			assertThat(cards).isEmpty();
+		}
+
+		@Test
+		@DisplayName("카드가 존재하나 히스토리가 존재하지 않는 경우에도 빈 리스트를 리턴해서는 안된다")
+		void shouldReturnCardListWhenCallFindCardByCategoryIdScoreAscTest() {
+			// given
+			Id cardId = Id.generateNextId();
+			Category category = CategoryTestHelper.generateUnSharedCategory("title", memberId, categoryId);
+			OxCard card = CardTestHelper.genOxCard(memberId, categoryId, cardId);
+			entityManager.persist(member);
+			entityManager.persist(category);
+			entityManager.persist(card);
+
+			// when
+			List<Card> cards = cardRepository.findCardByCategoryIdScoreAsc(categoryId, 1);
+
+			// then
+			assertThat(cards).isNotEmpty();
+		}
+
+		@Test
+		@DisplayName("카테고리 내의 카드가 존재하면 score가 오름차순으로 정렬된 카드 리스트를 limit 갯수만큼 리턴해야 한다")
+		void shouldReturnCardListWhenCallFindCardByCategoryIdScoreAscTest2() {
+			// given
+			Id cardId = Id.generateNextId();
+			Id cardId2 = Id.generateNextId();
+			Category category = CategoryTestHelper.generateUnSharedCategory("title", memberId, categoryId);
+			OxCard card = CardTestHelper.genOxCard(memberId, categoryId, cardId);
+			OxCard card2 = CardTestHelper.genOxCard(memberId, categoryId, cardId2);
+			CardHistory cardHistory1 = CardHistoryTestHelper.generateCardHistory(Id.generateNextId(), cardId,
+				categoryId,
+				30);
+			CardHistory cardHistory2 = CardHistoryTestHelper.generateCardHistory(Id.generateNextId(), cardId2,
+				categoryId,
+				10);
+
+			entityManager.persist(member);
+			entityManager.persist(category);
+			entityManager.persist(card);
+			entityManager.persist(card2);
+			entityManager.persist(cardHistory1);
+			entityManager.persist(cardHistory2);
+
+			// when
+			List<Card> cards = cardRepository.findCardByCategoryIdScoreAsc(categoryId, 1);
+
+			// then
+			assertThat(cards).isNotEmpty();
+			assertThat(cards.size()).isEqualTo(1);
+			assertThat(cards.get(0).getCardId()).isEqualTo(cardId2);
+		}
+
+		@Test
+		@DisplayName("카드 히스토리가 없는 카드가 카드히스토리가 존재하는 카드보다 앞에 존재해야 함")
+		void shouldReturnCardListWhenCallFindCardByCategoryIdScoreAscTest3() {
+			// given
+			Id cardId = Id.generateNextId();
+			Id cardId2 = Id.generateNextId();
+			Category category = CategoryTestHelper.generateUnSharedCategory("title", memberId, categoryId);
+			OxCard card = CardTestHelper.genOxCard(memberId, categoryId, cardId);
+			OxCard card2 = CardTestHelper.genOxCard(memberId, categoryId, cardId2);
+			CardHistory cardHistory1 = CardHistoryTestHelper.generateCardHistory(Id.generateNextId(), cardId,
+				categoryId,
+				30);
+
+			entityManager.persist(member);
+			entityManager.persist(category);
+			entityManager.persist(card);
+			entityManager.persist(card2);
+			entityManager.persist(cardHistory1);
+
+			// when
+			List<Card> cards = cardRepository.findCardByCategoryIdScoreAsc(categoryId, 1);
+
+			// then
+			assertThat(cards).isNotEmpty();
+			assertThat(cards.size()).isEqualTo(1);
+			assertThat(cards.get(0).getCardId()).isEqualTo(cardId2);
 		}
 	}
 
