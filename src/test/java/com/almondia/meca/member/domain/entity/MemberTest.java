@@ -45,7 +45,8 @@ class MemberTest {
 		assertThat(entityType).isNotNull();
 		assertThat(entityType.getName()).isEqualTo("Member");
 		assertThat(entityType.getAttributes()).extracting("name")
-			.containsExactlyInAnyOrder("oauthId", "memberId", "name", "email", "oAuthType", "createdAt", "modifiedAt",
+			.containsExactlyInAnyOrder("profile", "oauthId", "memberId", "name", "email", "oAuthType", "createdAt",
+				"modifiedAt",
 				"role", "isDeleted");
 	}
 
