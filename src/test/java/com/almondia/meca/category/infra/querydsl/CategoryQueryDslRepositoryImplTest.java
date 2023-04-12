@@ -38,7 +38,7 @@ class CategoryQueryDslRepositoryImplTest {
 	 * 4. 조회후 다음 페이징 index가 있는 경우 hasNext에 다음 카테고리 id가 존재해야 함
 	 * 5. 조회후 다음 페이징 index가 없는 경우 hasNext에 null이 존재해야 함
 	 * 6. 조회후 pageSize보다 적은 카테고리를 조회한 경우 hasNext는 null이어야 함
-	 * 7. share가 true인 카테고리는 조회하면 안된다
+	 * 7. share와 상관 없이 조회할 수 있어야 한다
 	 * 8. lastCategoryId를 입력받은 경우, lastCategoryId보다 작은 카테고리는 조회하지 않는다
 	 */
 	@Nested
@@ -167,22 +167,25 @@ class CategoryQueryDslRepositoryImplTest {
 		}
 
 		@Test
-		@DisplayName("share가 true인 카테고리는 조회하면 안된다")
-		void shouldNotReturnCategoryWhenCategoryIsSharedTest() {
+		@DisplayName("share와 상관 없이 조회할 수 있어야 한다")
+		void shouldReturnCategoryWhenCategoryIsSharedTest() {
 			// given
 			Id memberId = Id.generateNextId();
+			Id lastCategoryId = Id.generateNextId();
 			int pageSize = 3;
-			em.persist(CategoryTestHelper.generateSharedCategory("title1", memberId, Id.generateNextId()));
+			em.persist(CategoryTestHelper.generateSharedCategory("title1", memberId, lastCategoryId));
+			em.persist(CategoryTestHelper.generateUnSharedCategory("title2", memberId, Id.generateNextId()));
 
 			// when
 			CursorPage<CategoryWithHistoryResponseDto> result = categoryRepository.findCategoryWithStatisticsByMemberId(
 				pageSize,
 				memberId,
-				null);
+				lastCategoryId);
 
 			// then
 			assertThat(result).isNotNull();
-			assertThat(result.getContents()).isEmpty();
+			assertThat(result.getContents()).isNotEmpty();
+			assertThat(result.getContents().get(0).getCategoryId()).isNotNull();
 		}
 
 		@Test
