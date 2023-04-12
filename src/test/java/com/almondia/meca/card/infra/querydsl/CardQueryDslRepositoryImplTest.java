@@ -2,6 +2,8 @@ package com.almondia.meca.card.infra.querydsl;
 
 import static org.assertj.core.api.Assertions.*;
 
+import java.util.Optional;
+
 import javax.persistence.EntityManager;
 
 import org.junit.jupiter.api.DisplayName;
@@ -13,6 +15,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 
 import com.almondia.meca.card.controller.dto.CardCursorPageWithCategory;
+import com.almondia.meca.card.controller.dto.SharedCardResponseDto;
 import com.almondia.meca.card.domain.entity.OxCard;
 import com.almondia.meca.card.domain.repository.CardRepository;
 import com.almondia.meca.category.domain.entity.Category;
@@ -23,6 +26,8 @@ import com.almondia.meca.common.infra.querydsl.SortOption;
 import com.almondia.meca.common.infra.querydsl.SortOrder;
 import com.almondia.meca.helper.CardTestHelper;
 import com.almondia.meca.helper.CategoryTestHelper;
+import com.almondia.meca.helper.MemberTestHelper;
+import com.almondia.meca.member.domain.entity.Member;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -86,43 +91,64 @@ class CardQueryDslRepositoryImplTest {
 		}
 	}
 
-	// @Test
-	// @DisplayName("findSharedCard 공유 카드 단일 조회")
-	// void test2() {
-	// 	Id cardId = Id.generateNextId();
-	// 	Id memberId = Id.generateNextId();
-	// 	Id categoryId = Id.generateNextId();
-	//
-	// 	memberRepository.save(Member.builder()
-	// 		.memberId(memberId)
-	// 		.email(new Email("email@naver.com"))
-	// 		.name(new Name("name"))
-	// 		.oAuthType(OAuthType.KAKAO)
-	// 		.oauthId("1234")
-	// 		.role(Role.USER)
-	// 		.build());
-	//
-	// 	categoryRepository.save(Category.builder()
-	// 		.categoryId(categoryId)
-	// 		.memberId(memberId)
-	// 		.title(new com.almondia.meca.category.domain.vo.Title("title"))
-	// 		.isDeleted(false)
-	// 		.isShared(true)
-	// 		.build());
-	//
-	// 	cardRepository.save(OxCard.builder()
-	// 		.memberId(memberId)
-	// 		.categoryId(categoryId)
-	// 		.cardId(cardId)
-	// 		.oxAnswer(OxAnswer.O)
-	// 		.title(new Title("title"))
-	// 		.question(new Question("question"))
-	// 		.description(new Description("description"))
-	// 		.build());
-	//
-	// 	SharedCardResponseDto sharedCard = cardRepository.findSharedCard(cardId).orElseThrow();
-	// 	assertThat(sharedCard.getCardInfo()).isNotNull();
-	// 	assertThat(sharedCard.getMemberInfo()).isNotNull();
-	// }
+	/**
+	 * 1. 카테고리가 공유되어 있지 않은 경우 공유 카드 조회 결과는 없다
+	 * 2. 카테고리가 공유되어 있고 그 내부에 카드가 존재하는 경우 카드 조회 결과는 존재한다
+	 * 3. 카테고리가 공유되어 있지만 카드가 없는 경우 조회 결과는 없다
+	 */
+	@Nested
+	@DisplayName("findCardInSharedCategory 테스트")
+	class FindCardInSharedCategoryTest {
+
+		Id categoryId = Id.generateNextId();
+		Id memberId = Id.generateNextId();
+
+		@Test
+		@DisplayName("카테고리가 공유되어 있지 않은 경우 공유 카드 조회 결과는 없다")
+		void shouldReturnEmptyWhenCallFindCardInSharedCategoryTest() {
+			// given
+			Category category = CategoryTestHelper.generateUnSharedCategory("title", memberId, categoryId);
+			entityManager.persist(category);
+
+			// when
+			Optional<SharedCardResponseDto> optional = cardRepository.findCardInSharedCategory(categoryId);
+
+			// then
+			assertThat(optional.isEmpty()).isTrue();
+		}
+
+		@Test
+		@DisplayName("카테고리가 공유되어 있고 그 내부에 카드가 존재하는 경우 카드 조회 결과는 존재한다")
+		void shouldReturnCardWhenCallFindCardInSharedCategoryTest() {
+			// given
+			Id cardId = Id.generateNextId();
+			Member member = MemberTestHelper.generateMember(memberId);
+			Category category = CategoryTestHelper.generateSharedCategory("title", memberId, categoryId);
+			OxCard card = CardTestHelper.genOxCard(memberId, categoryId, cardId);
+			entityManager.persist(member);
+			entityManager.persist(category);
+			entityManager.persist(card);
+
+			// when
+			Optional<SharedCardResponseDto> optional = cardRepository.findCardInSharedCategory(cardId);
+
+			// then
+			assertThat(optional.isPresent()).isTrue();
+		}
+
+		@Test
+		@DisplayName("카테고리가 공유되어 있지만 카드가 없는 경우 조회 결과는 없다")
+		void shouldReturnEmptyWhenCallFindCardInSharedCategoryTest2() {
+			// given
+			Category category = CategoryTestHelper.generateSharedCategory("title", memberId, categoryId);
+			entityManager.persist(category);
+
+			// when
+			Optional<SharedCardResponseDto> optional = cardRepository.findCardInSharedCategory(categoryId);
+
+			// then
+			assertThat(optional.isEmpty()).isTrue();
+		}
+	}
 
 }
