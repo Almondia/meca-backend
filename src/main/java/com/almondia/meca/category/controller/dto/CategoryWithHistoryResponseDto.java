@@ -27,4 +27,5 @@ public class CategoryWithHistoryResponseDto {
 	private final LocalDateTime modifiedAt;
 	private final double scoreAvg;
 	private final long solveCount;
+	private final long totalCount;
 }

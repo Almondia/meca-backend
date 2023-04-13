@@ -18,6 +18,8 @@ import com.almondia.meca.category.domain.repository.CategoryRepository;
 import com.almondia.meca.common.configuration.jpa.QueryDslConfiguration;
 import com.almondia.meca.common.controller.dto.CursorPage;
 import com.almondia.meca.common.domain.vo.Id;
+import com.almondia.meca.helper.CardHistoryTestHelper;
+import com.almondia.meca.helper.CardTestHelper;
 import com.almondia.meca.helper.CategoryTestHelper;
 
 @DataJpaTest
@@ -40,6 +42,8 @@ class CategoryQueryDslRepositoryImplTest {
 	 * 6. 조회후 pageSize보다 적은 카테고리를 조회한 경우 hasNext는 null이어야 함
 	 * 7. share와 상관 없이 조회할 수 있어야 한다
 	 * 8. lastCategoryId를 입력받은 경우, lastCategoryId보다 작은 카테고리는 조회하지 않는다
+	 * 9. 풀이한 카드의 경우 풀이한 고유한 카드의 갯수만 조회할 수 있어야 한다
+	 * 10. 전체 카드는 풀이한 카드 또는 풀이한 카드와 상관 없이 고유한 카드의 갯수를 조회할 수 있어야 한다
 	 */
 	@Nested
 	@DisplayName("findCategoryWithStatisticsByMemberId 메서드 테스트")
@@ -208,6 +212,62 @@ class CategoryQueryDslRepositoryImplTest {
 			assertThat(result).isNotNull();
 			assertThat(result.getContents()).isNotEmpty();
 			assertThat(result.getContents().get(0).getCategoryId()).isEqualTo(lastCategoryId);
+		}
+
+		@Test
+		@DisplayName("풀이한 카드의 경우 풀이한 고유한 카드의 갯수만 조회할 수 있어야 한다")
+		void shouldReturnUniqueCardCountWhenSolvedCardTest() {
+			// given
+			Id memberId = Id.generateNextId();
+			int pageSize = 3;
+			Id categoryId = Id.generateNextId();
+			Id cardId1 = Id.generateNextId();
+			Id cardId2 = Id.generateNextId();
+			Id cardId3 = Id.generateNextId();
+			em.persist(CategoryTestHelper.generateUnSharedCategory("title1", memberId, categoryId));
+			em.persist(CardTestHelper.genOxCard(memberId, categoryId, cardId1));
+			em.persist(CardTestHelper.genOxCard(memberId, categoryId, cardId2));
+			em.persist(CardTestHelper.genOxCard(memberId, categoryId, cardId3));
+			em.persist(CardHistoryTestHelper.generateCardHistory(Id.generateNextId(), cardId1, categoryId, 10));
+			em.persist(CardHistoryTestHelper.generateCardHistory(Id.generateNextId(), cardId1, categoryId, 20));
+			em.persist(CardHistoryTestHelper.generateCardHistory(Id.generateNextId(), cardId2, categoryId, 10));
+
+			// when
+			CursorPage<CategoryWithHistoryResponseDto> result = categoryRepository.findCategoryWithStatisticsByMemberId(
+				pageSize,
+				memberId,
+				null);
+
+			// then
+			assertThat(result).isNotNull();
+			assertThat(result.getContents().get(0).getSolveCount()).isEqualTo(2);
+		}
+
+		@Test
+		@DisplayName("전체 카드는 풀이한 카드 또는 풀이한 카드와 상관 없이 고유한 카드의 갯수를 조회할 수 있어야 한다")
+		void shouldReturnUniqueCardCountWhenNotSolvedCardTest() {
+			// given
+			Id memberId = Id.generateNextId();
+			int pageSize = 3;
+			Id categoryId = Id.generateNextId();
+			Id cardId1 = Id.generateNextId();
+			Id cardId2 = Id.generateNextId();
+			Id cardId3 = Id.generateNextId();
+			em.persist(CategoryTestHelper.generateUnSharedCategory("title1", memberId, categoryId));
+			em.persist(CardTestHelper.genOxCard(memberId, categoryId, cardId1));
+			em.persist(CardTestHelper.genOxCard(memberId, categoryId, cardId2));
+			em.persist(CardTestHelper.genOxCard(memberId, categoryId, cardId3));
+
+			// when
+			CursorPage<CategoryWithHistoryResponseDto> result = categoryRepository.findCategoryWithStatisticsByMemberId(
+				pageSize,
+				memberId,
+				null);
+
+			// then
+			assertThat(result).isNotNull();
+			assertThat(result.getContents().get(0).getSolveCount()).isEqualTo(0);
+			assertThat(result.getContents().get(0).getTotalCount()).isEqualTo(3);
 		}
 	}
 
