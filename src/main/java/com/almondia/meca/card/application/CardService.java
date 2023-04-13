@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.almondia.meca.card.application.helper.CardFactory;
 import com.almondia.meca.card.application.helper.CardMapper;
 import com.almondia.meca.card.controller.dto.CardCursorPageWithCategory;
+import com.almondia.meca.card.controller.dto.CardCursorPageWithSharedCategoryDto;
 import com.almondia.meca.card.controller.dto.CardResponseDto;
 import com.almondia.meca.card.controller.dto.SaveCardRequestDto;
 import com.almondia.meca.card.controller.dto.SharedCardResponseDto;
@@ -114,7 +115,7 @@ public class CardService {
 	}
 
 	@Transactional(readOnly = true)
-	public CursorPage<CardResponseDto> searchCursorPagingSharedCard(int pageSize, Id categoryId,
+	public CardCursorPageWithSharedCategoryDto searchCursorPagingSharedCard(int pageSize, Id categoryId,
 		CardSearchCriteria criteria, SortOption<CardSortField> sortOption
 	) {
 		Category category = categoryRepository.findById(categoryId)
@@ -122,7 +123,7 @@ public class CardService {
 		if (!category.isShared()) {
 			throw new AccessDeniedException("공유되지 않은 카테고리에 접근할 수 없습니다");
 		}
-		CardCursorPageWithCategory cursor = cardRepository.findCardByCategoryIdUsingCursorPaging(pageSize,
+		CardCursorPageWithSharedCategoryDto cursor = cardRepository.findCardBySharedCategoryCursorPaging(pageSize,
 			criteria, sortOption);
 		cursor.setCategory(category);
 		return cursor;

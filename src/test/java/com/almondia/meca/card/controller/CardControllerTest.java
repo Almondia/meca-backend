@@ -25,10 +25,12 @@ import org.springframework.web.context.WebApplicationContext;
 import com.almondia.meca.card.application.CardService;
 import com.almondia.meca.card.application.CardSimulationService;
 import com.almondia.meca.card.controller.dto.CardCursorPageWithCategory;
+import com.almondia.meca.card.controller.dto.CardCursorPageWithSharedCategoryDto;
 import com.almondia.meca.card.controller.dto.CardResponseDto;
 import com.almondia.meca.card.controller.dto.SaveCardRequestDto;
 import com.almondia.meca.card.controller.dto.SharedCardResponseDto;
 import com.almondia.meca.card.controller.dto.UpdateCardRequestDto;
+import com.almondia.meca.card.domain.entity.Card;
 import com.almondia.meca.card.domain.entity.OxCard;
 import com.almondia.meca.card.domain.vo.CardType;
 import com.almondia.meca.card.domain.vo.Description;
@@ -40,6 +42,8 @@ import com.almondia.meca.common.configuration.jackson.JacksonConfiguration;
 import com.almondia.meca.common.configuration.security.filter.JwtAuthenticationFilter;
 import com.almondia.meca.common.domain.vo.Id;
 import com.almondia.meca.common.infra.querydsl.SortOrder;
+import com.almondia.meca.helper.CardTestHelper;
+import com.almondia.meca.helper.MemberTestHelper;
 import com.almondia.meca.member.domain.entity.Member;
 import com.almondia.meca.member.domain.vo.Email;
 import com.almondia.meca.member.domain.vo.Name;
@@ -367,8 +371,9 @@ class CardControllerTest {
 		@Test
 		@DisplayName("정상 동작시 200 응답 및 응답 포맷 테스트")
 		void shouldReturn200OkAndResponseFormatTest() throws Exception {
-			List<CardResponseDto> contents = List.of(makeResponse());
-			CardCursorPageWithCategory cardCursorPageWithCategory = new CardCursorPageWithCategory(contents,
+			List<SharedCardResponseDto> contents = List.of(makeResponse());
+			CardCursorPageWithSharedCategoryDto cardCursorPageWithCategory = new CardCursorPageWithSharedCategoryDto(
+				contents,
 				Id.generateNextId(), 5, SortOrder.DESC);
 			cardCursorPageWithCategory.setCategory(Category.builder()
 				.categoryId(Id.generateNextId())
@@ -386,18 +391,10 @@ class CardControllerTest {
 				.andExpect(jsonPath("category").exists());
 		}
 
-		private CardResponseDto makeResponse() {
-			return CardResponseDto.builder()
-				.cardId(Id.generateNextId())
-				.title(new Title("title"))
-				.question(new Question("hello"))
-				.categoryId(Id.generateNextId())
-				.cardType(CardType.OX_QUIZ)
-				.answer(OxAnswer.O.name())
-				.description(new Description("hello"))
-				.createdAt(LocalDateTime.now())
-				.modifiedAt(LocalDateTime.now())
-				.build();
+		private SharedCardResponseDto makeResponse() {
+			Card card = CardTestHelper.genOxCard(Id.generateNextId(), Id.generateNextId(), Id.generateNextId());
+			Member member = MemberTestHelper.generateMember(Id.generateNextId());
+			return new SharedCardResponseDto(card, member);
 		}
 	}
 }
