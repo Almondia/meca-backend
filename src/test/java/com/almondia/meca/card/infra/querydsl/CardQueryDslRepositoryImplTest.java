@@ -17,6 +17,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 
 import com.almondia.meca.card.controller.dto.CardCursorPageWithCategory;
+import com.almondia.meca.card.controller.dto.CardCursorPageWithSharedCategoryDto;
 import com.almondia.meca.card.controller.dto.SharedCardResponseDto;
 import com.almondia.meca.card.domain.entity.Card;
 import com.almondia.meca.card.domain.entity.OxCard;
@@ -93,6 +94,86 @@ class CardQueryDslRepositoryImplTest {
 
 			// then
 			assertThat(page.getHasNext()).isNotNull();
+		}
+	}
+
+	/**
+	 * 1. 페이징 사이즈보다 적게 조회한 경우 hasNext는 null이다
+	 * 2. 다음 페이지가 존재하는 경우 hasNext 값은 존재한다
+	 * 3. 조회시 회원 정보가 있어야 한다
+	 */
+	@Nested
+	@DisplayName("findCardBySharedCategoryCursorPaging 테스트")
+	class FindCardBySharedCategoryCursorPagingTest {
+
+		Id categoryId = Id.generateNextId();
+		Id memberId = Id.generateNextId();
+
+		CardSearchCriteria criteria = CardSearchCriteria.builder()
+			.eqCategoryId(categoryId)
+			.build();
+		SortOption<CardSortField> sortOption = new SortOption<>(CardSortField.CREATED_AT, SortOrder.DESC);
+
+		@Test
+		@DisplayName("페이징 사이즈보다 적게 조회한 경우 hasNext는 null이다")
+		void shouldReturnNullWhenCallFindCardBySharedCategoryCursorPagingTest() {
+			// given
+			int pageSize = 5;
+
+			// when
+			CardCursorPageWithSharedCategoryDto page = cardRepository.findCardBySharedCategoryCursorPaging(pageSize,
+				criteria,
+				sortOption);
+
+			// then
+			assertThat(page.getHasNext()).isNull();
+		}
+
+		@Test
+		@DisplayName("다음 페이지가 존재하는 경우 hasNext 값은 존재한다")
+		void shouldReturnHasNextWhenCallFindCardBySharedCategoryCursorPagingTest() {
+			// given
+			int pageSize = 1;
+			Member member = MemberTestHelper.generateMember(memberId);
+			Category category = CategoryTestHelper.generateSharedCategory("title", memberId, categoryId);
+			OxCard card1 = CardTestHelper.genOxCard(memberId, categoryId, Id.generateNextId());
+			OxCard card2 = CardTestHelper.genOxCard(memberId, categoryId, Id.generateNextId());
+			entityManager.persist(member);
+			entityManager.persist(category);
+			entityManager.persist(card1);
+			entityManager.persist(card2);
+
+			// when
+			CardCursorPageWithSharedCategoryDto page = cardRepository.findCardBySharedCategoryCursorPaging(pageSize,
+				criteria,
+				sortOption);
+
+			// then
+			assertThat(page.getHasNext()).isNotNull();
+		}
+
+		@Test
+		@DisplayName("조회시 회원 정보가 있어야 한다")
+		void shouldReturnMemberAndCategoryWhenCallFindCardBySharedCategoryCursorPagingTest() {
+			// given
+			int pageSize = 1;
+			Member member = MemberTestHelper.generateMember(memberId);
+			Category category = CategoryTestHelper.generateSharedCategory("title", memberId, categoryId);
+			OxCard card1 = CardTestHelper.genOxCard(memberId, categoryId, Id.generateNextId());
+			OxCard card2 = CardTestHelper.genOxCard(memberId, categoryId, Id.generateNextId());
+			entityManager.persist(member);
+			entityManager.persist(category);
+			entityManager.persist(card1);
+			entityManager.persist(card2);
+
+			// when
+			CardCursorPageWithSharedCategoryDto page = cardRepository.findCardBySharedCategoryCursorPaging(pageSize,
+				criteria,
+				sortOption);
+
+			// then
+			assertThat(page).isNotNull();
+			assertThat(page.getContents().get(0).getMemberInfo()).isNotNull();
 		}
 	}
 

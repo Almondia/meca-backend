@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import com.almondia.meca.card.application.helper.CardMapper;
 import com.almondia.meca.card.controller.dto.CardCursorPageWithCategory;
+import com.almondia.meca.card.controller.dto.CardCursorPageWithSharedCategoryDto;
 import com.almondia.meca.card.controller.dto.CardResponseDto;
 import com.almondia.meca.card.controller.dto.SharedCardResponseDto;
 import com.almondia.meca.card.domain.entity.Card;
@@ -50,10 +51,43 @@ public class CardQueryDslRepositoryImpl implements CardQueryDslRepository {
 			.map(CardMapper::cardToDto)
 			.collect(Collectors.toList());
 
-		Id hasNext = getHasNext(pageSize, contents);
-		if (hasNext != null)
+		Id hasNext = null;
+		if (contents.size() > pageSize) {
+			hasNext = contents.get(pageSize).getCardId();
 			contents.remove(pageSize);
+		}
 		return new CardCursorPageWithCategory(
+			contents,
+			hasNext,
+			pageSize,
+			sortOption.getSortOrder()
+		);
+	}
+
+	@Override
+	public CardCursorPageWithSharedCategoryDto findCardBySharedCategoryCursorPaging(int pageSize,
+		CardSearchCriteria criteria, SortOption<CardSortField> sortOption
+	) {
+		List<SharedCardResponseDto> contents = queryFactory
+			.select(Projections.constructor(
+				SharedCardResponseDto.class,
+				card,
+				member))
+			.from(card)
+			.where(criteria.getPredicate())
+			.innerJoin(member)
+			.on(card.memberId.eq(member.memberId))
+			.orderBy(SortFactory.createOrderSpecifier(sortOption))
+			.limit(pageSize + 1)
+			.fetch();
+
+		Id hasNext = null;
+		if (contents.size() > pageSize) {
+			hasNext = contents.get(pageSize).getCardInfo().getCardId();
+			contents.remove(pageSize);
+		}
+
+		return new CardCursorPageWithSharedCategoryDto(
 			contents,
 			hasNext,
 			pageSize,
@@ -113,13 +147,5 @@ public class CardQueryDslRepositoryImpl implements CardQueryDslRepository {
 				tuple -> tuple.get(card.cardId),
 				Collectors.mapping(tuple -> tuple.get(card.categoryId), Collectors.toList())
 			));
-	}
-
-	private Id getHasNext(int pageSize, List<CardResponseDto> contents) {
-		Id hasNext = null;
-		if (contents.size() > pageSize) {
-			hasNext = contents.get(pageSize).getCardId();
-		}
-		return hasNext;
 	}
 }
