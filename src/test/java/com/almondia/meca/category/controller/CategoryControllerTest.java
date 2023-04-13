@@ -169,7 +169,8 @@ class CategoryControllerTest {
 				.createdAt(LocalDateTime.now())
 				.modifiedAt(LocalDateTime.now())
 				.scoreAvg(12.3)
-				.solveCount(10)
+				.solveCount(10L)
+				.totalCount(20L)
 				.build();
 			CursorPage<CategoryWithHistoryResponseDto> response = CursorPage.<CategoryWithHistoryResponseDto>builder()
 				.contents(List.of(content))
