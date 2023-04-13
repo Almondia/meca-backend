@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
+import com.almondia.meca.card.domain.entity.QCard;
 import com.almondia.meca.cardhistory.domain.entity.QCardHistory;
 import com.almondia.meca.category.controller.dto.CategoryResponseDto;
 import com.almondia.meca.category.controller.dto.CategoryWithHistoryResponseDto;
@@ -25,9 +26,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CategoryQueryDslRepositoryImpl implements CategoryQueryDslRepository {
 
+	private static final QCategory category = QCategory.category;
+	private static final QCardHistory cardHistory = QCardHistory.cardHistory;
+	private static final QCard card = QCard.card;
 	private final JPAQueryFactory jpaQueryFactory;
-	private final QCategory category = QCategory.category;
-	private final QCardHistory cardHistory = QCardHistory.cardHistory;
 
 	@Override
 	public OffsetPage<CategoryResponseDto> findCategories(int offset, int pageSize,
@@ -59,11 +61,14 @@ public class CategoryQueryDslRepositoryImpl implements CategoryQueryDslRepositor
 				category.createdAt,
 				category.modifiedAt,
 				cardHistory.score.score.avg(),
-				cardHistory.score.score.count()
+				cardHistory.cardId.countDistinct(),
+				card.cardId.countDistinct()
 			))
 			.from(category)
+			.leftJoin(card)
+			.on(category.categoryId.eq(card.categoryId))
 			.leftJoin(cardHistory)
-			.on(category.categoryId.eq(cardHistory.categoryId))
+			.on(card.cardId.eq(cardHistory.cardId))
 			.where(cursorPagingExpression(memberId, lastCategoryId))
 			.groupBy(category.categoryId)
 			.orderBy(category.categoryId.uuid.desc())
