@@ -12,8 +12,8 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 
-import com.almondia.meca.category.controller.dto.CategoryResponseDto;
 import com.almondia.meca.category.controller.dto.CategoryWithHistoryResponseDto;
+import com.almondia.meca.category.controller.dto.SharedCategoryResponseDto;
 import com.almondia.meca.category.domain.repository.CategoryRepository;
 import com.almondia.meca.common.configuration.jpa.QueryDslConfiguration;
 import com.almondia.meca.common.controller.dto.CursorPage;
@@ -21,6 +21,7 @@ import com.almondia.meca.common.domain.vo.Id;
 import com.almondia.meca.helper.CardHistoryTestHelper;
 import com.almondia.meca.helper.CardTestHelper;
 import com.almondia.meca.helper.CategoryTestHelper;
+import com.almondia.meca.helper.MemberTestHelper;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -284,6 +285,8 @@ class CategoryQueryDslRepositoryImplTest {
 	@DisplayName("findCategoryShared 테스트")
 	class FindCategorySharedTest {
 
+		Id memberId = Id.generateNextId();
+
 		@Test
 		@DisplayName("카테고리가 없는 경우 contents가 비어있어야 함")
 		void shouldReturnEmptyContentsWhenNotExistCategoryTest() {
@@ -291,7 +294,7 @@ class CategoryQueryDslRepositoryImplTest {
 			int pageSize = 1;
 
 			// when
-			CursorPage<CategoryResponseDto> result = categoryRepository.findCategoryShared(
+			CursorPage<SharedCategoryResponseDto> result = categoryRepository.findCategoryShared(
 				pageSize,
 				null);
 
@@ -305,16 +308,20 @@ class CategoryQueryDslRepositoryImplTest {
 		void shouldReturnContentsWhenExistCategoryTest() {
 			// given
 			int pageSize = 1;
-			em.persist(CategoryTestHelper.generateSharedCategory("title1", Id.generateNextId(), Id.generateNextId()));
+			em.persist(MemberTestHelper.generateMember(memberId));
+			em.persist(CategoryTestHelper.generateSharedCategory("title1", memberId, Id.generateNextId()));
 
 			// when
-			CursorPage<CategoryResponseDto> result = categoryRepository.findCategoryShared(
+			CursorPage<SharedCategoryResponseDto> result = categoryRepository.findCategoryShared(
 				pageSize,
 				null);
 
 			// then
 			assertThat(result).isNotNull();
 			assertThat(result.getContents()).isNotEmpty();
+			assertThat(result.getContents().get(0))
+				.hasFieldOrProperty("categoryInfo")
+				.hasFieldOrProperty("memberInfo");
 		}
 
 		@Test
@@ -325,7 +332,7 @@ class CategoryQueryDslRepositoryImplTest {
 			em.persist(CategoryTestHelper.generateSharedCategory("title1", Id.generateNextId(), Id.generateNextId()));
 
 			// when
-			CursorPage<CategoryResponseDto> result = categoryRepository.findCategoryShared(
+			CursorPage<SharedCategoryResponseDto> result = categoryRepository.findCategoryShared(
 				pageSize,
 				null);
 
@@ -339,17 +346,21 @@ class CategoryQueryDslRepositoryImplTest {
 		void shouldReturnHasNextWhenExistNextPageTest() {
 			// given
 			int pageSize = 1;
-			em.persist(CategoryTestHelper.generateSharedCategory("title1", Id.generateNextId(), Id.generateNextId()));
-			em.persist(CategoryTestHelper.generateSharedCategory("title2", Id.generateNextId(), Id.generateNextId()));
+			em.persist(MemberTestHelper.generateMember(memberId));
+			em.persist(CategoryTestHelper.generateSharedCategory("title1", memberId, Id.generateNextId()));
+			em.persist(CategoryTestHelper.generateSharedCategory("title2", memberId, Id.generateNextId()));
 
 			// when
-			CursorPage<CategoryResponseDto> result = categoryRepository.findCategoryShared(
+			CursorPage<SharedCategoryResponseDto> result = categoryRepository.findCategoryShared(
 				pageSize,
 				null);
 
 			// then
 			assertThat(result).isNotNull();
 			assertThat(result.getContents()).isNotEmpty();
+			assertThat(result.getContents().get(0))
+				.hasFieldOrProperty("categoryInfo")
+				.hasFieldOrProperty("memberInfo");
 			assertThat(result.getHasNext()).isNotNull();
 		}
 
@@ -358,17 +369,21 @@ class CategoryQueryDslRepositoryImplTest {
 		void shouldReturnHasNextWhenExistNextPageButPageSizeIsLessThanCategoryCountTest() {
 			// given
 			int pageSize = 3;
-			em.persist(CategoryTestHelper.generateSharedCategory("title1", Id.generateNextId(), Id.generateNextId()));
-			em.persist(CategoryTestHelper.generateSharedCategory("title2", Id.generateNextId(), Id.generateNextId()));
+			em.persist(MemberTestHelper.generateMember(memberId));
+			em.persist(CategoryTestHelper.generateSharedCategory("title1", memberId, Id.generateNextId()));
+			em.persist(CategoryTestHelper.generateSharedCategory("title2", memberId, Id.generateNextId()));
 
 			// when
-			CursorPage<CategoryResponseDto> result = categoryRepository.findCategoryShared(
+			CursorPage<SharedCategoryResponseDto> result = categoryRepository.findCategoryShared(
 				pageSize,
 				null);
 
 			// then
 			assertThat(result).isNotNull();
 			assertThat(result.getContents()).isNotEmpty();
+			assertThat(result.getContents().get(0))
+				.hasFieldOrProperty("categoryInfo")
+				.hasFieldOrProperty("memberInfo");
 			assertThat(result.getHasNext()).isNull();
 		}
 
@@ -381,7 +396,7 @@ class CategoryQueryDslRepositoryImplTest {
 			em.persist(CategoryTestHelper.generateUnSharedCategory("title1", memberId, Id.generateNextId()));
 
 			// when
-			CursorPage<CategoryResponseDto> result = categoryRepository.findCategoryShared(
+			CursorPage<SharedCategoryResponseDto> result = categoryRepository.findCategoryShared(
 				pageSize,
 				null);
 
@@ -394,21 +409,24 @@ class CategoryQueryDslRepositoryImplTest {
 		@DisplayName("lastCategoryId를 입력받은 경우, lastCategoryId와 같거나 큰 카테고리는 조회되어야 한다")
 		void shouldReturnCategoryWhenLastCategoryIdIsNotNullTest() {
 			// given
-			Id memberId = Id.generateNextId();
 			Id lastCategoryId = Id.generateNextId();
 			int pageSize = 3;
+			em.persist(MemberTestHelper.generateMember(memberId));
 			em.persist(CategoryTestHelper.generateSharedCategory("title1", memberId, lastCategoryId));
 			em.persist(CategoryTestHelper.generateSharedCategory("title2", memberId, Id.generateNextId()));
 
 			// when
-			CursorPage<CategoryResponseDto> result = categoryRepository.findCategoryShared(
+			CursorPage<SharedCategoryResponseDto> result = categoryRepository.findCategoryShared(
 				pageSize,
 				lastCategoryId);
 
 			// then
 			assertThat(result).isNotNull();
 			assertThat(result.getContents()).isNotEmpty();
-			assertThat(result.getContents().get(0).getCategoryId()).isEqualTo(lastCategoryId);
+			assertThat(result.getContents().get(0))
+				.hasFieldOrProperty("categoryInfo")
+				.hasFieldOrProperty("memberInfo");
+			assertThat(result.getContents().get(0).getCategoryInfo().getCategoryId()).isEqualTo(lastCategoryId);
 		}
 	}
 

@@ -18,6 +18,7 @@ import com.almondia.meca.category.application.CategoryService;
 import com.almondia.meca.category.controller.dto.CategoryResponseDto;
 import com.almondia.meca.category.controller.dto.CategoryWithHistoryResponseDto;
 import com.almondia.meca.category.controller.dto.SaveCategoryRequestDto;
+import com.almondia.meca.category.controller.dto.SharedCategoryResponseDto;
 import com.almondia.meca.category.controller.dto.UpdateCategoryRequestDto;
 import com.almondia.meca.common.controller.dto.CursorPage;
 import com.almondia.meca.common.domain.vo.Id;
@@ -78,11 +79,11 @@ public class CategoryController {
 	}
 
 	@GetMapping("/share")
-	public ResponseEntity<CursorPage<CategoryResponseDto>> getCursorPagingCategoryShare(
+	public ResponseEntity<CursorPage<SharedCategoryResponseDto>> getCursorPagingCategoryShare(
 		@RequestParam(value = "hasNext", required = false) Id hasNext,
 		@RequestParam(value = "pageSize") int pageSize
 	) {
-		CursorPage<CategoryResponseDto> responseDto = categoryService.findCursorPagingCategoryResponseDto(
+		CursorPage<SharedCategoryResponseDto> responseDto = categoryService.findCursorPagingCategoryResponseDto(
 			pageSize, hasNext);
 		return ResponseEntity.ok(responseDto);
 	}

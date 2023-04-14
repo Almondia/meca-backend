@@ -15,6 +15,7 @@ import com.almondia.meca.category.application.helper.CategoryMapper;
 import com.almondia.meca.category.controller.dto.CategoryResponseDto;
 import com.almondia.meca.category.controller.dto.CategoryWithHistoryResponseDto;
 import com.almondia.meca.category.controller.dto.SaveCategoryRequestDto;
+import com.almondia.meca.category.controller.dto.SharedCategoryResponseDto;
 import com.almondia.meca.category.controller.dto.UpdateCategoryRequestDto;
 import com.almondia.meca.category.domain.entity.Category;
 import com.almondia.meca.category.domain.repository.CategoryRepository;
@@ -91,7 +92,7 @@ public class CategoryService {
 	}
 
 	@Transactional(readOnly = true)
-	public CursorPage<CategoryResponseDto> findCursorPagingCategoryResponseDto(
+	public CursorPage<SharedCategoryResponseDto> findCursorPagingCategoryResponseDto(
 		int pageSize,
 		Id lastCategoryId) {
 		return categoryRepository.findCategoryShared(pageSize, lastCategoryId);
