@@ -8,6 +8,7 @@ import com.almondia.meca.card.domain.entity.QCard;
 import com.almondia.meca.cardhistory.domain.entity.QCardHistory;
 import com.almondia.meca.category.controller.dto.CategoryResponseDto;
 import com.almondia.meca.category.controller.dto.CategoryWithHistoryResponseDto;
+import com.almondia.meca.category.controller.dto.SharedCategoryResponseDto;
 import com.almondia.meca.category.domain.entity.QCategory;
 import com.almondia.meca.common.controller.dto.CursorPage;
 import com.almondia.meca.common.controller.dto.OffsetPage;
@@ -16,6 +17,7 @@ import com.almondia.meca.common.infra.querydsl.SortFactory;
 import com.almondia.meca.common.infra.querydsl.SortField;
 import com.almondia.meca.common.infra.querydsl.SortOption;
 import com.almondia.meca.common.infra.querydsl.SortOrder;
+import com.almondia.meca.member.domain.entity.QMember;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -29,6 +31,8 @@ public class CategoryQueryDslRepositoryImpl implements CategoryQueryDslRepositor
 	private static final QCategory category = QCategory.category;
 	private static final QCardHistory cardHistory = QCardHistory.cardHistory;
 	private static final QCard card = QCard.card;
+	private static final QMember member = QMember.member;
+
 	private final JPAQueryFactory jpaQueryFactory;
 
 	@Override
@@ -79,18 +83,14 @@ public class CategoryQueryDslRepositoryImpl implements CategoryQueryDslRepositor
 	}
 
 	@Override
-	public CursorPage<CategoryResponseDto> findCategoryShared(int pageSize, Id lastCategoryId) {
-		List<CategoryResponseDto> response = jpaQueryFactory.select(
-				Projections.constructor(CategoryResponseDto.class,
-					category.categoryId,
-					category.memberId,
-					category.thumbnail,
-					category.title,
-					category.isDeleted,
-					category.isShared,
-					category.createdAt,
-					category.modifiedAt))
+	public CursorPage<SharedCategoryResponseDto> findCategoryShared(int pageSize, Id lastCategoryId) {
+		List<SharedCategoryResponseDto> response = jpaQueryFactory.select(
+				Projections.constructor(SharedCategoryResponseDto.class,
+					category,
+					member))
 			.from(category)
+			.innerJoin(member)
+			.on(category.memberId.eq(member.memberId))
 			.where(cursorPagingExpression(null, lastCategoryId)
 				.and(category.isShared.eq(true)))
 			.orderBy(category.categoryId.uuid.desc())
@@ -125,13 +125,14 @@ public class CategoryQueryDslRepositoryImpl implements CategoryQueryDslRepositor
 			.build();
 	}
 
-	private CursorPage<CategoryResponseDto> makeCursorPage(int pageSize, List<CategoryResponseDto> response) {
+	private CursorPage<SharedCategoryResponseDto> makeCursorPage(int pageSize,
+		List<SharedCategoryResponseDto> response) {
 		Id hasNext = null;
 		if (response.size() == pageSize + 1) {
-			hasNext = response.get(pageSize).getCategoryId();
+			hasNext = response.get(pageSize).getCategory().getCategoryId();
 			response.remove(response.size() - 1);
 		}
-		return CursorPage.<CategoryResponseDto>builder()
+		return CursorPage.<SharedCategoryResponseDto>builder()
 			.contents(response)
 			.pageSize(pageSize)
 			.hasNext(hasNext)
