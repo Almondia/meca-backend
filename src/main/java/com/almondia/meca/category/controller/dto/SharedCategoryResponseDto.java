@@ -11,11 +11,11 @@ import lombok.Getter;
 @Getter
 public class SharedCategoryResponseDto {
 
-	private final CategoryResponseDto category;
-	private final MemberResponseDto member;
+	private final CategoryResponseDto categoryInfo;
+	private final MemberResponseDto memberInfo;
 
 	public SharedCategoryResponseDto(Category category, Member member) {
-		this.category = CategoryMapper.entityToCategoryResponseDto(category);
-		this.member = MemberMapper.fromEntityToDto(member);
+		this.categoryInfo = CategoryMapper.entityToCategoryResponseDto(category);
+		this.memberInfo = MemberMapper.fromEntityToDto(member);
 	}
 }

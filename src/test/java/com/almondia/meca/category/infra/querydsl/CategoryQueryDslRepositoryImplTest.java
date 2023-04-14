@@ -320,8 +320,8 @@ class CategoryQueryDslRepositoryImplTest {
 			assertThat(result).isNotNull();
 			assertThat(result.getContents()).isNotEmpty();
 			assertThat(result.getContents().get(0))
-				.hasFieldOrProperty("category")
-				.hasFieldOrProperty("member");
+				.hasFieldOrProperty("categoryInfo")
+				.hasFieldOrProperty("memberInfo");
 		}
 
 		@Test
@@ -359,8 +359,8 @@ class CategoryQueryDslRepositoryImplTest {
 			assertThat(result).isNotNull();
 			assertThat(result.getContents()).isNotEmpty();
 			assertThat(result.getContents().get(0))
-				.hasFieldOrProperty("category")
-				.hasFieldOrProperty("member");
+				.hasFieldOrProperty("categoryInfo")
+				.hasFieldOrProperty("memberInfo");
 			assertThat(result.getHasNext()).isNotNull();
 		}
 
@@ -382,8 +382,8 @@ class CategoryQueryDslRepositoryImplTest {
 			assertThat(result).isNotNull();
 			assertThat(result.getContents()).isNotEmpty();
 			assertThat(result.getContents().get(0))
-				.hasFieldOrProperty("category")
-				.hasFieldOrProperty("member");
+				.hasFieldOrProperty("categoryInfo")
+				.hasFieldOrProperty("memberInfo");
 			assertThat(result.getHasNext()).isNull();
 		}
 
@@ -424,9 +424,9 @@ class CategoryQueryDslRepositoryImplTest {
 			assertThat(result).isNotNull();
 			assertThat(result.getContents()).isNotEmpty();
 			assertThat(result.getContents().get(0))
-				.hasFieldOrProperty("category")
-				.hasFieldOrProperty("member");
-			assertThat(result.getContents().get(0).getCategory().getCategoryId()).isEqualTo(lastCategoryId);
+				.hasFieldOrProperty("categoryInfo")
+				.hasFieldOrProperty("memberInfo");
+			assertThat(result.getContents().get(0).getCategoryInfo().getCategoryId()).isEqualTo(lastCategoryId);
 		}
 	}
 

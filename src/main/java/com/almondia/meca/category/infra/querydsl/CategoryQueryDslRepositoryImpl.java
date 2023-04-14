@@ -129,7 +129,7 @@ public class CategoryQueryDslRepositoryImpl implements CategoryQueryDslRepositor
 		List<SharedCategoryResponseDto> response) {
 		Id hasNext = null;
 		if (response.size() == pageSize + 1) {
-			hasNext = response.get(pageSize).getCategory().getCategoryId();
+			hasNext = response.get(pageSize).getCategoryInfo().getCategoryId();
 			response.remove(response.size() - 1);
 		}
 		return CursorPage.<SharedCategoryResponseDto>builder()
