@@ -26,6 +26,7 @@ import com.almondia.meca.category.application.CategoryService;
 import com.almondia.meca.category.controller.dto.CategoryResponseDto;
 import com.almondia.meca.category.controller.dto.CategoryWithHistoryResponseDto;
 import com.almondia.meca.category.controller.dto.SaveCategoryRequestDto;
+import com.almondia.meca.category.controller.dto.SharedCategoryResponseDto;
 import com.almondia.meca.category.controller.dto.UpdateCategoryRequestDto;
 import com.almondia.meca.category.domain.vo.Title;
 import com.almondia.meca.common.configuration.jackson.JacksonConfiguration;
@@ -35,6 +36,8 @@ import com.almondia.meca.common.controller.dto.CursorPage;
 import com.almondia.meca.common.domain.vo.Id;
 import com.almondia.meca.common.domain.vo.Image;
 import com.almondia.meca.common.infra.querydsl.SortOrder;
+import com.almondia.meca.helper.CategoryTestHelper;
+import com.almondia.meca.helper.MemberTestHelper;
 import com.almondia.meca.mock.security.WithMockMember;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -210,9 +213,11 @@ class CategoryControllerTest {
 		@Test
 		@DisplayName("카테고리 공유 커서 페이징 성공시 응답 200 및 정상 응답")
 		void shouldReturnStatus200AndResponseWhenSuccessTest() throws Exception {
-			CursorPage<CategoryResponseDto> cursorPage = CursorPage.<CategoryResponseDto>builder()
+			CursorPage<SharedCategoryResponseDto> cursorPage = CursorPage.<SharedCategoryResponseDto>builder()
 				.pageSize(2)
-				.contents(List.of(makeRandomCategoryResponseDto(), makeRandomCategoryResponseDto()))
+				.contents(List.of(new SharedCategoryResponseDto(
+					CategoryTestHelper.generateSharedCategory("title", Id.generateNextId(), Id.generateNextId()),
+					MemberTestHelper.generateMember(Id.generateNextId()))))
 				.hasNext(Id.generateNextId())
 				.sortOrder(SortOrder.DESC)
 				.build();
@@ -225,15 +230,5 @@ class CategoryControllerTest {
 				.andExpect(jsonPath("contents").exists())
 				.andDo(print());
 		}
-	}
-
-	private CategoryResponseDto makeRandomCategoryResponseDto() {
-		return CategoryResponseDto.builder()
-			.categoryId(Id.generateNextId())
-			.memberId(Id.generateNextId())
-			.title(new Title("title"))
-			.createdAt(LocalDateTime.now())
-			.modifiedAt(LocalDateTime.now())
-			.build();
 	}
 }
