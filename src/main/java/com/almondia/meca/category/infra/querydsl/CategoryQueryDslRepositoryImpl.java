@@ -52,7 +52,10 @@ public class CategoryQueryDslRepositoryImpl implements CategoryQueryDslRepositor
 			.on(category.categoryId.eq(card.categoryId))
 			.leftJoin(cardHistory)
 			.on(card.cardId.eq(cardHistory.cardId))
-			.where(cursorPagingExpression(memberId, lastCategoryId))
+			.where(
+				eqDeleted(false),
+				eqMemberId(memberId),
+				dynamicCursorExpression(lastCategoryId))
 			.groupBy(category.categoryId)
 			.orderBy(category.categoryId.uuid.desc())
 			.limit(pageSize + 1)
@@ -70,23 +73,25 @@ public class CategoryQueryDslRepositoryImpl implements CategoryQueryDslRepositor
 			.from(category)
 			.innerJoin(member)
 			.on(category.memberId.eq(member.memberId))
-			.where(cursorPagingExpression(null, lastCategoryId)
-				.and(category.isShared.eq(true)))
+			.where(
+				category.isShared.eq(true),
+				dynamicCursorExpression(lastCategoryId))
 			.orderBy(category.categoryId.uuid.desc())
 			.limit(pageSize + 1)
 			.fetch();
 		return makeCursorPage(pageSize, response);
 	}
 
-	private BooleanExpression cursorPagingExpression(Id memberId, Id lastCategoryId) {
-		BooleanExpression loe = null;
-		BooleanExpression eqMember = memberId == null ? null : category.memberId.eq(memberId);
-		if (lastCategoryId != null) {
-			loe = category.categoryId.uuid.loe(lastCategoryId.getUuid());
-		}
-		return category.isDeleted.eq(false)
-			.and(eqMember)
-			.and(loe);
+	private BooleanExpression eqMemberId(Id memberId) {
+		return memberId == null ? null : category.memberId.eq(memberId);
+	}
+
+	private BooleanExpression eqDeleted(boolean isDeleted) {
+		return category.isDeleted.eq(isDeleted);
+	}
+
+	private BooleanExpression dynamicCursorExpression(Id lastCategoryId) {
+		return lastCategoryId == null ? null : category.categoryId.uuid.loe(lastCategoryId.getUuid());
 	}
 
 	private CursorPage<CategoryWithHistoryResponseDto> makeCursorPageWithHistory(int pageSize,
