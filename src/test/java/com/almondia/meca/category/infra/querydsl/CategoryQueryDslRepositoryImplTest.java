@@ -45,6 +45,7 @@ class CategoryQueryDslRepositoryImplTest {
 	 * 8. lastCategoryId를 입력받은 경우, lastCategoryId보다 작은 카테고리는 조회하지 않는다
 	 * 9. 풀이한 카드의 경우 풀이한 고유한 카드의 갯수만 조회할 수 있어야 한다
 	 * 10. 전체 카드는 풀이한 카드 또는 풀이한 카드와 상관 없이 고유한 카드의 갯수를 조회할 수 있어야 한다
+	 * 11. searchOption의 containTitle을 입력받은 경우 해당 문자열을 포함하는 카테고리만 조회할 수 있어야 한다
 	 */
 	@Nested
 	@DisplayName("findCategoryWithStatisticsByMemberId 메서드 테스트")
@@ -269,6 +270,33 @@ class CategoryQueryDslRepositoryImplTest {
 			assertThat(result).isNotNull();
 			assertThat(result.getContents().get(0).getSolveCount()).isEqualTo(0);
 			assertThat(result.getContents().get(0).getTotalCount()).isEqualTo(3);
+		}
+
+		@Test
+		@DisplayName("searchOption의 containTitle을 입력받은 경우 해당 문자열을 포함하는 카테고리만 조회할 수 있어야 한다")
+		void shouldReturnCategoryWhenContainTitleTest() {
+			// given
+			Id memberId = Id.generateNextId();
+			int pageSize = 3;
+			Id categoryId1 = Id.generateNextId();
+			Id categoryId2 = Id.generateNextId();
+			Id cardId1 = Id.generateNextId();
+			Id cardId2 = Id.generateNextId();
+			em.persist(CategoryTestHelper.generateUnSharedCategory("title1", memberId, categoryId1));
+			em.persist(CategoryTestHelper.generateUnSharedCategory("lts it", memberId, categoryId2));
+			em.persist(CardTestHelper.genOxCard(memberId, categoryId1, cardId1));
+			em.persist(CardTestHelper.genOxCard(memberId, categoryId2, cardId2));
+
+			// when
+			CursorPage<CategoryWithHistoryResponseDto> result = categoryRepository.findCategoryWithStatisticsByMemberId(
+				pageSize,
+				memberId,
+				null,
+				new CategorySearchOption("it"));
+
+			// then
+			assertThat(result).isNotNull();
+			assertThat(result.getContents()).hasSize(2);
 		}
 	}
 

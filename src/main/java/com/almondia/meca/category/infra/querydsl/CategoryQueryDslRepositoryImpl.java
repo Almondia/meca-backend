@@ -65,6 +65,42 @@ public class CategoryQueryDslRepositoryImpl implements CategoryQueryDslRepositor
 	}
 
 	@Override
+	public CursorPage<CategoryWithHistoryResponseDto> findCategoryWithStatisticsByMemberId(int pageSize, Id memberId,
+		Id lastCategoryId, CategorySearchOption categorySearchOption
+	) {
+		List<CategoryWithHistoryResponseDto> response = jpaQueryFactory.select(Projections.constructor(
+				CategoryWithHistoryResponseDto.class,
+				category.categoryId,
+				category.memberId,
+				category.thumbnail,
+				category.title,
+				category.isDeleted,
+				category.isShared,
+				category.createdAt,
+				category.modifiedAt,
+				cardHistory.score.score.avg(),
+				cardHistory.cardId.countDistinct(),
+				card.cardId.countDistinct()
+			))
+			.from(category)
+			.leftJoin(card)
+			.on(category.categoryId.eq(card.categoryId))
+			.leftJoin(cardHistory)
+			.on(card.cardId.eq(cardHistory.cardId))
+			.where(
+				eqDeleted(false),
+				eqMemberId(memberId),
+				dynamicCursorExpression(lastCategoryId),
+				category.title.title.containsIgnoreCase(categorySearchOption.getContainTitle()))
+			.groupBy(category.categoryId)
+			.orderBy(category.categoryId.uuid.desc())
+			.limit(pageSize + 1)
+			.fetch();
+
+		return makeCursorPageWithHistory(pageSize, response);
+	}
+
+	@Override
 	public CursorPage<SharedCategoryResponseDto> findCategoryShared(int pageSize, Id lastCategoryId) {
 		List<SharedCategoryResponseDto> response = jpaQueryFactory.select(
 				Projections.constructor(SharedCategoryResponseDto.class,
