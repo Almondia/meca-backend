@@ -20,6 +20,7 @@ import com.almondia.meca.category.controller.dto.CategoryWithHistoryResponseDto;
 import com.almondia.meca.category.controller.dto.SaveCategoryRequestDto;
 import com.almondia.meca.category.controller.dto.SharedCategoryResponseDto;
 import com.almondia.meca.category.controller.dto.UpdateCategoryRequestDto;
+import com.almondia.meca.category.infra.querydsl.CategorySearchOption;
 import com.almondia.meca.common.controller.dto.CursorPage;
 import com.almondia.meca.common.domain.vo.Id;
 import com.almondia.meca.member.domain.entity.Member;
@@ -35,7 +36,7 @@ public class CategoryController {
 
 	@PostMapping
 	@Secured("ROLE_USER")
-	public ResponseEntity<CategoryResponseDto> CategoryEntity(
+	public ResponseEntity<CategoryResponseDto> saveCategory(
 		@AuthenticationPrincipal Member member,
 		@RequestBody SaveCategoryRequestDto saveCategoryRequestDto
 	) {
@@ -61,10 +62,14 @@ public class CategoryController {
 	public ResponseEntity<CursorPage<CategoryWithHistoryResponseDto>> getCursorPagingCategoryMe(
 		@AuthenticationPrincipal Member member,
 		@RequestParam(value = "hasNext", required = false) Id hasNext,
-		@RequestParam(value = "pageSize") int pageSize
+		@RequestParam(value = "pageSize") int pageSize,
+		@RequestParam(value = "containTitle", required = false) String containTitle
 	) {
+		CategorySearchOption categorySearchOption = CategorySearchOption.builder()
+			.containTitle(containTitle)
+			.build();
 		CursorPage<CategoryWithHistoryResponseDto> responseDto = categoryService.findCursorPagingCategoryWithHistoryResponse(
-			pageSize, member.getMemberId(), hasNext);
+			pageSize, member.getMemberId(), hasNext, categorySearchOption);
 		return ResponseEntity.ok(responseDto);
 	}
 
@@ -81,10 +86,14 @@ public class CategoryController {
 	@GetMapping("/share")
 	public ResponseEntity<CursorPage<SharedCategoryResponseDto>> getCursorPagingCategoryShare(
 		@RequestParam(value = "hasNext", required = false) Id hasNext,
-		@RequestParam(value = "pageSize") int pageSize
+		@RequestParam(value = "pageSize") int pageSize,
+		@RequestParam(value = "containTitle", required = false) String containTitle
 	) {
+		CategorySearchOption categorySearchOption = CategorySearchOption.builder()
+			.containTitle(containTitle)
+			.build();
 		CursorPage<SharedCategoryResponseDto> responseDto = categoryService.findCursorPagingCategoryResponseDto(
-			pageSize, hasNext);
+			pageSize, hasNext, categorySearchOption);
 		return ResponseEntity.ok(responseDto);
 	}
 }

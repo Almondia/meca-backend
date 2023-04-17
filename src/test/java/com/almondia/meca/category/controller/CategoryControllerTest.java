@@ -181,7 +181,7 @@ class CategoryControllerTest {
 				.sortOrder(SortOrder.DESC)
 				.build();
 			Mockito.doReturn(response)
-				.when(categoryservice).findCursorPagingCategoryWithHistoryResponse(anyInt(), any(), any());
+				.when(categoryservice).findCursorPagingCategoryWithHistoryResponse(anyInt(), any(), any(), any());
 
 			final String url = "/api/v1/categories/me?pageSize=4&sortField=createdAt&startCreatedAt=2023-03-13T10:23";
 			mockMvc.perform(get(url))
@@ -221,7 +221,9 @@ class CategoryControllerTest {
 				.hasNext(Id.generateNextId())
 				.sortOrder(SortOrder.DESC)
 				.build();
-			Mockito.doReturn(cursorPage).when(categoryservice).findCursorPagingCategoryResponseDto(anyInt(), any());
+			Mockito.doReturn(cursorPage)
+				.when(categoryservice)
+				.findCursorPagingCategoryResponseDto(anyInt(), any(), any());
 			mockMvc.perform(get("/api/v1/categories/share?pageSize=2"))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("pageSize").exists())

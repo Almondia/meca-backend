@@ -20,12 +20,9 @@ import com.almondia.meca.category.controller.dto.UpdateCategoryRequestDto;
 import com.almondia.meca.category.domain.entity.Category;
 import com.almondia.meca.category.domain.repository.CategoryRepository;
 import com.almondia.meca.category.domain.service.CategoryChecker;
-import com.almondia.meca.category.infra.querydsl.CategorySearchCriteria;
+import com.almondia.meca.category.infra.querydsl.CategorySearchOption;
 import com.almondia.meca.common.controller.dto.CursorPage;
-import com.almondia.meca.common.controller.dto.OffsetPage;
 import com.almondia.meca.common.domain.vo.Id;
-import com.almondia.meca.common.infra.querydsl.SortField;
-import com.almondia.meca.common.infra.querydsl.SortOption;
 
 import lombok.RequiredArgsConstructor;
 
@@ -61,16 +58,6 @@ public class CategoryService {
 		return CategoryMapper.entityToCategoryResponseDto(category);
 	}
 
-	@Transactional(readOnly = true)
-	public OffsetPage<CategoryResponseDto> getOffsetPagingCategoryResponseDto(
-		int offset,
-		int pageSize,
-		CategorySearchCriteria criteria,
-		SortOption<? extends SortField> sortOption
-	) {
-		return categoryRepository.findCategories(offset, pageSize, criteria, sortOption);
-	}
-
 	@Transactional
 	public void deleteCategory(Id categoryId, Id memberId) {
 		Category category = categoryChecker.checkAuthority(categoryId, memberId);
@@ -86,15 +73,19 @@ public class CategoryService {
 	public CursorPage<CategoryWithHistoryResponseDto> findCursorPagingCategoryWithHistoryResponse(
 		int pageSize,
 		Id memberId,
-		Id lastCategoryId) {
-		return categoryRepository.findCategoryWithStatisticsByMemberId(
-			pageSize, memberId, lastCategoryId);
+		Id lastCategoryId,
+		CategorySearchOption categorySearchOption
+	) {
+		return categoryRepository.findCategoryWithStatisticsByMemberId(pageSize, memberId, lastCategoryId,
+			categorySearchOption);
 	}
 
 	@Transactional(readOnly = true)
 	public CursorPage<SharedCategoryResponseDto> findCursorPagingCategoryResponseDto(
 		int pageSize,
-		Id lastCategoryId) {
-		return categoryRepository.findCategoryShared(pageSize, lastCategoryId);
+		Id lastCategoryId,
+		CategorySearchOption categorySearchOption
+	) {
+		return categoryRepository.findCategoryShared(pageSize, lastCategoryId, categorySearchOption);
 	}
 }
