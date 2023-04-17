@@ -35,7 +35,7 @@ public class CategoryController {
 
 	@PostMapping
 	@Secured("ROLE_USER")
-	public ResponseEntity<CategoryResponseDto> CategoryEntity(
+	public ResponseEntity<CategoryResponseDto> saveCategory(
 		@AuthenticationPrincipal Member member,
 		@RequestBody SaveCategoryRequestDto saveCategoryRequestDto
 	) {
