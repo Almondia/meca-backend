@@ -181,7 +181,7 @@ class CategoryControllerTest {
 				.sortOrder(SortOrder.DESC)
 				.build();
 			Mockito.doReturn(response)
-				.when(categoryservice).findCursorPagingCategoryWithHistoryResponse(anyInt(), any(), any());
+				.when(categoryservice).findCursorPagingCategoryWithHistoryResponse(anyInt(), any(), any(), any());
 
 			final String url = "/api/v1/categories/me?pageSize=4&sortField=createdAt&startCreatedAt=2023-03-13T10:23";
 			mockMvc.perform(get(url))
