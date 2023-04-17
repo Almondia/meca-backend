@@ -6,16 +6,11 @@ import org.springframework.stereotype.Repository;
 
 import com.almondia.meca.card.domain.entity.QCard;
 import com.almondia.meca.cardhistory.domain.entity.QCardHistory;
-import com.almondia.meca.category.controller.dto.CategoryResponseDto;
 import com.almondia.meca.category.controller.dto.CategoryWithHistoryResponseDto;
 import com.almondia.meca.category.controller.dto.SharedCategoryResponseDto;
 import com.almondia.meca.category.domain.entity.QCategory;
 import com.almondia.meca.common.controller.dto.CursorPage;
-import com.almondia.meca.common.controller.dto.OffsetPage;
 import com.almondia.meca.common.domain.vo.Id;
-import com.almondia.meca.common.infra.querydsl.SortFactory;
-import com.almondia.meca.common.infra.querydsl.SortField;
-import com.almondia.meca.common.infra.querydsl.SortOption;
 import com.almondia.meca.common.infra.querydsl.SortOrder;
 import com.almondia.meca.member.domain.entity.QMember;
 import com.querydsl.core.types.Projections;
@@ -34,22 +29,6 @@ public class CategoryQueryDslRepositoryImpl implements CategoryQueryDslRepositor
 	private static final QMember member = QMember.member;
 
 	private final JPAQueryFactory jpaQueryFactory;
-
-	@Override
-	public OffsetPage<CategoryResponseDto> findCategories(int offset, int pageSize,
-		CategorySearchCriteria categorySearchCriteria, SortOption<? extends SortField> sortOption) {
-		List<CategoryResponseDto> categories = jpaQueryFactory.select(
-				Projections.constructor(CategoryResponseDto.class, category.categoryId, category.memberId, category.title,
-					category.isDeleted, category.isShared, category.createdAt, category.modifiedAt))
-			.from(category)
-			.where(categorySearchCriteria.getPredicate())
-			.orderBy(SortFactory.createOrderSpecifier(sortOption))
-			.offset(offset)
-			.limit(pageSize)
-			.fetch();
-		long totalCount = jpaQueryFactory.selectFrom(category).fetch().size();
-		return OffsetPage.of(categories, offset, pageSize, (int)totalCount);
-	}
 
 	@Override
 	public CursorPage<CategoryWithHistoryResponseDto> findCategoryWithStatisticsByMemberId(int pageSize, Id memberId,
