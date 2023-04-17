@@ -76,10 +76,6 @@ public class CategoryService {
 		Id lastCategoryId,
 		CategorySearchOption categorySearchOption
 	) {
-		if (categorySearchOption == null) {
-			return categoryRepository.findCategoryWithStatisticsByMemberId(
-				pageSize, memberId, lastCategoryId);
-		}
 		return categoryRepository.findCategoryWithStatisticsByMemberId(pageSize, memberId, lastCategoryId,
 			categorySearchOption);
 	}
@@ -90,9 +86,6 @@ public class CategoryService {
 		Id lastCategoryId,
 		CategorySearchOption categorySearchOption
 	) {
-		if (categorySearchOption == null) {
-			return categoryRepository.findCategoryShared(pageSize, lastCategoryId);
-		}
 		return categoryRepository.findCategoryShared(pageSize, lastCategoryId, categorySearchOption);
 	}
 }

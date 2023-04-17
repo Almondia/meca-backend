@@ -65,12 +65,9 @@ public class CategoryController {
 		@RequestParam(value = "pageSize") int pageSize,
 		@RequestParam(value = "containTitle", required = false) String containTitle
 	) {
-		CategorySearchOption categorySearchOption = null;
-		if (containTitle != null) {
-			categorySearchOption = CategorySearchOption.builder()
-				.containTitle(containTitle)
-				.build();
-		}
+		CategorySearchOption categorySearchOption = CategorySearchOption.builder()
+			.containTitle(containTitle)
+			.build();
 		CursorPage<CategoryWithHistoryResponseDto> responseDto = categoryService.findCursorPagingCategoryWithHistoryResponse(
 			pageSize, member.getMemberId(), hasNext, categorySearchOption);
 		return ResponseEntity.ok(responseDto);
@@ -92,12 +89,9 @@ public class CategoryController {
 		@RequestParam(value = "pageSize") int pageSize,
 		@RequestParam(value = "containTitle", required = false) String containTitle
 	) {
-		CategorySearchOption categorySearchOption = null;
-		if (containTitle != null) {
-			categorySearchOption = CategorySearchOption.builder()
-				.containTitle(containTitle)
-				.build();
-		}
+		CategorySearchOption categorySearchOption = CategorySearchOption.builder()
+			.containTitle(containTitle)
+			.build();
 		CursorPage<SharedCategoryResponseDto> responseDto = categoryService.findCursorPagingCategoryResponseDto(
 			pageSize, hasNext, categorySearchOption);
 		return ResponseEntity.ok(responseDto);

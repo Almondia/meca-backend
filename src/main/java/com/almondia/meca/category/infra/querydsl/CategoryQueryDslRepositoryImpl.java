@@ -91,7 +91,7 @@ public class CategoryQueryDslRepositoryImpl implements CategoryQueryDslRepositor
 				eqDeleted(false),
 				eqMemberId(memberId),
 				dynamicCursorExpression(lastCategoryId),
-				category.title.title.containsIgnoreCase(categorySearchOption.getContainTitle()))
+				containTitle(categorySearchOption.getContainTitle()))
 			.groupBy(category.categoryId)
 			.orderBy(category.categoryId.uuid.desc())
 			.limit(pageSize + 1)
@@ -131,11 +131,15 @@ public class CategoryQueryDslRepositoryImpl implements CategoryQueryDslRepositor
 			.where(
 				category.isShared.eq(true),
 				dynamicCursorExpression(lastCategoryId),
-				category.title.title.containsIgnoreCase(categorySearchOption.getContainTitle()))
+				containTitle(categorySearchOption.getContainTitle()))
 			.orderBy(category.categoryId.uuid.desc())
 			.limit(pageSize + 1)
 			.fetch();
 		return makeCursorPage(pageSize, response);
+	}
+
+	private BooleanExpression containTitle(String containTitle) {
+		return containTitle == null ? null : category.title.title.containsIgnoreCase(containTitle);
 	}
 
 	private BooleanExpression eqMemberId(Id memberId) {
