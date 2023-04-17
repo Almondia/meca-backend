@@ -307,7 +307,8 @@ class CategoryQueryDslRepositoryImplTest {
 	 * 4. 조회후 다음 페이징 index가 있는 경우 hasNext에 다음 카테고리 id가 존재해야 함
 	 * 5. 조회후 다음 페이징 index가 없는 경우 hasNext에 null이 존재해야 함
 	 * 6. shared가 false인 카테고리는 조회하면 안된다
-	 * 7. "lastCategoryId를 입력받은 경우, lastCategoryId와 같거나 큰 카테고리는 조회되어야 한다"
+	 * 7. lastCategoryId를 입력받은 경우, lastCategoryId와 같거나 큰 카테고리는 조회되어야 한다
+	 * 8. CategorySearchOption의 containTitle을 입력받은 경우 해당 문자열을 포함하는 카테고리만 조회할 수 있어야 한다
 	 */
 	@Nested
 	@DisplayName("findCategoryShared 테스트")
@@ -447,6 +448,33 @@ class CategoryQueryDslRepositoryImplTest {
 			CursorPage<SharedCategoryResponseDto> result = categoryRepository.findCategoryShared(
 				pageSize,
 				lastCategoryId);
+
+			// then
+			assertThat(result).isNotNull();
+			assertThat(result.getContents()).isNotEmpty();
+			assertThat(result.getContents().get(0))
+				.hasFieldOrProperty("categoryInfo")
+				.hasFieldOrProperty("memberInfo");
+			assertThat(result.getContents().get(0).getCategoryInfo().getCategoryId()).isEqualTo(lastCategoryId);
+		}
+
+		@Test
+		@DisplayName("CategorySearchOption의 containTitle을 입력받은 경우 해당 문자열을 포함하는 카테고리만 조회할 수 있어야 한다")
+		void shouldReturnCategoryWhenContainTitleIsNotNullTest() {
+			// given
+			Id lastCategoryId = Id.generateNextId();
+			int pageSize = 3;
+			em.persist(MemberTestHelper.generateMember(memberId));
+			em.persist(CategoryTestHelper.generateSharedCategory("title1", memberId, lastCategoryId));
+			em.persist(CategoryTestHelper.generateSharedCategory("title2", memberId, Id.generateNextId()));
+
+			// when
+			CursorPage<SharedCategoryResponseDto> result = categoryRepository.findCategoryShared(
+				pageSize,
+				lastCategoryId,
+				CategorySearchOption.builder()
+					.containTitle("title1")
+					.build());
 
 			// then
 			assertThat(result).isNotNull();

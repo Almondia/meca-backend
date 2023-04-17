@@ -118,6 +118,26 @@ public class CategoryQueryDslRepositoryImpl implements CategoryQueryDslRepositor
 		return makeCursorPage(pageSize, response);
 	}
 
+	@Override
+	public CursorPage<SharedCategoryResponseDto> findCategoryShared(int pageSize, Id lastCategoryId,
+		CategorySearchOption categorySearchOption) {
+		List<SharedCategoryResponseDto> response = jpaQueryFactory.select(
+				Projections.constructor(SharedCategoryResponseDto.class,
+					category,
+					member))
+			.from(category)
+			.innerJoin(member)
+			.on(category.memberId.eq(member.memberId))
+			.where(
+				category.isShared.eq(true),
+				dynamicCursorExpression(lastCategoryId),
+				category.title.title.containsIgnoreCase(categorySearchOption.getContainTitle()))
+			.orderBy(category.categoryId.uuid.desc())
+			.limit(pageSize + 1)
+			.fetch();
+		return makeCursorPage(pageSize, response);
+	}
+
 	private BooleanExpression eqMemberId(Id memberId) {
 		return memberId == null ? null : category.memberId.eq(memberId);
 	}
