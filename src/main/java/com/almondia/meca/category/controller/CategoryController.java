@@ -89,10 +89,17 @@ public class CategoryController {
 	@GetMapping("/share")
 	public ResponseEntity<CursorPage<SharedCategoryResponseDto>> getCursorPagingCategoryShare(
 		@RequestParam(value = "hasNext", required = false) Id hasNext,
-		@RequestParam(value = "pageSize") int pageSize
+		@RequestParam(value = "pageSize") int pageSize,
+		@RequestParam(value = "containTitle", required = false) String containTitle
 	) {
+		CategorySearchOption categorySearchOption = null;
+		if (containTitle != null) {
+			categorySearchOption = CategorySearchOption.builder()
+				.containTitle(containTitle)
+				.build();
+		}
 		CursorPage<SharedCategoryResponseDto> responseDto = categoryService.findCursorPagingCategoryResponseDto(
-			pageSize, hasNext);
+			pageSize, hasNext, categorySearchOption);
 		return ResponseEntity.ok(responseDto);
 	}
 }
