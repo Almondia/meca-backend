@@ -20,6 +20,7 @@ import com.almondia.meca.category.controller.dto.UpdateCategoryRequestDto;
 import com.almondia.meca.category.domain.entity.Category;
 import com.almondia.meca.category.domain.repository.CategoryRepository;
 import com.almondia.meca.category.domain.service.CategoryChecker;
+import com.almondia.meca.category.infra.querydsl.CategorySearchOption;
 import com.almondia.meca.common.controller.dto.CursorPage;
 import com.almondia.meca.common.domain.vo.Id;
 
@@ -72,9 +73,15 @@ public class CategoryService {
 	public CursorPage<CategoryWithHistoryResponseDto> findCursorPagingCategoryWithHistoryResponse(
 		int pageSize,
 		Id memberId,
-		Id lastCategoryId) {
-		return categoryRepository.findCategoryWithStatisticsByMemberId(
-			pageSize, memberId, lastCategoryId);
+		Id lastCategoryId,
+		CategorySearchOption categorySearchOption
+	) {
+		if (categorySearchOption == null) {
+			return categoryRepository.findCategoryWithStatisticsByMemberId(
+				pageSize, memberId, lastCategoryId);
+		}
+		return categoryRepository.findCategoryWithStatisticsByMemberId(pageSize, memberId, lastCategoryId,
+			categorySearchOption);
 	}
 
 	@Transactional(readOnly = true)
