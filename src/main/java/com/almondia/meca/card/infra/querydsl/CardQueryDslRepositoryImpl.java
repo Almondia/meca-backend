@@ -46,7 +46,7 @@ public class CardQueryDslRepositoryImpl implements CardQueryDslRepository {
 	) {
 		List<CardResponseDto> contents = queryFactory.selectFrom(card)
 			.where(
-				eqCategoryId(categoryId),
+				card.categoryId.eq(categoryId),
 				containTitle(cardSearchOption.getContainTitle()),
 				card.isDeleted.eq(false),
 				lessOrEqCardId(lastCardId)
@@ -84,7 +84,7 @@ public class CardQueryDslRepositoryImpl implements CardQueryDslRepository {
 				card,
 				member))
 			.from(card)
-			.where(eqCategoryId(categoryId),
+			.where(card.categoryId.eq(categoryId),
 				containTitle(cardSearchOption.getContainTitle()),
 				category.isShared.eq(true),
 				card.isDeleted.eq(false),
@@ -163,10 +163,6 @@ public class CardQueryDslRepositoryImpl implements CardQueryDslRepository {
 				tuple -> tuple.get(card.cardId),
 				Collectors.mapping(tuple -> tuple.get(card.categoryId), Collectors.toList())
 			));
-	}
-
-	private BooleanExpression eqCategoryId(Id categoryId) {
-		return categoryId == null ? null : card.categoryId.eq(categoryId);
 	}
 
 	private BooleanExpression lessOrEqCardId(Id lastCardId) {
