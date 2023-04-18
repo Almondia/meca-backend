@@ -22,13 +22,12 @@ import com.almondia.meca.card.controller.dto.SharedCardResponseDto;
 import com.almondia.meca.card.domain.entity.Card;
 import com.almondia.meca.card.domain.entity.OxCard;
 import com.almondia.meca.card.domain.repository.CardRepository;
+import com.almondia.meca.card.domain.vo.Title;
 import com.almondia.meca.cardhistory.domain.entity.CardHistory;
 import com.almondia.meca.category.domain.entity.Category;
 import com.almondia.meca.common.configuration.jpa.JpaAuditingConfiguration;
 import com.almondia.meca.common.configuration.jpa.QueryDslConfiguration;
 import com.almondia.meca.common.domain.vo.Id;
-import com.almondia.meca.common.infra.querydsl.SortOption;
-import com.almondia.meca.common.infra.querydsl.SortOrder;
 import com.almondia.meca.helper.CardHistoryTestHelper;
 import com.almondia.meca.helper.CardTestHelper;
 import com.almondia.meca.helper.CategoryTestHelper;
@@ -49,6 +48,9 @@ class CardQueryDslRepositoryImplTest {
 	/**
 	 * 1. 페이징 사이즈보다 적게 조회한 경우 hasNext는 null이다
 	 * 2. 다음 페이지가 존재하는 경우 hasNext 값은 존재한다
+	 * 3. 삭제된 카드는 조회하지 않는다
+	 * 4. lastCardId를 입력한 경우 lastCardId보다 같거나 작은 cardId만 조회된다
+	 * 5. 검색 옵션의 containTitle 속성이 존재하는 경우, 카드 제목에 containTitle이 포함된 카드만 조회된다
 	 */
 	@Nested
 	@DisplayName("findCardByCategoryIdUsingCursorPaging 테스트")
@@ -57,11 +59,6 @@ class CardQueryDslRepositoryImplTest {
 		Id categoryId = Id.generateNextId();
 		Id memberId = Id.generateNextId();
 
-		CardSearchCriteria criteria = CardSearchCriteria.builder()
-			.eqCategoryId(categoryId)
-			.build();
-		SortOption<CardSortField> sortOption = new SortOption<>(CardSortField.CREATED_AT, SortOrder.DESC);
-
 		@Test
 		@DisplayName("페이징 사이즈보다 적게 조회한 경우 hasNext는 null이다")
 		void shouldReturnNullWhenCallFindCardByCategoryIdUsingCursorPagingTest() {
@@ -69,8 +66,8 @@ class CardQueryDslRepositoryImplTest {
 			int pageSize = 5;
 
 			// when
-			CardCursorPageWithCategory page = cardRepository.findCardByCategoryIdUsingCursorPaging(pageSize, criteria,
-				sortOption);
+			CardCursorPageWithCategory page = cardRepository.findCardByCategoryIdUsingCursorPaging(pageSize, null,
+				categoryId, CardSearchOption.builder().build());
 
 			// then
 			assertThat(page.getHasNext()).isNull();
@@ -89,11 +86,79 @@ class CardQueryDslRepositoryImplTest {
 			entityManager.persist(card2);
 
 			// when
-			CardCursorPageWithCategory page = cardRepository.findCardByCategoryIdUsingCursorPaging(pageSize, criteria,
-				sortOption);
+			CardCursorPageWithCategory page = cardRepository.findCardByCategoryIdUsingCursorPaging(pageSize, null,
+				categoryId, CardSearchOption.builder().build());
 
 			// then
 			assertThat(page.getHasNext()).isNotNull();
+		}
+
+		@Test
+		@DisplayName("삭제된 카드는 조회하지 않는다")
+		void shouldNotReturnDeletedCardWhenCallFindCardByCategoryIdUsingCursorPagingTest() {
+			// given
+			int pageSize = 1;
+			Category category = CategoryTestHelper.generateUnSharedCategory("title", memberId, categoryId);
+			OxCard card1 = CardTestHelper.genOxCard(memberId, categoryId, Id.generateNextId());
+			card1.delete();
+			entityManager.persist(category);
+			entityManager.persist(card1);
+
+			// when
+			CardCursorPageWithCategory page = cardRepository.findCardByCategoryIdUsingCursorPaging(pageSize, null,
+				categoryId, CardSearchOption.builder().build());
+
+			// then
+			assertThat(page.getHasNext()).isNull();
+			assertThat(page.getContents()).isEmpty();
+		}
+
+		@Test
+		@DisplayName("lastCardId를 입력한 경우 lastCardId보다 같거나 작은 cardId만 조회된다")
+		void shouldReturnCardIdLessThanLastCardIdWhenCallFindCardByCategoryIdUsingCursorPagingTest() {
+			// given
+			int pageSize = 3;
+			Category category = CategoryTestHelper.generateUnSharedCategory("title", memberId, categoryId);
+			OxCard card1 = CardTestHelper.genOxCard(memberId, categoryId, Id.generateNextId());
+			OxCard card2 = CardTestHelper.genOxCard(memberId, categoryId, Id.generateNextId());
+			entityManager.persist(category);
+			entityManager.persist(card1);
+			entityManager.persist(card2);
+
+			// when
+			CardCursorPageWithCategory page = cardRepository.findCardByCategoryIdUsingCursorPaging(pageSize,
+				card2.getCardId(),
+				categoryId, CardSearchOption.builder().build());
+
+			// then
+			assertThat(page.getHasNext()).isNull();
+			assertThat(page.getContents()).hasSize(2);
+		}
+
+		@Test
+		@DisplayName("검색 옵션의 containTitle 속성이 존재하는 경우, 카드 제목에 containTitle이 포함된 카드만 조회된다")
+		void shouldReturnCardTitleContainsContainTitleWhenCallFindCardByCategoryIdUsingCursorPagingTest() {
+			// given
+			int pageSize = 3;
+			Category category = CategoryTestHelper.generateUnSharedCategory("title", memberId, categoryId);
+			OxCard card1 = CardTestHelper.genOxCard(memberId, categoryId, Id.generateNextId());
+			OxCard card2 = CardTestHelper.genOxCard(memberId, categoryId, Id.generateNextId());
+			OxCard card3 = CardTestHelper.genOxCard(memberId, categoryId, Id.generateNextId());
+			card1.changeTitle(new Title("title1"));
+			card2.changeTitle(new Title("title2"));
+			card3.changeTitle(new Title("title3"));
+			entityManager.persist(category);
+			entityManager.persist(card1);
+			entityManager.persist(card2);
+			entityManager.persist(card3);
+
+			// when
+			CardCursorPageWithCategory page = cardRepository.findCardByCategoryIdUsingCursorPaging(pageSize, null,
+				categoryId, CardSearchOption.builder().containTitle("title").build());
+
+			// then
+			assertThat(page.getHasNext()).isNull();
+			assertThat(page.getContents()).hasSize(3);
 		}
 	}
 
@@ -101,6 +166,12 @@ class CardQueryDslRepositoryImplTest {
 	 * 1. 페이징 사이즈보다 적게 조회한 경우 hasNext는 null이다
 	 * 2. 다음 페이지가 존재하는 경우 hasNext 값은 존재한다
 	 * 3. 조회시 회원 정보가 있어야 한다
+	 * 4. 삭제된 카드는 조회하면 안된다
+	 * 5. 공유되지 않은 카테고리 내부의 카드는 조회하면 안된다
+	 * 6. 카테고리가 공유되어 있고 그 내부에 카드가 존재하는 경우 카드 조회 결과는 존재한다
+	 * 7. 카테고리가 공유되어 있지만 카드가 없는 경우 조회 결과는 없다
+	 * 8. lastCardId를 입력한 경우 lastCardId보다 같거나 작은 cardId만 조회된다
+	 * 9. 검색 옵션의 containTitle 속성이 존재하는 경우, 카드 제목에 containTitle이 포함된 카드만 조회된다
 	 */
 	@Nested
 	@DisplayName("findCardBySharedCategoryCursorPaging 테스트")
@@ -108,11 +179,6 @@ class CardQueryDslRepositoryImplTest {
 
 		Id categoryId = Id.generateNextId();
 		Id memberId = Id.generateNextId();
-
-		CardSearchCriteria criteria = CardSearchCriteria.builder()
-			.eqCategoryId(categoryId)
-			.build();
-		SortOption<CardSortField> sortOption = new SortOption<>(CardSortField.CREATED_AT, SortOrder.DESC);
 
 		@Test
 		@DisplayName("페이징 사이즈보다 적게 조회한 경우 hasNext는 null이다")
@@ -122,8 +188,9 @@ class CardQueryDslRepositoryImplTest {
 
 			// when
 			CardCursorPageWithSharedCategoryDto page = cardRepository.findCardBySharedCategoryCursorPaging(pageSize,
-				criteria,
-				sortOption);
+				null,
+				categoryId,
+				CardSearchOption.builder().build());
 
 			// then
 			assertThat(page.getHasNext()).isNull();
@@ -145,8 +212,9 @@ class CardQueryDslRepositoryImplTest {
 
 			// when
 			CardCursorPageWithSharedCategoryDto page = cardRepository.findCardBySharedCategoryCursorPaging(pageSize,
-				criteria,
-				sortOption);
+				null,
+				categoryId,
+				CardSearchOption.builder().build());
 
 			// then
 			assertThat(page.getHasNext()).isNotNull();
@@ -168,13 +236,166 @@ class CardQueryDslRepositoryImplTest {
 
 			// when
 			CardCursorPageWithSharedCategoryDto page = cardRepository.findCardBySharedCategoryCursorPaging(pageSize,
-				criteria,
-				sortOption);
+				null,
+				categoryId,
+				CardSearchOption.builder().build());
 
 			// then
 			assertThat(page).isNotNull();
 			assertThat(page.getContents().get(0).getMemberInfo()).isNotNull();
 		}
+
+		@Test
+		@DisplayName("삭제된 카드는 조회하면 안된다")
+		void shouldNotReturnDeletedCardWhenCallFindCardBySharedCategoryCursorPagingTest() {
+			// given
+			int pageSize = 1;
+			Member member = MemberTestHelper.generateMember(memberId);
+			Category category = CategoryTestHelper.generateSharedCategory("title", memberId, categoryId);
+			OxCard card1 = CardTestHelper.genOxCard(memberId, categoryId, Id.generateNextId());
+			OxCard card2 = CardTestHelper.genOxCard(memberId, categoryId, Id.generateNextId());
+			card1.delete();
+			entityManager.persist(member);
+			entityManager.persist(category);
+			entityManager.persist(card1);
+			entityManager.persist(card2);
+
+			// when
+			CardCursorPageWithSharedCategoryDto page = cardRepository.findCardBySharedCategoryCursorPaging(pageSize,
+				null,
+				categoryId,
+				CardSearchOption.builder().build());
+
+			// then
+			assertThat(page).isNotNull();
+			assertThat(page.getContents()).hasSize(1);
+		}
+
+		@Test
+		@DisplayName("공유되지 않은 카테고리 내부의 카드는 조회하면 안된다")
+		void shouldNotReturnCardWhenCallFindCardBySharedCategoryCursorPagingTest() {
+			// given
+			int pageSize = 1;
+			Member member = MemberTestHelper.generateMember(memberId);
+			Category category = CategoryTestHelper.generateUnSharedCategory("title", memberId, categoryId);
+			OxCard card1 = CardTestHelper.genOxCard(memberId, categoryId, Id.generateNextId());
+			OxCard card2 = CardTestHelper.genOxCard(memberId, categoryId, Id.generateNextId());
+			entityManager.persist(member);
+			entityManager.persist(category);
+			entityManager.persist(card1);
+			entityManager.persist(card2);
+
+			// when
+			CardCursorPageWithSharedCategoryDto page = cardRepository.findCardBySharedCategoryCursorPaging(pageSize,
+				null,
+				categoryId,
+				CardSearchOption.builder().build());
+
+			// then
+			assertThat(page).isNotNull();
+			assertThat(page.getContents()).isEmpty();
+		}
+
+		@Test
+		@DisplayName("카테고리가 공유되어 있고 그 내부에 카드가 존재하는 경우 카드 조회 결과는 존재한다")
+		void shouldReturnCardWhenCallFindCardBySharedCategoryCursorPagingTest() {
+			// given
+			int pageSize = 2;
+			Member member = MemberTestHelper.generateMember(memberId);
+			Category category = CategoryTestHelper.generateSharedCategory("title", memberId, categoryId);
+			OxCard card1 = CardTestHelper.genOxCard(memberId, categoryId, Id.generateNextId());
+			OxCard card2 = CardTestHelper.genOxCard(memberId, categoryId, Id.generateNextId());
+			entityManager.persist(member);
+			entityManager.persist(category);
+			entityManager.persist(card1);
+			entityManager.persist(card2);
+
+			// when
+			CardCursorPageWithSharedCategoryDto page = cardRepository.findCardBySharedCategoryCursorPaging(pageSize,
+				null,
+				categoryId,
+				CardSearchOption.builder().build());
+
+			// then
+			assertThat(page).isNotNull();
+			assertThat(page.getContents()).hasSize(2);
+		}
+
+		@Test
+		@DisplayName("카테고리가 공유되어 있지만 카드가 없는 경우 조회 결과는 없다")
+		void shouldReturnEmptyWhenCallFindCardBySharedCategoryCursorPagingTest() {
+			// given
+			int pageSize = 2;
+			Member member = MemberTestHelper.generateMember(memberId);
+			Category category = CategoryTestHelper.generateSharedCategory("title", memberId, categoryId);
+			entityManager.persist(member);
+			entityManager.persist(category);
+
+			// when
+			CardCursorPageWithSharedCategoryDto page = cardRepository.findCardBySharedCategoryCursorPaging(pageSize,
+				null,
+				categoryId,
+				CardSearchOption.builder().build());
+
+			// then
+			assertThat(page).isNotNull();
+			assertThat(page.getContents()).isEmpty();
+		}
+
+		@Test
+		@DisplayName("lastCardId를 입력한 경우 lastCardId보다 같거나 작은 cardId만 조회된다")
+		void shouldReturnCardsWhenCallFindCardBySharedCategoryCursorPagingTest() {
+			// given
+			int pageSize = 3;
+			Member member = MemberTestHelper.generateMember(memberId);
+			Category category = CategoryTestHelper.generateSharedCategory("title", memberId, categoryId);
+			OxCard card1 = CardTestHelper.genOxCard(memberId, categoryId, Id.generateNextId());
+			OxCard card2 = CardTestHelper.genOxCard(memberId, categoryId, Id.generateNextId());
+			OxCard card3 = CardTestHelper.genOxCard(memberId, categoryId, Id.generateNextId());
+			entityManager.persist(member);
+			entityManager.persist(category);
+			entityManager.persist(card1);
+			entityManager.persist(card2);
+			entityManager.persist(card3);
+
+			// when
+			CardCursorPageWithSharedCategoryDto page = cardRepository.findCardBySharedCategoryCursorPaging(pageSize,
+				card3.getCardId(),
+				categoryId,
+				CardSearchOption.builder().build());
+
+			// then
+			assertThat(page).isNotNull();
+			assertThat(page.getContents()).hasSize(3);
+		}
+
+		@Test
+		@DisplayName("검색 옵션의 containTitle 속성이 존재하는 경우, 카드 제목에 containTitle이 포함된 카드만 조회된다")
+		void shouldReturnCardContainTitleWhenCallFindCardBySharedCategoryCursorPagingTest() {
+			// given
+			int pageSize = 3;
+			Member member = MemberTestHelper.generateMember(memberId);
+			Category category = CategoryTestHelper.generateSharedCategory("title", memberId, categoryId);
+			OxCard card1 = CardTestHelper.genOxCard(memberId, categoryId, Id.generateNextId());
+			OxCard card2 = CardTestHelper.genOxCard(memberId, categoryId, Id.generateNextId());
+			OxCard card3 = CardTestHelper.genOxCard(memberId, categoryId, Id.generateNextId());
+			entityManager.persist(member);
+			entityManager.persist(category);
+			entityManager.persist(card1);
+			entityManager.persist(card2);
+			entityManager.persist(card3);
+
+			// when
+			CardCursorPageWithSharedCategoryDto page = cardRepository.findCardBySharedCategoryCursorPaging(pageSize,
+				null,
+				categoryId,
+				CardSearchOption.builder().containTitle("title").build());
+
+			// then
+			assertThat(page).isNotNull();
+			assertThat(page.getContents()).hasSize(3);
+		}
+
 	}
 
 	/**
