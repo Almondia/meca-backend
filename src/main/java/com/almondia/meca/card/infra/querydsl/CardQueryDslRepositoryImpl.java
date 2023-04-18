@@ -17,12 +17,13 @@ import com.almondia.meca.card.domain.entity.QCard;
 import com.almondia.meca.cardhistory.domain.entity.QCardHistory;
 import com.almondia.meca.category.domain.entity.QCategory;
 import com.almondia.meca.common.domain.vo.Id;
-import com.almondia.meca.common.infra.querydsl.SortFactory;
-import com.almondia.meca.common.infra.querydsl.SortOption;
+import com.almondia.meca.common.infra.querydsl.SortOrder;
 import com.almondia.meca.member.domain.entity.QMember;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 @Repository
@@ -39,12 +40,18 @@ public class CardQueryDslRepositoryImpl implements CardQueryDslRepository {
 	@Override
 	public CardCursorPageWithCategory findCardByCategoryIdUsingCursorPaging(
 		int pageSize,
-		CardSearchCriteria criteria,
-		SortOption<CardSortField> sortOption
+		Id lastCardId,
+		@NonNull Id categoryId,
+		CardSearchOption cardSearchOption
 	) {
 		List<CardResponseDto> contents = queryFactory.selectFrom(card)
-			.where(criteria.getPredicate())
-			.orderBy(SortFactory.createOrderSpecifier(sortOption))
+			.where(
+				card.categoryId.eq(categoryId),
+				containTitle(cardSearchOption.getContainTitle()),
+				card.isDeleted.eq(false),
+				lessOrEqCardId(lastCardId)
+			)
+			.orderBy(card.cardId.uuid.desc())
 			.limit(pageSize + 1)
 			.fetch()
 			.stream()
@@ -60,13 +67,16 @@ public class CardQueryDslRepositoryImpl implements CardQueryDslRepository {
 			contents,
 			hasNext,
 			pageSize,
-			sortOption.getSortOrder()
+			SortOrder.DESC
 		);
 	}
 
 	@Override
-	public CardCursorPageWithSharedCategoryDto findCardBySharedCategoryCursorPaging(int pageSize,
-		CardSearchCriteria criteria, SortOption<CardSortField> sortOption
+	public CardCursorPageWithSharedCategoryDto findCardBySharedCategoryCursorPaging(
+		int pageSize,
+		Id lastCardId,
+		@NonNull Id categoryId,
+		CardSearchOption cardSearchOption
 	) {
 		List<SharedCardResponseDto> contents = queryFactory
 			.select(Projections.constructor(
@@ -74,10 +84,16 @@ public class CardQueryDslRepositoryImpl implements CardQueryDslRepository {
 				card,
 				member))
 			.from(card)
-			.where(criteria.getPredicate())
+			.where(card.categoryId.eq(categoryId),
+				containTitle(cardSearchOption.getContainTitle()),
+				category.isShared.eq(true),
+				card.isDeleted.eq(false),
+				lessOrEqCardId(lastCardId))
+			.innerJoin(category)
+			.on(card.categoryId.eq(category.categoryId))
 			.innerJoin(member)
 			.on(card.memberId.eq(member.memberId))
-			.orderBy(SortFactory.createOrderSpecifier(sortOption))
+			.orderBy(card.cardId.uuid.desc())
 			.limit(pageSize + 1)
 			.fetch();
 
@@ -91,7 +107,7 @@ public class CardQueryDslRepositoryImpl implements CardQueryDslRepository {
 			contents,
 			hasNext,
 			pageSize,
-			sortOption.getSortOrder()
+			SortOrder.DESC
 		);
 	}
 
@@ -147,5 +163,13 @@ public class CardQueryDslRepositoryImpl implements CardQueryDslRepository {
 				tuple -> tuple.get(card.cardId),
 				Collectors.mapping(tuple -> tuple.get(card.categoryId), Collectors.toList())
 			));
+	}
+
+	private BooleanExpression lessOrEqCardId(Id lastCardId) {
+		return lastCardId == null ? null : card.cardId.uuid.loe(lastCardId.getUuid());
+	}
+
+	private BooleanExpression containTitle(String containTitle) {
+		return containTitle == null ? null : card.title.title.contains(containTitle);
 	}
 }

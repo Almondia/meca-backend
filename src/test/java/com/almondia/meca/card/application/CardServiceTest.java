@@ -37,17 +37,16 @@ import com.almondia.meca.card.domain.vo.MultiChoiceAnswer;
 import com.almondia.meca.card.domain.vo.OxAnswer;
 import com.almondia.meca.card.domain.vo.Question;
 import com.almondia.meca.card.domain.vo.Title;
-import com.almondia.meca.card.infra.querydsl.CardSearchCriteria;
-import com.almondia.meca.card.infra.querydsl.CardSortField;
+import com.almondia.meca.card.infra.querydsl.CardSearchOption;
 import com.almondia.meca.category.domain.entity.Category;
 import com.almondia.meca.category.domain.service.CategoryChecker;
 import com.almondia.meca.common.configuration.jpa.QueryDslConfiguration;
 import com.almondia.meca.common.controller.dto.CursorPage;
 import com.almondia.meca.common.domain.vo.Id;
 import com.almondia.meca.common.domain.vo.Image;
-import com.almondia.meca.common.infra.querydsl.SortOption;
-import com.almondia.meca.common.infra.querydsl.SortOrder;
 import com.almondia.meca.data.CardDataFactory;
+import com.almondia.meca.helper.CategoryTestHelper;
+import com.almondia.meca.helper.MemberTestHelper;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -298,29 +297,26 @@ class CardServiceTest {
 		@Test
 		@DisplayName("본인이 가진 카테고리가 아닐 시 권한 에러 출력")
 		void shouldThrowAccessDeniedExceptionWhenNotMyCategoryIdHandleTest() {
-
 			assertThatThrownBy(() -> cardService.searchCursorPagingCard(
 				10,
+				Id.generateNextId(),
 				categoryId,
-				CardSearchCriteria.builder().build(),
-				SortOption.of(CardSortField.CARD_ID, SortOrder.DESC),
-				Id.generateNextId())).isInstanceOf(AccessDeniedException.class);
+				Id.generateNextId(),
+				CardSearchOption.builder().build())).isInstanceOf(AccessDeniedException.class);
 		}
 
 		@Test
 		@DisplayName("카드 커서 페이징 출력 형태 및 결과 테스트")
 		void shouldSuccessWorkTest() {
-			em.persist(Category.builder()
-				.title(new com.almondia.meca.category.domain.vo.Title("title"))
-				.memberId(memberId)
-				.categoryId(categoryId)
-				.build());
+			em.persist(MemberTestHelper.generateMember(memberId));
+			em.persist(CategoryTestHelper.generateUnSharedCategory("title", memberId, categoryId));
 			CursorPage<CardResponseDto> cursorPage = cardService.searchCursorPagingCard(
 				5,
+				null,
 				categoryId,
-				CardSearchCriteria.builder().build(),
-				SortOption.of(CardSortField.CARD_ID, SortOrder.DESC),
-				memberId);
+				memberId,
+				CardSearchOption.builder().build()
+			);
 			assertThat(cursorPage)
 				.hasFieldOrProperty("contents")
 				.hasFieldOrProperty("pageSize")
@@ -443,11 +439,5 @@ class CardServiceTest {
 				.categoryId(categoryId)
 				.build());
 		}
-	}
-
-	@Nested
-	@DisplayName("공유 카테고리의 카드 목록 페이징 조회")
-	class SharedCardCursorPagingTest {
-
 	}
 }

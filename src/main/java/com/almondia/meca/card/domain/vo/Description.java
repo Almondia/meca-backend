@@ -26,9 +26,6 @@ public class Description implements Wrapper {
 		if (editText.length() > MAX_LENGTH) {
 			throw new IllegalArgumentException(String.format("%d 초과해서 문자열 길이를 늘릴 수 없습니다", MAX_LENGTH));
 		}
-		if (editText.isBlank()) {
-			throw new IllegalArgumentException("빈 공백은 허용되지 않습니다");
-		}
 	}
 
 	@Override

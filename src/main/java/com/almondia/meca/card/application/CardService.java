@@ -17,8 +17,7 @@ import com.almondia.meca.card.controller.dto.UpdateCardRequestDto;
 import com.almondia.meca.card.domain.entity.Card;
 import com.almondia.meca.card.domain.repository.CardRepository;
 import com.almondia.meca.card.domain.service.CardChecker;
-import com.almondia.meca.card.infra.querydsl.CardSearchCriteria;
-import com.almondia.meca.card.infra.querydsl.CardSortField;
+import com.almondia.meca.card.infra.querydsl.CardSearchOption;
 import com.almondia.meca.cardhistory.domain.entity.CardHistory;
 import com.almondia.meca.cardhistory.domain.repository.CardHistoryRepository;
 import com.almondia.meca.category.domain.entity.Category;
@@ -26,7 +25,6 @@ import com.almondia.meca.category.domain.repository.CategoryRepository;
 import com.almondia.meca.category.domain.service.CategoryChecker;
 import com.almondia.meca.common.controller.dto.CursorPage;
 import com.almondia.meca.common.domain.vo.Id;
-import com.almondia.meca.common.infra.querydsl.SortOption;
 
 import lombok.AllArgsConstructor;
 
@@ -57,14 +55,14 @@ public class CardService {
 	@Transactional(readOnly = true)
 	public CursorPage<CardResponseDto> searchCursorPagingCard(
 		int pageSize,
+		Id lastCardId,
 		Id categoryId,
-		CardSearchCriteria cardSearchCriteria,
-		SortOption<CardSortField> sortOption,
-		Id memberId
+		Id memberId,
+		CardSearchOption cardSearchOption
 	) {
 		Category category = categoryChecker.checkAuthority(categoryId, memberId);
 		CardCursorPageWithCategory cursor = cardRepository.findCardByCategoryIdUsingCursorPaging(pageSize,
-			cardSearchCriteria, sortOption);
+			lastCardId, categoryId, cardSearchOption);
 		cursor.setCategory(category);
 		return cursor;
 	}
@@ -115,8 +113,11 @@ public class CardService {
 	}
 
 	@Transactional(readOnly = true)
-	public CardCursorPageWithSharedCategoryDto searchCursorPagingSharedCard(int pageSize, Id categoryId,
-		CardSearchCriteria criteria, SortOption<CardSortField> sortOption
+	public CardCursorPageWithSharedCategoryDto searchCursorPagingSharedCard(
+		int pageSize,
+		Id lastCardId,
+		Id categoryId,
+		CardSearchOption cardSearchOption
 	) {
 		Category category = categoryRepository.findById(categoryId)
 			.orElseThrow(() -> new IllegalArgumentException("카테고리가 존재하지 않습니다"));
@@ -124,7 +125,7 @@ public class CardService {
 			throw new AccessDeniedException("공유되지 않은 카테고리에 접근할 수 없습니다");
 		}
 		CardCursorPageWithSharedCategoryDto cursor = cardRepository.findCardBySharedCategoryCursorPaging(pageSize,
-			criteria, sortOption);
+			lastCardId, categoryId, cardSearchOption);
 		cursor.setCategory(category);
 		return cursor;
 	}

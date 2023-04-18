@@ -7,8 +7,7 @@ import org.junit.jupiter.api.Test;
 /**
  * 1. editText의 길이가 2_1000을 초과하면 IllegalArgumentException을 던진다
  * 2. editText의 길이가 2_1000을 초과하지 않으면 정상적으로 데이터를 생성한다
- * 3. editText는 빈 공백을 허용하지 않는다
- * 4. equalsandhashcode 테스트
+ * 3. equalsandhashcode 테스트
  */
 class DescriptionTest {
 
@@ -20,11 +19,6 @@ class DescriptionTest {
 	@Test
 	void editTextLengthIsNotOver2_1000Test() {
 		assertDoesNotThrow(() -> new Description("a".repeat(2_1000)));
-	}
-
-	@Test
-	void editTextIsBlankTest() {
-		assertThrows(IllegalArgumentException.class, () -> new Description(" "));
 	}
 
 	@Test

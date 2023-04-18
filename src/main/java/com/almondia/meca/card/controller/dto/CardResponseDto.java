@@ -19,6 +19,7 @@ public class CardResponseDto {
 
 	private final Id cardId;
 	private final Title title;
+	private final Id memberId;
 	private final Question question;
 	private final Id categoryId;
 	private final CardType cardType;
