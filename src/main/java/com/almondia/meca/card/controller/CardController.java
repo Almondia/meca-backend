@@ -23,12 +23,9 @@ import com.almondia.meca.card.controller.dto.CardResponseDto;
 import com.almondia.meca.card.controller.dto.SaveCardRequestDto;
 import com.almondia.meca.card.controller.dto.SharedCardResponseDto;
 import com.almondia.meca.card.controller.dto.UpdateCardRequestDto;
-import com.almondia.meca.card.infra.querydsl.CardSearchCriteria;
-import com.almondia.meca.card.infra.querydsl.CardSortField;
+import com.almondia.meca.card.infra.querydsl.CardSearchOption;
 import com.almondia.meca.common.controller.dto.CursorPage;
 import com.almondia.meca.common.domain.vo.Id;
-import com.almondia.meca.common.infra.querydsl.SortOption;
-import com.almondia.meca.common.infra.querydsl.SortOrder;
 import com.almondia.meca.member.domain.entity.Member;
 
 import lombok.RequiredArgsConstructor;
@@ -66,29 +63,32 @@ public class CardController {
 	public ResponseEntity<CursorPage<CardResponseDto>> searchPagingCards(
 		@AuthenticationPrincipal Member member,
 		@PathVariable(value = "categoryId") Id categoryId,
-		@RequestParam(value = "hasNext", required = false) Id lastId,
+		@RequestParam(value = "hasNext", required = false) Id lastCardId,
 		@RequestParam(value = "pageSize", defaultValue = "1000") int pageSize,
-		@RequestParam(value = "sortOrder", defaultValue = "desc") SortOrder sortOrder
+		@RequestParam(value = "containTitle", required = false) String containTitle
 	) {
-		CardSearchCriteria criteria = makeCursorCriteria(categoryId, lastId, sortOrder);
+		CardSearchOption cardSearchOption = CardSearchOption.builder()
+			.containTitle(containTitle)
+			.build();
 
-		CursorPage<CardResponseDto> responseDto = cardService.searchCursorPagingCard(pageSize, categoryId, criteria,
-			SortOption.of(CardSortField.CARD_ID, sortOrder), member.getMemberId());
+		CursorPage<CardResponseDto> responseDto = cardService.searchCursorPagingCard(
+			pageSize, lastCardId, categoryId, member.getMemberId(), cardSearchOption);
 		return ResponseEntity.ok(responseDto);
 	}
 
 	@GetMapping("/categories/{categoryId}/share")
 	public ResponseEntity<CursorPage<SharedCardResponseDto>> searchSharedCardPaging(
 		@PathVariable("categoryId") Id categoryId,
-		@RequestParam(value = "hasNext", required = false) Id lastId,
+		@RequestParam(value = "hasNext", required = false) Id lastCardId,
 		@RequestParam(value = "pageSize", defaultValue = "1000") int pageSize,
-		@RequestParam(value = "sortOrder", defaultValue = "desc") SortOrder sortOrder
+		@RequestParam(value = "containTitle", required = false) String containTitle
 	) {
-		CardSearchCriteria criteria = makeCursorCriteria(categoryId, lastId, sortOrder);
+		CardSearchOption cardSearchOption = CardSearchOption.builder()
+			.containTitle(containTitle)
+			.build();
 
-		CursorPage<SharedCardResponseDto> responseDto = cardService.searchCursorPagingSharedCard(pageSize, categoryId,
-			criteria,
-			SortOption.of(CardSortField.CARD_ID, sortOrder));
+		CursorPage<SharedCardResponseDto> responseDto = cardService.searchCursorPagingSharedCard(
+			pageSize, lastCardId, categoryId, cardSearchOption);
 		return ResponseEntity.ok(responseDto);
 	}
 
@@ -148,22 +148,5 @@ public class CardController {
 	) {
 		cardService.deleteCard(cardId, member.getMemberId());
 		return ResponseEntity.status(HttpStatus.OK).body("");
-	}
-
-	private CardSearchCriteria makeCursorCriteria(Id categoryId, Id lastId,
-		SortOrder sortOrder) {
-		Id gtLastId = null;
-		Id ltLastId = null;
-		if (sortOrder.equals(SortOrder.ASC)) {
-			gtLastId = lastId;
-		}
-		if (sortOrder.equals(SortOrder.DESC)) {
-			ltLastId = lastId;
-		}
-		return CardSearchCriteria.builder()
-			.eqCategoryId(categoryId)
-			.gtCardId(gtLastId)
-			.ltCardId(ltLastId)
-			.build();
 	}
 }
