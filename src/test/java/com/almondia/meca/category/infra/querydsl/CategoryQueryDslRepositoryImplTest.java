@@ -302,7 +302,7 @@ class CategoryQueryDslRepositoryImplTest {
 
 	/**
 	 * 1. 카테고리가 없는 경우 contents가 비어있어야 함
-	 * 2. 카테고리가 있는 경우 contents가 있어야 함
+	 * 2. 카테고리가 있고 내부에 카드가 최소 1개 이상이여야 contents가 있음
 	 * 3. 카테고리가 있는 경우, pageSize가 0인 경우 contents가 비어 있어야 함
 	 * 4. 조회후 다음 페이징 index가 있는 경우 hasNext에 다음 카테고리 id가 존재해야 함
 	 * 5. 조회후 다음 페이징 index가 없는 경우 hasNext에 null이 존재해야 함
@@ -333,12 +333,14 @@ class CategoryQueryDslRepositoryImplTest {
 		}
 
 		@Test
-		@DisplayName("카테고리가 있는 경우 contents가 있어야 함")
+		@DisplayName("카테고리가 있고 내부에 카드가 최소 1개 이상이여야 contents가 있음")
 		void shouldReturnContentsWhenExistCategoryTest() {
 			// given
 			int pageSize = 1;
+			Id categoryId = Id.generateNextId();
 			em.persist(MemberTestHelper.generateMember(memberId));
-			em.persist(CategoryTestHelper.generateSharedCategory("title1", memberId, Id.generateNextId()));
+			em.persist(CategoryTestHelper.generateSharedCategory("title1", memberId, categoryId));
+			em.persist(CardTestHelper.genOxCard(memberId, categoryId, Id.generateNextId()));
 
 			// when
 			CursorPage<SharedCategoryResponseDto> result = categoryRepository.findCategoryShared(
@@ -375,9 +377,13 @@ class CategoryQueryDslRepositoryImplTest {
 		void shouldReturnHasNextWhenExistNextPageTest() {
 			// given
 			int pageSize = 1;
+			Id categoryId1 = Id.generateNextId();
+			Id categoryId2 = Id.generateNextId();
 			em.persist(MemberTestHelper.generateMember(memberId));
-			em.persist(CategoryTestHelper.generateSharedCategory("title1", memberId, Id.generateNextId()));
-			em.persist(CategoryTestHelper.generateSharedCategory("title2", memberId, Id.generateNextId()));
+			em.persist(CategoryTestHelper.generateSharedCategory("title1", memberId, categoryId1));
+			em.persist(CategoryTestHelper.generateSharedCategory("title2", memberId, categoryId2));
+			em.persist(CardTestHelper.genOxCard(memberId, categoryId1, Id.generateNextId()));
+			em.persist(CardTestHelper.genOxCard(memberId, categoryId2, Id.generateNextId()));
 
 			// when
 			CursorPage<SharedCategoryResponseDto> result = categoryRepository.findCategoryShared(
@@ -398,9 +404,12 @@ class CategoryQueryDslRepositoryImplTest {
 		void shouldReturnHasNextWhenExistNextPageButPageSizeIsLessThanCategoryCountTest() {
 			// given
 			int pageSize = 3;
+			Id categoryId = Id.generateNextId();
+			Id cardId = Id.generateNextId();
 			em.persist(MemberTestHelper.generateMember(memberId));
-			em.persist(CategoryTestHelper.generateSharedCategory("title1", memberId, Id.generateNextId()));
+			em.persist(CategoryTestHelper.generateSharedCategory("title1", memberId, categoryId));
 			em.persist(CategoryTestHelper.generateSharedCategory("title2", memberId, Id.generateNextId()));
+			em.persist(CardTestHelper.genOxCard(memberId, categoryId, cardId));
 
 			// when
 			CursorPage<SharedCategoryResponseDto> result = categoryRepository.findCategoryShared(
@@ -439,10 +448,13 @@ class CategoryQueryDslRepositoryImplTest {
 		void shouldReturnCategoryWhenLastCategoryIdIsNotNullTest() {
 			// given
 			Id lastCategoryId = Id.generateNextId();
+			Id categoryId = Id.generateNextId();
 			int pageSize = 3;
 			em.persist(MemberTestHelper.generateMember(memberId));
 			em.persist(CategoryTestHelper.generateSharedCategory("title1", memberId, lastCategoryId));
-			em.persist(CategoryTestHelper.generateSharedCategory("title2", memberId, Id.generateNextId()));
+			em.persist(CategoryTestHelper.generateSharedCategory("title2", memberId, categoryId));
+			em.persist(CardTestHelper.genOxCard(memberId, categoryId, Id.generateNextId()));
+			em.persist(CardTestHelper.genOxCard(memberId, lastCategoryId, Id.generateNextId()));
 
 			// when
 			CursorPage<SharedCategoryResponseDto> result = categoryRepository.findCategoryShared(
@@ -463,10 +475,13 @@ class CategoryQueryDslRepositoryImplTest {
 		void shouldReturnCategoryWhenContainTitleIsNotNullTest() {
 			// given
 			Id lastCategoryId = Id.generateNextId();
+			Id categoryId = Id.generateNextId();
 			int pageSize = 3;
 			em.persist(MemberTestHelper.generateMember(memberId));
 			em.persist(CategoryTestHelper.generateSharedCategory("title1", memberId, lastCategoryId));
-			em.persist(CategoryTestHelper.generateSharedCategory("title2", memberId, Id.generateNextId()));
+			em.persist(CategoryTestHelper.generateSharedCategory("title2", memberId, categoryId));
+			em.persist(CardTestHelper.genOxCard(memberId, categoryId, Id.generateNextId()));
+			em.persist(CardTestHelper.genOxCard(memberId, lastCategoryId, Id.generateNextId()));
 
 			// when
 			CursorPage<SharedCategoryResponseDto> result = categoryRepository.findCategoryShared(
