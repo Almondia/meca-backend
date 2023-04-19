@@ -107,11 +107,15 @@ public class CategoryQueryDslRepositoryImpl implements CategoryQueryDslRepositor
 					category,
 					member))
 			.from(category)
-			.innerJoin(member)
-			.on(category.memberId.eq(member.memberId))
 			.where(
 				category.isShared.eq(true),
 				dynamicCursorExpression(lastCategoryId))
+			.innerJoin(member)
+			.on(category.memberId.eq(member.memberId))
+			.leftJoin(card)
+			.on(category.categoryId.eq(card.categoryId))
+			.groupBy(category.categoryId)
+			.having(card.cardId.countDistinct().gt(0))
 			.orderBy(category.categoryId.uuid.desc())
 			.limit(pageSize + 1)
 			.fetch();
@@ -128,6 +132,10 @@ public class CategoryQueryDslRepositoryImpl implements CategoryQueryDslRepositor
 			.from(category)
 			.innerJoin(member)
 			.on(category.memberId.eq(member.memberId))
+			.leftJoin(card)
+			.on(category.categoryId.eq(card.categoryId))
+			.groupBy(category.categoryId)
+			.having(card.cardId.countDistinct().gt(0))
 			.where(
 				category.isShared.eq(true),
 				dynamicCursorExpression(lastCategoryId),
