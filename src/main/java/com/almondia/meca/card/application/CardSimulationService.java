@@ -27,7 +27,7 @@ public class CardSimulationService {
 	@Transactional(readOnly = true)
 	public List<CardResponseDto> simulateRandom(Id categoryId, Id memberId, int limit) {
 		categoryChecker.checkAuthority(categoryId, memberId);
-		List<Card> cards = cardRepository.findByCategoryId(categoryId);
+		List<Card> cards = cardRepository.findByCategoryIdAndIsDeleted(categoryId, false);
 		CardPicker cardPicker = new RandomCardPicker();
 		List<Card> pick = cardPicker.pick(cards, limit);
 		return pick.stream().map(CardMapper::cardToDto).collect(Collectors.toList());

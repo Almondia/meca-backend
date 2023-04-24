@@ -61,9 +61,9 @@ public class CategoryService {
 	@Transactional
 	public void deleteCategory(Id categoryId, Id memberId) {
 		Category category = categoryChecker.checkAuthority(categoryId, memberId);
-		List<Card> cards = cardRepository.findByCategoryId(categoryId);
+		List<Card> cards = cardRepository.findByCategoryIdAndIsDeleted(categoryId, false);
 		List<Id> cardIds = cards.stream().map(Card::getCardId).collect(Collectors.toList());
-		List<CardHistory> cardHistories = cardHistoryRepository.findByCardIdIn(cardIds);
+		List<CardHistory> cardHistories = cardHistoryRepository.findByCardIdInAndIsDeleted(cardIds, false);
 		cardHistories.forEach(CardHistory::delete);
 		cards.forEach(Card::delete);
 		category.delete();
