@@ -21,6 +21,11 @@ public class Question implements Wrapper {
 		this.question = question;
 	}
 
+	@Override
+	public String toString() {
+		return question;
+	}
+
 	private void validateQuestion(String question) {
 		if (question.isBlank()) {
 			throw new IllegalArgumentException("퀴즈 문제에 비우거나 공백만 입력해서는 안됩니다");
