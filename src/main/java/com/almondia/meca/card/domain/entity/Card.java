@@ -46,6 +46,7 @@ public abstract class Card extends DateEntity {
 	Question question;
 
 	@Embedded
+	@AttributeOverride(name = "title", column = @Column(name = "title", nullable = false, length = 120))
 	Title title;
 
 	@Embedded
