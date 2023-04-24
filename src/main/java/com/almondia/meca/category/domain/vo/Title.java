@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Title implements Wrapper, Comparable<Title> {
 
-	private static final int MAX_LENGTH = 20;
+	private static final int MAX_LENGTH = 40;
 
 	private String title;
 

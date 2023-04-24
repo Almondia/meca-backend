@@ -24,15 +24,15 @@ public class Email implements Wrapper {
 		this.email = email;
 	}
 
+	@Override
+	public String toString() {
+		return email;
+	}
+
 	private void validateEmailFormat(String email) {
 		Matcher matcher = EMAIL_PATTERN.matcher(email);
 		if (!matcher.matches()) {
 			throw new IllegalArgumentException("이메일 형식과 일치하지 않습니다");
 		}
-	}
-
-	@Override
-	public String toString() {
-		return email;
 	}
 }

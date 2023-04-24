@@ -8,18 +8,26 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
 /**
- * 1. 2이상 20 이하의 글자를 입력 가능하다
- * 2. 공백만 입력할 수 없다
+ * 1. 2이상 글자 입력 가능하다
+ * 2. 40 이하의 글자를 입력 가능하다
+ * 3. 공백만 입력할 수 없다
  */
 class TitleTest {
 
 	@ParameterizedTest
-	@DisplayName("2이상 20 이하의 글자를 입력 가능하다")
+	@DisplayName("2이상 40 이하의 글자를 입력 가능하다")
 	@CsvSource({
-		"a", "aaaaaaaaaaaaaaaaaaaaa"
+		"a"
 	})
 	void titleLengthTest(String input) {
 		assertThatThrownBy(() -> new Title(input)).isInstanceOf(IllegalArgumentException.class);
+	}
+
+	@Test
+	@DisplayName("40 이하의 글자를 입력 가능하다")
+	void shouldInputUnder40Characters() {
+		Title title = new Title("a".repeat(40));
+		assertThat(title).isNotNull();
 	}
 
 	@Test
