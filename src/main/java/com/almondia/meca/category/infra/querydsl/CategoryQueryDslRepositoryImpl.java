@@ -109,7 +109,9 @@ public class CategoryQueryDslRepositoryImpl implements CategoryQueryDslRepositor
 			.from(category)
 			.where(
 				category.isShared.eq(true),
-				dynamicCursorExpression(lastCategoryId))
+				dynamicCursorExpression(lastCategoryId),
+				card.isDeleted.eq(false)
+			)
 			.innerJoin(member)
 			.on(category.memberId.eq(member.memberId))
 			.leftJoin(card)
@@ -139,6 +141,7 @@ public class CategoryQueryDslRepositoryImpl implements CategoryQueryDslRepositor
 			.where(
 				category.isShared.eq(true),
 				dynamicCursorExpression(lastCategoryId),
+				card.isDeleted.eq(false),
 				containTitle(categorySearchOption.getContainTitle()))
 			.orderBy(category.categoryId.uuid.desc())
 			.limit(pageSize + 1)
