@@ -27,7 +27,7 @@ public class Category extends DateEntity {
 	private Id categoryId;
 
 	@Embedded
-	@AttributeOverride(name = "title", column = @Column(name = "title", nullable = false, length = 60))
+	@AttributeOverride(name = "title", column = @Column(name = "title", nullable = false, length = 120))
 	private Title title;
 
 	@Embedded

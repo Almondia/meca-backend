@@ -6,7 +6,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 /**
- * 1. title 문자 길이는 20을 초과할 수 없다
+ * 1. title 문자 길이는 40을 초과할 수 없다
  * 2. 빈 공백만으로 title을 초기화 할 수 없다
  * 3. 문자열을 기준으로 크기 비교가 가능하다
  * 4. of 메서드를 통해 초기화 할 수 있다
@@ -15,9 +15,9 @@ import org.junit.jupiter.api.Test;
 class TitleTest {
 
 	@Test
-	@DisplayName("title 문자 길이는 20을 초과할 수 없다")
+	@DisplayName("title 문자 길이는 40을 초과할 수 없다")
 	void shouldThrowWhenTitleLengthMoreThan20Test() {
-		assertThatThrownBy(() -> new Title("a".repeat(21))).isInstanceOf(IllegalArgumentException.class);
+		assertThatThrownBy(() -> new Title("a".repeat(41))).isInstanceOf(IllegalArgumentException.class);
 	}
 
 	@Test
