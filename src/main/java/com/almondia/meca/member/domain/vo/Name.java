@@ -22,6 +22,11 @@ public class Name implements Wrapper {
 		this.name = name;
 	}
 
+	@Override
+	public String toString() {
+		return name;
+	}
+
 	private void validateNameFormat(String name) {
 		name = name.strip();
 		if (name.isBlank()) {
@@ -30,10 +35,5 @@ public class Name implements Wrapper {
 		if (name.length() > MAX_LENGTH || name.length() < MIN_LENGTH) {
 			throw new IllegalArgumentException("이름은 1 ~ 20 사이만 입력 가능합니다");
 		}
-	}
-
-	@Override
-	public String toString() {
-		return name;
 	}
 }

@@ -23,14 +23,14 @@ public class MultiChoiceAnswer implements Wrapper {
 		this.number = number;
 	}
 
+	@Override
+	public String toString() {
+		return number.toString();
+	}
+
 	private void validateNumber(int number) {
 		if (number < MIN_NUMBER || number > MAX_NUMBER) {
 			throw new IllegalArgumentException(String.format("%d부터 %d숫자만 입력 가능합니다", MIN_NUMBER, MAX_NUMBER));
 		}
-	}
-
-	@Override
-	public String toString() {
-		return number.toString();
 	}
 }
