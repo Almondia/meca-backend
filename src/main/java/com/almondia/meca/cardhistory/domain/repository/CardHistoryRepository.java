@@ -11,6 +11,6 @@ import com.almondia.meca.common.domain.vo.Id;
 public interface CardHistoryRepository extends JpaRepository<CardHistory, Id> {
 	List<CardHistory> findByCardId(Id cardId);
 
-	List<CardHistory> findByCardIdIn(Collection<Id> cardIds);
+	List<CardHistory> findByCardIdInAndIsDeleted(Collection<Id> cardIds, boolean isDeleted);
 
 }

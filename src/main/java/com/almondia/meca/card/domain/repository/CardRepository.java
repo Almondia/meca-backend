@@ -12,6 +12,6 @@ import com.almondia.meca.common.domain.vo.Id;
 public interface CardRepository extends JpaRepository<Card, Id>, CardQueryDslRepository {
 	Optional<Card> findByCardIdAndMemberId(Id cardId, Id memberId);
 
-	List<Card> findByCategoryId(Id categoryId);
+	List<Card> findByCategoryIdAndIsDeleted(Id categoryId, boolean isDeleted);
 
 }

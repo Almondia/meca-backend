@@ -302,13 +302,14 @@ class CategoryQueryDslRepositoryImplTest {
 
 	/**
 	 * 1. 카테고리가 없는 경우 contents가 비어있어야 함
-	 * 2. 카테고리가 있고 내부에 카드가 최소 1개 이상이여야 contents가 있음
-	 * 3. 카테고리가 있는 경우, pageSize가 0인 경우 contents가 비어 있어야 함
-	 * 4. 조회후 다음 페이징 index가 있는 경우 hasNext에 다음 카테고리 id가 존재해야 함
-	 * 5. 조회후 다음 페이징 index가 없는 경우 hasNext에 null이 존재해야 함
-	 * 6. shared가 false인 카테고리는 조회하면 안된다
-	 * 7. lastCategoryId를 입력받은 경우, lastCategoryId와 같거나 큰 카테고리는 조회되어야 한다
-	 * 8. CategorySearchOption의 containTitle을 입력받은 경우 해당 문자열을 포함하는 카테고리만 조회할 수 있어야 한다
+	 * 2. 카테고리가 있고 내부에 삭제되지 않은 카드가 최소 1개 이상이여야 contents가 있음
+	 * 3. 카테고리가 있고 내부에 삭제된 카드가 1개 이상 있어도 contents는 비어 있어야 함
+	 * 4. 카테고리가 있는 경우, pageSize가 0인 경우 contents가 비어 있어야 함
+	 * 5. 조회후 다음 페이징 index가 있는 경우 hasNext에 다음 카테고리 id가 존재해야 함
+	 * 6. 조회후 다음 페이징 index가 없는 경우 hasNext에 null이 존재해야 함
+	 * 7. shared가 false인 카테고리는 조회하면 안된다
+	 * 8. lastCategoryId를 입력받은 경우, lastCategoryId와 같거나 큰 카테고리는 조회되어야 한다
+	 * 9. CategorySearchOption의 containTitle을 입력받은 경우 해당 문자열을 포함하는 카테고리만 조회할 수 있어야 한다
 	 */
 	@Nested
 	@DisplayName("findCategoryShared 테스트")
@@ -333,7 +334,7 @@ class CategoryQueryDslRepositoryImplTest {
 		}
 
 		@Test
-		@DisplayName("카테고리가 있고 내부에 카드가 최소 1개 이상이여야 contents가 있음")
+		@DisplayName("카테고리가 있고 내부에 삭제 되지 않은 카드가 최소 1개 이상이여야 contents가 있음")
 		void shouldReturnContentsWhenExistCategoryTest() {
 			// given
 			int pageSize = 1;
@@ -353,6 +354,26 @@ class CategoryQueryDslRepositoryImplTest {
 			assertThat(result.getContents().get(0))
 				.hasFieldOrProperty("categoryInfo")
 				.hasFieldOrProperty("memberInfo");
+		}
+
+		@Test
+		@DisplayName("카테고리가 있고 내부에 삭제된 카드가 1개 이상 있어도 contents는 비어 있어야 함")
+		void shouldReturnEmptyContentsWhenExistCategoryAndDeletedCardTest() {
+			// given
+			int pageSize = 1;
+			Id categoryId = Id.generateNextId();
+			em.persist(MemberTestHelper.generateMember(memberId));
+			em.persist(CategoryTestHelper.generateSharedCategory("title1", memberId, categoryId));
+			em.persist(CardTestHelper.genDeletedOxCard(memberId, categoryId, Id.generateNextId()));
+
+			// when
+			CursorPage<SharedCategoryResponseDto> result = categoryRepository.findCategoryShared(
+				pageSize,
+				null);
+
+			// then
+			assertThat(result).isNotNull();
+			assertThat(result.getContents()).isEmpty();
 		}
 
 		@Test

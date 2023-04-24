@@ -27,4 +27,20 @@ public class CardTestHelper {
 			.isDeleted(false)
 			.build();
 	}
+
+	public static OxCard genDeletedOxCard(Id memberId, Id categoryId, Id cardId) {
+		return OxCard.builder()
+			.cardId(cardId)
+			.categoryId(categoryId)
+			.memberId(memberId)
+			.title(new Title("title"))
+			.description(new Description("description"))
+			.question(new Question("question"))
+			.oxAnswer(OxAnswer.O)
+			.cardType(CardType.OX_QUIZ)
+			.createdAt(LocalDateTime.now())
+			.modifiedAt(LocalDateTime.now())
+			.isDeleted(true)
+			.build();
+	}
 }
