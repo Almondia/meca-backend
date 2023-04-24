@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Title implements Wrapper {
 
-	private static final int TITLE_MAX_LENGTH = 20;
+	private static final int TITLE_MAX_LENGTH = 40;
 	private static final int TITLE_MIN_LENGTH = 2;
 
 	private String title;
@@ -21,6 +21,11 @@ public class Title implements Wrapper {
 	public Title(String title) {
 		validateTitle(title);
 		this.title = title;
+	}
+
+	@Override
+	public String toString() {
+		return title;
 	}
 
 	private void validateTitle(String title) {
