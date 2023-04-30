@@ -53,7 +53,9 @@ public class CategoryQueryDslRepositoryImpl implements CategoryQueryDslRepositor
 				category.categoryId.eq(card.categoryId),
 				card.isDeleted.eq(false))
 			.leftJoin(cardHistory)
-			.on(card.cardId.eq(cardHistory.cardId))
+			.on(
+				card.cardId.eq(cardHistory.cardId),
+				cardHistory.isDeleted.eq(false))
 			.where(
 				category.isDeleted.eq(false),
 				eqMemberId(memberId),
@@ -90,7 +92,9 @@ public class CategoryQueryDslRepositoryImpl implements CategoryQueryDslRepositor
 				category.categoryId.eq(card.categoryId),
 				card.isDeleted.eq(false))
 			.leftJoin(cardHistory)
-			.on(card.cardId.eq(cardHistory.cardId))
+			.on(
+				card.cardId.eq(cardHistory.cardId),
+				cardHistory.isDeleted.eq(false))
 			.where(
 				category.isDeleted.eq(false),
 				eqMemberId(memberId),
