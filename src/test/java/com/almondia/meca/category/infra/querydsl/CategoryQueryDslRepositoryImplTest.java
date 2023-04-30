@@ -12,6 +12,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 
+import com.almondia.meca.card.domain.entity.Card;
 import com.almondia.meca.category.controller.dto.CategoryWithHistoryResponseDto;
 import com.almondia.meca.category.controller.dto.SharedCategoryResponseDto;
 import com.almondia.meca.category.domain.repository.CategoryRepository;
@@ -46,6 +47,7 @@ class CategoryQueryDslRepositoryImplTest {
 	 * 9. 풀이한 카드의 경우 풀이한 고유한 카드의 갯수만 조회할 수 있어야 한다
 	 * 10. 전체 카드는 풀이한 카드 또는 풀이한 카드와 상관 없이 고유한 카드의 갯수를 조회할 수 있어야 한다
 	 * 11. searchOption의 containTitle을 입력받은 경우 해당 문자열을 포함하는 카테고리만 조회할 수 있어야 한다
+	 * 12. 카드를 생성후 삭제시 카테고리의 카드 갯수는 0이여야 한다
 	 */
 	@Nested
 	@DisplayName("findCategoryWithStatisticsByMemberId 메서드 테스트")
@@ -297,6 +299,32 @@ class CategoryQueryDslRepositoryImplTest {
 			// then
 			assertThat(result).isNotNull();
 			assertThat(result.getContents()).hasSize(2);
+		}
+
+		@Test
+		@DisplayName("카드를 생성후 삭제시 카테고리의 카드 갯수는 0이여야 한다")
+		void shouldCardCountIsZeroWhenDeleteCardTest() {
+			// given
+			Id memberId = Id.generateNextId();
+			int pageSize = 3;
+			Id categoryId = Id.generateNextId();
+			Id cardId = Id.generateNextId();
+			em.persist(CategoryTestHelper.generateUnSharedCategory("title1", memberId, categoryId));
+			em.persist(CardTestHelper.genOxCard(memberId, categoryId, cardId));
+			em.persist(CardTestHelper.genOxCard(memberId, categoryId, Id.generateNextId()));
+			em.persist(CardTestHelper.genOxCard(memberId, categoryId, Id.generateNextId()));
+			em.persist(CardTestHelper.genOxCard(memberId, categoryId, Id.generateNextId()));
+
+			// when
+			em.find(Card.class, cardId).delete();
+			CursorPage<CategoryWithHistoryResponseDto> result = categoryRepository.findCategoryWithStatisticsByMemberId(
+				pageSize,
+				memberId,
+				null);
+
+			// then
+			assertThat(result).isNotNull();
+			assertThat(result.getContents().get(0).getTotalCount()).isEqualTo(3L);
 		}
 	}
 

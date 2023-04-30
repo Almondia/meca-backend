@@ -54,6 +54,7 @@ public class CategoryQueryDslRepositoryImpl implements CategoryQueryDslRepositor
 			.on(card.cardId.eq(cardHistory.cardId))
 			.where(
 				category.isDeleted.eq(false),
+				card.isDeleted.eq(false),
 				eqMemberId(memberId),
 				dynamicCursorExpression(lastCategoryId))
 			.groupBy(category.categoryId)
@@ -89,6 +90,7 @@ public class CategoryQueryDslRepositoryImpl implements CategoryQueryDslRepositor
 			.on(card.cardId.eq(cardHistory.cardId))
 			.where(
 				category.isDeleted.eq(false),
+				card.isDeleted.eq(false),
 				eqMemberId(memberId),
 				dynamicCursorExpression(lastCategoryId),
 				containTitle(categorySearchOption.getContainTitle()))
