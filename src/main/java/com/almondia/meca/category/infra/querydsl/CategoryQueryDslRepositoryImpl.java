@@ -49,12 +49,13 @@ public class CategoryQueryDslRepositoryImpl implements CategoryQueryDslRepositor
 			))
 			.from(category)
 			.leftJoin(card)
-			.on(category.categoryId.eq(card.categoryId))
+			.on(
+				category.categoryId.eq(card.categoryId),
+				card.isDeleted.eq(false))
 			.leftJoin(cardHistory)
 			.on(card.cardId.eq(cardHistory.cardId))
 			.where(
 				category.isDeleted.eq(false),
-				card.isDeleted.eq(false),
 				eqMemberId(memberId),
 				dynamicCursorExpression(lastCategoryId))
 			.groupBy(category.categoryId)
@@ -85,12 +86,13 @@ public class CategoryQueryDslRepositoryImpl implements CategoryQueryDslRepositor
 			))
 			.from(category)
 			.leftJoin(card)
-			.on(category.categoryId.eq(card.categoryId))
+			.on(
+				category.categoryId.eq(card.categoryId),
+				card.isDeleted.eq(false))
 			.leftJoin(cardHistory)
 			.on(card.cardId.eq(cardHistory.cardId))
 			.where(
 				category.isDeleted.eq(false),
-				card.isDeleted.eq(false),
 				eqMemberId(memberId),
 				dynamicCursorExpression(lastCategoryId),
 				containTitle(categorySearchOption.getContainTitle()))
