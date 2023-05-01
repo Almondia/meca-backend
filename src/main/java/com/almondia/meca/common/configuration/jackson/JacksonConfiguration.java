@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Primary;
 
 import com.almondia.meca.common.configuration.jackson.module.date.LocalDateTimeModule;
 import com.almondia.meca.common.configuration.jackson.module.wrapper.WrapperModule;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Configuration
@@ -16,6 +17,7 @@ public class JacksonConfiguration {
 	public ObjectMapper getObjectMapper() {
 		return new ObjectMapper()
 			.registerModule(new LocalDateTimeModule())
-			.registerModule(new WrapperModule());
+			.registerModule(new WrapperModule())
+			.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 	}
 }
