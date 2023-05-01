@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Answer implements Wrapper {
 
-	private static final int MAX_LENGTH = 20;
+	private static final int MAX_LENGTH = 255;
 
 	private String answer;
 
@@ -30,9 +30,6 @@ public class Answer implements Wrapper {
 	private void validateAnswer(String answer) {
 		if (answer.length() > MAX_LENGTH) {
 			throw new IllegalArgumentException(String.format("%d 초과로 입력할 수 없습니다", MAX_LENGTH));
-		}
-		if (answer.isBlank()) {
-			throw new IllegalArgumentException("공백을 입력으로 받을 수 없습니다");
 		}
 	}
 }
