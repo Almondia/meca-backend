@@ -47,7 +47,8 @@ public class CardHistoryQueryDslRepositoryImpl implements CardHistoryQueryDslRep
 					category.categoryId,
 					category.title,
 					cardHistory.cardId,
-					card.title
+					card.title,
+					cardHistory.createdAt
 				))
 			.from(cardHistory)
 			.innerJoin(card)
@@ -96,7 +97,8 @@ public class CardHistoryQueryDslRepositoryImpl implements CardHistoryQueryDslRep
 					category.categoryId,
 					category.title,
 					cardHistory.cardId,
-					card.title
+					card.title,
+					cardHistory.createdAt
 				))
 			.from(cardHistory)
 			.innerJoin(card)

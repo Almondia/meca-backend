@@ -1,5 +1,7 @@
 package com.almondia.meca.cardhistory.controller.dto;
 
+import java.time.LocalDateTime;
+
 import com.almondia.meca.cardhistory.domain.vo.Answer;
 import com.almondia.meca.cardhistory.domain.vo.Score;
 import com.almondia.meca.common.domain.vo.Id;
@@ -28,4 +30,5 @@ public class CardHistoryResponseDto {
 	private com.almondia.meca.category.domain.vo.Title categoryTitle;
 	private Id cardId;
 	private com.almondia.meca.card.domain.vo.Title cardTitle;
+	private LocalDateTime createdAt;
 }
