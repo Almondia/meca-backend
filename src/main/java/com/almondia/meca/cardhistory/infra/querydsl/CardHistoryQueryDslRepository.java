@@ -9,4 +9,7 @@ import com.almondia.meca.common.domain.vo.Id;
 public interface CardHistoryQueryDslRepository {
 
 	CursorPage<CardHistoryDto> findCardHistoriesByCardId(@NonNull Id cardId, int pageSize, Id lastCardHistoryId);
+
+	CursorPage<CardHistoryDto> findCardHistoriesByCategoryId(@NonNull Id categoryId, int pageSize,
+		Id lastCardHistoryId);
 }

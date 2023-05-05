@@ -32,6 +32,7 @@ public class CardHistoryQueryDslRepositoryImpl implements CardHistoryQueryDslRep
 		Assert.isTrue(pageSize <= 1000, "pageSize must be less than or equal to 1000");
 
 		List<CardHistoryDto> contents = jpaQueryFactory.select(Projections.constructor(CardHistoryDto.class,
+				cardHistory.cardHistoryId,
 				cardHistory.cardId,
 				cardHistory.userAnswer,
 				cardHistory.score
@@ -47,10 +48,39 @@ public class CardHistoryQueryDslRepositoryImpl implements CardHistoryQueryDslRep
 
 		Id hasNext = null;
 		if (contents.size() > pageSize) {
-			hasNext = contents.get(pageSize).getCardId();
+			hasNext = contents.get(pageSize).getCardHistoryId();
 			contents.remove(pageSize);
 		}
 
+		return new CursorPage<>(contents, hasNext, pageSize, SortOrder.DESC);
+	}
+
+	@Override
+	public CursorPage<CardHistoryDto> findCardHistoriesByCategoryId(@NonNull Id categoryId, int pageSize,
+		Id lastCardHistoryId) {
+		Assert.isTrue(pageSize >= 0, "pageSize must be greater than or equal to 0");
+		Assert.isTrue(pageSize <= 1000, "pageSize must be less than or equal to 1000");
+
+		List<CardHistoryDto> contents = jpaQueryFactory.select(Projections.constructor(CardHistoryDto.class,
+				cardHistory.cardHistoryId,
+				cardHistory.cardId,
+				cardHistory.userAnswer,
+				cardHistory.score
+			))
+			.from(cardHistory)
+			.where(
+				cardHistory.categoryId.eq(categoryId),
+				cardHistory.isDeleted.eq(false),
+				lessOrEqCardHistoryId(lastCardHistoryId))
+			.orderBy(cardHistory.cardHistoryId.uuid.desc())
+			.limit(pageSize + 1)
+			.fetch();
+
+		Id hasNext = null;
+		if (contents.size() > pageSize) {
+			hasNext = contents.get(pageSize).getCardHistoryId();
+			contents.remove(pageSize);
+		}
 		return new CursorPage<>(contents, hasNext, pageSize, SortOrder.DESC);
 	}
 
