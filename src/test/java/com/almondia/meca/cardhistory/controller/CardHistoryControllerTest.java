@@ -85,6 +85,9 @@ class CardHistoryControllerTest {
 		}
 	}
 
+	/**
+	 * 정상 응답 테스트
+	 */
 	@Nested
 	@DisplayName("시뮬레이션 결과 조회 API")
 	class FindSimulationCardHistoryTest {
@@ -101,6 +104,28 @@ class CardHistoryControllerTest {
 					.build())
 				.when(cardHistoryService).findCardHistoriesByCardId(any(), anyInt(), any());
 			mockMvc.perform(get("/api/v1/histories/cards/{cardId}?pageSize=2", Id.generateNextId().toString())
+					.contentType(MediaType.APPLICATION_JSON)
+					.characterEncoding(StandardCharsets.UTF_8))
+				.andExpect(status().isOk());
+		}
+	}
+
+	@Nested
+	@DisplayName("카테고리 기반 카드 히스토리 조회 API")
+	class FindCardHistoryByCategoryIdTest {
+
+		@Test
+		@DisplayName("정상 응답 테스트")
+		@WithMockMember
+		void shouldReturn200WhenSuccessTest() throws Exception {
+			Mockito.doReturn(CursorPage.builder()
+					.contents(List.of(CardHistoryTestHelper.generateCardHistory(Id.generateNextId(), Id.generateNextId(),
+						Id.generateNextId(), 100)))
+					.hasNext(null)
+					.pageSize(2)
+					.build())
+				.when(cardHistoryService).findCardHistoriesByCategoryId(any(), anyInt(), any());
+			mockMvc.perform(get("/api/v1/histories/categories/{categoryId}?pageSize=2", Id.generateNextId().toString())
 					.contentType(MediaType.APPLICATION_JSON)
 					.characterEncoding(StandardCharsets.UTF_8))
 				.andExpect(status().isOk());
