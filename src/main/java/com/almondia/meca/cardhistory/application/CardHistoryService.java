@@ -6,14 +6,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.almondia.meca.card.domain.repository.CardRepository;
-import com.almondia.meca.cardhistory.controller.dto.CardHistoryDto;
+import com.almondia.meca.cardhistory.controller.dto.CardHistoryRequestDto;
+import com.almondia.meca.cardhistory.controller.dto.CardHistoryResponseDto;
 import com.almondia.meca.cardhistory.controller.dto.SaveRequestCardHistoryDto;
 import com.almondia.meca.cardhistory.domain.entity.CardHistory;
 import com.almondia.meca.cardhistory.domain.repository.CardHistoryRepository;
+import com.almondia.meca.common.controller.dto.CursorPage;
 import com.almondia.meca.common.domain.vo.Id;
 
 import lombok.RequiredArgsConstructor;
@@ -32,16 +35,28 @@ public class CardHistoryService {
 		cardHistoryRepository.saveAll(cardHistories);
 	}
 
+	@Transactional(readOnly = true)
+	public CursorPage<CardHistoryResponseDto> findCardHistoriesByCardId(@NonNull Id cardId, int pageSize,
+		Id lastCardHistoryId) {
+		return cardHistoryRepository.findCardHistoriesByCardId(cardId, pageSize, lastCardHistoryId);
+	}
+
+	@Transactional(readOnly = true)
+	public CursorPage<CardHistoryResponseDto> findCardHistoriesByCategoryId(@NonNull Id categoryId, int pageSize,
+		Id lastCardHistoryId) {
+		return cardHistoryRepository.findCardHistoriesByCategoryId(categoryId, pageSize, lastCardHistoryId);
+	}
+
 	private List<CardHistory> getCardHistories(SaveRequestCardHistoryDto saveRequestCardHistoryDto,
 		Map<Id, List<Id>> categoryIdsByCardId) {
 		List<CardHistory> cardHistories = new ArrayList<>();
-		for (CardHistoryDto cardHistoryDto : saveRequestCardHistoryDto.getCardHistories()) {
+		for (CardHistoryRequestDto cardHistoryResponseDto : saveRequestCardHistoryDto.getCardHistories()) {
 			CardHistory cardHistory = CardHistory.builder()
 				.cardHistoryId(Id.generateNextId())
-				.cardId(cardHistoryDto.getCardId())
-				.categoryId(categoryIdsByCardId.get(cardHistoryDto.getCardId()).get(0))
-				.userAnswer(cardHistoryDto.getUserAnswer())
-				.score(cardHistoryDto.getScore())
+				.cardId(cardHistoryResponseDto.getCardId())
+				.categoryId(categoryIdsByCardId.get(cardHistoryResponseDto.getCardId()).get(0))
+				.userAnswer(cardHistoryResponseDto.getUserAnswer())
+				.score(cardHistoryResponseDto.getScore())
 				.build();
 			cardHistories.add(cardHistory);
 		}
@@ -50,7 +65,7 @@ public class CardHistoryService {
 
 	private Map<Id, List<Id>> checkAuthority(SaveRequestCardHistoryDto saveRequestCardHistoryDto, Id memberId) {
 		List<Id> cardIds = saveRequestCardHistoryDto.getCardHistories().stream()
-			.map(CardHistoryDto::getCardId)
+			.map(CardHistoryRequestDto::getCardId)
 			.collect(Collectors.toList());
 		Map<Id, List<Id>> categoryIdsByCardId = cardRepository.findMapByListOfCardIdAndMemberId(cardIds, memberId);
 		long allValuesCount = categoryIdsByCardId.values().stream().mapToLong(Collection::size).sum();
