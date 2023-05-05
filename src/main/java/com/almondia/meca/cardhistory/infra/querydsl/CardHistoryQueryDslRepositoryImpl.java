@@ -6,11 +6,14 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.Assert;
 
+import com.almondia.meca.card.domain.entity.QCard;
 import com.almondia.meca.cardhistory.controller.dto.CardHistoryResponseDto;
 import com.almondia.meca.cardhistory.domain.entity.QCardHistory;
+import com.almondia.meca.category.domain.entity.QCategory;
 import com.almondia.meca.common.controller.dto.CursorPage;
 import com.almondia.meca.common.domain.vo.Id;
 import com.almondia.meca.common.infra.querydsl.SortOrder;
+import com.almondia.meca.member.domain.entity.QMember;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -22,6 +25,9 @@ import lombok.RequiredArgsConstructor;
 public class CardHistoryQueryDslRepositoryImpl implements CardHistoryQueryDslRepository {
 
 	private static final QCardHistory cardHistory = QCardHistory.cardHistory;
+	private static final QCard card = QCard.card;
+	private static final QCategory category = QCategory.category;
+	private static final QMember member = QMember.member;
 
 	private final JPAQueryFactory jpaQueryFactory;
 
@@ -34,13 +40,31 @@ public class CardHistoryQueryDslRepositoryImpl implements CardHistoryQueryDslRep
 		List<CardHistoryResponseDto> contents = jpaQueryFactory.select(
 				Projections.constructor(CardHistoryResponseDto.class,
 					cardHistory.cardHistoryId,
-					cardHistory.cardId,
+					member.memberId,
+					member.name,
 					cardHistory.userAnswer,
-					cardHistory.score
+					cardHistory.score,
+					category.categoryId,
+					category.title,
+					cardHistory.cardId,
+					card.title
 				))
 			.from(cardHistory)
+			.innerJoin(card)
+			.on(
+				cardHistory.cardId.eq(card.cardId),
+				card.isDeleted.eq(false),
+				card.cardId.eq(cardId))
+			.innerJoin(category)
+			.on(
+				card.categoryId.eq(category.categoryId),
+				category.isDeleted.eq(false))
+			.innerJoin(member)
+			.on(
+				category.memberId.eq(member.memberId),
+				member.isDeleted.eq(false)
+			)
 			.where(
-				cardHistory.cardId.eq(cardId),
 				cardHistory.isDeleted.eq(false),
 				lessOrEqCardHistoryId(lastCardHistoryId))
 			.orderBy(cardHistory.cardHistoryId.uuid.desc())
@@ -65,11 +89,30 @@ public class CardHistoryQueryDslRepositoryImpl implements CardHistoryQueryDslRep
 		List<CardHistoryResponseDto> contents = jpaQueryFactory.select(
 				Projections.constructor(CardHistoryResponseDto.class,
 					cardHistory.cardHistoryId,
-					cardHistory.cardId,
+					member.memberId,
+					member.name,
 					cardHistory.userAnswer,
-					cardHistory.score
+					cardHistory.score,
+					category.categoryId,
+					category.title,
+					cardHistory.cardId,
+					card.title
 				))
 			.from(cardHistory)
+			.innerJoin(card)
+			.on(
+				cardHistory.cardId.eq(card.cardId),
+				card.isDeleted.eq(false))
+			.innerJoin(category)
+			.on(
+				card.categoryId.eq(category.categoryId),
+				category.isDeleted.eq(false),
+				category.categoryId.eq(categoryId))
+			.innerJoin(member)
+			.on(
+				category.memberId.eq(member.memberId),
+				member.isDeleted.eq(false)
+			)
 			.where(
 				cardHistory.categoryId.eq(categoryId),
 				cardHistory.isDeleted.eq(false),

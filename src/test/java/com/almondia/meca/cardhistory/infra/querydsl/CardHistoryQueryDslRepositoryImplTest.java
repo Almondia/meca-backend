@@ -13,13 +13,19 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 
+import com.almondia.meca.card.domain.entity.Card;
 import com.almondia.meca.cardhistory.controller.dto.CardHistoryResponseDto;
 import com.almondia.meca.cardhistory.domain.entity.CardHistory;
 import com.almondia.meca.cardhistory.domain.repository.CardHistoryRepository;
+import com.almondia.meca.category.domain.entity.Category;
 import com.almondia.meca.common.configuration.jpa.QueryDslConfiguration;
 import com.almondia.meca.common.controller.dto.CursorPage;
 import com.almondia.meca.common.domain.vo.Id;
 import com.almondia.meca.helper.CardHistoryTestHelper;
+import com.almondia.meca.helper.CardTestHelper;
+import com.almondia.meca.helper.CategoryTestHelper;
+import com.almondia.meca.helper.MemberTestHelper;
+import com.almondia.meca.member.domain.entity.Member;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -96,8 +102,13 @@ class CardHistoryQueryDslRepositoryImplTest {
 		@DisplayName("lastCardHistoryId가 null이 아니면 해당 인덱스부터 조회한다")
 		void shouldFindCardHistoryFromLastCardHistoryIdTest() {
 			// given
+			Id memberId = Id.generateNextId();
 			Id categoryId = Id.generateNextId();
 			Id cardId = Id.generateNextId();
+
+			Member member = MemberTestHelper.generateMember(memberId);
+			Category category = CategoryTestHelper.generateUnSharedCategory("hello", memberId, categoryId);
+			Card card = CardTestHelper.genOxCard(memberId, categoryId, cardId);
 			CardHistory cardHistory1 = CardHistoryTestHelper.generateCardHistory(Id.generateNextId(), cardId,
 				categoryId,
 				10);
@@ -107,19 +118,16 @@ class CardHistoryQueryDslRepositoryImplTest {
 			CardHistory cardHistory3 = CardHistoryTestHelper.generateCardHistory(Id.generateNextId(), cardId,
 				categoryId,
 				10);
-			em.persist(cardHistory1);
-			em.persist(cardHistory2);
-			em.persist(cardHistory3);
+			persistAll(member, category, card, cardHistory1, cardHistory2, cardHistory3);
 
 			// when
 			CursorPage<CardHistoryResponseDto> result = cardHistoryRepository.findCardHistoriesByCardId(cardId,
-				10, cardHistory2.getCardHistoryId());
+				1, cardHistory2.getCardHistoryId());
 
 			// then
-			assertThat(result.getContents()).hasSize(2);
-			assertThat(result.getHasNext()).isNull();
+			assertThat(result.getContents()).hasSize(1);
+			assertThat(result.getHasNext()).isNotNull();
 		}
-
 	}
 
 	/**
@@ -129,7 +137,7 @@ class CardHistoryQueryDslRepositoryImplTest {
 	 * lastCardHistoryId가 null이 아니면 해당 인덱스부터 조회
 	 */
 	@Nested
-	@DisplayName("FindCardHistoriesByCardIdAndCategoryId 메서드 테스트")
+	@DisplayName("FindCardHistoriesByCategoryId 메서드 테스트")
 	class FindCardHistoriesByCardIdAndCategoryId {
 
 		@Test
@@ -186,8 +194,12 @@ class CardHistoryQueryDslRepositoryImplTest {
 		@DisplayName("lastCardHistoryId가 null이 아니면 해당 인덱스부터 조회")
 		void shouldFindCardHistoryFromLastCardHistoryIdTest() {
 			// given
+			Id memberId = Id.generateNextId();
 			Id categoryId = Id.generateNextId();
 			Id cardId = Id.generateNextId();
+			Member member = MemberTestHelper.generateMember(memberId);
+			Category category = CategoryTestHelper.generateUnSharedCategory("hello", memberId, categoryId);
+			Card card = CardTestHelper.genOxCard(memberId, categoryId, cardId);
 			CardHistory cardHistory1 = CardHistoryTestHelper.generateCardHistory(Id.generateNextId(), cardId,
 				categoryId,
 				10);
@@ -197,9 +209,7 @@ class CardHistoryQueryDslRepositoryImplTest {
 			CardHistory cardHistory3 = CardHistoryTestHelper.generateCardHistory(Id.generateNextId(), cardId,
 				categoryId,
 				10);
-			em.persist(cardHistory1);
-			em.persist(cardHistory2);
-			em.persist(cardHistory3);
+			persistAll(member, category, card, cardHistory1, cardHistory2, cardHistory3);
 
 			// when
 			CursorPage<CardHistoryResponseDto> result = cardHistoryRepository.findCardHistoriesByCategoryId(categoryId,
@@ -208,6 +218,12 @@ class CardHistoryQueryDslRepositoryImplTest {
 			// then
 			assertThat(result.getContents()).hasSize(2);
 			assertThat(result.getHasNext()).isNull();
+		}
+	}
+
+	private void persistAll(Object... entities) {
+		for (Object entity : entities) {
+			em.persist(entity);
 		}
 	}
 }
