@@ -40,6 +40,12 @@ public class CardHistoryService {
 		return cardHistoryRepository.findCardHistoriesByCardId(cardId, pageSize, lastCardHistoryId);
 	}
 
+	@Transactional(readOnly = true)
+	public CursorPage<CardHistoryDto> findCardHistoriesByCategoryId(@NonNull Id categoryId, int pageSize,
+		Id lastCardHistoryId) {
+		return cardHistoryRepository.findCardHistoriesByCategoryId(categoryId, pageSize, lastCardHistoryId);
+	}
+
 	private List<CardHistory> getCardHistories(SaveRequestCardHistoryDto saveRequestCardHistoryDto,
 		Map<Id, List<Id>> categoryIdsByCardId) {
 		List<CardHistory> cardHistories = new ArrayList<>();
