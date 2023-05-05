@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.almondia.meca.card.domain.repository.CardRepository;
+import com.almondia.meca.cardhistory.controller.dto.CardHistoryRequestDto;
 import com.almondia.meca.cardhistory.controller.dto.CardHistoryResponseDto;
 import com.almondia.meca.cardhistory.controller.dto.SaveRequestCardHistoryDto;
 import com.almondia.meca.cardhistory.domain.entity.CardHistory;
@@ -49,7 +50,7 @@ public class CardHistoryService {
 	private List<CardHistory> getCardHistories(SaveRequestCardHistoryDto saveRequestCardHistoryDto,
 		Map<Id, List<Id>> categoryIdsByCardId) {
 		List<CardHistory> cardHistories = new ArrayList<>();
-		for (CardHistoryResponseDto cardHistoryResponseDto : saveRequestCardHistoryDto.getCardHistories()) {
+		for (CardHistoryRequestDto cardHistoryResponseDto : saveRequestCardHistoryDto.getCardHistories()) {
 			CardHistory cardHistory = CardHistory.builder()
 				.cardHistoryId(Id.generateNextId())
 				.cardId(cardHistoryResponseDto.getCardId())
@@ -64,7 +65,7 @@ public class CardHistoryService {
 
 	private Map<Id, List<Id>> checkAuthority(SaveRequestCardHistoryDto saveRequestCardHistoryDto, Id memberId) {
 		List<Id> cardIds = saveRequestCardHistoryDto.getCardHistories().stream()
-			.map(CardHistoryResponseDto::getCardId)
+			.map(CardHistoryRequestDto::getCardId)
 			.collect(Collectors.toList());
 		Map<Id, List<Id>> categoryIdsByCardId = cardRepository.findMapByListOfCardIdAndMemberId(cardIds, memberId);
 		long allValuesCount = categoryIdsByCardId.values().stream().mapToLong(Collection::size).sum();
