@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,6 +15,7 @@ import com.almondia.meca.cardhistory.controller.dto.CardHistoryDto;
 import com.almondia.meca.cardhistory.controller.dto.SaveRequestCardHistoryDto;
 import com.almondia.meca.cardhistory.domain.entity.CardHistory;
 import com.almondia.meca.cardhistory.domain.repository.CardHistoryRepository;
+import com.almondia.meca.common.controller.dto.CursorPage;
 import com.almondia.meca.common.domain.vo.Id;
 
 import lombok.RequiredArgsConstructor;
@@ -30,6 +32,12 @@ public class CardHistoryService {
 		Map<Id, List<Id>> categoryIdsByCardId = checkAuthority(saveRequestCardHistoryDto, memberId);
 		List<CardHistory> cardHistories = getCardHistories(saveRequestCardHistoryDto, categoryIdsByCardId);
 		cardHistoryRepository.saveAll(cardHistories);
+	}
+
+	@Transactional(readOnly = true)
+	public CursorPage<CardHistoryDto> findCardHistoriesByCardId(@NonNull Id cardId, int pageSize,
+		Id lastCardHistoryId) {
+		return cardHistoryRepository.findCardHistoriesByCardId(cardId, pageSize, lastCardHistoryId);
 	}
 
 	private List<CardHistory> getCardHistories(SaveRequestCardHistoryDto saveRequestCardHistoryDto,
