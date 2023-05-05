@@ -23,7 +23,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.almondia.meca.cardhistory.application.CardHistoryService;
-import com.almondia.meca.cardhistory.controller.dto.CardHistoryDto;
+import com.almondia.meca.cardhistory.controller.dto.CardHistoryResponseDto;
 import com.almondia.meca.cardhistory.controller.dto.SaveRequestCardHistoryDto;
 import com.almondia.meca.cardhistory.domain.vo.Answer;
 import com.almondia.meca.cardhistory.domain.vo.Score;
@@ -70,7 +70,7 @@ class CardHistoryControllerTest {
 		@DisplayName("정상 응답 테스트")
 		@WithMockMember
 		void shouldReturn200WhenSuccessTest() throws Exception {
-			CardHistoryDto historyDto = CardHistoryDto.builder()
+			CardHistoryResponseDto historyDto = CardHistoryResponseDto.builder()
 				.cardId(Id.generateNextId())
 				.userAnswer(new Answer("answer"))
 				.score(new Score(100))

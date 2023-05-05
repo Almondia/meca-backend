@@ -13,7 +13,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 
-import com.almondia.meca.cardhistory.controller.dto.CardHistoryDto;
+import com.almondia.meca.cardhistory.controller.dto.CardHistoryResponseDto;
 import com.almondia.meca.cardhistory.domain.entity.CardHistory;
 import com.almondia.meca.cardhistory.domain.repository.CardHistoryRepository;
 import com.almondia.meca.common.configuration.jpa.QueryDslConfiguration;
@@ -54,7 +54,7 @@ class CardHistoryQueryDslRepositoryImplTest {
 			em.persist(cardHistory);
 
 			// when
-			CursorPage<CardHistoryDto> result = cardHistoryRepository.findCardHistoriesByCardId(cardId,
+			CursorPage<CardHistoryResponseDto> result = cardHistoryRepository.findCardHistoriesByCardId(cardId,
 				10, null);
 
 			// then
@@ -112,7 +112,7 @@ class CardHistoryQueryDslRepositoryImplTest {
 			em.persist(cardHistory3);
 
 			// when
-			CursorPage<CardHistoryDto> result = cardHistoryRepository.findCardHistoriesByCardId(cardId,
+			CursorPage<CardHistoryResponseDto> result = cardHistoryRepository.findCardHistoriesByCardId(cardId,
 				10, cardHistory2.getCardHistoryId());
 
 			// then
@@ -144,7 +144,7 @@ class CardHistoryQueryDslRepositoryImplTest {
 			em.persist(cardHistory);
 
 			// when
-			CursorPage<CardHistoryDto> result = cardHistoryRepository.findCardHistoriesByCategoryId(categoryId,
+			CursorPage<CardHistoryResponseDto> result = cardHistoryRepository.findCardHistoriesByCategoryId(categoryId,
 				10, null);
 
 			// then
@@ -202,7 +202,7 @@ class CardHistoryQueryDslRepositoryImplTest {
 			em.persist(cardHistory3);
 
 			// when
-			CursorPage<CardHistoryDto> result = cardHistoryRepository.findCardHistoriesByCategoryId(categoryId,
+			CursorPage<CardHistoryResponseDto> result = cardHistoryRepository.findCardHistoriesByCategoryId(categoryId,
 				10, cardHistory2.getCardHistoryId());
 
 			// then

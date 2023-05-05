@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.almondia.meca.cardhistory.application.CardHistoryService;
-import com.almondia.meca.cardhistory.controller.dto.CardHistoryDto;
+import com.almondia.meca.cardhistory.controller.dto.CardHistoryResponseDto;
 import com.almondia.meca.cardhistory.controller.dto.SaveRequestCardHistoryDto;
 import com.almondia.meca.common.controller.dto.CursorPage;
 import com.almondia.meca.common.domain.vo.Id;
@@ -38,23 +38,23 @@ public class CardHistoryController {
 	}
 
 	@GetMapping("/cards/{cardId}")
-	public ResponseEntity<CursorPage<CardHistoryDto>> findCardHistoriesByCardId(
+	public ResponseEntity<CursorPage<CardHistoryResponseDto>> findCardHistoriesByCardId(
 		@PathVariable("cardId") Id cardId,
 		@RequestParam(value = "pageSize", defaultValue = "1000") int pageSize,
 		@RequestParam(value = "lastCardHistoryId", required = false) Id lastCardHistoryId
 	) {
-		CursorPage<CardHistoryDto> cursorPage = cardHistoryService.findCardHistoriesByCardId(cardId,
+		CursorPage<CardHistoryResponseDto> cursorPage = cardHistoryService.findCardHistoriesByCardId(cardId,
 			pageSize, lastCardHistoryId);
 		return ResponseEntity.ok(cursorPage);
 	}
 
 	@GetMapping("/categories/{categoryId}")
-	public ResponseEntity<CursorPage<CardHistoryDto>> findCardHistoriesByCategoryId(
+	public ResponseEntity<CursorPage<CardHistoryResponseDto>> findCardHistoriesByCategoryId(
 		@PathVariable("categoryId") Id categoryId,
 		@RequestParam(value = "pageSize", defaultValue = "1000") int pageSize,
 		@RequestParam(value = "lastCardHistoryId", required = false) Id lastCardHistoryId
 	) {
-		CursorPage<CardHistoryDto> cursorPage = cardHistoryService.findCardHistoriesByCategoryId(categoryId,
+		CursorPage<CardHistoryResponseDto> cursorPage = cardHistoryService.findCardHistoriesByCategoryId(categoryId,
 			pageSize, lastCardHistoryId);
 		return ResponseEntity.ok(cursorPage);
 	}

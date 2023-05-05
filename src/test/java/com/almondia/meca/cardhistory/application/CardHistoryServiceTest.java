@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Import;
 
 import com.almondia.meca.card.domain.entity.Card;
 import com.almondia.meca.card.domain.repository.CardRepository;
-import com.almondia.meca.cardhistory.controller.dto.CardHistoryDto;
+import com.almondia.meca.cardhistory.controller.dto.CardHistoryResponseDto;
 import com.almondia.meca.cardhistory.controller.dto.SaveRequestCardHistoryDto;
 import com.almondia.meca.cardhistory.domain.vo.Answer;
 import com.almondia.meca.cardhistory.domain.vo.Score;
@@ -49,7 +49,7 @@ class CardHistoryServiceTest {
 	@DisplayName("권한 체크 여부 테스트")
 	void checkAuthorityTest() {
 		SaveRequestCardHistoryDto saveRequestCardHistoryDto = new SaveRequestCardHistoryDto(List.of(
-			CardHistoryDto.builder()
+			CardHistoryResponseDto.builder()
 				.cardId(Id.generateNextId())
 				.score(new Score(100))
 				.userAnswer(new Answer("100"))

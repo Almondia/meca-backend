@@ -14,6 +14,6 @@ import lombok.ToString;
 @ToString
 public class SaveRequestCardHistoryDto {
 
-	private List<CardHistoryDto> cardHistories;
+	private List<CardHistoryResponseDto> cardHistories;
 
 }

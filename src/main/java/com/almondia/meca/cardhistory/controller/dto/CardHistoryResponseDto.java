@@ -16,7 +16,7 @@ import lombok.ToString;
 @Builder
 @AllArgsConstructor
 @ToString
-public class CardHistoryDto {
+public class CardHistoryResponseDto {
 
 	private Id cardHistoryId;
 	private Id cardId;
