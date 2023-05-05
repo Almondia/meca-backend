@@ -41,7 +41,7 @@ public class CardHistoryController {
 	public ResponseEntity<CursorPage<CardHistoryResponseDto>> findCardHistoriesByCardId(
 		@PathVariable("cardId") Id cardId,
 		@RequestParam(value = "pageSize", defaultValue = "1000") int pageSize,
-		@RequestParam(value = "lastCardHistoryId", required = false) Id lastCardHistoryId
+		@RequestParam(value = "hasNext", required = false) Id lastCardHistoryId
 	) {
 		CursorPage<CardHistoryResponseDto> cursorPage = cardHistoryService.findCardHistoriesByCardId(cardId,
 			pageSize, lastCardHistoryId);
@@ -52,7 +52,7 @@ public class CardHistoryController {
 	public ResponseEntity<CursorPage<CardHistoryResponseDto>> findCardHistoriesByCategoryId(
 		@PathVariable("categoryId") Id categoryId,
 		@RequestParam(value = "pageSize", defaultValue = "1000") int pageSize,
-		@RequestParam(value = "lastCardHistoryId", required = false) Id lastCardHistoryId
+		@RequestParam(value = "hasNext", required = false) Id lastCardHistoryId
 	) {
 		CursorPage<CardHistoryResponseDto> cursorPage = cardHistoryService.findCardHistoriesByCategoryId(categoryId,
 			pageSize, lastCardHistoryId);
