@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.Assert;
 
 import com.almondia.meca.cardhistory.controller.dto.CardHistoryDto;
 import com.almondia.meca.cardhistory.domain.entity.QCardHistory;
@@ -27,7 +28,8 @@ public class CardHistoryQueryDslRepositoryImpl implements CardHistoryQueryDslRep
 	@Override
 	public CursorPage<CardHistoryDto> findCardHistoriesByCardId(@NonNull Id cardId, int pageSize,
 		Id lastCardHistoryId) {
-		assert pageSize <= 1000 : "pageSize should be less than or equal to 1000";
+		Assert.isTrue(pageSize >= 0, "pageSize must be greater than or equal to 0");
+		Assert.isTrue(pageSize <= 1000, "pageSize must be less than or equal to 1000");
 
 		List<CardHistoryDto> contents = jpaQueryFactory.select(Projections.constructor(CardHistoryDto.class,
 				cardHistory.cardId,

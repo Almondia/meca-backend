@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 
 import com.almondia.meca.cardhistory.controller.dto.CardHistoryDto;
 import com.almondia.meca.cardhistory.domain.entity.CardHistory;
@@ -34,6 +35,7 @@ class CardHistoryQueryDslRepositoryImplTest {
 	/**
 	 * 삭제된 카드 히스토리는 조회되면 안된다
 	 * 요청 pageSize는 1000이하만 가능하다
+	 * 요청 pageSize는 0이상이어야 한다
 	 * lastCardHistoryId가 null이 아니면 해당 인덱스부터 조회한다
 	 */
 	@Nested
@@ -72,7 +74,22 @@ class CardHistoryQueryDslRepositoryImplTest {
 
 			// expect
 			assertThatThrownBy(() -> cardHistoryRepository.findCardHistoriesByCardId(cardId, 1001, null))
-				.isInstanceOf(AssertionError.class);
+				.isInstanceOf(InvalidDataAccessApiUsageException.class);
+		}
+
+		@Test
+		@DisplayName("요청 pageSize는 0이상이어야 한다")
+		void shouldNotFindCardHistoryWhenPageSizeIsUnder0Test() {
+			// given
+			Id categoryId = Id.generateNextId();
+			Id cardId = Id.generateNextId();
+			CardHistory cardHistory = CardHistoryTestHelper.generateCardHistory(Id.generateNextId(), cardId, categoryId,
+				10);
+			em.persist(cardHistory);
+
+			// expect
+			assertThatThrownBy(() -> cardHistoryRepository.findCardHistoriesByCardId(cardId, -1, null))
+				.isInstanceOf(InvalidDataAccessApiUsageException.class);
 		}
 
 		@Test
