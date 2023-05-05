@@ -18,6 +18,7 @@ import lombok.ToString;
 @ToString
 public class CardHistoryDto {
 
+	private Id cardHistoryId;
 	private Id cardId;
 	private Answer userAnswer;
 	private Score score;
