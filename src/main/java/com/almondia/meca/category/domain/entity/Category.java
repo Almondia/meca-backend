@@ -61,4 +61,8 @@ public class Category extends DateEntity {
 	public void changeThumbnail(Image thumbnail) {
 		this.thumbnail = thumbnail;
 	}
+
+	public boolean isMyCategory(Id memberId) {
+		return this.memberId.equals(memberId);
+	}
 }
