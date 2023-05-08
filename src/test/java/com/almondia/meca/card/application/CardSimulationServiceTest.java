@@ -4,18 +4,17 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 import org.springframework.security.access.AccessDeniedException;
 
 import com.almondia.meca.card.controller.dto.CardResponseDto;
-import com.almondia.meca.card.domain.entity.Card;
 import com.almondia.meca.card.domain.repository.CardRepository;
 import com.almondia.meca.category.domain.repository.CategoryRepository;
-import com.almondia.meca.category.domain.service.CategoryChecker;
 import com.almondia.meca.common.domain.vo.Id;
 import com.almondia.meca.helper.CardTestHelper;
 import com.almondia.meca.helper.CategoryTestHelper;
@@ -24,67 +23,185 @@ class CardSimulationServiceTest {
 
 	CategoryRepository categoryRepository = Mockito.mock(CategoryRepository.class);
 
-	CategoryChecker categoryChecker = Mockito.mock(CategoryChecker.class);
-
 	CardRepository cardRepository = Mockito.mock(CardRepository.class);
 
-	@InjectMocks
-	CardSimulationService cardSimulationService = new CardSimulationService(categoryChecker, cardRepository);
+	CardSimulationService cardSimulationService = new CardSimulationService(cardRepository, categoryRepository);
 
-	@Test
-	@DisplayName("simulateRandom 권한 체크 테스트")
-	void randomCheckAuthorityTest() {
-		Mockito.doThrow(AccessDeniedException.class).when(categoryChecker).checkAuthority(any(), any());
-		assertThatThrownBy(
-			() -> cardSimulationService.simulateRandom(Id.generateNextId(), Id.generateNextId(), 100)).isInstanceOf(
-			AccessDeniedException.class);
+	/**
+	 * 삭제된 카테고리를 조회한 경우
+	 * 본인 카테고리가 아니거나 남의 카테고리지만 공유가 되지 않은 경우 접근 불가 예외를 발생한다
+	 * 카테고리에 속한 카드가 없는 경우 빈 리스트를 반환한다
+	 * limit으로 제한한 카드 갯수로 출력한다
+	 */
+	@Nested
+	@DisplayName("simulateRandom 테스트")
+	class SimulationRandomTest {
+
+		@Test
+		@DisplayName("삭제된 카테고리를 조회한 경우")
+		void shouldThrowIllegalArgumentExceptionWhenCategoryIsDeletedTest() {
+			// given
+			Mockito.doReturn(Optional.empty())
+				.when(categoryRepository)
+				.findByCategoryIdAndIsDeleted(any(), anyBoolean());
+			Mockito.doReturn(
+					List.of(CardTestHelper.genOxCard(Id.generateNextId(), Id.generateNextId(), Id.generateNextId())))
+				.when(cardRepository)
+				.findByCategoryIdAndIsDeleted(any(), anyBoolean());
+
+			// expect
+			assertThatThrownBy(
+				() -> cardSimulationService.simulateRandom(Id.generateNextId(), Id.generateNextId(), 100)).isInstanceOf(
+				IllegalArgumentException.class);
+		}
+
+		@Test
+		@DisplayName("본인 카테고리가 아니거나 남의 카테고리지만 공유가 되지 않은 경우 접근 불가 예외를 발생한다")
+		void shouldThrowAccessDeniedExceptionWhenNotMyCategoryOrNotSharedTest() {
+			// given
+			Mockito.doReturn(Optional.of(
+					CategoryTestHelper.generateUnSharedCategory("title", Id.generateNextId(), Id.generateNextId())))
+				.when(categoryRepository)
+				.findByCategoryIdAndIsDeleted(any(), anyBoolean());
+			Mockito.doReturn(
+					List.of(CardTestHelper.genOxCard(Id.generateNextId(), Id.generateNextId(), Id.generateNextId())))
+				.when(cardRepository)
+				.findByCategoryIdAndIsDeleted(any(), anyBoolean());
+
+			// expect
+			assertThatThrownBy(
+				() -> cardSimulationService.simulateRandom(Id.generateNextId(), Id.generateNextId(), 100)).isInstanceOf(
+				AccessDeniedException.class);
+		}
+
+		@Test
+		@DisplayName("카테고리에 속한 카드가 없는 경우 빈 리스트를 반환한다")
+		void shouldReturnEmptyListWhenCategoryHasNoCardsTest() {
+			// given
+			Mockito.doReturn(Optional.of(
+					CategoryTestHelper.generateSharedCategory("title", Id.generateNextId(), Id.generateNextId())))
+				.when(categoryRepository)
+				.findByCategoryIdAndIsDeleted(any(), anyBoolean());
+			Mockito.doReturn(List.of()).when(cardRepository).findByCategoryIdAndIsDeleted(any(), anyBoolean());
+
+			// when
+			List<CardResponseDto> randoms = cardSimulationService.simulateRandom(Id.generateNextId(),
+				Id.generateNextId(), 100);
+
+			// then
+			assertThat(randoms).isEmpty();
+		}
+
+		@Test
+		@DisplayName("limit으로 제한한 카드 갯수로 출력한다")
+		void shouldReturnLimitedCardsTest() {
+			// given
+			Mockito.doReturn(Optional.of(
+					CategoryTestHelper.generateSharedCategory("title", Id.generateNextId(), Id.generateNextId())))
+				.when(categoryRepository)
+				.findByCategoryIdAndIsDeleted(any(), anyBoolean());
+			Mockito.doReturn(
+					List.of(CardTestHelper.genOxCard(Id.generateNextId(), Id.generateNextId(), Id.generateNextId()),
+						CardTestHelper.genOxCard(Id.generateNextId(), Id.generateNextId(), Id.generateNextId()),
+						CardTestHelper.genOxCard(Id.generateNextId(), Id.generateNextId(), Id.generateNextId())))
+				.when(cardRepository)
+				.findByCategoryIdAndIsDeleted(any(), anyBoolean());
+			final int limit = 2;
+
+			// when
+			List<CardResponseDto> randoms = cardSimulationService.simulateRandom(Id.generateNextId(),
+				Id.generateNextId(), limit);
+
+			// then
+			assertThat(randoms).hasSize(limit);
+		}
 	}
 
-	@Test
-	@DisplayName("simulateRandom 응답 테스트")
-	void randomResponseTest() {
-		Id memberId = Id.generateNextId();
-		Id categoryId = Id.generateNextId();
-		List<Card> testData = List.of(
-			CardTestHelper.genOxCard(memberId, categoryId, Id.generateNextId()),
-			CardTestHelper.genOxCard(memberId, categoryId, Id.generateNextId()));
-		Mockito.doReturn(CategoryTestHelper.generateUnSharedCategory("title", memberId, categoryId))
-			.when(categoryChecker).checkAuthority(any(), any());
-		Mockito.doReturn(testData).when(cardRepository).findByCategoryIdAndIsDeleted(any(), eq(false));
-		final int limit = 2;
+	/**
+	 * 삭제된 카테고리를 조회한 경우
+	 * 본인 카테고리가 아니거나 남의 카테고리지만 공유가 되지 않은 경우 접근 불가 예외를 발생한다
+	 * 카테고리에 속한 카드가 없는 경우 빈 리스트를 반환한다
+	 * limit으로 제한한 카드 갯수로 출력한다
+	 */
+	@Nested
+	@DisplayName("simulateScore 테스트")
+	class SimulateScoreTest {
 
-		List<CardResponseDto> randoms = cardSimulationService.simulateRandom(Id.generateNextId(), Id.generateNextId(),
-			limit);
-		assertThat(randoms).doesNotHaveDuplicates().hasSize(2);
-	}
+		@Test
+		@DisplayName("삭제된 카테고리를 조회한 경우")
+		void shouldThrowIllegalArgumentExceptionWhenCategoryIsDeletedTest() {
+			// given
+			Mockito.doReturn(Optional.empty())
+				.when(categoryRepository)
+				.findByCategoryIdAndIsDeleted(any(), anyBoolean());
+			Mockito.doReturn(
+					List.of(CardTestHelper.genOxCard(Id.generateNextId(), Id.generateNextId(), Id.generateNextId())))
+				.when(cardRepository)
+				.findByCategoryIdAndIsDeleted(any(), anyBoolean());
 
-	@Test
-	@DisplayName("simulateScore 권한 체크")
-	void scoreCheckAuthorityTest() {
-		Mockito.doThrow(AccessDeniedException.class).when(categoryChecker).checkAuthority(any(), any());
-		assertThatThrownBy(
-			() -> cardSimulationService.simulateScore(Id.generateNextId(), Id.generateNextId(), 100)).isInstanceOf(
-			AccessDeniedException.class);
-	}
+			// expect
+			assertThatThrownBy(
+				() -> cardSimulationService.simulateScore(Id.generateNextId(), Id.generateNextId(), 100)).isInstanceOf(
+				IllegalArgumentException.class);
+		}
 
-	@Test
-	@DisplayName("simulateScore 정상 응답 테스트")
-	void scoreResponseTest() {
-		Id memberId = Id.generateNextId();
-		Id categoryId = Id.generateNextId();
-		List<Card> testData = List.of(
-			CardTestHelper.genOxCard(memberId, categoryId, Id.generateNextId()),
-			CardTestHelper.genOxCard(memberId, categoryId, Id.generateNextId()),
-			CardTestHelper.genOxCard(memberId, categoryId, Id.generateNextId()),
-			CardTestHelper.genOxCard(memberId, categoryId, Id.generateNextId())
-		);
-		Mockito.doReturn(CategoryTestHelper.generateUnSharedCategory("title", memberId, categoryId))
-			.when(categoryChecker).checkAuthority(any(), any());
-		Mockito.doReturn(testData).when(cardRepository).findCardByCategoryIdScoreAsc(any(), anyInt());
-		final int limit = 4;
+		@Test
+		@DisplayName("본인 카테고리가 아니거나 남의 카테고리지만 공유가 되지 않은 경우 접근 불가 예외를 발생한다")
+		void shouldThrowAccessDeniedExceptionWhenNotMyCategoryOrNotSharedTest() {
+			// given
+			Mockito.doReturn(Optional.of(
+					CategoryTestHelper.generateUnSharedCategory("title", Id.generateNextId(), Id.generateNextId())))
+				.when(categoryRepository)
+				.findByCategoryIdAndIsDeleted(any(), anyBoolean());
+			Mockito.doReturn(
+					List.of(CardTestHelper.genOxCard(Id.generateNextId(), Id.generateNextId(), Id.generateNextId())))
+				.when(cardRepository)
+				.findCardByCategoryIdScoreAsc(any(), anyInt());
 
-		List<CardResponseDto> scores = cardSimulationService.simulateScore(Id.generateNextId(), Id.generateNextId(),
-			limit);
-		assertThat(scores).doesNotHaveDuplicates().hasSize(4);
+			// expect
+			assertThatThrownBy(
+				() -> cardSimulationService.simulateScore(Id.generateNextId(), Id.generateNextId(), 100)).isInstanceOf(
+				AccessDeniedException.class);
+		}
+
+		@Test
+		@DisplayName("카테고리에 속한 카드가 없는 경우 빈 리스트를 반환한다")
+		void shouldReturnEmptyListWhenCategoryHasNoCardsTest() {
+			// given
+			Mockito.doReturn(Optional.of(
+					CategoryTestHelper.generateSharedCategory("title", Id.generateNextId(), Id.generateNextId())))
+				.when(categoryRepository)
+				.findByCategoryIdAndIsDeleted(any(), anyBoolean());
+			Mockito.doReturn(List.of()).when(cardRepository).findByCategoryIdAndIsDeleted(any(), anyBoolean());
+
+			// when
+			List<CardResponseDto> result = cardSimulationService.simulateScore(Id.generateNextId(),
+				Id.generateNextId(), 100);
+
+			// then
+			assertThat(result).isEmpty();
+		}
+
+		@Test
+		@DisplayName("limit으로 제한한 카드 갯수로 출력한다")
+		void shouldReturnLimitedCardsTest() {
+			// given
+			Mockito.doReturn(Optional.of(
+					CategoryTestHelper.generateSharedCategory("title", Id.generateNextId(), Id.generateNextId())))
+				.when(categoryRepository)
+				.findByCategoryIdAndIsDeleted(any(), anyBoolean());
+			Mockito.doReturn(
+					List.of(CardTestHelper.genOxCard(Id.generateNextId(), Id.generateNextId(), Id.generateNextId()),
+						CardTestHelper.genOxCard(Id.generateNextId(), Id.generateNextId(), Id.generateNextId())))
+				.when(cardRepository).findCardByCategoryIdScoreAsc(any(), anyInt());
+			final int limit = 2;
+
+			// when
+			List<CardResponseDto> result = cardSimulationService.simulateScore(Id.generateNextId(),
+				Id.generateNextId(), limit);
+
+			// then
+			assertThat(result).hasSize(limit);
+		}
 	}
 }
