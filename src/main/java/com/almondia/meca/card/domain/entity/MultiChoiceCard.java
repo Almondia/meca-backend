@@ -24,7 +24,7 @@ import lombok.experimental.SuperBuilder;
 public class MultiChoiceCard extends Card {
 
 	@Embedded
-	@AttributeOverride(name = "number", column = @Column(name = "multi_choice_answer"))
+	@AttributeOverride(name = "number", column = @Column(name = "multi_choice_answer", length = 2))
 	private MultiChoiceAnswer multiChoiceAnswer;
 
 	@Override

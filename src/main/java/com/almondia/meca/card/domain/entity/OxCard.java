@@ -1,5 +1,6 @@
 package com.almondia.meca.card.domain.entity;
 
+import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -23,6 +24,7 @@ import lombok.experimental.SuperBuilder;
 public class OxCard extends Card {
 
 	@Enumerated(EnumType.STRING)
+	@Column(name = "ox_answer", length = 2)
 	private OxAnswer oxAnswer;
 
 	@Override
