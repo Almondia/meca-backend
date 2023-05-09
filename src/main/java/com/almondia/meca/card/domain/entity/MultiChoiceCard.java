@@ -1,5 +1,6 @@
 package com.almondia.meca.card.domain.entity;
 
+import javax.persistence.AttributeOverride;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Embedded;
@@ -23,7 +24,7 @@ import lombok.experimental.SuperBuilder;
 public class MultiChoiceCard extends Card {
 
 	@Embedded
-	@Column(name = "multi_choice_answer", nullable = false)
+	@AttributeOverride(name = "number", column = @Column(name = "multi_choice_answer"))
 	private MultiChoiceAnswer multiChoiceAnswer;
 
 	@Override
