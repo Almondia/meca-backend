@@ -22,7 +22,7 @@ public class MemberController {
 
 	@GetMapping("/me")
 	@Secured("ROLE_USER")
-	public ResponseEntity<MemberResponseDto> getMyProfile(@AuthenticationPrincipal Member member) {
+	public ResponseEntity<MemberResponseDto> findMyProfile(@AuthenticationPrincipal Member member) {
 		MemberResponseDto myProfile = memberService.findMyProfile(member.getMemberId());
 		return ResponseEntity.ok(myProfile);
 	}
