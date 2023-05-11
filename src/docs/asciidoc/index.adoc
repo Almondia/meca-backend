@@ -34,9 +34,32 @@ operation::oauth-controller-test/should-return-access-token-response-dto-all-pro
 [[Member-개인-프로필-조회]]
 === Member 개인 프로필 조회
 
-operation::find-my-profile/should-return-member-response-dto-attributes-when-return200-test[snippets='http-request,request-headers,http-response,response-fields']
+operation::find-my-profile/should-return-member-response-dto-attributes-when-return200-test[snippets='http-request,http-response,response-fields']
 
+[[Category-API]]
+== Category API
 
+[[Category-개인-카테고리-페이징-조회]]
+=== Category 개인 카테고리 페이징 조회
 
+operation::offset-paging-category-test/should-return-page-type-when-call-paging-search-test[snippets='http-request,request-parameters,http-response,response-fields']
 
+[[Category-공유-카테고리-페이징-조회]]
+=== Category 공유 카테고리 페이징 조회
 
+operation::search-share-category-test/should-return-status200-and-response-when-success-test[snippets='http-request,request-parameters,http-response,response-fields']
+
+[[Category-카테고리-등록]]
+=== Category 카테고리 등록
+
+operation::save-category-test/should-return201-when-enroll-success-test[snippets='http-request,request-fields,http-response,response-fields']
+
+[[Category-카테고리-수정]]
+=== Category 카테고리 수정
+
+operation::update-category-test/should-return200-when-success-update-category-test[snippets='http-request,path-parameters,request-fields,http-response,response-fields']
+
+[[Cateogory-카테고리-삭제]]
+=== Category 카테고리 삭제
+
+operation::delete-category-test/should-return-status200-when-success-test[snippets='http-request,path-parameters,http-response']
