@@ -2,9 +2,12 @@ package com.almondia.meca.helper;
 
 import java.time.LocalDateTime;
 
+import com.almondia.meca.category.controller.dto.CategoryResponseDto;
+import com.almondia.meca.category.controller.dto.SaveCategoryRequestDto;
 import com.almondia.meca.category.domain.entity.Category;
 import com.almondia.meca.category.domain.vo.Title;
 import com.almondia.meca.common.domain.vo.Id;
+import com.almondia.meca.common.domain.vo.Image;
 
 public class CategoryTestHelper {
 
@@ -27,6 +30,26 @@ public class CategoryTestHelper {
 			.title(Title.of(title))
 			.isDeleted(false)
 			.isShared(true)
+			.createdAt(LocalDateTime.now())
+			.modifiedAt(LocalDateTime.now())
+			.build();
+	}
+
+	public static SaveCategoryRequestDto generateSaveCategoryRequestDto() {
+		return SaveCategoryRequestDto.builder()
+			.title(Title.of("title"))
+			.thumbnail(new Image("https://aws.s3.com"))
+			.build();
+	}
+
+	public static CategoryResponseDto generateCategoryResponseDto() {
+		return CategoryResponseDto.builder()
+			.categoryId(Id.generateNextId())
+			.memberId(Id.generateNextId())
+			.thumbnail(new Image("https://aws.s3.com"))
+			.title(Title.of("title"))
+			.isDeleted(false)
+			.isShared(false)
 			.createdAt(LocalDateTime.now())
 			.modifiedAt(LocalDateTime.now())
 			.build();
