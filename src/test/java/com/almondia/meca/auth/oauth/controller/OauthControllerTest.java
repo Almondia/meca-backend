@@ -1,18 +1,29 @@
 package com.almondia.meca.auth.oauth.controller;
 
+import static com.almondia.meca.asciidocs.ApiDocumentUtils.*;
 import static org.mockito.ArgumentMatchers.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.RestDocumentationContextProvider;
+import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
 import com.almondia.meca.auth.jwt.service.JwtTokenService;
 import com.almondia.meca.auth.oauth.exception.BadWebClientRequestException;
@@ -33,10 +44,13 @@ import com.almondia.meca.member.domain.vo.OAuthType;
  *  4. 사용자 입력 오류시 400 반환
  */
 @WebMvcTest({OauthController.class})
+@ExtendWith({RestDocumentationExtension.class})
 @Import({SecurityConfiguration.class, JacksonConfiguration.class})
 class OauthControllerTest {
 
 	@Autowired
+	WebApplicationContext context;
+
 	MockMvc mockMvc;
 
 	@MockBean
@@ -47,6 +61,14 @@ class OauthControllerTest {
 
 	@MockBean
 	Oauth2Service oauth2Service;
+
+	@BeforeEach
+	public void setUp(RestDocumentationContextProvider restDocumentation) {
+		this.mockMvc = MockMvcBuilders.webAppContextSetup(context)
+			.alwaysDo(print())
+			.apply(documentationConfiguration(restDocumentation))
+			.build();
+	}
 
 	@Test
 	@DisplayName("요청 성공시 첫 로그인인 경우 AccessTokenResponseDto 속성에 담긴 값이 모두 출력되야 하며 camel case여야 함 성공 응답은 201")
@@ -61,7 +83,20 @@ class OauthControllerTest {
 				.param("code", "authorizeCode")
 				.contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isCreated())
-			.andExpect(jsonPath("$.accessToken").exists());
+			.andExpect(jsonPath("$.accessToken").exists())
+			.andDo(document("{class-name}/{method-name}",
+				getDocumentRequest(),
+				getDocumentResponse(),
+				pathParameters(
+					parameterWithName("registrationId").description("google, kakao, naver 중 하나의 값")
+				),
+				requestParameters(
+					parameterWithName("code").description("oauth2 인증 후 발급받은 authorization code")
+				),
+				responseFields(
+					fieldWithPath("accessToken").description("JWT Access Token")
+				)
+			));
 	}
 
 	@Test
@@ -78,7 +113,20 @@ class OauthControllerTest {
 				.param("code", "authorizeCode")
 				.contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.accessToken").exists());
+			.andExpect(jsonPath("$.accessToken").exists())
+			.andDo(document("{class-name}/{method-name}",
+				getDocumentRequest(),
+				getDocumentResponse(),
+				pathParameters(
+					parameterWithName("registrationId").description("google, kakao, naver 중 하나의 값")
+				),
+				requestParameters(
+					parameterWithName("code").description("oauth2 인증 후 발급받은 authorization code")
+				),
+				responseFields(
+					fieldWithPath("accessToken").description("JWT Access Token")
+				)
+			));
 
 	}
 
