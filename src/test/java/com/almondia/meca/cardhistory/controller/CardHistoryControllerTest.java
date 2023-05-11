@@ -1,7 +1,13 @@
 package com.almondia.meca.cardhistory.controller;
 
+import static com.almondia.meca.asciidocs.ApiDocumentUtils.*;
 import static org.mockito.ArgumentMatchers.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.restdocs.headers.HeaderDocumentation.*;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
+import static org.springframework.restdocs.snippet.Attributes.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -12,13 +18,17 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.RestDocumentationContextProvider;
+import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -31,13 +41,17 @@ import com.almondia.meca.common.configuration.jackson.JacksonConfiguration;
 import com.almondia.meca.common.configuration.security.filter.JwtAuthenticationFilter;
 import com.almondia.meca.common.controller.dto.CursorPage;
 import com.almondia.meca.common.domain.vo.Id;
+import com.almondia.meca.common.infra.querydsl.SortOrder;
 import com.almondia.meca.helper.CardHistoryTestHelper;
 import com.almondia.meca.mock.security.WithMockMember;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @WebMvcTest(CardHistoryController.class)
+@ExtendWith({RestDocumentationExtension.class})
 @Import({JacksonConfiguration.class})
 class CardHistoryControllerTest {
+
+	private static final String jwtToken = "jwt token";
 
 	@MockBean
 	CardHistoryService cardHistoryService;
@@ -48,15 +62,17 @@ class CardHistoryControllerTest {
 	@Autowired
 	WebApplicationContext context;
 
-	@Autowired
 	MockMvc mockMvc;
 
 	@Autowired
 	ObjectMapper objectMapper;
 
 	@BeforeEach
-	void before() {
-		mockMvc = MockMvcBuilders.webAppContextSetup(context).alwaysDo(print()).build();
+	public void setUp(RestDocumentationContextProvider restDocumentation) {
+		this.mockMvc = MockMvcBuilders.webAppContextSetup(context)
+			.alwaysDo(print())
+			.apply(documentationConfiguration(restDocumentation))
+			.build();
 	}
 
 	/**
@@ -70,6 +86,7 @@ class CardHistoryControllerTest {
 		@DisplayName("정상 응답 테스트")
 		@WithMockMember
 		void shouldReturn200WhenSuccessTest() throws Exception {
+			// given
 			CardHistoryRequestDto historyDto = CardHistoryRequestDto.builder()
 				.cardId(Id.generateNextId())
 				.userAnswer(new Answer("answer"))
@@ -77,11 +94,22 @@ class CardHistoryControllerTest {
 				.build();
 			SaveRequestCardHistoryDto saveRequestCardHistoryDto = new SaveRequestCardHistoryDto(List.of(historyDto));
 
-			mockMvc.perform(post("/api/v1/histories/simulation")
-					.contentType(MediaType.APPLICATION_JSON)
+			// when
+			ResultActions resultActions = mockMvc.perform(
+				post("/api/v1/histories/simulation").contentType(MediaType.APPLICATION_JSON)
 					.characterEncoding(StandardCharsets.UTF_8)
-					.content(objectMapper.writeValueAsString(saveRequestCardHistoryDto)))
-				.andExpect(status().isCreated());
+					.content(objectMapper.writeValueAsString(saveRequestCardHistoryDto))
+					.header("Authorization", "Bearer " + jwtToken));
+
+			// then
+			resultActions.andExpect(status().isCreated())
+				.andDo(document("{class-name}/{method-name}", getDocumentRequest(), getDocumentResponse(),
+					requestHeaders(headerWithName("Authorization").description("JWT 토큰")),
+					requestFields(fieldWithPath("cardHistories[].cardId").description("카드 ID"),
+						fieldWithPath("cardHistories[].userAnswer").description("사용자 답안")
+							.attributes(key("constraints").value("100글자 이내")),
+						fieldWithPath("cardHistories[].score").description("점수")
+							.attributes(key("constraints").value("0 ~ 100 정수")))));
 		}
 	}
 
@@ -96,17 +124,41 @@ class CardHistoryControllerTest {
 		@DisplayName("정상 응답 테스트")
 		@WithMockMember
 		void shouldReturn200WhenSuccessTest() throws Exception {
+			// given
 			Mockito.doReturn(CursorPage.builder()
-					.contents(List.of(CardHistoryTestHelper.generateCardHistory(Id.generateNextId(), Id.generateNextId(),
-						Id.generateNextId(), 100)))
-					.hasNext(null)
-					.pageSize(2)
-					.build())
-				.when(cardHistoryService).findCardHistoriesByCardId(any(), anyInt(), any());
-			mockMvc.perform(get("/api/v1/histories/cards/{cardId}?pageSize=2", Id.generateNextId().toString())
-					.contentType(MediaType.APPLICATION_JSON)
-					.characterEncoding(StandardCharsets.UTF_8))
-				.andExpect(status().isOk());
+				.contents(List.of(CardHistoryTestHelper.generateCardHistory(Id.generateNextId(), Id.generateNextId(),
+					Id.generateNextId(), 100)))
+				.hasNext(null)
+				.pageSize(2)
+				.sortOrder(SortOrder.DESC)
+				.build()).when(cardHistoryService).findCardHistoriesByCardId(any(), anyInt(), any());
+
+			// when
+			ResultActions resultActions = mockMvc.perform(
+				get("/api/v1/histories/cards/{cardId}", Id.generateNextId().toString()).contentType(
+						MediaType.APPLICATION_JSON)
+					.characterEncoding(StandardCharsets.UTF_8)
+					.queryParam("pageSize", "2")
+					.queryParam("hasNext", Id.generateNextId().toString()));
+
+			// then
+			resultActions.andExpect(status().isOk())
+				.andDo(document("{class-name}/{method-name}", getDocumentRequest(), getDocumentResponse(),
+					requestParameters(parameterWithName("pageSize").description("페이지 사이즈"),
+						parameterWithName("hasNext").description("다음 페이지 존재 여부").optional()),
+					pathParameters(parameterWithName("cardId").description("카드 ID")),
+					responseFields(
+						fieldWithPath("contents[].cardHistoryId").description("카드 히스토리 ID"),
+						fieldWithPath("contents[].categoryId").description("카테고리 ID"),
+						fieldWithPath("contents[].cardId").description("카드 ID"),
+						fieldWithPath("contents[].userAnswer").description("사용자 답안"),
+						fieldWithPath("contents[].score").description("점수"),
+						fieldWithPath("contents[].createdAt").description("생성일"),
+						fieldWithPath("contents[].deleted").description("삭제 여부"),
+						fieldWithPath("hasNext").description("다음 페이지 존재 여부"),
+						fieldWithPath("pageSize").description("페이지 사이즈"),
+						fieldWithPath("sortOrder").description("정렬 방식"))
+				));
 		}
 	}
 
@@ -118,17 +170,50 @@ class CardHistoryControllerTest {
 		@DisplayName("정상 응답 테스트")
 		@WithMockMember
 		void shouldReturn200WhenSuccessTest() throws Exception {
+			// given
 			Mockito.doReturn(CursorPage.builder()
-					.contents(List.of(CardHistoryTestHelper.generateCardHistory(Id.generateNextId(), Id.generateNextId(),
-						Id.generateNextId(), 100)))
-					.hasNext(null)
-					.pageSize(2)
-					.build())
-				.when(cardHistoryService).findCardHistoriesByCategoryId(any(), anyInt(), any());
-			mockMvc.perform(get("/api/v1/histories/categories/{categoryId}?pageSize=2", Id.generateNextId().toString())
+				.contents(List.of(CardHistoryTestHelper.generateCardHistory(Id.generateNextId(), Id.generateNextId(),
+					Id.generateNextId(), 100)))
+				.hasNext(null)
+				.pageSize(2)
+				.sortOrder(SortOrder.DESC)
+				.build()).when(cardHistoryService).findCardHistoriesByCategoryId(any(), anyInt(), any());
+
+			// when
+			ResultActions resultActions = mockMvc.perform(
+				get("/api/v1/histories/categories/{categoryId}", Id.generateNextId().toString())
 					.contentType(MediaType.APPLICATION_JSON)
-					.characterEncoding(StandardCharsets.UTF_8))
-				.andExpect(status().isOk());
+					.characterEncoding(StandardCharsets.UTF_8)
+					.queryParam("hasNext", Id.generateNextId().toString())
+					.queryParam("pageSize", "2")
+			);
+
+			// then
+			resultActions.andExpect(status().isOk())
+				.andDo(document(
+					"{class-name}/{method-name}",
+					getDocumentRequest(),
+					getDocumentResponse(),
+					requestParameters(
+						parameterWithName("hasNext").description("다음 페이지 존재 여부").optional(),
+						parameterWithName("pageSize").description("페이지 사이즈")
+					),
+					pathParameters(
+						parameterWithName("categoryId").description("카테고리 ID")
+					),
+					responseFields(
+						fieldWithPath("contents[].cardHistoryId").description("카드 히스토리 ID"),
+						fieldWithPath("contents[].categoryId").description("카테고리 ID"),
+						fieldWithPath("contents[].cardId").description("카드 ID"),
+						fieldWithPath("contents[].userAnswer").description("사용자 답안"),
+						fieldWithPath("contents[].score").description("점수"),
+						fieldWithPath("contents[].createdAt").description("생성일"),
+						fieldWithPath("contents[].deleted").description("삭제 여부"),
+						fieldWithPath("hasNext").description("다음 페이지 존재 여부"),
+						fieldWithPath("pageSize").description("페이지 사이즈"),
+						fieldWithPath("sortOrder").description("정렬 방식")
+					)
+				));
 		}
 	}
 }
