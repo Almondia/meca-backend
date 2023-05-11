@@ -112,3 +112,20 @@ operation::update-category-test/should-return200-when-success-update-category-te
 
 operation::delete-category-test/should-return-status200-when-success-test[snippets='http-request,path-parameters,http-response']
 
+[[CardHistory-API]]
+== CardHistory API
+
+[[CardHistory-시뮬레이션-카드-히스토리-등록]]
+=== CardHistory 시뮬레이션 카드 히스토리 등록
+
+operation::save-simulation-card-history-test/should-return200-when-success-test[snippets='http-request,request-fields,http-response']
+
+[[CardHistory-카드ID-기반-카드-히스토리-페이징-조회]]
+=== CardHistory 카드ID 기반 카드 히스토리 페이징 조회
+
+operation::find-simulation-card-history-test/should-return200-when-success-test[snippets='http-request,path-parameters,request-parameters,http-response,response-fields']
+
+[[CardHistory-카테고리ID-기반-카드-히스토리-단일-조회]]
+=== CardHistory 카테고리ID 기반 카드 히스토리 단일 조회
+
+operation::find-card-history-by-category-id-test/should-return200-when-success-test[snippets='http-request,path-parameters,http-response,response-fields']
