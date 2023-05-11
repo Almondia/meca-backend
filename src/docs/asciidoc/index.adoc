@@ -1,0 +1,22 @@
+= mecastudy rest API Docs
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+:sectlinks:
+
+include::overview.adoc[]
+
+[[Member-API]]
+== Member API
+
+[[Member-개인-프로필-조회]]
+=== Member 개인 프로필 조회
+
+operation::find-my-profile/should-return-member-response-dto-attributes-when-return200-test[snippets='http-request,request-headers,http-response,response-fields']
+
+
+
+
+
