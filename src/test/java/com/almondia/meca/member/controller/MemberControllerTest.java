@@ -2,6 +2,7 @@ package com.almondia.meca.member.controller;
 
 import static com.almondia.meca.asciidocs.ApiDocumentUtils.*;
 import static org.mockito.ArgumentMatchers.*;
+import static org.springframework.restdocs.headers.HeaderDocumentation.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -95,6 +96,9 @@ class MemberControllerTest {
 				.andDo(document("{class-name}/{method-name}",
 					getDocumentRequest(),
 					getDocumentResponse(),
+					requestHeaders(
+						headerWithName("Authorization").description("Bearer Token")
+					),
 					responseFields(
 						fieldWithPath("memberId").description("회원 아이디"),
 						fieldWithPath("name").description("회원 이름"),
