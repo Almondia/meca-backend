@@ -8,6 +8,26 @@
 
 include::overview.adoc[]
 
+[[Oauth-API]]
+== OAuth API
+
+[[Oauth-로그인]]
+=== OAuth 로그인
+
+operation::oauth-controller-test/should-return-access-token-response-dto-all-properties-and-response-status-using-camel-case-test[snippets='http-request,path-parameters,request-parameters']
+
+==== HTTP response
+
+처음 로그인시 oauthId로 회원 아이디 생성 응답
+
+include::{snippets}/oauth-controller-test/should-return-access-token-response-dto-all-properties-and-response-status-using-camel-case-test/http-response.adoc[]
+
+로그인시 응답
+
+include::{snippets}/oauth-controller-test/should-return-access-token-and-status200-when-duplicate-login/http-response.adoc[]
+
+operation::oauth-controller-test/should-return-access-token-response-dto-all-properties-and-response-status-using-camel-case-test[snippets='response-fields']
+
 [[Member-API]]
 == Member API
 
