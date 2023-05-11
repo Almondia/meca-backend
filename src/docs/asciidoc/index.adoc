@@ -63,3 +63,52 @@ operation::update-category-test/should-return200-when-success-update-category-te
 === Category 카테고리 삭제
 
 operation::delete-category-test/should-return-status200-when-success-test[snippets='http-request,path-parameters,http-response']
+
+[[Card-API]]
+== Card API
+
+[[Card-개인-카드-단일-조회]]
+=== Card 개인 카드 단일 조회
+
+operation::search-card-one-test/should-return200ok-and-response-format-test[snippets='http-request,path-parameters,http-response,response-fields']
+
+[[Card-공유-카드-단일-조회]]
+=== Card 공유 카드 단일 조회
+
+operation::find-shared-card-test/should-return200-ok-and-response-format-test[snippets='http-request,path-parameters,http-response,response-fields']
+
+[[Card-카드-페이징-조회]]
+=== Card 카드 페이징 조회
+
+operation::card-cursor-paging-search-test/should-return200-when-success-test[snippets='http-request,path-parameters,request-parameters,http-response,response-fields']
+
+[[Card-공유-카드-페이징-조회]]
+=== Card 공유 카드 페이징 조회
+
+operation::shared-card-cursor-paging-test/should-return200-ok-and-response-format-test[snippets='http-request,path-parameters,request-parameters,http-response,response-fields']
+
+[[Card-카드-시뮬레이션-조회]]
+=== Card 카드 시뮬레이션 조회
+
+operation::simulate-card-test/should-return200-when-success-test[snippets='http-request,path-parameters,http-response,response-fields']
+
+[[Card-카테고리별-카드-조회]]
+=== Card 카테고리별 카드 조회
+
+operation::find-card-count-by-category-test/should-return200ok-and-response-format-test[snippets='http-request,path-parameters,http-response,response-fields']
+
+[[Card-카드-등록]]
+=== Card 카드 등록
+
+operation::save-card-test/should-return201-when-enroll-success-test[snippets='http-request,request-fields,http-response,response-fields']
+
+[[Card-카드-수정]]
+=== Card 카드 수정
+
+operation::update-category-test/should-return200-when-success-update-category-test[snippets='http-request,path-parameters,request-fields,http-response,response-fields']
+
+[[Card-카드-삭제]]
+=== Card 카드 삭제
+
+operation::delete-category-test/should-return-status200-when-success-test[snippets='http-request,path-parameters,http-response']
+
