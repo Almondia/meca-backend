@@ -8,8 +8,8 @@
 
 include::overview.adoc[]
 
-[[Oauth-API]]
-== OAuth API
+[[Auth-API]]
+== Auth API
 
 [[Oauth-로그인]]
 === OAuth 로그인
@@ -27,6 +27,11 @@ include::{snippets}/oauth-controller-test/should-return-access-token-response-dt
 include::{snippets}/oauth-controller-test/should-return-access-token-and-status200-when-duplicate-login/http-response.adoc[]
 
 operation::oauth-controller-test/should-return-access-token-response-dto-all-properties-and-response-status-using-camel-case-test[snippets='response-fields']
+
+[[Presign-이미지-업로드]]
+=== Presign 이미지 업로드
+
+operation::presign/upload[snippets='http-request,request-parameters,http-response']
 
 [[Member-API]]
 == Member API
