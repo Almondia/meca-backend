@@ -59,6 +59,34 @@ public class CardController {
 	}
 
 	@Secured("ROLE_USER")
+	@DeleteMapping("/{cardId}")
+	public ResponseEntity<String> deleteCard(
+		@AuthenticationPrincipal Member member,
+		@PathVariable(value = "cardId") Id cardId
+	) {
+		cardService.deleteCard(cardId, member.getMemberId());
+		return ResponseEntity.status(HttpStatus.OK).body("");
+	}
+
+	@Secured("ROLE_USER")
+	@GetMapping("/{cardId}/me")
+	public ResponseEntity<CardResponseDto> findCardByCardId(
+		@AuthenticationPrincipal Member member,
+		@PathVariable(value = "cardId") Id cardId
+	) {
+		CardResponseDto responseDto = cardService.findCardById(cardId, member.getMemberId());
+		return ResponseEntity.ok(responseDto);
+	}
+
+	@GetMapping("/{cardId}/share")
+	public ResponseEntity<SharedCardResponseDto> findCardByCardId(
+		@PathVariable(value = "cardId") Id cardId
+	) {
+		SharedCardResponseDto responseDto = cardService.findSharedCard(cardId);
+		return ResponseEntity.ok(responseDto);
+	}
+
+	@Secured("ROLE_USER")
 	@GetMapping("/categories/{categoryId}/me")
 	public ResponseEntity<CursorPage<CardResponseDto>> searchPagingCards(
 		@AuthenticationPrincipal Member member,
@@ -93,24 +121,6 @@ public class CardController {
 	}
 
 	@Secured("ROLE_USER")
-	@GetMapping("/{cardId}/me")
-	public ResponseEntity<CardResponseDto> findCardByCardId(
-		@AuthenticationPrincipal Member member,
-		@PathVariable(value = "cardId") Id cardId
-	) {
-		CardResponseDto responseDto = cardService.findCardById(cardId, member.getMemberId());
-		return ResponseEntity.ok(responseDto);
-	}
-
-	@GetMapping("/{cardId}/share")
-	public ResponseEntity<SharedCardResponseDto> findCardByCardId(
-		@PathVariable(value = "cardId") Id cardId
-	) {
-		SharedCardResponseDto responseDto = cardService.findSharedCard(cardId);
-		return ResponseEntity.ok(responseDto);
-	}
-
-	@Secured("ROLE_USER")
 	@GetMapping("/categories/{categoryId}/simulation")
 	public ResponseEntity<List<CardResponseDto>> findCardByCardIdResponseDto(
 		@AuthenticationPrincipal Member member,
@@ -138,15 +148,5 @@ public class CardController {
 	) {
 		long count = cardService.findCardsCountByCategoryId(categoryId, member.getMemberId());
 		return ResponseEntity.ok(new CardCountResponseDto(count));
-	}
-
-	@Secured("ROLE_USER")
-	@DeleteMapping("/{cardId}")
-	public ResponseEntity<String> deleteCard(
-		@AuthenticationPrincipal Member member,
-		@PathVariable(value = "cardId") Id cardId
-	) {
-		cardService.deleteCard(cardId, member.getMemberId());
-		return ResponseEntity.status(HttpStatus.OK).body("");
 	}
 }

@@ -29,7 +29,7 @@ public class OauthController {
 	private final JwtTokenService jwtTokenService;
 
 	@PostMapping("/login/{registrationId}")
-	public ResponseEntity<AccessTokenResponseDto> getUserInfo(
+	public ResponseEntity<AccessTokenResponseDto> loginUser(
 		@PathVariable("registrationId") String registrationId,
 		@RequestParam("code") String authorizationCode) {
 		HttpStatus statusResponse = HttpStatus.OK;

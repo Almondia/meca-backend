@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 import com.almondia.meca.common.domain.vo.Id;
 import com.almondia.meca.common.domain.vo.Image;
+import com.almondia.meca.member.controller.dto.MemberResponseDto;
 import com.almondia.meca.member.domain.entity.Member;
 import com.almondia.meca.member.domain.vo.Email;
 import com.almondia.meca.member.domain.vo.Name;
@@ -21,6 +22,34 @@ public class MemberTestHelper {
 			.oauthId("12312`1`1123")
 			.oAuthType(OAuthType.GOOGLE)
 			.role(Role.USER)
+			.createdAt(LocalDateTime.now())
+			.modifiedAt(LocalDateTime.now())
+			.build();
+	}
+
+	public static MemberResponseDto genMemberResponseDto() {
+		return MemberResponseDto.builder()
+			.memberId(Id.generateNextId())
+			.name(new Name("name"))
+			.email(new Email("email@naver.com"))
+			.profile(new Image("profile"))
+			.oAuthType(OAuthType.KAKAO)
+			.role(Role.USER)
+			.isDeleted(false)
+			.createdAt(LocalDateTime.now())
+			.modifiedAt(LocalDateTime.now())
+			.build();
+	}
+
+	public static MemberResponseDto generateMemberResponseDto(Id memberId) {
+		return MemberResponseDto.builder()
+			.memberId(memberId)
+			.name(new Name("name"))
+			.email(new Email("email@naver.com"))
+			.profile(new Image("profile"))
+			.oAuthType(OAuthType.KAKAO)
+			.role(Role.USER)
+			.isDeleted(false)
 			.createdAt(LocalDateTime.now())
 			.modifiedAt(LocalDateTime.now())
 			.build();
