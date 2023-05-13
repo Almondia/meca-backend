@@ -16,8 +16,9 @@ public class CardHistoryTestHelper {
 		return CardHistory.builder()
 			.cardHistoryId(cardHistoryId)
 			.cardId(cardId)
-			.userAnswer(new Answer("answer"))
 			.categoryId(categoryId)
+			.solvedUserId(Id.generateNextId())
+			.userAnswer(new Answer("answer"))
 			.score(new Score(score))
 			.createdAt(LocalDateTime.now())
 			.build();
