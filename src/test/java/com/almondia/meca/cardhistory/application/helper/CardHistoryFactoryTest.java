@@ -2,10 +2,13 @@ package com.almondia.meca.cardhistory.application.helper;
 
 import static org.assertj.core.api.Assertions.*;
 
+import java.util.List;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import com.almondia.meca.cardhistory.controller.dto.CardHistoryResponseDto;
+import com.almondia.meca.cardhistory.controller.dto.CardHistoryRequestDto;
+import com.almondia.meca.cardhistory.controller.dto.SaveRequestCardHistoryDto;
 import com.almondia.meca.cardhistory.domain.entity.CardHistory;
 import com.almondia.meca.cardhistory.domain.vo.Answer;
 import com.almondia.meca.cardhistory.domain.vo.Score;
@@ -19,17 +22,26 @@ class CardHistoryFactoryTest {
 	@Test
 	@DisplayName("dto에서 정상정인 인스턴스 생성하는지 테스트")
 	void shouldGenerateNewInstanceFromDtoTest() {
-		CardHistoryResponseDto cardHistoryResponseDto = CardHistoryResponseDto.builder()
+		CardHistoryRequestDto cardHistoryRequestDto = CardHistoryRequestDto.builder()
 			.cardId(Id.generateNextId())
 			.score(new Score(100))
 			.userAnswer(new Answer("123"))
 			.build();
+
 		Id categoryId = Id.generateNextId();
-		CardHistory cardHistory = CardHistoryFactory.makeCardHistory(cardHistoryResponseDto, categoryId);
-		assertThat(cardHistory)
-			.hasFieldOrPropertyWithValue("cardId", cardHistoryResponseDto.getCardId())
-			.hasFieldOrPropertyWithValue("score", cardHistoryResponseDto.getScore())
-			.hasFieldOrPropertyWithValue("userAnswer", cardHistoryResponseDto.getUserAnswer())
+		Id solvedMemberId = Id.generateNextId();
+
+		SaveRequestCardHistoryDto saveRequestCardHistoryDto = SaveRequestCardHistoryDto.builder()
+			.cardHistories(List.of(cardHistoryRequestDto))
+			.categoryId(categoryId)
+			.build();
+
+		List<CardHistory> result = CardHistoryFactory.makeCardHistories(saveRequestCardHistoryDto, solvedMemberId);
+		assertThat(result.get(0))
+			.hasFieldOrPropertyWithValue("cardId", cardHistoryRequestDto.getCardId())
+			.hasFieldOrPropertyWithValue("score", cardHistoryRequestDto.getScore())
+			.hasFieldOrPropertyWithValue("userAnswer", cardHistoryRequestDto.getUserAnswer())
+			.hasFieldOrPropertyWithValue("solvedUserId", solvedMemberId)
 			.hasFieldOrPropertyWithValue("categoryId", categoryId);
 
 	}

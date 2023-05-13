@@ -1,18 +1,32 @@
 package com.almondia.meca.cardhistory.application.helper;
 
-import com.almondia.meca.cardhistory.controller.dto.CardHistoryResponseDto;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import com.almondia.meca.cardhistory.controller.dto.CardHistoryRequestDto;
+import com.almondia.meca.cardhistory.controller.dto.SaveRequestCardHistoryDto;
 import com.almondia.meca.cardhistory.domain.entity.CardHistory;
 import com.almondia.meca.common.domain.vo.Id;
 
 public class CardHistoryFactory {
 
-	public static CardHistory makeCardHistory(CardHistoryResponseDto cardHistoryResponseDto, Id categoryId) {
+	public static List<CardHistory> makeCardHistories(SaveRequestCardHistoryDto saveRequestCardHistoryDto,
+		Id solvedMemberId) {
+		return saveRequestCardHistoryDto.getCardHistories().stream()
+			.map(cardHistoryRequestDto -> makeCardHistory(cardHistoryRequestDto,
+				saveRequestCardHistoryDto.getCategoryId(), solvedMemberId))
+			.collect(Collectors.toList());
+	}
+
+	private static CardHistory makeCardHistory(CardHistoryRequestDto cardHistoryRequestDto, Id categoryId,
+		Id solvedMemberId) {
 		return CardHistory.builder()
 			.cardHistoryId(Id.generateNextId())
-			.cardId(cardHistoryResponseDto.getCardId())
+			.cardId(cardHistoryRequestDto.getCardId())
 			.categoryId(categoryId)
-			.userAnswer(cardHistoryResponseDto.getUserAnswer())
-			.score(cardHistoryResponseDto.getScore())
+			.solvedUserId(solvedMemberId)
+			.userAnswer(cardHistoryRequestDto.getUserAnswer())
+			.score(cardHistoryRequestDto.getScore())
 			.build();
 	}
 }
