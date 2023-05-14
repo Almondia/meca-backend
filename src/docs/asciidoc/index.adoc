@@ -95,10 +95,10 @@ operation::shared-card-cursor-paging-test/should-return200-ok-and-response-forma
 [[Card-카드-시뮬레이션-조회]]
 === Card 카드 시뮬레이션 조회
 
-operation::simulate-card-test/should-return200-when-success-test[snippets='http-request,path-parameters,http-response,response-fields']
+operation::simulate-card-test/should-return200-when-success-test[snippets='http-request,path-parameters,request-parameters,http-response,response-fields']
 
-[[Card-카테고리별-카드-조회]]
-=== Card 카테고리별 카드 조회
+[[Card-카테고리별-카드-갯수-조회]]
+=== Card 카테고리별 카드 갯수 조회
 
 operation::find-card-count-by-category-test/should-return200ok-and-response-format-test[snippets='http-request,path-parameters,http-response,response-fields']
 
