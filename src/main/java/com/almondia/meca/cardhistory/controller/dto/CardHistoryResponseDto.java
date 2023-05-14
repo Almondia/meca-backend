@@ -22,7 +22,7 @@ import lombok.ToString;
 public class CardHistoryResponseDto {
 
 	private Id cardHistoryId;
-	private Id solvedMemberId;
+	private Id solvedUserId;
 	private Name solvedUserName;
 	private Answer userAnswer;
 	private Score score;
