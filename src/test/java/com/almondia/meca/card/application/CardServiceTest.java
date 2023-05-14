@@ -45,6 +45,7 @@ import com.almondia.meca.common.controller.dto.CursorPage;
 import com.almondia.meca.common.domain.vo.Id;
 import com.almondia.meca.common.domain.vo.Image;
 import com.almondia.meca.data.CardDataFactory;
+import com.almondia.meca.helper.CardTestHelper;
 import com.almondia.meca.helper.CategoryTestHelper;
 import com.almondia.meca.helper.MemberTestHelper;
 
@@ -70,6 +71,12 @@ class CardServiceTest {
 
 	@PersistenceContext
 	EntityManager em;
+
+	private void persistAll(Object... objects) {
+		for (Object object : objects) {
+			em.persist(object);
+		}
+	}
 
 	/**
 	 * 1. oxCard type정보가 들어가면 oxCard 정보가 저장되는지 검증
@@ -394,50 +401,62 @@ class CardServiceTest {
 	}
 
 	/**
-	 * 1. 권한이 없는데 접근한 경우
-	 * 2. 카테고리별 카드 총 조회 API
+	 * 1. 내 카테고리에 카드 갯수를 요청한 경우 정상적으로 카드 개수를 출력
+	 * 2. 내 카테고리가 아닌 카테고리에 카드 갯수를 요청한 경우 공유 상태의 카테고리가 아닌경우 권한 에러 발생
 	 */
 	@Nested
-	@DisplayName("카테고리별 카드 총 조회 API")
+	@DisplayName("카테고리별 카드 개수 조회 API")
 	class SearchCardsCountByCategoryIdTest {
 
-		Id cardId1 = Id.generateNextId();
 		Id categoryId = Id.generateNextId();
 		Id memberId = Id.generateNextId();
 
 		@Test
-		@DisplayName("권한이 없는데 접근한 경우")
-		void shouldThrowExceptionWhenNotMyCategoryTest() {
-			initDataSetting();
-			assertThatThrownBy(() -> cardService.findCardsCountByCategoryId(Id.generateNextId(), Id.generateNextId()))
+		@DisplayName("내 카테고리에 카드 갯수를 요청한 경우 정상적으로 카드 개수를 출력")
+		void shouldReturnCountWhenMyCategoryTest() {
+			// given
+			Category myCategory = CategoryTestHelper.generateUnSharedCategory("title", memberId, categoryId);
+			Card card1 = CardTestHelper.genOxCard(Id.generateNextId(), categoryId, Id.generateNextId());
+			Card card2 = CardTestHelper.genOxCard(Id.generateNextId(), categoryId, Id.generateNextId());
+			persistAll(myCategory, card1, card2);
+
+			// when
+			long count = cardService.findCardsCountByCategoryId(categoryId, memberId);
+
+			// then
+			assertThat(count).isEqualTo(2L);
+		}
+
+		@Test
+		@DisplayName("내 카테고리가 아닌 카테고리에 카드 갯수를 요청한 경우 공유 상태의 카테고리가 아닌경우 권한 에러 발생")
+		void shouldThrowExceptionWhenNotMyCategoryAndNotSharedTest() {
+			// given
+			Category notMyCategory = CategoryTestHelper.generateUnSharedCategory("title", Id.generateNextId(),
+				categoryId);
+			Card card1 = CardTestHelper.genOxCard(Id.generateNextId(), categoryId, Id.generateNextId());
+			Card card2 = CardTestHelper.genOxCard(Id.generateNextId(), categoryId, Id.generateNextId());
+			persistAll(notMyCategory, card1, card2);
+
+			// when
+			assertThatThrownBy(() -> cardService.findCardsCountByCategoryId(categoryId, memberId))
 				.isInstanceOf(AccessDeniedException.class);
 		}
 
 		@Test
-		@DisplayName("카테고리별 카드 총 조회 API")
-		void shouldReturnCardsCountByCategoryIdTest() {
-			initDataSetting();
-			assertThat(cardService.findCardsCountByCategoryId(categoryId, memberId)).isEqualTo(1);
-		}
+		@DisplayName("내 카테고리가 아닌 카테고리에 카드 갯수를 요청한 경우 공유 상태라면 정상적인 카드 갯수 출력")
+		void shouldReturnCountWhenNotMyCategoryAndSharedTest() {
+			// given
+			Category notMyCategory = CategoryTestHelper.generateSharedCategory("title", Id.generateNextId(),
+				categoryId);
+			Card card1 = CardTestHelper.genOxCard(Id.generateNextId(), categoryId, Id.generateNextId());
+			Card card2 = CardTestHelper.genOxCard(Id.generateNextId(), categoryId, Id.generateNextId());
+			persistAll(notMyCategory, card1, card2);
 
-		private void initDataSetting() {
-			cardRepository.saveAll(List.of(
-				MultiChoiceCard.builder()
-					.cardId(cardId1)
-					.title(new Title("title3"))
-					.cardType(CardType.MULTI_CHOICE)
-					.categoryId(categoryId)
-					.memberId(memberId)
-					.question(new Question("question"))
-					.multiChoiceAnswer(new MultiChoiceAnswer(1))
-					.build()
-			));
+			// when
+			long count = cardService.findCardsCountByCategoryId(categoryId, memberId);
 
-			em.persist(Category.builder()
-				.title(new com.almondia.meca.category.domain.vo.Title("title"))
-				.memberId(memberId)
-				.categoryId(categoryId)
-				.build());
+			// then
+			assertThat(count).isEqualTo(2L);
 		}
 	}
 }
