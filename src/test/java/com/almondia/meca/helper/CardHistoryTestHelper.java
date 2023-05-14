@@ -23,4 +23,16 @@ public class CardHistoryTestHelper {
 			.createdAt(LocalDateTime.now())
 			.build();
 	}
+
+	public static CardHistory generateCardHistory(Id cardId, Id categoryId, Id solvedUserId) {
+		return CardHistory.builder()
+			.cardHistoryId(Id.generateNextId())
+			.cardId(cardId)
+			.categoryId(categoryId)
+			.solvedUserId(solvedUserId)
+			.userAnswer(new Answer("answer"))
+			.score(new Score(random.nextInt(100)))
+			.createdAt(LocalDateTime.now())
+			.build();
+	}
 }
