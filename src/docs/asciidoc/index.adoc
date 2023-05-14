@@ -128,9 +128,9 @@ operation::save-simulation-card-history-test/should-return200-when-success-test[
 [[CardHistory-카드ID-기반-카드-히스토리-페이징-조회]]
 === CardHistory 카드ID 기반 카드 히스토리 페이징 조회
 
-operation::find-simulation-card-history-test/should-return200-when-success-test[snippets='http-request,path-parameters,request-parameters,http-response,response-fields']
+operation::find-card-histories-by-card-id-test/should-return200-when-success-test[snippets='http-request,path-parameters,request-parameters,http-response,response-fields']
 
 [[CardHistory-카테고리ID-기반-카드-히스토리-페이징-조회]]
 === CardHistory 카테고리ID 기반 카드 히스토리 페이징 조회
 
-operation::find-card-history-by-category-id-test/should-return200-when-success-test[snippets='http-request,path-parameters,http-response,response-fields']
+operation::find-card-history-by-category-id-test/should-return200-when-success-test[snippets='http-request,path-parameters,request-parameters,http-response,response-fields']
