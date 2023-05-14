@@ -22,13 +22,11 @@ import lombok.ToString;
 public class CardHistoryResponseDto {
 
 	private Id cardHistoryId;
-	private Id memberId;
-	private Name name;
+	private Id solvedMemberId;
+	private Name solvedUserName;
 	private Answer userAnswer;
 	private Score score;
 	private Id categoryId;
-	private com.almondia.meca.category.domain.vo.Title categoryTitle;
 	private Id cardId;
-	private com.almondia.meca.card.domain.vo.Title cardTitle;
 	private LocalDateTime createdAt;
 }
