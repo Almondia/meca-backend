@@ -45,6 +45,10 @@ public class CardHistory {
 	private Id categoryId;
 
 	@Embedded
+	@AttributeOverride(name = "uuid", column = @Column(name = "solved_user_id", nullable = false, columnDefinition = "BINARY(16)"))
+	private Id solvedUserId;
+
+	@Embedded
 	@AttributeOverride(name = "answer", column = @Column(name = "user_answer", nullable = false))
 	private Answer userAnswer;
 

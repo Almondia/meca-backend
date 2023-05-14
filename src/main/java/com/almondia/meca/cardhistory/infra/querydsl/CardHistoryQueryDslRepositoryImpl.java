@@ -40,33 +40,28 @@ public class CardHistoryQueryDslRepositoryImpl implements CardHistoryQueryDslRep
 		List<CardHistoryResponseDto> contents = jpaQueryFactory.select(
 				Projections.constructor(CardHistoryResponseDto.class,
 					cardHistory.cardHistoryId,
-					member.memberId,
+					cardHistory.solvedUserId,
 					member.name,
 					cardHistory.userAnswer,
 					cardHistory.score,
-					category.categoryId,
-					category.title,
+					cardHistory.categoryId,
 					cardHistory.cardId,
-					card.title,
 					cardHistory.createdAt
 				))
 			.from(cardHistory)
 			.innerJoin(card)
 			.on(
 				cardHistory.cardId.eq(card.cardId),
-				card.isDeleted.eq(false),
-				card.cardId.eq(cardId))
-			.innerJoin(category)
-			.on(
-				card.categoryId.eq(category.categoryId),
-				category.isDeleted.eq(false))
+				card.isDeleted.eq(false)
+			)
 			.innerJoin(member)
 			.on(
-				category.memberId.eq(member.memberId),
+				cardHistory.solvedUserId.eq(member.memberId),
 				member.isDeleted.eq(false)
 			)
 			.where(
 				cardHistory.isDeleted.eq(false),
+				card.cardId.eq(cardId),
 				lessOrEqCardHistoryId(lastCardHistoryId))
 			.orderBy(cardHistory.cardHistoryId.uuid.desc())
 			.limit(pageSize + 1)
@@ -90,14 +85,12 @@ public class CardHistoryQueryDslRepositoryImpl implements CardHistoryQueryDslRep
 		List<CardHistoryResponseDto> contents = jpaQueryFactory.select(
 				Projections.constructor(CardHistoryResponseDto.class,
 					cardHistory.cardHistoryId,
-					member.memberId,
+					cardHistory.solvedUserId,
 					member.name,
 					cardHistory.userAnswer,
 					cardHistory.score,
-					category.categoryId,
-					category.title,
+					cardHistory.categoryId,
 					cardHistory.cardId,
-					card.title,
 					cardHistory.createdAt
 				))
 			.from(cardHistory)
@@ -105,14 +98,9 @@ public class CardHistoryQueryDslRepositoryImpl implements CardHistoryQueryDslRep
 			.on(
 				cardHistory.cardId.eq(card.cardId),
 				card.isDeleted.eq(false))
-			.innerJoin(category)
-			.on(
-				card.categoryId.eq(category.categoryId),
-				category.isDeleted.eq(false),
-				category.categoryId.eq(categoryId))
 			.innerJoin(member)
 			.on(
-				category.memberId.eq(member.memberId),
+				cardHistory.solvedUserId.eq(member.memberId),
 				member.isDeleted.eq(false)
 			)
 			.where(

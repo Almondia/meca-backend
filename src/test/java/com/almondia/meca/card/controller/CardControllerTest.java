@@ -597,6 +597,8 @@ class CardControllerTest {
 				.andExpect(jsonPath("$[0].description").exists())
 				.andExpect(jsonPath("$[0].title").exists())
 				.andDo(document("{class-name}/{method-name}",
+					getDocumentRequest(),
+					getDocumentResponse(),
 					requestHeaders(headerWithName("Authorization").description("JWT 인증 토큰")),
 					pathParameters(parameterWithName("categoryId").description("카테고리 아이디")),
 					requestParameters(parameterWithName("limit").description("카드 갯수"),
@@ -634,6 +636,8 @@ class CardControllerTest {
 			resultActions.andExpect(status().isOk())
 				.andExpect(jsonPath("count").exists())
 				.andDo(document("{class-name}/{method-name}",
+					getDocumentRequest(),
+					getDocumentResponse(),
 					requestHeaders(headerWithName("Authorization").description("JWT 인증 토큰")),
 					pathParameters(parameterWithName("categoryId").description("카테고리 아이디")),
 					responseFields(fieldWithPath("count").description("카드 갯수"))));

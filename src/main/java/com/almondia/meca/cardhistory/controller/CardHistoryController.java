@@ -33,7 +33,7 @@ public class CardHistoryController {
 	public ResponseEntity<String> saveHistories(
 		@AuthenticationPrincipal Member member,
 		@RequestBody SaveRequestCardHistoryDto saveRequestCardHistoryDto) {
-		cardHistoryService.saveHistories(saveRequestCardHistoryDto, member.getMemberId());
+		cardHistoryService.saveCardHistories(saveRequestCardHistoryDto, member.getMemberId());
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 

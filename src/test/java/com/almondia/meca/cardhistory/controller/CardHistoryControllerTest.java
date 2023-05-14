@@ -34,6 +34,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import com.almondia.meca.cardhistory.application.CardHistoryService;
 import com.almondia.meca.cardhistory.controller.dto.CardHistoryRequestDto;
+import com.almondia.meca.cardhistory.controller.dto.CardHistoryResponseDto;
 import com.almondia.meca.cardhistory.controller.dto.SaveRequestCardHistoryDto;
 import com.almondia.meca.cardhistory.domain.vo.Answer;
 import com.almondia.meca.cardhistory.domain.vo.Score;
@@ -92,7 +93,9 @@ class CardHistoryControllerTest {
 				.userAnswer(new Answer("answer"))
 				.score(new Score(100))
 				.build();
-			SaveRequestCardHistoryDto saveRequestCardHistoryDto = new SaveRequestCardHistoryDto(List.of(historyDto));
+			Id categoryId = Id.generateNextId();
+			SaveRequestCardHistoryDto saveRequestCardHistoryDto = new SaveRequestCardHistoryDto(List.of(historyDto),
+				categoryId);
 
 			// when
 			ResultActions resultActions = mockMvc.perform(
@@ -103,13 +106,21 @@ class CardHistoryControllerTest {
 
 			// then
 			resultActions.andExpect(status().isCreated())
-				.andDo(document("{class-name}/{method-name}", getDocumentRequest(), getDocumentResponse(),
-					requestHeaders(headerWithName("Authorization").description("JWT 토큰")),
-					requestFields(fieldWithPath("cardHistories[].cardId").description("카드 ID"),
+				.andDo(document("{class-name}/{method-name}",
+					getDocumentRequest(),
+					getDocumentResponse(),
+					requestHeaders(
+						headerWithName("Authorization").description("JWT 토큰")
+					),
+					requestFields(
+						fieldWithPath("cardHistories[].cardId").description("카드 ID"),
 						fieldWithPath("cardHistories[].userAnswer").description("사용자 답안")
 							.attributes(key("constraints").value("100글자 이내")),
 						fieldWithPath("cardHistories[].score").description("점수")
-							.attributes(key("constraints").value("0 ~ 100 정수")))));
+							.attributes(key("constraints").value("0 ~ 100 정수")),
+						fieldWithPath("categoryId").description("카테고리 ID")
+					)
+				));
 		}
 	}
 
@@ -117,17 +128,16 @@ class CardHistoryControllerTest {
 	 * 정상 응답 테스트
 	 */
 	@Nested
-	@DisplayName("시뮬레이션 결과 조회 API")
-	class FindSimulationCardHistoryTest {
+	@DisplayName("카드 ID 기반 카드 히스토리 조회 API")
+	class FindCardHistoriesByCardIdTest {
 
 		@Test
 		@DisplayName("정상 응답 테스트")
 		@WithMockMember
 		void shouldReturn200WhenSuccessTest() throws Exception {
 			// given
-			Mockito.doReturn(CursorPage.builder()
-				.contents(List.of(CardHistoryTestHelper.generateCardHistory(Id.generateNextId(), Id.generateNextId(),
-					Id.generateNextId(), 100)))
+			Mockito.doReturn(CursorPage.<CardHistoryResponseDto>builder()
+				.contents(List.of(CardHistoryTestHelper.generateCardHistoryResponseDto()))
 				.hasNext(null)
 				.pageSize(2)
 				.sortOrder(SortOrder.DESC)
@@ -135,29 +145,36 @@ class CardHistoryControllerTest {
 
 			// when
 			ResultActions resultActions = mockMvc.perform(
-				get("/api/v1/histories/cards/{cardId}", Id.generateNextId().toString()).contentType(
-						MediaType.APPLICATION_JSON)
+				get("/api/v1/histories/cards/{cardId}",
+					Id.generateNextId().toString())
+					.contentType(MediaType.APPLICATION_JSON)
 					.characterEncoding(StandardCharsets.UTF_8)
 					.queryParam("pageSize", "2")
 					.queryParam("hasNext", Id.generateNextId().toString()));
 
 			// then
 			resultActions.andExpect(status().isOk())
-				.andDo(document("{class-name}/{method-name}", getDocumentRequest(), getDocumentResponse(),
-					requestParameters(parameterWithName("pageSize").description("페이지 사이즈"),
-						parameterWithName("hasNext").description("다음 페이지 존재 여부").optional()),
+				.andDo(document("{class-name}/{method-name}",
+					getDocumentRequest(),
+					getDocumentResponse(),
+					requestParameters(
+						parameterWithName("pageSize").description("페이지 사이즈"),
+						parameterWithName("hasNext").description("다음 페이지 존재 여부").optional()
+					),
 					pathParameters(parameterWithName("cardId").description("카드 ID")),
 					responseFields(
 						fieldWithPath("contents[].cardHistoryId").description("카드 히스토리 ID"),
 						fieldWithPath("contents[].categoryId").description("카테고리 ID"),
 						fieldWithPath("contents[].cardId").description("카드 ID"),
+						fieldWithPath("contents[].solvedUserId").description("문제를 푼 사용자 ID"),
+						fieldWithPath("contents[].solvedUserName").description("문제를 푼 사용자 이름"),
 						fieldWithPath("contents[].userAnswer").description("사용자 답안"),
 						fieldWithPath("contents[].score").description("점수"),
 						fieldWithPath("contents[].createdAt").description("생성일"),
-						fieldWithPath("contents[].deleted").description("삭제 여부"),
 						fieldWithPath("hasNext").description("다음 페이지 존재 여부"),
 						fieldWithPath("pageSize").description("페이지 사이즈"),
-						fieldWithPath("sortOrder").description("정렬 방식"))
+						fieldWithPath("sortOrder").description("정렬 방식")
+					)
 				));
 		}
 	}
@@ -171,9 +188,8 @@ class CardHistoryControllerTest {
 		@WithMockMember
 		void shouldReturn200WhenSuccessTest() throws Exception {
 			// given
-			Mockito.doReturn(CursorPage.builder()
-				.contents(List.of(CardHistoryTestHelper.generateCardHistory(Id.generateNextId(), Id.generateNextId(),
-					Id.generateNextId(), 100)))
+			Mockito.doReturn(CursorPage.<CardHistoryResponseDto>builder()
+				.contents(List.of(CardHistoryTestHelper.generateCardHistoryResponseDto()))
 				.hasNext(null)
 				.pageSize(2)
 				.sortOrder(SortOrder.DESC)
@@ -185,30 +201,26 @@ class CardHistoryControllerTest {
 					.contentType(MediaType.APPLICATION_JSON)
 					.characterEncoding(StandardCharsets.UTF_8)
 					.queryParam("hasNext", Id.generateNextId().toString())
-					.queryParam("pageSize", "2")
-			);
+					.queryParam("pageSize", "2"));
 
 			// then
 			resultActions.andExpect(status().isOk())
-				.andDo(document(
-					"{class-name}/{method-name}",
+				.andDo(document("{class-name}/{method-name}",
 					getDocumentRequest(),
 					getDocumentResponse(),
-					requestParameters(
-						parameterWithName("hasNext").description("다음 페이지 존재 여부").optional(),
+					requestParameters(parameterWithName("hasNext").description("다음 페이지 존재 여부").optional(),
 						parameterWithName("pageSize").description("페이지 사이즈")
 					),
-					pathParameters(
-						parameterWithName("categoryId").description("카테고리 ID")
-					),
+					pathParameters(parameterWithName("categoryId").description("카테고리 ID")),
 					responseFields(
 						fieldWithPath("contents[].cardHistoryId").description("카드 히스토리 ID"),
 						fieldWithPath("contents[].categoryId").description("카테고리 ID"),
 						fieldWithPath("contents[].cardId").description("카드 ID"),
+						fieldWithPath("contents[].solvedUserId").description("문제를 푼 사용자 ID"),
+						fieldWithPath("contents[].solvedUserName").description("문제를 푼 사용자 이름"),
 						fieldWithPath("contents[].userAnswer").description("사용자 답안"),
 						fieldWithPath("contents[].score").description("점수"),
 						fieldWithPath("contents[].createdAt").description("생성일"),
-						fieldWithPath("contents[].deleted").description("삭제 여부"),
 						fieldWithPath("hasNext").description("다음 페이지 존재 여부"),
 						fieldWithPath("pageSize").description("페이지 사이즈"),
 						fieldWithPath("sortOrder").description("정렬 방식")

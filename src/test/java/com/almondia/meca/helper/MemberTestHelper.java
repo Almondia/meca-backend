@@ -19,7 +19,7 @@ public class MemberTestHelper {
 			.email(new Email("www@gmail.com"))
 			.name(new Name("name"))
 			.profile(new Image("https://aws.s3.com"))
-			.oauthId("12312`1`1123")
+			.oauthId(Id.generateNextId().toString())
 			.oAuthType(OAuthType.GOOGLE)
 			.role(Role.USER)
 			.createdAt(LocalDateTime.now())

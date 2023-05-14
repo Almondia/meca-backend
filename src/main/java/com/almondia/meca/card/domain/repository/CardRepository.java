@@ -1,5 +1,6 @@
 package com.almondia.meca.card.domain.repository;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,4 +15,6 @@ public interface CardRepository extends JpaRepository<Card, Id>, CardQueryDslRep
 
 	List<Card> findByCategoryIdAndIsDeleted(Id categoryId, boolean isDeleted);
 
+	long countByIsDeletedFalseAndCardIdIn(
+		Collection<Id> cardIds);
 }

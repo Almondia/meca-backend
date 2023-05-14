@@ -40,7 +40,8 @@ class CardHistoryTest {
 		assertThat(entityType).isNotNull();
 		assertThat(entityType.getName()).isEqualTo("CardHistory");
 		assertThat(entityType.getAttributes()).extracting("name")
-			.containsExactlyInAnyOrder("isDeleted", "categoryId", "cardId", "cardHistoryId", "score", "userAnswer",
+			.containsExactlyInAnyOrder("solvedUserId", "isDeleted", "categoryId", "cardId", "cardHistoryId", "score",
+				"userAnswer",
 				"createdAt");
 	}
 
@@ -51,6 +52,7 @@ class CardHistoryTest {
 			.cardId(Id.generateNextId())
 			.cardHistoryId(Id.generateNextId())
 			.categoryId(Id.generateNextId())
+			.solvedUserId(Id.generateNextId())
 			.userAnswer(new Answer("answer asdfa"))
 			.score(new Score(100))
 			.build();

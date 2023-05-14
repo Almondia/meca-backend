@@ -1,9 +1,6 @@
 package com.almondia.meca.cardhistory.application;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.lang.NonNull;
@@ -11,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.almondia.meca.card.domain.repository.CardRepository;
+import com.almondia.meca.cardhistory.application.helper.CardHistoryFactory;
 import com.almondia.meca.cardhistory.controller.dto.CardHistoryRequestDto;
 import com.almondia.meca.cardhistory.controller.dto.CardHistoryResponseDto;
 import com.almondia.meca.cardhistory.controller.dto.SaveRequestCardHistoryDto;
@@ -29,9 +27,15 @@ public class CardHistoryService {
 	private final CardRepository cardRepository;
 
 	@Transactional
-	public void saveHistories(SaveRequestCardHistoryDto saveRequestCardHistoryDto, Id memberId) {
-		Map<Id, List<Id>> categoryIdsByCardId = checkAuthority(saveRequestCardHistoryDto, memberId);
-		List<CardHistory> cardHistories = getCardHistories(saveRequestCardHistoryDto, categoryIdsByCardId);
+	public void saveCardHistories(SaveRequestCardHistoryDto saveRequestCardHistoryDto, Id solvedMemberId) {
+		List<Id> cardIds = saveRequestCardHistoryDto.getCardHistories().stream()
+			.map(CardHistoryRequestDto::getCardId)
+			.collect(Collectors.toList());
+		if (cardRepository.countByIsDeletedFalseAndCardIdIn(cardIds) != cardIds.size()) {
+			throw new IllegalArgumentException("존재하지 않는 카드가 포함되어 있습니다.");
+		}
+		List<CardHistory> cardHistories = CardHistoryFactory.makeCardHistories(saveRequestCardHistoryDto,
+			solvedMemberId);
 		cardHistoryRepository.saveAll(cardHistories);
 	}
 
@@ -45,33 +49,5 @@ public class CardHistoryService {
 	public CursorPage<CardHistoryResponseDto> findCardHistoriesByCategoryId(@NonNull Id categoryId, int pageSize,
 		Id lastCardHistoryId) {
 		return cardHistoryRepository.findCardHistoriesByCategoryId(categoryId, pageSize, lastCardHistoryId);
-	}
-
-	private List<CardHistory> getCardHistories(SaveRequestCardHistoryDto saveRequestCardHistoryDto,
-		Map<Id, List<Id>> categoryIdsByCardId) {
-		List<CardHistory> cardHistories = new ArrayList<>();
-		for (CardHistoryRequestDto cardHistoryResponseDto : saveRequestCardHistoryDto.getCardHistories()) {
-			CardHistory cardHistory = CardHistory.builder()
-				.cardHistoryId(Id.generateNextId())
-				.cardId(cardHistoryResponseDto.getCardId())
-				.categoryId(categoryIdsByCardId.get(cardHistoryResponseDto.getCardId()).get(0))
-				.userAnswer(cardHistoryResponseDto.getUserAnswer())
-				.score(cardHistoryResponseDto.getScore())
-				.build();
-			cardHistories.add(cardHistory);
-		}
-		return cardHistories;
-	}
-
-	private Map<Id, List<Id>> checkAuthority(SaveRequestCardHistoryDto saveRequestCardHistoryDto, Id memberId) {
-		List<Id> cardIds = saveRequestCardHistoryDto.getCardHistories().stream()
-			.map(CardHistoryRequestDto::getCardId)
-			.collect(Collectors.toList());
-		Map<Id, List<Id>> categoryIdsByCardId = cardRepository.findMapByListOfCardIdAndMemberId(cardIds, memberId);
-		long allValuesCount = categoryIdsByCardId.values().stream().mapToLong(Collection::size).sum();
-		if (allValuesCount != cardIds.size()) {
-			throw new IllegalArgumentException("권한이 없거나 옳바르지 않은 입력을 하셨습니다");
-		}
-		return categoryIdsByCardId;
 	}
 }

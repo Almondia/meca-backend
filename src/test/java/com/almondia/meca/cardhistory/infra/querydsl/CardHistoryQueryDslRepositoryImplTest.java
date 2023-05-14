@@ -102,31 +102,26 @@ class CardHistoryQueryDslRepositoryImplTest {
 		@DisplayName("lastCardHistoryId가 null이 아니면 해당 인덱스부터 조회한다")
 		void shouldFindCardHistoryFromLastCardHistoryIdTest() {
 			// given
-			Id memberId = Id.generateNextId();
-			Id categoryId = Id.generateNextId();
-			Id cardId = Id.generateNextId();
-
-			Member member = MemberTestHelper.generateMember(memberId);
-			Category category = CategoryTestHelper.generateUnSharedCategory("hello", memberId, categoryId);
-			Card card = CardTestHelper.genOxCard(memberId, categoryId, cardId);
-			CardHistory cardHistory1 = CardHistoryTestHelper.generateCardHistory(Id.generateNextId(), cardId,
-				categoryId,
-				10);
-			CardHistory cardHistory2 = CardHistoryTestHelper.generateCardHistory(Id.generateNextId(), cardId,
-				categoryId,
-				10);
-			CardHistory cardHistory3 = CardHistoryTestHelper.generateCardHistory(Id.generateNextId(), cardId,
-				categoryId,
-				10);
-			persistAll(member, category, card, cardHistory1, cardHistory2, cardHistory3);
+			final Id categoryId = Id.generateNextId();
+			Member member = MemberTestHelper.generateMember(Id.generateNextId());
+			Member solvedMember = MemberTestHelper.generateMember(Id.generateNextId());
+			Member solvedMember2 = MemberTestHelper.generateMember(Id.generateNextId());
+			Category category = CategoryTestHelper.generateUnSharedCategory("hello", member.getMemberId(), categoryId);
+			Card card = CardTestHelper.genOxCard(member.getMemberId(), categoryId, Id.generateNextId());
+			CardHistory cardHistory1 = CardHistoryTestHelper.generateCardHistory(card.getCardId(), categoryId,
+				solvedMember2.getMemberId());
+			CardHistory cardHistory2 = CardHistoryTestHelper.generateCardHistory(card.getCardId(), categoryId,
+				solvedMember.getMemberId());
+			persistAll(member, solvedMember, solvedMember2, category, card, cardHistory1, cardHistory2);
 
 			// when
-			CursorPage<CardHistoryResponseDto> result = cardHistoryRepository.findCardHistoriesByCardId(cardId,
-				1, cardHistory2.getCardHistoryId());
+			CursorPage<CardHistoryResponseDto> result = cardHistoryRepository.findCardHistoriesByCardId(
+				card.getCardId(),
+				100, cardHistory2.getCardHistoryId());
 
 			// then
-			assertThat(result.getContents()).hasSize(1);
-			assertThat(result.getHasNext()).isNotNull();
+			assertThat(result.getContents()).hasSize(2);
+			assertThat(result.getHasNext()).isNull();
 		}
 	}
 
@@ -194,22 +189,19 @@ class CardHistoryQueryDslRepositoryImplTest {
 		@DisplayName("lastCardHistoryId가 null이 아니면 해당 인덱스부터 조회")
 		void shouldFindCardHistoryFromLastCardHistoryIdTest() {
 			// given
-			Id memberId = Id.generateNextId();
-			Id categoryId = Id.generateNextId();
-			Id cardId = Id.generateNextId();
+			final Id memberId = Id.generateNextId();
+			final Id solvedMemberId = Id.generateNextId();
+			final Id categoryId = Id.generateNextId();
 			Member member = MemberTestHelper.generateMember(memberId);
+			Member solvedMember = MemberTestHelper.generateMember(solvedMemberId);
+			Member solvedMember1 = MemberTestHelper.generateMember(Id.generateNextId());
 			Category category = CategoryTestHelper.generateUnSharedCategory("hello", memberId, categoryId);
-			Card card = CardTestHelper.genOxCard(memberId, categoryId, cardId);
-			CardHistory cardHistory1 = CardHistoryTestHelper.generateCardHistory(Id.generateNextId(), cardId,
-				categoryId,
-				10);
-			CardHistory cardHistory2 = CardHistoryTestHelper.generateCardHistory(Id.generateNextId(), cardId,
-				categoryId,
-				10);
-			CardHistory cardHistory3 = CardHistoryTestHelper.generateCardHistory(Id.generateNextId(), cardId,
-				categoryId,
-				10);
-			persistAll(member, category, card, cardHistory1, cardHistory2, cardHistory3);
+			Card card = CardTestHelper.genOxCard(memberId, categoryId, Id.generateNextId());
+			CardHistory cardHistory1 = CardHistoryTestHelper.generateCardHistory(card.getCardId(), categoryId,
+				solvedMemberId);
+			CardHistory cardHistory2 = CardHistoryTestHelper.generateCardHistory(card.getCardId(), categoryId,
+				solvedMember1.getMemberId());
+			persistAll(member, solvedMember, solvedMember1, category, card, cardHistory1, cardHistory2);
 
 			// when
 			CursorPage<CardHistoryResponseDto> result = cardHistoryRepository.findCardHistoriesByCategoryId(categoryId,
