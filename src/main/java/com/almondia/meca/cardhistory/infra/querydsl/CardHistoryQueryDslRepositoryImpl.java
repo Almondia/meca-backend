@@ -44,7 +44,7 @@ public class CardHistoryQueryDslRepositoryImpl implements CardHistoryQueryDslRep
 					member.name,
 					cardHistory.userAnswer,
 					cardHistory.score,
-					cardHistory.categoryId,
+					category.categoryId,
 					cardHistory.cardId,
 					cardHistory.createdAt
 				))
@@ -53,6 +53,11 @@ public class CardHistoryQueryDslRepositoryImpl implements CardHistoryQueryDslRep
 			.on(
 				cardHistory.cardId.eq(card.cardId),
 				card.isDeleted.eq(false)
+			)
+			.innerJoin(category)
+			.on(
+				card.categoryId.eq(category.categoryId),
+				category.isDeleted.eq(false)
 			)
 			.innerJoin(member)
 			.on(
@@ -89,7 +94,7 @@ public class CardHistoryQueryDslRepositoryImpl implements CardHistoryQueryDslRep
 					member.name,
 					cardHistory.userAnswer,
 					cardHistory.score,
-					cardHistory.categoryId,
+					category.categoryId,
 					cardHistory.cardId,
 					cardHistory.createdAt
 				))
@@ -98,13 +103,18 @@ public class CardHistoryQueryDslRepositoryImpl implements CardHistoryQueryDslRep
 			.on(
 				cardHistory.cardId.eq(card.cardId),
 				card.isDeleted.eq(false))
+			.innerJoin(category)
+			.on(
+				card.categoryId.eq(category.categoryId),
+				category.isDeleted.eq(false)
+			)
 			.innerJoin(member)
 			.on(
 				cardHistory.solvedUserId.eq(member.memberId),
 				member.isDeleted.eq(false)
 			)
 			.where(
-				cardHistory.categoryId.eq(categoryId),
+				category.categoryId.eq(categoryId),
 				cardHistory.isDeleted.eq(false),
 				lessOrEqCardHistoryId(lastCardHistoryId))
 			.orderBy(cardHistory.cardHistoryId.uuid.desc())

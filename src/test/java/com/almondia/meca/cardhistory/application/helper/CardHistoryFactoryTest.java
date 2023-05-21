@@ -33,7 +33,6 @@ class CardHistoryFactoryTest {
 
 		SaveRequestCardHistoryDto saveRequestCardHistoryDto = SaveRequestCardHistoryDto.builder()
 			.cardHistories(List.of(cardHistoryRequestDto))
-			.categoryId(categoryId)
 			.build();
 
 		List<CardHistory> result = CardHistoryFactory.makeCardHistories(saveRequestCardHistoryDto, solvedMemberId);
@@ -41,8 +40,7 @@ class CardHistoryFactoryTest {
 			.hasFieldOrPropertyWithValue("cardId", cardHistoryRequestDto.getCardId())
 			.hasFieldOrPropertyWithValue("score", cardHistoryRequestDto.getScore())
 			.hasFieldOrPropertyWithValue("userAnswer", cardHistoryRequestDto.getUserAnswer())
-			.hasFieldOrPropertyWithValue("solvedUserId", solvedMemberId)
-			.hasFieldOrPropertyWithValue("categoryId", categoryId);
+			.hasFieldOrPropertyWithValue("solvedUserId", solvedMemberId);
 
 	}
 }

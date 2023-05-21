@@ -2,8 +2,6 @@ package com.almondia.meca.cardhistory.controller.dto;
 
 import java.util.List;
 
-import com.almondia.meca.common.domain.vo.Id;
-
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,5 +17,4 @@ import lombok.ToString;
 public class SaveRequestCardHistoryDto {
 
 	private List<CardHistoryRequestDto> cardHistories;
-	private Id categoryId;
 }

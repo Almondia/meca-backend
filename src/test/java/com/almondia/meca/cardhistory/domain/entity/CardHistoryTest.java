@@ -40,7 +40,7 @@ class CardHistoryTest {
 		assertThat(entityType).isNotNull();
 		assertThat(entityType.getName()).isEqualTo("CardHistory");
 		assertThat(entityType.getAttributes()).extracting("name")
-			.containsExactlyInAnyOrder("solvedUserId", "isDeleted", "categoryId", "cardId", "cardHistoryId", "score",
+			.containsExactlyInAnyOrder("solvedUserId", "isDeleted", "cardId", "cardHistoryId", "score",
 				"userAnswer",
 				"createdAt");
 	}
@@ -51,7 +51,6 @@ class CardHistoryTest {
 		CardHistory cardHistory = CardHistory.builder()
 			.cardId(Id.generateNextId())
 			.cardHistoryId(Id.generateNextId())
-			.categoryId(Id.generateNextId())
 			.solvedUserId(Id.generateNextId())
 			.userAnswer(new Answer("answer asdfa"))
 			.score(new Score(100))
@@ -67,7 +66,6 @@ class CardHistoryTest {
 		CardHistory cardHistory = CardHistory.builder()
 			.cardHistoryId(Id.generateNextId())
 			.cardId(Id.generateNextId())
-			.categoryId(Id.generateNextId())
 			.score(new Score(100))
 			.userAnswer(new Answer("answer"))
 			.build();
@@ -81,7 +79,6 @@ class CardHistoryTest {
 		CardHistory cardHistory = CardHistory.builder()
 			.cardHistoryId(Id.generateNextId())
 			.cardId(Id.generateNextId())
-			.categoryId(Id.generateNextId())
 			.score(new Score(100))
 			.userAnswer(new Answer("answer"))
 			.isDeleted(false)

@@ -59,7 +59,7 @@ class CardHistoryServiceTest {
 			// expect
 			assertThatThrownBy(
 				() -> cardHistoryService.saveCardHistories(
-					makeSaveRequest(card1.getCardId(), Id.generateNextId(), categoryId),
+					makeSaveRequest(card1.getCardId(), Id.generateNextId()),
 					memberId)).isInstanceOf(IllegalArgumentException.class);
 
 		}
@@ -77,8 +77,7 @@ class CardHistoryServiceTest {
 
 			// when
 			cardHistoryService.saveCardHistories(
-				makeSaveRequest(card1.getCardId(), card2.getCardId(), categoryId),
-				memberId);
+				makeSaveRequest(card1.getCardId(), card2.getCardId()), memberId);
 
 			// then
 			QCardHistory cardHistory = QCardHistory.cardHistory;
@@ -88,7 +87,7 @@ class CardHistoryServiceTest {
 			assertThat(fetch).isEqualTo(2L);
 		}
 
-		private SaveRequestCardHistoryDto makeSaveRequest(Id cardId1, Id cardId2, Id categoryId) {
+		private SaveRequestCardHistoryDto makeSaveRequest(Id cardId1, Id cardId2) {
 			return SaveRequestCardHistoryDto.builder()
 				.cardHistories(List.of(CardHistoryRequestDto.builder()
 					.cardId(cardId1)
@@ -99,7 +98,6 @@ class CardHistoryServiceTest {
 					.userAnswer(new Answer(OxAnswer.X.toString()))
 					.score(new Score(0))
 					.build()))
-				.categoryId(categoryId)
 				.build();
 		}
 	}

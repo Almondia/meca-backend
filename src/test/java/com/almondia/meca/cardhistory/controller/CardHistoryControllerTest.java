@@ -94,8 +94,7 @@ class CardHistoryControllerTest {
 				.score(new Score(100))
 				.build();
 			Id categoryId = Id.generateNextId();
-			SaveRequestCardHistoryDto saveRequestCardHistoryDto = new SaveRequestCardHistoryDto(List.of(historyDto),
-				categoryId);
+			SaveRequestCardHistoryDto saveRequestCardHistoryDto = new SaveRequestCardHistoryDto(List.of(historyDto));
 
 			// when
 			ResultActions resultActions = mockMvc.perform(
@@ -117,8 +116,7 @@ class CardHistoryControllerTest {
 						fieldWithPath("cardHistories[].userAnswer").description("사용자 답안")
 							.attributes(key("constraints").value("100글자 이내")),
 						fieldWithPath("cardHistories[].score").description("점수")
-							.attributes(key("constraints").value("0 ~ 100 정수")),
-						fieldWithPath("categoryId").description("카테고리 ID")
+							.attributes(key("constraints").value("0 ~ 100 정수"))
 					)
 				));
 		}
