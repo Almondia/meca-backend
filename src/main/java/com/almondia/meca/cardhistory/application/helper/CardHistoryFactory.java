@@ -13,17 +13,14 @@ public class CardHistoryFactory {
 	public static List<CardHistory> makeCardHistories(SaveRequestCardHistoryDto saveRequestCardHistoryDto,
 		Id solvedMemberId) {
 		return saveRequestCardHistoryDto.getCardHistories().stream()
-			.map(cardHistoryRequestDto -> makeCardHistory(cardHistoryRequestDto,
-				saveRequestCardHistoryDto.getCategoryId(), solvedMemberId))
+			.map(cardHistoryRequestDto -> makeCardHistory(cardHistoryRequestDto, solvedMemberId))
 			.collect(Collectors.toList());
 	}
 
-	private static CardHistory makeCardHistory(CardHistoryRequestDto cardHistoryRequestDto, Id categoryId,
-		Id solvedMemberId) {
+	private static CardHistory makeCardHistory(CardHistoryRequestDto cardHistoryRequestDto, Id solvedMemberId) {
 		return CardHistory.builder()
 			.cardHistoryId(Id.generateNextId())
 			.cardId(cardHistoryRequestDto.getCardId())
-			.categoryId(categoryId)
 			.solvedUserId(solvedMemberId)
 			.userAnswer(cardHistoryRequestDto.getUserAnswer())
 			.score(cardHistoryRequestDto.getScore())
