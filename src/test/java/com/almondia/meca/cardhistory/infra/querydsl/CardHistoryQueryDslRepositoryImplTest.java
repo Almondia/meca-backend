@@ -54,8 +54,7 @@ class CardHistoryQueryDslRepositoryImplTest {
 			// given
 			Id categoryId = Id.generateNextId();
 			Id cardId = Id.generateNextId();
-			CardHistory cardHistory = CardHistoryTestHelper.generateCardHistory(Id.generateNextId(), cardId, categoryId,
-				10);
+			CardHistory cardHistory = CardHistoryTestHelper.generateCardHistory(Id.generateNextId(), cardId, 10);
 			cardHistory.delete();
 			em.persist(cardHistory);
 
@@ -74,8 +73,7 @@ class CardHistoryQueryDslRepositoryImplTest {
 			// given
 			Id categoryId = Id.generateNextId();
 			Id cardId = Id.generateNextId();
-			CardHistory cardHistory = CardHistoryTestHelper.generateCardHistory(Id.generateNextId(), cardId, categoryId,
-				10);
+			CardHistory cardHistory = CardHistoryTestHelper.generateCardHistory(Id.generateNextId(), cardId, 10);
 			em.persist(cardHistory);
 
 			// expect
@@ -89,8 +87,7 @@ class CardHistoryQueryDslRepositoryImplTest {
 			// given
 			Id categoryId = Id.generateNextId();
 			Id cardId = Id.generateNextId();
-			CardHistory cardHistory = CardHistoryTestHelper.generateCardHistory(Id.generateNextId(), cardId, categoryId,
-				10);
+			CardHistory cardHistory = CardHistoryTestHelper.generateCardHistory(Id.generateNextId(), cardId, 10);
 			em.persist(cardHistory);
 
 			// expect
@@ -108,9 +105,9 @@ class CardHistoryQueryDslRepositoryImplTest {
 			Member solvedMember2 = MemberTestHelper.generateMember(Id.generateNextId());
 			Category category = CategoryTestHelper.generateUnSharedCategory("hello", member.getMemberId(), categoryId);
 			Card card = CardTestHelper.genOxCard(member.getMemberId(), categoryId, Id.generateNextId());
-			CardHistory cardHistory1 = CardHistoryTestHelper.generateCardHistory(card.getCardId(), categoryId,
+			CardHistory cardHistory1 = CardHistoryTestHelper.generateCardHistory(card.getCardId(),
 				solvedMember2.getMemberId());
-			CardHistory cardHistory2 = CardHistoryTestHelper.generateCardHistory(card.getCardId(), categoryId,
+			CardHistory cardHistory2 = CardHistoryTestHelper.generateCardHistory(card.getCardId(),
 				solvedMember.getMemberId());
 			persistAll(member, solvedMember, solvedMember2, category, card, cardHistory1, cardHistory2);
 
@@ -141,8 +138,7 @@ class CardHistoryQueryDslRepositoryImplTest {
 			// given
 			Id categoryId = Id.generateNextId();
 			Id cardId = Id.generateNextId();
-			CardHistory cardHistory = CardHistoryTestHelper.generateCardHistory(Id.generateNextId(), cardId, categoryId,
-				10);
+			CardHistory cardHistory = CardHistoryTestHelper.generateCardHistory(Id.generateNextId(), cardId, 10);
 			cardHistory.delete();
 			em.persist(cardHistory);
 
@@ -161,8 +157,7 @@ class CardHistoryQueryDslRepositoryImplTest {
 			// given
 			Id categoryId = Id.generateNextId();
 			Id cardId = Id.generateNextId();
-			CardHistory cardHistory = CardHistoryTestHelper.generateCardHistory(Id.generateNextId(), cardId, categoryId,
-				10);
+			CardHistory cardHistory = CardHistoryTestHelper.generateCardHistory(Id.generateNextId(), cardId, 10);
 			em.persist(cardHistory);
 
 			// expect
@@ -176,8 +171,7 @@ class CardHistoryQueryDslRepositoryImplTest {
 			// given
 			Id categoryId = Id.generateNextId();
 			Id cardId = Id.generateNextId();
-			CardHistory cardHistory = CardHistoryTestHelper.generateCardHistory(Id.generateNextId(), cardId, categoryId,
-				10);
+			CardHistory cardHistory = CardHistoryTestHelper.generateCardHistory(Id.generateNextId(), cardId, 10);
 			em.persist(cardHistory);
 
 			// expect
@@ -197,9 +191,8 @@ class CardHistoryQueryDslRepositoryImplTest {
 			Member solvedMember1 = MemberTestHelper.generateMember(Id.generateNextId());
 			Category category = CategoryTestHelper.generateUnSharedCategory("hello", memberId, categoryId);
 			Card card = CardTestHelper.genOxCard(memberId, categoryId, Id.generateNextId());
-			CardHistory cardHistory1 = CardHistoryTestHelper.generateCardHistory(card.getCardId(), categoryId,
-				solvedMemberId);
-			CardHistory cardHistory2 = CardHistoryTestHelper.generateCardHistory(card.getCardId(), categoryId,
+			CardHistory cardHistory1 = CardHistoryTestHelper.generateCardHistory(card.getCardId(), solvedMemberId);
+			CardHistory cardHistory2 = CardHistoryTestHelper.generateCardHistory(card.getCardId(),
 				solvedMember1.getMemberId());
 			persistAll(member, solvedMember, solvedMember1, category, card, cardHistory1, cardHistory2);
 

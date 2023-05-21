@@ -232,9 +232,9 @@ class CategoryQueryDslRepositoryImplTest {
 			em.persist(CardTestHelper.genOxCard(memberId, categoryId, cardId1));
 			em.persist(CardTestHelper.genOxCard(memberId, categoryId, cardId2));
 			em.persist(CardTestHelper.genOxCard(memberId, categoryId, cardId3));
-			em.persist(CardHistoryTestHelper.generateCardHistory(Id.generateNextId(), cardId1, categoryId, 10));
-			em.persist(CardHistoryTestHelper.generateCardHistory(Id.generateNextId(), cardId1, categoryId, 20));
-			em.persist(CardHistoryTestHelper.generateCardHistory(Id.generateNextId(), cardId2, categoryId, 10));
+			em.persist(CardHistoryTestHelper.generateCardHistory(Id.generateNextId(), cardId1, 10));
+			em.persist(CardHistoryTestHelper.generateCardHistory(Id.generateNextId(), cardId1, 20));
+			em.persist(CardHistoryTestHelper.generateCardHistory(Id.generateNextId(), cardId2, 10));
 
 			// when
 			CursorPage<CategoryWithHistoryResponseDto> result = categoryRepository.findCategoryWithStatisticsByMemberId(

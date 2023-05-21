@@ -555,12 +555,8 @@ class CardQueryDslRepositoryImplTest {
 			Category category = CategoryTestHelper.generateUnSharedCategory("title", memberId, categoryId);
 			OxCard card = CardTestHelper.genOxCard(memberId, categoryId, cardId);
 			OxCard card2 = CardTestHelper.genOxCard(memberId, categoryId, cardId2);
-			CardHistory cardHistory1 = CardHistoryTestHelper.generateCardHistory(Id.generateNextId(), cardId,
-				categoryId,
-				30);
-			CardHistory cardHistory2 = CardHistoryTestHelper.generateCardHistory(Id.generateNextId(), cardId2,
-				categoryId,
-				10);
+			CardHistory cardHistory1 = CardHistoryTestHelper.generateCardHistory(Id.generateNextId(), cardId, 30);
+			CardHistory cardHistory2 = CardHistoryTestHelper.generateCardHistory(Id.generateNextId(), cardId2, 10);
 
 			entityManager.persist(member);
 			entityManager.persist(category);
@@ -587,9 +583,7 @@ class CardQueryDslRepositoryImplTest {
 			Category category = CategoryTestHelper.generateUnSharedCategory("title", memberId, categoryId);
 			OxCard card = CardTestHelper.genOxCard(memberId, categoryId, cardId);
 			OxCard card2 = CardTestHelper.genOxCard(memberId, categoryId, cardId2);
-			CardHistory cardHistory1 = CardHistoryTestHelper.generateCardHistory(Id.generateNextId(), cardId,
-				categoryId,
-				30);
+			CardHistory cardHistory1 = CardHistoryTestHelper.generateCardHistory(Id.generateNextId(), cardId, 30);
 
 			entityManager.persist(member);
 			entityManager.persist(category);

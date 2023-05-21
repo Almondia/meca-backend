@@ -14,11 +14,10 @@ public class CardHistoryTestHelper {
 
 	private static final Random random = new Random();
 
-	public static CardHistory generateCardHistory(Id cardHistoryId, Id cardId, Id categoryId, int score) {
+	public static CardHistory generateCardHistory(Id cardHistoryId, Id cardId, int score) {
 		return CardHistory.builder()
 			.cardHistoryId(cardHistoryId)
 			.cardId(cardId)
-			.categoryId(categoryId)
 			.solvedUserId(Id.generateNextId())
 			.userAnswer(new Answer("answer"))
 			.score(new Score(score))
@@ -26,11 +25,10 @@ public class CardHistoryTestHelper {
 			.build();
 	}
 
-	public static CardHistory generateCardHistory(Id cardId, Id categoryId, Id solvedUserId) {
+	public static CardHistory generateCardHistory(Id cardId, Id solvedUserId) {
 		return CardHistory.builder()
 			.cardHistoryId(Id.generateNextId())
 			.cardId(cardId)
-			.categoryId(categoryId)
 			.solvedUserId(solvedUserId)
 			.userAnswer(new Answer("answer"))
 			.score(new Score(random.nextInt(100)))
