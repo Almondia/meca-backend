@@ -50,4 +50,11 @@ public class CardHistoryService {
 		Id lastCardHistoryId) {
 		return cardHistoryRepository.findCardHistoriesByCategoryId(categoryId, pageSize, lastCardHistoryId);
 	}
+
+	@Transactional(readOnly = true)
+	public CursorPage<CardHistoryResponseDto> findCardHistoriesBySolvedMemberId(@NonNull Id solvedMemberId,
+		int pageSize,
+		Id lastCardHistoryId) {
+		return cardHistoryRepository.findCardHistoriesBySolvedMemberId(solvedMemberId, pageSize, lastCardHistoryId);
+	}
 }
