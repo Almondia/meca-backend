@@ -226,4 +226,54 @@ class CardHistoryControllerTest {
 				));
 		}
 	}
+
+	@Nested
+	@DisplayName("푼 사용자 기반 카드 히스토리 조회 API")
+	class FindCardHistoriesBySolvedMemberIdTest {
+
+		@Test
+		@DisplayName("정상 응답 테스트")
+		@WithMockMember
+		void shouldReturn200WhenSuccessTest() throws Exception {
+			// given
+			Mockito.doReturn(CursorPage.<CardHistoryResponseDto>builder()
+				.contents(List.of(CardHistoryTestHelper.generateCardHistoryResponseDto()))
+				.hasNext(null)
+				.pageSize(2)
+				.sortOrder(SortOrder.DESC)
+				.build()).when(cardHistoryService).findCardHistoriesBySolvedMemberId(any(), anyInt(), any());
+
+			// when
+			ResultActions resultActions = mockMvc.perform(
+				get("/api/v1/histories/members/{solvedMemberId}", Id.generateNextId().toString())
+					.contentType(MediaType.APPLICATION_JSON)
+					.characterEncoding(StandardCharsets.UTF_8)
+					.queryParam("hasNext", Id.generateNextId().toString())
+					.queryParam("pageSize", "2"));
+
+			// then
+			resultActions.andExpect(status().isOk())
+				.andDo(document("{class-name}/{method-name}",
+					getDocumentRequest(),
+					getDocumentResponse(),
+					requestParameters(parameterWithName("hasNext").description("다음 페이지 존재 여부").optional(),
+						parameterWithName("pageSize").description("페이지 사이즈")
+					),
+					pathParameters(parameterWithName("solvedMemberId").description("문제를 푼 사용자 ID")),
+					responseFields(
+						fieldWithPath("contents[].cardHistoryId").description("카드 히스토리 ID"),
+						fieldWithPath("contents[].categoryId").description("카테고리 ID"),
+						fieldWithPath("contents[].cardId").description("카드 ID"),
+						fieldWithPath("contents[].solvedUserId").description("문제를 푼 사용자 ID"),
+						fieldWithPath("contents[].solvedUserName").description("문제를 푼 사용자 이름"),
+						fieldWithPath("contents[].userAnswer").description("사용자 답안"),
+						fieldWithPath("contents[].score").description("점수"),
+						fieldWithPath("contents[].createdAt").description("생성일"),
+						fieldWithPath("hasNext").description("다음 페이지 존재 여부"),
+						fieldWithPath("pageSize").description("페이지 사이즈"),
+						fieldWithPath("sortOrder").description("정렬 방식")
+					)
+				));
+		}
+	}
 }
