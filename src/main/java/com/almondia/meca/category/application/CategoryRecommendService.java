@@ -22,11 +22,17 @@ public class CategoryRecommendService {
 		if (!categoryRepository.existsByCategoryIdAndIsDeletedFalse(categoryId)) {
 			throw new IllegalArgumentException("존재하지 않는 카테고리를 추천할 수 없습니다");
 		}
-		categoryRecommendRepository.save(CategoryRecommend.builder()
-			.categoryRecommendId(Id.generateNextId())
-			.categoryId(categoryId)
-			.recommendMemberId(memberId)
-			.build());
+		CategoryRecommend categoryRecommend = categoryRecommendRepository.findByCategoryIdAndRecommendMemberId(
+				categoryId, memberId)
+			.orElseGet(() -> CategoryRecommend.builder()
+				.categoryRecommendId(Id.generateNextId())
+				.categoryId(categoryId)
+				.recommendMemberId(memberId)
+				.build());
+		if (!categoryRecommend.isDeleted()) {
+			throw new IllegalArgumentException("이미 추천한 카테고리입니다");
+		}
+		categoryRecommend.restore();
 	}
 
 }

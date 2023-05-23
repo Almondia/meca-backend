@@ -20,6 +20,7 @@ import com.almondia.meca.common.configuration.jpa.QueryDslConfiguration;
 import com.almondia.meca.common.domain.vo.Id;
 import com.almondia.meca.helper.CategoryTestHelper;
 import com.almondia.meca.helper.MemberTestHelper;
+import com.almondia.meca.helper.recommend.CategoryRecommendTestHelper;
 import com.almondia.meca.member.domain.entity.Member;
 import com.almondia.meca.recommand.domain.entity.CategoryRecommend;
 import com.almondia.meca.recommand.domain.entity.QCategoryRecommend;
@@ -50,7 +51,9 @@ class CategoryRecommendServiceTest {
 	/**
 	 * 존재하지 않는 카테고리에 등록시 예외 발생
 	 * 삭제된 카테고리에 등록시 예외 발생
-	 * 정상적으로 등록된 경우 영속성 컨텍스트에 저장되어 있음
+	 * 카테고리 추천 엔티티가 존재하는 경우 예외 발생
+	 * 카테고리 추천을 하지 않은 경우 새로운 정보를 생성에 영속함
+	 * 카테고리 추천이 되어있지만 취소된 경우 복구함
 	 */
 	@Nested
 	@DisplayName("추천 등록")
@@ -87,7 +90,24 @@ class CategoryRecommendServiceTest {
 		}
 
 		@Test
-		@DisplayName("정상적으로 등록된 경우 영속성 컨텍스트에 저장되어 있음")
+		@DisplayName("카테고리 추천 엔티티가 존재하는 경우 예외 발생")
+		void shouldThrowExceptionWhenCategoryRecommendExist() {
+			// given
+			final Id categoryId = Id.generateNextId();
+			final Id memberId = Id.generateNextId();
+			Member member = MemberTestHelper.generateMember(memberId);
+			Category category = CategoryTestHelper.generateUnSharedCategory("hello", memberId, categoryId);
+			CategoryRecommend categoryRecommend = CategoryRecommendTestHelper.generateCategoryRecommend(categoryId,
+				memberId);
+			persistAll(member, category, categoryRecommend);
+
+			// expect
+			assertThatThrownBy(() -> categoryRecommendService.recommend(categoryId, memberId))
+				.isInstanceOf(IllegalArgumentException.class);
+		}
+
+		@Test
+		@DisplayName("카테고리 추천을 하지 않은 경우 새로운 정보를 생성에 영속함")
 		void shouldPersistWhenRecommendSuccess() {
 			// given
 			final Id categoryId = Id.generateNextId();
@@ -95,6 +115,28 @@ class CategoryRecommendServiceTest {
 			Member member = MemberTestHelper.generateMember(memberId);
 			Category category = CategoryTestHelper.generateUnSharedCategory("hello", memberId, categoryId);
 			persistAll(member, category);
+
+			// when
+			categoryRecommendService.recommend(categoryId, memberId);
+
+			// then
+			List<CategoryRecommend> fetch = jpaQueryFactory.selectFrom(categoryRecommend)
+				.fetch();
+			assertThat(fetch).isNotEmpty();
+		}
+
+		@Test
+		@DisplayName("카테고리 추천이 되어있지만 취소된 경우 복구함")
+		void shouldRecoverWhenRecommendCancel() {
+			// given
+			final Id categoryId = Id.generateNextId();
+			final Id memberId = Id.generateNextId();
+			Member member = MemberTestHelper.generateMember(memberId);
+			Category category = CategoryTestHelper.generateUnSharedCategory("hello", memberId, categoryId);
+			CategoryRecommend categoryRecommend1 = CategoryRecommendTestHelper.generateCategoryRecommend(categoryId,
+				memberId);
+			categoryRecommend1.delete();
+			persistAll(member, category, categoryRecommend1);
 
 			// when
 			categoryRecommendService.recommend(categoryId, memberId);
