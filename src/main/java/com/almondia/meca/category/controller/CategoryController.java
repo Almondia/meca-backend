@@ -108,4 +108,14 @@ public class CategoryController {
 		categoryRecommendService.recommend(categoryId, member.getMemberId());
 		return ResponseEntity.ok().build();
 	}
+
+	@DeleteMapping("/{categoryId}/recommend")
+	@Secured("ROLE_USER")
+	public ResponseEntity<Void> cancelCategory(
+		@AuthenticationPrincipal Member member,
+		@PathVariable(value = "categoryId") Id categoryId
+	) {
+		categoryRecommendService.cancel(categoryId, member.getMemberId());
+		return ResponseEntity.ok().build();
+	}
 }

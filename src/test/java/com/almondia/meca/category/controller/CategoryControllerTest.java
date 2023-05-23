@@ -410,4 +410,35 @@ class CategoryControllerTest {
 				));
 		}
 	}
+
+	@Nested
+	@DisplayName("카테고리 추천 취소 API")
+	class CancelTest {
+
+		@Test
+		@WithMockMember
+		@DisplayName("카테고리 추천 취소 성공시 응답 200")
+		void shouldReturnStatus200AndResponseWhenSuccessTest() throws Exception {
+			// given
+			Id categoryId = Id.generateNextId();
+
+			// when
+			ResultActions resultActions = mockMvc.perform(
+				delete("/api/v1/categories/{categoryId}/recommend", categoryId)
+					.header("Authorization", "Bearer " + jwtToken));
+
+			// then
+			resultActions.andExpect(status().isOk())
+				.andDo(document("{class-name}/{method-name}",
+					getDocumentRequest(),
+					getDocumentResponse(),
+					requestHeaders(
+						headerWithName("Authorization").description("JWT Bearer 토큰")
+					),
+					pathParameters(
+						parameterWithName("categoryId").description("카테고리 아이디")
+					)
+				));
+		}
+	}
 }
