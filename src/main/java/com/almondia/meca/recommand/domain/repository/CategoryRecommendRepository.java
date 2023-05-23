@@ -14,4 +14,6 @@ public interface CategoryRecommendRepository extends JpaRepository<CategoryRecom
 	Optional<CategoryRecommend> findByCategoryIdAndRecommendMemberIdAndIsDeletedFalse(Id categoryId,
 		Id recommendMemberId);
 
+	long countByCategoryIdAndIsDeletedFalse(Id categoryId);
+
 }
