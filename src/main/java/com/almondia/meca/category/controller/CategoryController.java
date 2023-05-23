@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.almondia.meca.category.application.CategoryRecommendService;
 import com.almondia.meca.category.application.CategoryService;
 import com.almondia.meca.category.controller.dto.CategoryResponseDto;
 import com.almondia.meca.category.controller.dto.CategoryWithHistoryResponseDto;
@@ -33,6 +34,7 @@ import lombok.RequiredArgsConstructor;
 public class CategoryController {
 
 	private final CategoryService categoryService;
+	private final CategoryRecommendService categoryRecommendService;
 
 	@PostMapping
 	@Secured("ROLE_USER")
@@ -95,5 +97,15 @@ public class CategoryController {
 		CursorPage<SharedCategoryResponseDto> responseDto = categoryService.findCursorPagingCategoryResponseDto(
 			pageSize, hasNext, categorySearchOption);
 		return ResponseEntity.ok(responseDto);
+	}
+
+	@PostMapping("/{categoryId}/recommend")
+	@Secured("ROLE_USER")
+	public ResponseEntity<Void> recommendCategory(
+		@AuthenticationPrincipal Member member,
+		@PathVariable(value = "categoryId") Id categoryId
+	) {
+		categoryRecommendService.recommend(categoryId, member.getMemberId());
+		return ResponseEntity.ok().build();
 	}
 }
