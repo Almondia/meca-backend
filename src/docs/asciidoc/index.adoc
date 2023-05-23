@@ -69,6 +69,18 @@ operation::update-category-test/should-return200-when-success-update-category-te
 
 operation::delete-category-test/should-return-status200-when-success-test[snippets='http-request,path-parameters,http-response']
 
+[[Category-카테고리-추천]]
+=== Category 카테고리 추천
+
+operation::recommend-test/should-return-status200-and-response-when-success-test[snippets='http-request,path-parameters,http-response']
+
+[[Category-카테고리-추천-취소]]
+=== Category 카테고리 추천 취소
+
+operation::cancel-test/should-return-status200-and-response-when-success-test[snippets='http-request,path-parameters,http-response']
+
+[[Category-카테고리-공유]]
+[[Category-카테고리-공유]]
 [[Card-API]]
 == Card API
 

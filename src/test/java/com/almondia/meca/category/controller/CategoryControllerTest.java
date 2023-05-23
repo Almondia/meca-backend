@@ -34,6 +34,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import com.almondia.meca.category.application.CategoryRecommendService;
 import com.almondia.meca.category.application.CategoryService;
 import com.almondia.meca.category.controller.dto.CategoryWithHistoryResponseDto;
 import com.almondia.meca.category.controller.dto.SharedCategoryResponseDto;
@@ -66,6 +67,9 @@ class CategoryControllerTest {
 
 	@MockBean
 	CategoryService categoryservice;
+
+	@MockBean
+	CategoryRecommendService categoryRecommendService;
 
 	@MockBean
 	JwtAuthenticationFilter jwtAuthenticationFilter;
@@ -372,6 +376,67 @@ class CategoryControllerTest {
 						fieldWithPath("contents[].memberInfo.modifiedAt").description("회원 수정일"),
 						fieldWithPath("contents[].memberInfo.oauthType").description("Oauth 타입"),
 						fieldWithPath("contents[].memberInfo.deleted").description("회원 삭제 여부")
+					)
+				));
+		}
+	}
+
+	@Nested
+	@DisplayName("카테고리 추천 등록 API")
+	class RecommendTest {
+
+		@Test
+		@WithMockMember
+		@DisplayName("카테고리 추천 등롱 성공시 응답 200")
+		void shouldReturnStatus200AndResponseWhenSuccessTest() throws Exception {
+			// given
+
+			// when
+			ResultActions resultActions = mockMvc.perform(
+				post("/api/v1/categories/{categoryId}/like/like", Id.generateNextId())
+					.header("Authorization", "Bearer " + jwtToken));
+
+			// then
+			resultActions.andExpect(status().isOk())
+				.andDo(document("{class-name}/{method-name}",
+					getDocumentRequest(),
+					getDocumentResponse(),
+					requestHeaders(
+						headerWithName("Authorization").description("JWT Bearer 토큰")
+					),
+					pathParameters(
+						parameterWithName("categoryId").description("카테고리 아이디")
+					)
+				));
+		}
+	}
+
+	@Nested
+	@DisplayName("카테고리 추천 취소 API")
+	class CancelTest {
+
+		@Test
+		@WithMockMember
+		@DisplayName("카테고리 추천 취소 성공시 응답 200")
+		void shouldReturnStatus200AndResponseWhenSuccessTest() throws Exception {
+			// given
+			Id categoryId = Id.generateNextId();
+
+			// when
+			ResultActions resultActions = mockMvc.perform(
+				post("/api/v1/categories/{categoryId}/like/unlike", categoryId)
+					.header("Authorization", "Bearer " + jwtToken));
+
+			// then
+			resultActions.andExpect(status().isOk())
+				.andDo(document("{class-name}/{method-name}",
+					getDocumentRequest(),
+					getDocumentResponse(),
+					requestHeaders(
+						headerWithName("Authorization").description("JWT Bearer 토큰")
+					),
+					pathParameters(
+						parameterWithName("categoryId").description("카테고리 아이디")
 					)
 				));
 		}
