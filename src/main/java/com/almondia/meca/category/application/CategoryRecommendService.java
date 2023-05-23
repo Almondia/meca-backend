@@ -35,4 +35,12 @@ public class CategoryRecommendService {
 		categoryRecommend.restore();
 	}
 
+	@Transactional
+	public void cancel(Id categoryId, Id memberId) {
+		CategoryRecommend categoryRecommend =
+			categoryRecommendRepository.findByCategoryIdAndRecommendMemberIdAndIsDeletedFalse(categoryId, memberId)
+				.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 카테고리 추천을 취소할 수 없습니다"));
+		categoryRecommend.delete();
+	}
+
 }

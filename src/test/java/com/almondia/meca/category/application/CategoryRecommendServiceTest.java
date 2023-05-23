@@ -147,4 +147,68 @@ class CategoryRecommendServiceTest {
 			assertThat(fetch).isNotEmpty();
 		}
 	}
+
+	/**
+	 * 존재하지 않는 카테고리에 등록시 예외 발생
+	 * 삭제된 카테고리 추천을 삭제시 예외 발생
+	 * 성공적으로 삭제시 삭제 상태로 영속화함
+	 */
+	@Nested
+	@DisplayName("추천 취소")
+	class CancelTest {
+
+		@Test
+		@DisplayName("존재하지 않는 카테고리에 등록시 예외 발생")
+		void shouldThrowExceptionWhenCategoryNotExist() {
+			// given
+			final Id categoryId = Id.generateNextId();
+			final Id memberId = Id.generateNextId();
+			Member member = MemberTestHelper.generateMember(memberId);
+			persistAll(member);
+
+			// expect
+			assertThatThrownBy(() -> categoryRecommendService.cancel(categoryId, memberId))
+				.isInstanceOf(IllegalArgumentException.class);
+		}
+
+		@Test
+		@DisplayName("삭제된 카테고리 추천을 삭제시 예외 발생")
+		void shouldThrowExceptionWhenCategoryRecommendDeleted() {
+			// given
+			final Id categoryId = Id.generateNextId();
+			final Id memberId = Id.generateNextId();
+			Member member = MemberTestHelper.generateMember(memberId);
+			Category category = CategoryTestHelper.generateUnSharedCategory("hello", memberId, categoryId);
+			CategoryRecommend categoryRecommend = CategoryRecommendTestHelper.generateCategoryRecommend(categoryId,
+				memberId);
+			categoryRecommend.delete();
+			persistAll(member, category, categoryRecommend);
+
+			// expect
+			assertThatThrownBy(() -> categoryRecommendService.cancel(categoryId, memberId))
+				.isInstanceOf(IllegalArgumentException.class);
+		}
+
+		@Test
+		@DisplayName("성공적으로 삭제시 삭제 상태로 영속화함")
+		void shouldPersistWhenCancelSuccess() {
+			// given
+			final Id categoryId = Id.generateNextId();
+			final Id memberId = Id.generateNextId();
+			Member member = MemberTestHelper.generateMember(memberId);
+			Category category = CategoryTestHelper.generateUnSharedCategory("hello", memberId, categoryId);
+			CategoryRecommend categoryRecommend1 = CategoryRecommendTestHelper.generateCategoryRecommend(categoryId,
+				memberId);
+			persistAll(member, category, categoryRecommend1);
+
+			// when
+			categoryRecommendService.cancel(categoryId, memberId);
+
+			// then
+			CategoryRecommend fetch = jpaQueryFactory.selectFrom(categoryRecommend)
+				.fetchOne();
+			assertThat(fetch).isNotNull();
+			assertThat(fetch.isDeleted()).isEqualTo(true);
+		}
+	}
 }
