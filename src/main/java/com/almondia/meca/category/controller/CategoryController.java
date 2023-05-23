@@ -99,7 +99,7 @@ public class CategoryController {
 		return ResponseEntity.ok(responseDto);
 	}
 
-	@PostMapping("/{categoryId}/recommend")
+	@PostMapping("/{categoryId}/like/like")
 	@Secured("ROLE_USER")
 	public ResponseEntity<Void> recommendCategory(
 		@AuthenticationPrincipal Member member,
@@ -109,7 +109,7 @@ public class CategoryController {
 		return ResponseEntity.ok().build();
 	}
 
-	@DeleteMapping("/{categoryId}/recommend")
+	@PostMapping("/{categoryId}/like/unlike")
 	@Secured("ROLE_USER")
 	public ResponseEntity<Void> cancelCategory(
 		@AuthenticationPrincipal Member member,

@@ -393,7 +393,7 @@ class CategoryControllerTest {
 
 			// when
 			ResultActions resultActions = mockMvc.perform(
-				post("/api/v1/categories/{categoryId}/recommend", Id.generateNextId())
+				post("/api/v1/categories/{categoryId}/like/like", Id.generateNextId())
 					.header("Authorization", "Bearer " + jwtToken));
 
 			// then
@@ -424,7 +424,7 @@ class CategoryControllerTest {
 
 			// when
 			ResultActions resultActions = mockMvc.perform(
-				delete("/api/v1/categories/{categoryId}/recommend", categoryId)
+				post("/api/v1/categories/{categoryId}/like/unlike", categoryId)
 					.header("Authorization", "Bearer " + jwtToken));
 
 			// then
