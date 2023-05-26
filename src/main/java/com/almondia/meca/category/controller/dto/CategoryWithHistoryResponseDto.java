@@ -28,4 +28,5 @@ public class CategoryWithHistoryResponseDto {
 	private final double scoreAvg;
 	private final long solveCount;
 	private final long totalCount;
+	private final long likeCount;
 }
