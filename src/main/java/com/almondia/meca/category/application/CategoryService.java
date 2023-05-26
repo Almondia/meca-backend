@@ -12,7 +12,7 @@ import com.almondia.meca.cardhistory.domain.entity.CardHistory;
 import com.almondia.meca.cardhistory.domain.repository.CardHistoryRepository;
 import com.almondia.meca.category.application.helper.CategoryFactory;
 import com.almondia.meca.category.application.helper.CategoryMapper;
-import com.almondia.meca.category.controller.dto.CategoryResponseDto;
+import com.almondia.meca.category.controller.dto.CategoryDto;
 import com.almondia.meca.category.controller.dto.CategoryWithHistoryResponseDto;
 import com.almondia.meca.category.controller.dto.SaveCategoryRequestDto;
 import com.almondia.meca.category.controller.dto.SharedCategoryResponseDto;
@@ -36,14 +36,14 @@ public class CategoryService {
 	private final CategoryChecker categoryChecker;
 
 	@Transactional
-	public CategoryResponseDto saveCategory(SaveCategoryRequestDto saveCategoryRequestDto, Id memberId) {
+	public CategoryDto saveCategory(SaveCategoryRequestDto saveCategoryRequestDto, Id memberId) {
 		Category category = CategoryFactory.genCategory(saveCategoryRequestDto, memberId);
 		Category result = categoryRepository.save(category);
 		return CategoryMapper.entityToCategoryResponseDto(result);
 	}
 
 	@Transactional
-	public CategoryResponseDto updateCategory(UpdateCategoryRequestDto updateCategoryRequestDto, Id categoryId,
+	public CategoryDto updateCategory(UpdateCategoryRequestDto updateCategoryRequestDto, Id categoryId,
 		Id memberId) {
 		Category category = categoryChecker.checkAuthority(categoryId, memberId);
 		if (updateCategoryRequestDto.getTitle() != null) {

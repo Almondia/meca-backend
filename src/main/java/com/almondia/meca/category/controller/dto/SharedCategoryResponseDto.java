@@ -11,7 +11,7 @@ import lombok.Getter;
 @Getter
 public class SharedCategoryResponseDto {
 
-	private final CategoryResponseDto categoryInfo;
+	private final CategoryDto categoryInfo;
 	private final MemberResponseDto memberInfo;
 
 	public SharedCategoryResponseDto(Category category, Member member) {

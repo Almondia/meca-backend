@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.almondia.meca.category.application.CategoryRecommendService;
 import com.almondia.meca.category.application.CategoryService;
-import com.almondia.meca.category.controller.dto.CategoryResponseDto;
+import com.almondia.meca.category.controller.dto.CategoryDto;
 import com.almondia.meca.category.controller.dto.CategoryWithHistoryResponseDto;
 import com.almondia.meca.category.controller.dto.SaveCategoryRequestDto;
 import com.almondia.meca.category.controller.dto.SharedCategoryResponseDto;
@@ -38,23 +38,23 @@ public class CategoryController {
 
 	@PostMapping
 	@Secured("ROLE_USER")
-	public ResponseEntity<CategoryResponseDto> saveCategory(
+	public ResponseEntity<CategoryDto> saveCategory(
 		@AuthenticationPrincipal Member member,
 		@RequestBody SaveCategoryRequestDto saveCategoryRequestDto
 	) {
-		CategoryResponseDto categoryResponseDto = categoryService.saveCategory(saveCategoryRequestDto,
+		CategoryDto categoryDto = categoryService.saveCategory(saveCategoryRequestDto,
 			member.getMemberId());
-		return ResponseEntity.status(HttpStatus.CREATED).body(categoryResponseDto);
+		return ResponseEntity.status(HttpStatus.CREATED).body(categoryDto);
 	}
 
 	@PutMapping("/{categoryId}")
 	@Secured("ROLE_USER")
-	public ResponseEntity<CategoryResponseDto> updateCategory(
+	public ResponseEntity<CategoryDto> updateCategory(
 		@AuthenticationPrincipal Member member,
 		@PathVariable(value = "categoryId") Id categoryId,
 		@RequestBody UpdateCategoryRequestDto updateCategoryRequestDto
 	) {
-		CategoryResponseDto responseDto = categoryService.updateCategory(updateCategoryRequestDto,
+		CategoryDto responseDto = categoryService.updateCategory(updateCategoryRequestDto,
 			categoryId, member.getMemberId());
 		return ResponseEntity.ok(responseDto);
 	}

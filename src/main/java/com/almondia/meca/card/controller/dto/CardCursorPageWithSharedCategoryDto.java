@@ -3,7 +3,7 @@ package com.almondia.meca.card.controller.dto;
 import java.util.List;
 
 import com.almondia.meca.category.application.helper.CategoryMapper;
-import com.almondia.meca.category.controller.dto.CategoryResponseDto;
+import com.almondia.meca.category.controller.dto.CategoryDto;
 import com.almondia.meca.category.domain.entity.Category;
 import com.almondia.meca.common.controller.dto.CursorPage;
 import com.almondia.meca.common.domain.vo.Id;
@@ -14,7 +14,7 @@ import lombok.Getter;
 @Getter
 public class CardCursorPageWithSharedCategoryDto extends CursorPage<SharedCardResponseDto> {
 
-	private CategoryResponseDto category;
+	private CategoryDto category;
 
 	public CardCursorPageWithSharedCategoryDto(List<SharedCardResponseDto> contents, Id hasNext, int pageSize,
 		SortOrder sortOrder) {

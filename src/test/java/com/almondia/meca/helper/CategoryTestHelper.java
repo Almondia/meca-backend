@@ -2,7 +2,7 @@ package com.almondia.meca.helper;
 
 import java.time.LocalDateTime;
 
-import com.almondia.meca.category.controller.dto.CategoryResponseDto;
+import com.almondia.meca.category.controller.dto.CategoryDto;
 import com.almondia.meca.category.controller.dto.SaveCategoryRequestDto;
 import com.almondia.meca.category.domain.entity.Category;
 import com.almondia.meca.category.domain.vo.Title;
@@ -42,8 +42,8 @@ public class CategoryTestHelper {
 			.build();
 	}
 
-	public static CategoryResponseDto generateCategoryResponseDto() {
-		return CategoryResponseDto.builder()
+	public static CategoryDto generateCategoryResponseDto() {
+		return CategoryDto.builder()
 			.categoryId(Id.generateNextId())
 			.memberId(Id.generateNextId())
 			.thumbnail(new Image("https://aws.s3.com"))

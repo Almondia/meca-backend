@@ -19,7 +19,7 @@ import org.springframework.security.access.AccessDeniedException;
 
 import com.almondia.meca.card.domain.repository.CardRepository;
 import com.almondia.meca.cardhistory.domain.repository.CardHistoryRepository;
-import com.almondia.meca.category.controller.dto.CategoryResponseDto;
+import com.almondia.meca.category.controller.dto.CategoryDto;
 import com.almondia.meca.category.controller.dto.SaveCategoryRequestDto;
 import com.almondia.meca.category.controller.dto.UpdateCategoryRequestDto;
 import com.almondia.meca.category.domain.entity.Category;
@@ -70,7 +70,7 @@ class CategoryServiceTest {
 				.build();
 
 			// when
-			CategoryResponseDto result = categoryService.saveCategory(saveCategoryRequestDto,
+			CategoryDto result = categoryService.saveCategory(saveCategoryRequestDto,
 				Id.generateNextId());
 
 			// then
@@ -90,7 +90,7 @@ class CategoryServiceTest {
 				.build();
 
 			// when
-			CategoryResponseDto result = categoryService.saveCategory(saveCategoryRequestDto,
+			CategoryDto result = categoryService.saveCategory(saveCategoryRequestDto,
 				Id.generateNextId());
 
 			// then
@@ -183,7 +183,7 @@ class CategoryServiceTest {
 				.build();
 
 			// when
-			CategoryResponseDto result = categoryService.updateCategory(updateCategoryRequestDto,
+			CategoryDto result = categoryService.updateCategory(updateCategoryRequestDto,
 				category.getCategoryId(),
 				category.getMemberId());
 
@@ -210,7 +210,7 @@ class CategoryServiceTest {
 				.build();
 
 			// when
-			CategoryResponseDto result = categoryService.updateCategory(updateCategoryRequestDto,
+			CategoryDto result = categoryService.updateCategory(updateCategoryRequestDto,
 				category.getCategoryId(),
 				category.getMemberId());
 
@@ -238,7 +238,7 @@ class CategoryServiceTest {
 				.build();
 
 			// when
-			CategoryResponseDto result = categoryService.updateCategory(updateCategoryRequestDto,
+			CategoryDto result = categoryService.updateCategory(updateCategoryRequestDto,
 				category.getCategoryId(),
 				category.getMemberId());
 
@@ -268,7 +268,7 @@ class CategoryServiceTest {
 				.build();
 
 			// when
-			CategoryResponseDto result = categoryService.updateCategory(updateCategoryRequestDto,
+			CategoryDto result = categoryService.updateCategory(updateCategoryRequestDto,
 				category.getCategoryId(),
 				category.getMemberId());
 

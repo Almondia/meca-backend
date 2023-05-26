@@ -15,7 +15,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @Getter
 @ToString
-public class CategoryResponseDto {
+public class CategoryDto {
 
 	private final Id categoryId;
 	private final Id memberId;
