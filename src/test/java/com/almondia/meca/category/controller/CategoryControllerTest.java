@@ -278,7 +278,8 @@ class CategoryControllerTest {
 						fieldWithPath("contents[].solveCount").description("카테고리 문제 풀이 수"),
 						fieldWithPath("contents[].totalCount").description("카테고리 문제 수"),
 						fieldWithPath("contents[].deleted").description("카테고리 삭제 여부"),
-						fieldWithPath("contents[].shared").description("카테고리 공유 여부")
+						fieldWithPath("contents[].shared").description("카테고리 공유 여부"),
+						fieldWithPath("contents[].likeCount").description("카테고리 좋아요 수")
 					)
 				));
 		}
