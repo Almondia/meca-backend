@@ -36,18 +36,18 @@ class CategoryQueryDslRepositoryImplTest {
 	EntityManager em;
 
 	/**
-	 * 1. 카테고리가 없는 경우 contents가 비어있어야 함
-	 * 2. 카테고리가 있는 경우 contents가 있어야 함
-	 * 3. 카테고리가 있는 경우, pageSize가 0인 경우 contents가 비어 있어야 함
-	 * 4. 조회후 다음 페이징 index가 있는 경우 hasNext에 다음 카테고리 id가 존재해야 함
-	 * 5. 조회후 다음 페이징 index가 없는 경우 hasNext에 null이 존재해야 함
-	 * 6. 조회후 pageSize보다 적은 카테고리를 조회한 경우 hasNext는 null이어야 함
-	 * 7. share와 상관 없이 조회할 수 있어야 한다
-	 * 8. lastCategoryId를 입력받은 경우, lastCategoryId보다 작은 카테고리는 조회하지 않는다
-	 * 9. 풀이한 카드의 경우 풀이한 고유한 카드의 갯수만 조회할 수 있어야 한다
-	 * 10. 전체 카드는 풀이한 카드 또는 풀이한 카드와 상관 없이 고유한 카드의 갯수를 조회할 수 있어야 한다
-	 * 11. searchOption의 containTitle을 입력받은 경우 해당 문자열을 포함하는 카테고리만 조회할 수 있어야 한다
-	 * 12. 카드를 생성후 삭제시 카테고리의 카드 갯수는 0이여야 한다
+	 * 카테고리가 없는 경우 contents가 비어있어야 함
+	 * 카테고리가 있는 경우 contents가 있어야 함
+	 * 카테고리가 있는 경우, pageSize가 0인 경우 contents가 비어 있어야 함
+	 * 조회후 다음 페이징 index가 있는 경우 hasNext에 다음 카테고리 id가 존재해야 함
+	 * 조회후 다음 페이징 index가 없는 경우 hasNext에 null이 존재해야 함
+	 * 조회후 pageSize보다 적은 카테고리를 조회한 경우 hasNext는 null이어야 함
+	 * share와 상관 없이 조회할 수 있어야 한다
+	 * lastCategoryId를 입력받은 경우, lastCategoryId보다 작은 카테고리는 조회하지 않는다
+	 * 풀이한 카드의 경우 풀이한 고유한 카드의 갯수만 조회할 수 있어야 한다
+	 * 전체 카드는 풀이한 카드 또는 풀이한 카드와 상관 없이 고유한 카드의 갯수를 조회할 수 있어야 한다
+	 * searchOption의 containTitle을 입력받은 경우 해당 문자열을 포함하는 카테고리만 조회할 수 있어야 한다
+	 * 카드를 생성후 삭제시 카테고리의 카드 갯수는 0이여야 한다
 	 */
 	@Nested
 	@DisplayName("findCategoryWithStatisticsByMemberId 메서드 테스트")
@@ -329,15 +329,15 @@ class CategoryQueryDslRepositoryImplTest {
 	}
 
 	/**
-	 * 1. 카테고리가 없는 경우 contents가 비어있어야 함
-	 * 2. 카테고리가 있고 내부에 삭제되지 않은 카드가 최소 1개 이상이여야 contents가 있음
-	 * 3. 카테고리가 있고 내부에 삭제된 카드가 1개 이상 있어도 contents는 비어 있어야 함
-	 * 4. 카테고리가 있는 경우, pageSize가 0인 경우 contents가 비어 있어야 함
-	 * 5. 조회후 다음 페이징 index가 있는 경우 hasNext에 다음 카테고리 id가 존재해야 함
-	 * 6. 조회후 다음 페이징 index가 없는 경우 hasNext에 null이 존재해야 함
-	 * 7. shared가 false인 카테고리는 조회하면 안된다
-	 * 8. lastCategoryId를 입력받은 경우, lastCategoryId와 같거나 큰 카테고리는 조회되어야 한다
-	 * 9. CategorySearchOption의 containTitle을 입력받은 경우 해당 문자열을 포함하는 카테고리만 조회할 수 있어야 한다
+	 * 카테고리가 없는 경우 contents가 비어있어야 함
+	 * 카테고리가 있고 내부에 삭제되지 않은 카드가 최소 1개 이상이여야 contents가 있음
+	 * 카테고리가 있고 내부에 삭제된 카드가 1개 이상 있어도 contents는 비어 있어야 함
+	 * 카테고리가 있는 경우, pageSize가 0인 경우 contents가 비어 있어야 함
+	 * 조회후 다음 페이징 index가 있는 경우 hasNext에 다음 카테고리 id가 존재해야 함
+	 * 조회후 다음 페이징 index가 없는 경우 hasNext에 null이 존재해야 함
+	 * shared가 false인 카테고리는 조회하면 안된다
+	 * lastCategoryId를 입력받은 경우, lastCategoryId와 같거나 큰 카테고리는 조회되어야 한다
+	 * CategorySearchOption의 containTitle을 입력받은 경우 해당 문자열을 포함하는 카테고리만 조회할 수 있어야 한다
 	 */
 	@Nested
 	@DisplayName("findCategoryShared 테스트")
