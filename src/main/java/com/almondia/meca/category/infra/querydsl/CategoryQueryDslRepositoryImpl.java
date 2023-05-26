@@ -128,17 +128,25 @@ public class CategoryQueryDslRepositoryImpl implements CategoryQueryDslRepositor
 		List<SharedCategoryResponseDto> response = jpaQueryFactory.select(
 				Projections.constructor(SharedCategoryResponseDto.class,
 					category,
-					member))
+					member,
+					categoryRecommend.categoryRecommendId.count()))
 			.from(category)
 			.where(
 				category.isShared.eq(true),
-				dynamicCursorExpression(lastCategoryId),
-				card.isDeleted.eq(false)
+				dynamicCursorExpression(lastCategoryId)
 			)
 			.innerJoin(member)
-			.on(category.memberId.eq(member.memberId))
+			.on(category.memberId.eq(member.memberId),
+				member.isDeleted.eq(false)
+			)
 			.leftJoin(card)
-			.on(category.categoryId.eq(card.categoryId))
+			.on(category.categoryId.eq(card.categoryId),
+				card.isDeleted.eq(false)
+			)
+			.leftJoin(categoryRecommend)
+			.on(category.categoryId.eq(categoryRecommend.categoryId),
+				categoryRecommend.isDeleted.eq(false)
+			)
 			.groupBy(category.categoryId)
 			.having(card.cardId.countDistinct().gt(0))
 			.orderBy(category.categoryId.uuid.desc())
@@ -153,18 +161,29 @@ public class CategoryQueryDslRepositoryImpl implements CategoryQueryDslRepositor
 		List<SharedCategoryResponseDto> response = jpaQueryFactory.select(
 				Projections.constructor(SharedCategoryResponseDto.class,
 					category,
-					member))
+					member,
+					categoryRecommend.categoryRecommendId.count()))
 			.from(category)
 			.innerJoin(member)
-			.on(category.memberId.eq(member.memberId))
+			.on(
+				category.memberId.eq(member.memberId),
+				member.isDeleted.eq(false)
+			)
 			.leftJoin(card)
-			.on(category.categoryId.eq(card.categoryId))
+			.on(
+				category.categoryId.eq(card.categoryId),
+				card.isDeleted.eq(false)
+			)
+			.leftJoin(categoryRecommend)
+			.on(
+				category.categoryId.eq(categoryRecommend.categoryId),
+				categoryRecommend.isDeleted.eq(false)
+			)
 			.groupBy(category.categoryId)
 			.having(card.cardId.countDistinct().gt(0))
 			.where(
 				category.isShared.eq(true),
 				dynamicCursorExpression(lastCategoryId),
-				card.isDeleted.eq(false),
 				containTitle(categorySearchOption.getContainTitle()))
 			.orderBy(category.categoryId.uuid.desc())
 			.limit(pageSize + 1)

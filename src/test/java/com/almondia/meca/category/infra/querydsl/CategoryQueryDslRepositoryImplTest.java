@@ -366,6 +366,7 @@ class CategoryQueryDslRepositoryImplTest {
 	 * shared가 false인 카테고리는 조회하면 안된다
 	 * lastCategoryId를 입력받은 경우, lastCategoryId와 같거나 큰 카테고리는 조회되어야 한다
 	 * CategorySearchOption의 containTitle을 입력받은 경우 해당 문자열을 포함하는 카테고리만 조회할 수 있어야 한다
+	 * 추천수가 0인 경우 추천수는 0개여야 한다
 	 */
 	@Nested
 	@DisplayName("findCategoryShared 테스트")
@@ -575,6 +576,29 @@ class CategoryQueryDslRepositoryImplTest {
 				.hasFieldOrProperty("categoryInfo")
 				.hasFieldOrProperty("memberInfo");
 			assertThat(result.getContents().get(0).getCategoryInfo().getCategoryId()).isEqualTo(lastCategoryId);
+		}
+
+		@Test
+		@DisplayName("추천수가 0인 경우 추천수는 0개여야 한다")
+		void shouldReturnZeroRecommendCountWhenRecommendCountIsZeroTest() {
+			// given
+			Id categoryId = Id.generateNextId();
+			em.persist(MemberTestHelper.generateMember(memberId));
+			em.persist(CategoryTestHelper.generateSharedCategory("title1", memberId, categoryId));
+			em.persist(CardTestHelper.genOxCard(memberId, categoryId, Id.generateNextId()));
+
+			// when
+			CursorPage<SharedCategoryResponseDto> result = categoryRepository.findCategoryShared(
+				1,
+				null);
+
+			// then
+			assertThat(result).isNotNull();
+			assertThat(result.getContents()).isNotEmpty();
+			assertThat(result.getContents().get(0))
+				.hasFieldOrProperty("categoryInfo")
+				.hasFieldOrProperty("memberInfo");
+			assertThat(result.getContents().get(0).getLikeCount()).isEqualTo(0);
 		}
 	}
 
