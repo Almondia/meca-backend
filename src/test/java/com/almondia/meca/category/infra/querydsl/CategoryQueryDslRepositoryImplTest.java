@@ -23,6 +23,7 @@ import com.almondia.meca.helper.CardHistoryTestHelper;
 import com.almondia.meca.helper.CardTestHelper;
 import com.almondia.meca.helper.CategoryTestHelper;
 import com.almondia.meca.helper.MemberTestHelper;
+import com.almondia.meca.helper.recommend.CategoryRecommendTestHelper;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -48,6 +49,7 @@ class CategoryQueryDslRepositoryImplTest {
 	 * 전체 카드는 풀이한 카드 또는 풀이한 카드와 상관 없이 고유한 카드의 갯수를 조회할 수 있어야 한다
 	 * searchOption의 containTitle을 입력받은 경우 해당 문자열을 포함하는 카테고리만 조회할 수 있어야 한다
 	 * 카드를 생성후 삭제시 카테고리의 카드 갯수는 0이여야 한다
+	 * 추천하지 않은 경우 추천수는 0개여야 한다
 	 */
 	@Nested
 	@DisplayName("findCategoryWithStatisticsByMemberId 메서드 테스트")
@@ -288,6 +290,8 @@ class CategoryQueryDslRepositoryImplTest {
 			em.persist(CategoryTestHelper.generateUnSharedCategory("lts it", memberId, categoryId2));
 			em.persist(CardTestHelper.genOxCard(memberId, categoryId1, cardId1));
 			em.persist(CardTestHelper.genOxCard(memberId, categoryId2, cardId2));
+			// em.persist(CategoryRecommendTestHelper.generateCategoryRecommend(categoryId1, memberId));
+			// em.persist(CategoryRecommendTestHelper.generateCategoryRecommend(categoryId2, memberId));
 
 			// when
 			CursorPage<CategoryWithHistoryResponseDto> result = categoryRepository.findCategoryWithStatisticsByMemberId(
@@ -325,6 +329,30 @@ class CategoryQueryDslRepositoryImplTest {
 			// then
 			assertThat(result).isNotNull();
 			assertThat(result.getContents().get(0).getTotalCount()).isEqualTo(3L);
+		}
+
+		@Test
+		@DisplayName("추천하지 않은 경우 추천수는 0개여야 한다")
+		void shouldRecommendCountIsZeroWhenNotRecommendTest() {
+			// given
+			Id memberId = Id.generateNextId();
+			int pageSize = 3;
+			Id categoryId = Id.generateNextId();
+			em.persist(CategoryTestHelper.generateUnSharedCategory("title1", memberId, categoryId));
+			em.persist(CategoryTestHelper.generateUnSharedCategory("title2", memberId, Id.generateNextId()));
+			em.persist(CategoryRecommendTestHelper.generateCategoryRecommend(categoryId, Id.generateNextId()));
+			em.persist(CategoryRecommendTestHelper.generateCategoryRecommend(categoryId, Id.generateNextId()));
+
+			// when
+			CursorPage<CategoryWithHistoryResponseDto> result = categoryRepository.findCategoryWithStatisticsByMemberId(
+				pageSize,
+				memberId,
+				null);
+
+			// then
+			assertThat(result).isNotNull();
+			assertThat(result.getContents().get(0).getLikeCount()).isEqualTo(0);
+			assertThat(result.getContents().get(1).getLikeCount()).isEqualTo(2);
 		}
 	}
 
