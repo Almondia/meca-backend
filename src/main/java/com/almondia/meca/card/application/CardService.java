@@ -100,22 +100,6 @@ public class CardService {
 		return cardRepository.countCardsByCategoryId(categoryId);
 	}
 
-	private void updateCard(UpdateCardRequestDto updateCardRequestDto, Id memberId, Card card) {
-		if (updateCardRequestDto.getTitle() != null) {
-			card.changeTitle(updateCardRequestDto.getTitle());
-		}
-		if (updateCardRequestDto.getDescription() != null) {
-			card.changeEditText(updateCardRequestDto.getDescription());
-		}
-		if (updateCardRequestDto.getQuestion() != null) {
-			card.changeQuestion(updateCardRequestDto.getQuestion());
-		}
-		if (updateCardRequestDto.getCategoryId() != null) {
-			categoryChecker.checkAuthority(updateCardRequestDto.getCategoryId(), memberId);
-			card.changeCategoryId(updateCardRequestDto.getCategoryId());
-		}
-	}
-
 	@Transactional(readOnly = true)
 	public CardCursorPageWithSharedCategoryDto searchCursorPagingSharedCard(
 		int pageSize,
@@ -132,5 +116,21 @@ public class CardService {
 			lastCardId, categoryId, cardSearchOption);
 		cursor.setCategory(category);
 		return cursor;
+	}
+
+	private void updateCard(UpdateCardRequestDto updateCardRequestDto, Id memberId, Card card) {
+		if (updateCardRequestDto.getTitle() != null) {
+			card.changeTitle(updateCardRequestDto.getTitle());
+		}
+		if (updateCardRequestDto.getDescription() != null) {
+			card.changeEditText(updateCardRequestDto.getDescription());
+		}
+		if (updateCardRequestDto.getQuestion() != null) {
+			card.changeQuestion(updateCardRequestDto.getQuestion());
+		}
+		if (updateCardRequestDto.getCategoryId() != null) {
+			categoryChecker.checkAuthority(updateCardRequestDto.getCategoryId(), memberId);
+			card.changeCategoryId(updateCardRequestDto.getCategoryId());
+		}
 	}
 }
