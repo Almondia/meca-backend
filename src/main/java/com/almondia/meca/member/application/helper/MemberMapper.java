@@ -10,6 +10,7 @@ public class MemberMapper {
 			.memberId(member.getMemberId())
 			.name(member.getName())
 			.email(member.getEmail())
+			.profile(member.getProfile())
 			.oAuthType(member.getOAuthType())
 			.role(member.getRole())
 			.isDeleted(member.isDeleted())
