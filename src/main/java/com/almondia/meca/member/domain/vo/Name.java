@@ -17,9 +17,13 @@ public class Name implements Wrapper {
 	private static final int MIN_LENGTH = 1;
 	private String name;
 
-	public Name(String name) {
+	private Name(String name) {
 		validateNameFormat(name);
 		this.name = name;
+	}
+
+	public static Name of(String name) {
+		return new Name(name);
 	}
 
 	@Override

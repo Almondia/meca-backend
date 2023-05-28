@@ -22,7 +22,7 @@ public class WithMockMemberSecurityContextFactory implements WithSecurityContext
 	public SecurityContext createSecurityContext(WithMockMember annotation) {
 		SecurityContext context = SecurityContextHolder.createEmptyContext();
 		Member member = Member.builder()
-			.name(new Name(annotation.name()))
+			.name(Name.of(annotation.name()))
 			.email(new Email(annotation.email()))
 			.memberId(new Id(annotation.id()))
 			.createdAt(LocalDateTime.now())

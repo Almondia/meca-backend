@@ -7,6 +7,7 @@ import com.almondia.meca.auth.oauth.infra.attribute.OAuth2UserAttribute;
 import com.almondia.meca.common.domain.vo.Id;
 import com.almondia.meca.member.application.helper.MemberMapper;
 import com.almondia.meca.member.controller.dto.MemberResponseDto;
+import com.almondia.meca.member.controller.dto.UpdateMemberRequestDto;
 import com.almondia.meca.member.domain.entity.Member;
 import com.almondia.meca.member.domain.vo.Email;
 import com.almondia.meca.member.domain.vo.Name;
@@ -27,13 +28,24 @@ public class MemberService {
 		Member member = Member.builder()
 			.memberId(Id.generateNextId())
 			.oauthId(oauth2UserAttribute.getOAuthId())
-			.name(new Name(oauth2UserAttribute.getName()))
+			.name(Name.of(oauth2UserAttribute.getName()))
 			.oAuthType(oauth2UserAttribute.getOauthType())
 			.email(email)
 			.role(Role.USER)
 			.build();
 		memberRepository.save(member);
 		return member;
+	}
+
+	@Transactional
+	public MemberResponseDto update(UpdateMemberRequestDto updateMemberRequestDto, Member member) {
+		if (updateMemberRequestDto.getName() != null) {
+			member.updateName(updateMemberRequestDto.getName());
+		}
+		if (updateMemberRequestDto.getProfile() != null) {
+			member.updateProfile(updateMemberRequestDto.getProfile());
+		}
+		return MemberMapper.fromEntityToDto(member);
 	}
 
 	@Transactional(readOnly = true)
