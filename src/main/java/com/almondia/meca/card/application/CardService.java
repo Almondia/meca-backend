@@ -25,6 +25,7 @@ import com.almondia.meca.category.domain.repository.CategoryRepository;
 import com.almondia.meca.category.domain.service.CategoryChecker;
 import com.almondia.meca.common.controller.dto.CursorPage;
 import com.almondia.meca.common.domain.vo.Id;
+import com.almondia.meca.recommand.domain.repository.CategoryRecommendRepository;
 
 import lombok.AllArgsConstructor;
 
@@ -37,6 +38,7 @@ public class CardService {
 	private final CategoryRepository categoryRepository;
 	private final CategoryChecker categoryChecker;
 	private final CardChecker cardChecker;
+	private final CategoryRecommendRepository categoryRecommendRepository;
 
 	@Transactional
 	public CardResponseDto saveCard(SaveCardRequestDto saveCardRequestDto, Id memberId) {
@@ -61,9 +63,11 @@ public class CardService {
 		CardSearchOption cardSearchOption
 	) {
 		Category category = categoryChecker.checkAuthority(categoryId, memberId);
+		long likeCount = categoryRecommendRepository.countByCategoryIdAndIsDeletedFalse(categoryId);
 		CardCursorPageWithCategory cursor = cardRepository.findCardByCategoryIdUsingCursorPaging(pageSize,
 			lastCardId, categoryId, cardSearchOption);
 		cursor.setCategory(category);
+		cursor.setCategoryLikeCount(likeCount);
 		return cursor;
 	}
 
@@ -112,9 +116,11 @@ public class CardService {
 		if (!category.isShared()) {
 			throw new AccessDeniedException("공유되지 않은 카테고리에 접근할 수 없습니다");
 		}
+		long likeCount = categoryRecommendRepository.countByCategoryIdAndIsDeletedFalse(categoryId);
 		CardCursorPageWithSharedCategoryDto cursor = cardRepository.findCardBySharedCategoryCursorPaging(pageSize,
 			lastCardId, categoryId, cardSearchOption);
 		cursor.setCategory(category);
+		cursor.setCategoryLikeCount(likeCount);
 		return cursor;
 	}
 
