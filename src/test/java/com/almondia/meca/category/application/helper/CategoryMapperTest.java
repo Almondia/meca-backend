@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import com.almondia.meca.category.controller.dto.CategoryResponseDto;
+import com.almondia.meca.category.controller.dto.CategoryDto;
 import com.almondia.meca.category.domain.entity.Category;
 import com.almondia.meca.category.domain.vo.Title;
 import com.almondia.meca.common.domain.vo.Id;
@@ -20,7 +20,7 @@ class CategoryMapperTest {
 	@Test
 	@DisplayName("성공적으로 응답 포맷으로 변환해야 함")
 	void shouldReturnResponseFormatWhenCallToCategoryResponseDtoTest() {
-		CategoryResponseDto dto = CategoryMapper.entityToCategoryResponseDto(makeCategory());
+		CategoryDto dto = CategoryMapper.entityToCategoryResponseDto(makeCategory());
 		assertThat(dto)
 			.hasFieldOrProperty("categoryId")
 			.hasFieldOrProperty("memberId")

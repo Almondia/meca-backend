@@ -7,15 +7,19 @@ import com.almondia.meca.member.controller.dto.MemberResponseDto;
 import com.almondia.meca.member.domain.entity.Member;
 
 import lombok.Getter;
+import lombok.ToString;
 
 @Getter
+@ToString
 public class SharedCategoryResponseDto {
 
-	private final CategoryResponseDto categoryInfo;
+	private final CategoryDto categoryInfo;
 	private final MemberResponseDto memberInfo;
+	private final long likeCount;
 
-	public SharedCategoryResponseDto(Category category, Member member) {
+	public SharedCategoryResponseDto(Category category, Member member, long likeCount) {
 		this.categoryInfo = CategoryMapper.entityToCategoryResponseDto(category);
 		this.memberInfo = MemberMapper.fromEntityToDto(member);
+		this.likeCount = likeCount;
 	}
 }

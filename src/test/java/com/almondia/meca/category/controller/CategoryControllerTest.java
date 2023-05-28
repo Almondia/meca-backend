@@ -278,7 +278,8 @@ class CategoryControllerTest {
 						fieldWithPath("contents[].solveCount").description("카테고리 문제 풀이 수"),
 						fieldWithPath("contents[].totalCount").description("카테고리 문제 수"),
 						fieldWithPath("contents[].deleted").description("카테고리 삭제 여부"),
-						fieldWithPath("contents[].shared").description("카테고리 공유 여부")
+						fieldWithPath("contents[].shared").description("카테고리 공유 여부"),
+						fieldWithPath("contents[].likeCount").description("카테고리 좋아요 수")
 					)
 				));
 		}
@@ -326,7 +327,8 @@ class CategoryControllerTest {
 				.pageSize(2)
 				.contents(List.of(new SharedCategoryResponseDto(
 					CategoryTestHelper.generateSharedCategory("title", Id.generateNextId(), Id.generateNextId()),
-					MemberTestHelper.generateMember(Id.generateNextId()))))
+					MemberTestHelper.generateMember(Id.generateNextId()),
+					1L)))
 				.hasNext(Id.generateNextId())
 				.sortOrder(SortOrder.DESC)
 				.build();
@@ -375,7 +377,8 @@ class CategoryControllerTest {
 						fieldWithPath("contents[].memberInfo.createdAt").description("회원 생성일"),
 						fieldWithPath("contents[].memberInfo.modifiedAt").description("회원 수정일"),
 						fieldWithPath("contents[].memberInfo.oauthType").description("Oauth 타입"),
-						fieldWithPath("contents[].memberInfo.deleted").description("회원 삭제 여부")
+						fieldWithPath("contents[].memberInfo.deleted").description("회원 삭제 여부"),
+						fieldWithPath("contents[].likeCount").description("카테고리 좋아요 수")
 					)
 				));
 		}
