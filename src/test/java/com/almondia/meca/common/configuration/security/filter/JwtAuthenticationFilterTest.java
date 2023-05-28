@@ -50,7 +50,7 @@ class JwtAuthenticationFilterTest {
 		Mockito.doReturn(Member.builder()
 			.memberId(Id.generateNextId())
 			.email(new Email("emial@naver.com"))
-			.name(new Name("name"))
+			.name(Name.of("name"))
 			.oAuthType(OAuthType.KAKAO)
 			.role(Role.USER)
 			.build()).when(memberService).findMember(any());

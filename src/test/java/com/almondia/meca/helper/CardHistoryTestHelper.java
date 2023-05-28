@@ -40,7 +40,7 @@ public class CardHistoryTestHelper {
 		return CardHistoryResponseDto.builder()
 			.cardHistoryId(Id.generateNextId())
 			.solvedUserId(Id.generateNextId())
-			.solvedUserName(new Name("name"))
+			.solvedUserName(Name.of("name"))
 			.userAnswer(new Answer("answer"))
 			.score(new Score(random.nextInt(100)))
 			.categoryId(Id.generateNextId())

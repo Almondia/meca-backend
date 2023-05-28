@@ -65,7 +65,7 @@ class MemberServiceTest {
 			.memberId(id)
 			.oauthId("id")
 			.oAuthType(OAuthType.KAKAO)
-			.name(new Name("hello"))
+			.name(Name.of("hello"))
 			.email(new Email("hello@naver.com"))
 			.role(Role.USER)
 			.build();
@@ -86,7 +86,7 @@ class MemberServiceTest {
 			.memberId(id)
 			.oauthId("id")
 			.oAuthType(OAuthType.KAKAO)
-			.name(new Name("hello"))
+			.name(Name.of("hello"))
 			.email(new Email("hello@naver.com"))
 			.role(Role.USER)
 			.createdAt(LocalDateTime.now())

@@ -17,7 +17,7 @@ public class MemberTestHelper {
 		return Member.builder()
 			.memberId(memberId)
 			.email(new Email("www@gmail.com"))
-			.name(new Name("name"))
+			.name(Name.of("name"))
 			.profile(new Image("https://aws.s3.com"))
 			.oauthId(Id.generateNextId().toString())
 			.oAuthType(OAuthType.GOOGLE)
@@ -30,7 +30,7 @@ public class MemberTestHelper {
 	public static MemberResponseDto genMemberResponseDto() {
 		return MemberResponseDto.builder()
 			.memberId(Id.generateNextId())
-			.name(new Name("name"))
+			.name(Name.of("name"))
 			.email(new Email("email@naver.com"))
 			.profile(new Image("profile"))
 			.oAuthType(OAuthType.KAKAO)
@@ -44,7 +44,7 @@ public class MemberTestHelper {
 	public static MemberResponseDto generateMemberResponseDto(Id memberId) {
 		return MemberResponseDto.builder()
 			.memberId(memberId)
-			.name(new Name("name"))
+			.name(Name.of("name"))
 			.email(new Email("email@naver.com"))
 			.profile(new Image("profile"))
 			.oAuthType(OAuthType.KAKAO)

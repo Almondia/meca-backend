@@ -353,7 +353,7 @@ class CardControllerTest {
 			Member member = Member.builder()
 				.memberId(Id.generateNextId())
 				.email(new Email("abc@gamil.com"))
-				.name(new Name("nickname"))
+				.name(Name.of("nickname"))
 				.oAuthType(OAuthType.KAKAO)
 				.oauthId("id")
 				.role(Role.USER)

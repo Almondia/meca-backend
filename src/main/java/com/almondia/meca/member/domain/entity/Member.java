@@ -71,7 +71,7 @@ public class Member extends DateEntity {
 		this.profile = profile;
 	}
 
-	public void updateName(String name) {
-		this.name = Name.of(name);
+	public void updateName(Name name) {
+		this.name = name;
 	}
 }

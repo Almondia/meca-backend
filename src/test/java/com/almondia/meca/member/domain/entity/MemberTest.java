@@ -20,14 +20,18 @@ import org.springframework.test.context.TestPropertySource;
 import com.almondia.meca.common.configuration.jpa.JpaAuditingConfiguration;
 import com.almondia.meca.common.configuration.jpa.QueryDslConfiguration;
 import com.almondia.meca.common.domain.vo.Id;
+import com.almondia.meca.common.domain.vo.Image;
+import com.almondia.meca.helper.MemberTestHelper;
 import com.almondia.meca.member.domain.vo.Email;
 import com.almondia.meca.member.domain.vo.Name;
 import com.almondia.meca.member.domain.vo.OAuthType;
 import com.almondia.meca.member.domain.vo.Role;
 
 /**
- * 1. meta데이터를 통해 entity 속성이 잘 생성되었는지 테스트
- * 2. 영속화시 Member에 날짜가 자동으로 갱신되는지 테스트
+ * meta데이터를 통해 entity 속성이 잘 생성되었는지 테스트
+ * 영속화시 Member에 날짜가 자동으로 갱신되는지 테스트
+ * updateName시 name 변화 테스트
+ * updateProfile시 profile 변화 테스트
  */
 @DataJpaTest
 @TestPropertySource(properties = {"spring.jpa.hibernate.ddl-auto=create-drop"})
@@ -58,7 +62,7 @@ class MemberTest {
 			.memberId(Id.generateNextId())
 			.oauthId("id")
 			.email(new Email("hello@naver.com"))
-			.name(new Name("hello"))
+			.name(Name.of("hello"))
 			.oAuthType(OAuthType.GOOGLE)
 			.role(Role.USER)
 			.isDeleted(false)
@@ -70,25 +74,19 @@ class MemberTest {
 		assertThat(createdAt).isEqualTo(modifiedAt);
 	}
 
-	// @Test
-	// @DisplayName("entity 수정시 modifiedAt이 업데이트되며 modifiedAt이 createdAt보다 이후의 날짜여야 함")
-	// void shouldUpdateModifiedAtAndModifiedAtAfterThanCreatedAtWhenEntityUpdate() throws InterruptedException {
-	// 	JpaRepository<Member, Id> memberRepository = new SimpleJpaRepository<>(Member.class, entityManager);
-	// 	Member member = Member.builder()
-	// 		.memberId(Id.generateNextId())
-	// 		.email(new Email("hello@naver.com"))
-	// 		.name(new Name("hello"))
-	// 		.oAuthType(OAuthType.GOOGLE)
-	// 		.role(Role.USER)
-	// 		.isDeleted(false)
-	// 		.build();
-	// 	memberRepository.save(member);
-	// 	Member temp = memberRepository.findById(member.getMemberId()).orElseThrow();
-	// 	temp.delete();
-	// 	entityManager.flush();
-	// 	entityManager.clear();
-	// 	Thread.sleep(100);
-	// 	Member result = memberRepository.findById(member.getMemberId()).orElseThrow();
-	// 	assertThat(result.getModifiedAt()).isAfter(result.getCreatedAt());
-	// }
+	@Test
+	@DisplayName("updateName시 name 변화 테스트")
+	void shouldUpdateNameWhenUpdateName() {
+		Member member = MemberTestHelper.generateMember(Id.generateNextId());
+		member.updateName(Name.of("newName"));
+		assertThat(member.getName()).isEqualTo(Name.of("newName"));
+	}
+
+	@Test
+	@DisplayName("updateProfile시 profile 변화 테스트")
+	void shouldUpdateProfileWhenUpdateProfile() {
+		Member member = MemberTestHelper.generateMember(Id.generateNextId());
+		member.updateProfile(new Image("aws"));
+		assertThat(member.getProfile()).isEqualTo(new Image("aws"));
+	}
 }
