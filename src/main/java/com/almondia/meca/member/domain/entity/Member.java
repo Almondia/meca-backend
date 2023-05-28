@@ -66,4 +66,12 @@ public class Member extends DateEntity {
 	public boolean isDeleted() {
 		return this.isDeleted;
 	}
+
+	public void updateProfile(Image profile) {
+		this.profile = profile;
+	}
+
+	public void updateName(String name) {
+		this.name = Name.of(name);
+	}
 }

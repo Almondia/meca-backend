@@ -22,6 +22,10 @@ public class Name implements Wrapper {
 		this.name = name;
 	}
 
+	public static Name of(String name) {
+		return new Name(name);
+	}
+
 	@Override
 	public String toString() {
 		return name;
