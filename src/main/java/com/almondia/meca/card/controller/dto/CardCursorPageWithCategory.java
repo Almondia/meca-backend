@@ -14,6 +14,7 @@ import lombok.Getter;
 public class CardCursorPageWithCategory extends CursorPage<CardResponseDto> {
 
 	private CategoryDto category;
+	private long categoryLikeCount;
 
 	public CardCursorPageWithCategory(List<CardResponseDto> contents, Id hasNext, int pageSize, SortOrder sortOrder) {
 		super(contents, hasNext, pageSize, sortOrder);
@@ -30,5 +31,9 @@ public class CardCursorPageWithCategory extends CursorPage<CardResponseDto> {
 			.isShared(category.isShared())
 			.isDeleted(category.isDeleted())
 			.build();
+	}
+
+	public void setCategoryLikeCount(long categoryLikeCount) {
+		this.categoryLikeCount = categoryLikeCount;
 	}
 }
