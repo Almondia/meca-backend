@@ -18,7 +18,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.access.AccessDeniedException;
 
-import com.almondia.meca.card.controller.dto.CardResponseDto;
+import com.almondia.meca.card.controller.dto.CardDto;
 import com.almondia.meca.card.controller.dto.SaveCardRequestDto;
 import com.almondia.meca.card.controller.dto.UpdateCardRequestDto;
 import com.almondia.meca.card.domain.entity.Card;
@@ -188,8 +188,8 @@ class CardServiceTest {
 		@DisplayName("카드 업데이트시 업데이트가 성공적으로 반영되었는지 테스트")
 		void shouldReturnCardResponseDtoWhenCallUpdateCardRequestTest() {
 			UpdateCardRequestDto updateCardRequestDto = makeUpdateCardRequest(categoryId);
-			CardResponseDto responseDto = cardService.updateCard(updateCardRequestDto, cardId, memberId);
-			assertThat(responseDto).isInstanceOf(CardResponseDto.class);
+			CardDto responseDto = cardService.updateCard(updateCardRequestDto, cardId, memberId);
+			assertThat(responseDto).isInstanceOf(CardDto.class);
 		}
 
 		@Test
@@ -317,7 +317,7 @@ class CardServiceTest {
 		void shouldSuccessWorkTest() {
 			em.persist(MemberTestHelper.generateMember(memberId));
 			em.persist(CategoryTestHelper.generateUnSharedCategory("title", memberId, categoryId));
-			CursorPage<CardResponseDto> cursorPage = cardService.searchCursorPagingCard(
+			CursorPage<CardDto> cursorPage = cardService.searchCursorPagingCard(
 				5,
 				null,
 				categoryId,
@@ -371,7 +371,7 @@ class CardServiceTest {
 		@DisplayName("종류별 카드 타입 변환이 결과에 잘 반영 되는지 확인")
 		void returnCardResponseType() {
 			initDataSetting();
-			CardResponseDto card = cardService.findCardById(cardId1, memberId);
+			CardDto card = cardService.findCardById(cardId1, memberId);
 			assertThat(card.getCardType()).isEqualTo(CardType.MULTI_CHOICE);
 		}
 

@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.almondia.meca.card.application.helper.CardMapper;
-import com.almondia.meca.card.controller.dto.CardResponseDto;
+import com.almondia.meca.card.controller.dto.CardDto;
 import com.almondia.meca.card.domain.entity.Card;
 import com.almondia.meca.card.domain.repository.CardRepository;
 import com.almondia.meca.card.domain.service.CardPicker;
@@ -27,7 +27,7 @@ public class CardSimulationService {
 	private final CategoryRepository categoryRepository;
 
 	@Transactional(readOnly = true)
-	public List<CardResponseDto> simulateRandom(Id categoryId, Id memberId, int limit) {
+	public List<CardDto> simulateRandom(Id categoryId, Id memberId, int limit) {
 		Category category = categoryRepository.findByCategoryIdAndIsDeleted(categoryId, false)
 			.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 카테고리입니다"));
 		CardPicker cardPicker = new RandomCardPicker();
@@ -40,7 +40,7 @@ public class CardSimulationService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<CardResponseDto> simulateScore(Id categoryId, Id memberId, int limit) {
+	public List<CardDto> simulateScore(Id categoryId, Id memberId, int limit) {
 		Category category = categoryRepository.findByCategoryIdAndIsDeleted(categoryId, false)
 			.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 카테고리입니다"));
 		if (category.isMyCategory(memberId) || (!category.isMyCategory(memberId) && category.isShared())) {

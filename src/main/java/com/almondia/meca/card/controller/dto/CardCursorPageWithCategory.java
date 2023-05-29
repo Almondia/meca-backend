@@ -11,12 +11,12 @@ import com.almondia.meca.common.infra.querydsl.SortOrder;
 import lombok.Getter;
 
 @Getter
-public class CardCursorPageWithCategory extends CursorPage<CardResponseDto> {
+public class CardCursorPageWithCategory extends CursorPage<CardDto> {
 
 	private CategoryDto category;
 	private long categoryLikeCount;
 
-	public CardCursorPageWithCategory(List<CardResponseDto> contents, Id hasNext, int pageSize, SortOrder sortOrder) {
+	public CardCursorPageWithCategory(List<CardDto> contents, Id hasNext, int pageSize, SortOrder sortOrder) {
 		super(contents, hasNext, pageSize, sortOrder);
 	}
 

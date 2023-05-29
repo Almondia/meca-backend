@@ -36,7 +36,7 @@ import com.almondia.meca.card.application.CardService;
 import com.almondia.meca.card.application.CardSimulationService;
 import com.almondia.meca.card.controller.dto.CardCursorPageWithCategory;
 import com.almondia.meca.card.controller.dto.CardCursorPageWithSharedCategoryDto;
-import com.almondia.meca.card.controller.dto.CardResponseDto;
+import com.almondia.meca.card.controller.dto.CardDto;
 import com.almondia.meca.card.controller.dto.SaveCardRequestDto;
 import com.almondia.meca.card.controller.dto.SharedCardResponseDto;
 import com.almondia.meca.card.controller.dto.UpdateCardRequestDto;
@@ -158,8 +158,8 @@ class CardControllerTest {
 						fieldWithPath("answer").description("카드 정답"))));
 		}
 
-		private CardResponseDto makeResponse() {
-			return CardResponseDto.builder()
+		private CardDto makeResponse() {
+			return CardDto.builder()
 				.cardId(Id.generateNextId())
 				.title(new Title("title"))
 				.memberId(Id.generateNextId())
@@ -237,8 +237,8 @@ class CardControllerTest {
 						fieldWithPath("answer").description("카드 정답"))));
 		}
 
-		private CardResponseDto makeResponse() {
-			return CardResponseDto.builder()
+		private CardDto makeResponse() {
+			return CardDto.builder()
 				.cardId(Id.generateNextId())
 				.title(new Title("title"))
 				.memberId(Id.generateNextId())
@@ -291,7 +291,7 @@ class CardControllerTest {
 		@DisplayName("정상 동작시 200 응답 및 응답 포맷 테스트")
 		void shouldReturn200OKAndResponseFormatTest() throws Exception {
 			// given
-			CardResponseDto responseDto = CardResponseDto.builder()
+			CardDto responseDto = CardDto.builder()
 				.cardId(Id.generateNextId())
 				.memberId(Id.generateNextId())
 				.categoryId(Id.generateNextId())
@@ -413,7 +413,7 @@ class CardControllerTest {
 		@WithMockMember
 		void shouldReturn200WhenSuccessTest() throws Exception {
 			// given
-			List<CardResponseDto> contents = List.of(makeResponse());
+			List<CardDto> contents = List.of(makeResponse());
 			CardCursorPageWithCategory cardCursorPageWithCategory = new CardCursorPageWithCategory(contents,
 				Id.generateNextId(), 5, SortOrder.DESC);
 			cardCursorPageWithCategory.setCategory(Category.builder()
@@ -467,8 +467,8 @@ class CardControllerTest {
 						fieldWithPath("category.memberId").description("카테고리 멤버 아이디"))));
 		}
 
-		private CardResponseDto makeResponse() {
-			return CardResponseDto.builder()
+		private CardDto makeResponse() {
+			return CardDto.builder()
 				.cardId(Id.generateNextId())
 				.title(new Title("title"))
 				.memberId(Id.generateNextId())
@@ -570,7 +570,7 @@ class CardControllerTest {
 		@DisplayName("정상 동작시 200 응답 및 응답 포맷 테스트")
 		void shouldReturn200WhenSuccessTest() throws Exception {
 			// given
-			CardResponseDto responseDto = CardResponseDto.builder()
+			CardDto responseDto = CardDto.builder()
 				.cardId(Id.generateNextId())
 				.memberId(Id.generateNextId())
 				.categoryId(Id.generateNextId())

@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.almondia.meca.card.application.CardService;
 import com.almondia.meca.card.application.CardSimulationService;
 import com.almondia.meca.card.controller.dto.CardCountResponseDto;
-import com.almondia.meca.card.controller.dto.CardResponseDto;
+import com.almondia.meca.card.controller.dto.CardDto;
 import com.almondia.meca.card.controller.dto.SaveCardRequestDto;
 import com.almondia.meca.card.controller.dto.SharedCardResponseDto;
 import com.almondia.meca.card.controller.dto.UpdateCardRequestDto;
@@ -40,21 +40,21 @@ public class CardController {
 
 	@Secured("ROLE_USER")
 	@PostMapping
-	public ResponseEntity<CardResponseDto> saveCard(
+	public ResponseEntity<CardDto> saveCard(
 		@AuthenticationPrincipal Member member,
 		@RequestBody SaveCardRequestDto saveCardRequestDto) {
-		CardResponseDto cardResponseDto = cardService.saveCard(saveCardRequestDto, member.getMemberId());
-		return ResponseEntity.status(HttpStatus.CREATED).body(cardResponseDto);
+		CardDto cardDto = cardService.saveCard(saveCardRequestDto, member.getMemberId());
+		return ResponseEntity.status(HttpStatus.CREATED).body(cardDto);
 	}
 
 	@Secured("ROLE_USER")
 	@PutMapping("/{cardId}")
-	public ResponseEntity<CardResponseDto> updateCard(
+	public ResponseEntity<CardDto> updateCard(
 		@AuthenticationPrincipal Member member,
 		@PathVariable(value = "cardId") Id cardId,
 		@RequestBody UpdateCardRequestDto updateCardRequestDto
 	) {
-		CardResponseDto responseDto = cardService.updateCard(updateCardRequestDto, cardId, member.getMemberId());
+		CardDto responseDto = cardService.updateCard(updateCardRequestDto, cardId, member.getMemberId());
 		return ResponseEntity.ok(responseDto);
 	}
 
@@ -70,11 +70,11 @@ public class CardController {
 
 	@Secured("ROLE_USER")
 	@GetMapping("/{cardId}/me")
-	public ResponseEntity<CardResponseDto> findCardByCardId(
+	public ResponseEntity<CardDto> findCardByCardId(
 		@AuthenticationPrincipal Member member,
 		@PathVariable(value = "cardId") Id cardId
 	) {
-		CardResponseDto responseDto = cardService.findCardById(cardId, member.getMemberId());
+		CardDto responseDto = cardService.findCardById(cardId, member.getMemberId());
 		return ResponseEntity.ok(responseDto);
 	}
 
@@ -88,7 +88,7 @@ public class CardController {
 
 	@Secured("ROLE_USER")
 	@GetMapping("/categories/{categoryId}/me")
-	public ResponseEntity<CursorPage<CardResponseDto>> searchPagingCards(
+	public ResponseEntity<CursorPage<CardDto>> searchPagingCards(
 		@AuthenticationPrincipal Member member,
 		@PathVariable(value = "categoryId") Id categoryId,
 		@RequestParam(value = "hasNext", required = false) Id lastCardId,
@@ -99,7 +99,7 @@ public class CardController {
 			.containTitle(containTitle)
 			.build();
 
-		CursorPage<CardResponseDto> responseDto = cardService.searchCursorPagingCard(
+		CursorPage<CardDto> responseDto = cardService.searchCursorPagingCard(
 			pageSize, lastCardId, categoryId, member.getMemberId(), cardSearchOption);
 		return ResponseEntity.ok(responseDto);
 	}
@@ -122,19 +122,19 @@ public class CardController {
 
 	@Secured("ROLE_USER")
 	@GetMapping("/categories/{categoryId}/simulation")
-	public ResponseEntity<List<CardResponseDto>> findCardByCardIdResponseDto(
+	public ResponseEntity<List<CardDto>> findCardByCardIdResponseDto(
 		@AuthenticationPrincipal Member member,
 		@PathVariable(value = "categoryId") Id categoryId,
 		@RequestParam(value = "algorithm") String algorithm,
 		@RequestParam(value = "limit") int limit
 	) {
 		if (algorithm.equals("random")) {
-			List<CardResponseDto> random = cardSimulationService.simulateRandom(categoryId,
+			List<CardDto> random = cardSimulationService.simulateRandom(categoryId,
 				member.getMemberId(), limit);
 			return ResponseEntity.ok(random);
 		}
 		if (algorithm.equals("score")) {
-			List<CardResponseDto> scores = cardSimulationService.simulateScore(categoryId, member.getMemberId(), limit);
+			List<CardDto> scores = cardSimulationService.simulateScore(categoryId, member.getMemberId(), limit);
 			return ResponseEntity.ok(scores);
 		}
 		throw new IllegalArgumentException("algorithm: random, score 중 하나를 입력해주세요");

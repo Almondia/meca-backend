@@ -7,7 +7,7 @@ import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import com.almondia.meca.card.controller.dto.CardResponseDto;
+import com.almondia.meca.card.controller.dto.CardDto;
 import com.almondia.meca.card.domain.vo.CardType;
 import com.almondia.meca.card.domain.vo.Title;
 import com.almondia.meca.common.domain.vo.Id;
@@ -21,8 +21,8 @@ class CursorPageTest {
 	@Test
 	@DisplayName("cusorPage 내부 컨텐트는 읽기만 가능하고 수정이 불가능하다")
 	void notModifyInnerContentsTest() {
-		List<CardResponseDto> contents = List.of(
-			CardResponseDto.builder()
+		List<CardDto> contents = List.of(
+			CardDto.builder()
 				.cardId(Id.generateNextId())
 				.title(new Title("title"))
 				.cardType(CardType.OX_QUIZ)
@@ -30,7 +30,7 @@ class CursorPageTest {
 				.answer("answer")
 				.build()
 		);
-		CursorPage<CardResponseDto> cursorPage = CursorPage.<CardResponseDto>builder()
+		CursorPage<CardDto> cursorPage = CursorPage.<CardDto>builder()
 			.pageSize(2)
 			.contents(contents)
 			.hasNext(contents.get(0).getCardId())
@@ -38,8 +38,8 @@ class CursorPageTest {
 			.build();
 
 		assertThatThrownBy(() -> {
-			List<CardResponseDto> innerContents = cursorPage.getContents();
-			innerContents.set(0, CardResponseDto.builder()
+			List<CardDto> innerContents = cursorPage.getContents();
+			innerContents.set(0, CardDto.builder()
 				.cardId(Id.generateNextId())
 				.title(new Title("title2"))
 				.cardType(CardType.OX_QUIZ)

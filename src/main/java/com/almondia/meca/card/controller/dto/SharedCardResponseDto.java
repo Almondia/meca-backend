@@ -11,7 +11,7 @@ import lombok.Getter;
 @Getter
 public class SharedCardResponseDto {
 
-	private final CardResponseDto cardInfo;
+	private final CardDto cardInfo;
 	private final MemberResponseDto memberInfo;
 
 	public SharedCardResponseDto(Card card, Member member) {

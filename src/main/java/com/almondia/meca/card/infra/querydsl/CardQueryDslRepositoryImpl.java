@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import com.almondia.meca.card.application.helper.CardMapper;
 import com.almondia.meca.card.controller.dto.CardCursorPageWithCategory;
 import com.almondia.meca.card.controller.dto.CardCursorPageWithSharedCategoryDto;
-import com.almondia.meca.card.controller.dto.CardResponseDto;
+import com.almondia.meca.card.controller.dto.CardDto;
 import com.almondia.meca.card.controller.dto.SharedCardResponseDto;
 import com.almondia.meca.card.domain.entity.Card;
 import com.almondia.meca.card.domain.entity.QCard;
@@ -44,7 +44,7 @@ public class CardQueryDslRepositoryImpl implements CardQueryDslRepository {
 		@NonNull Id categoryId,
 		CardSearchOption cardSearchOption
 	) {
-		List<CardResponseDto> contents = queryFactory.selectFrom(card)
+		List<CardDto> contents = queryFactory.selectFrom(card)
 			.where(
 				card.categoryId.eq(categoryId),
 				containTitle(cardSearchOption.getContainTitle()),
