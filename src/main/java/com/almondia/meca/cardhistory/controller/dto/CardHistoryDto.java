@@ -2,6 +2,7 @@ package com.almondia.meca.cardhistory.controller.dto;
 
 import java.time.LocalDateTime;
 
+import com.almondia.meca.cardhistory.domain.entity.CardHistory;
 import com.almondia.meca.cardhistory.domain.vo.Answer;
 import com.almondia.meca.cardhistory.domain.vo.Score;
 import com.almondia.meca.common.domain.vo.Id;
@@ -24,5 +25,12 @@ public class CardHistoryDto {
 	private Answer userAnswer;
 	private Score score;
 	private LocalDateTime createdAt;
+
+	public CardHistoryDto(CardHistory cardHistory) {
+		this.cardHistoryId = cardHistory.getCardHistoryId();
+		this.userAnswer = cardHistory.getUserAnswer();
+		this.score = cardHistory.getScore();
+		this.createdAt = cardHistory.getCreatedAt();
+	}
 
 }
