@@ -33,8 +33,8 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.almondia.meca.cardhistory.application.CardHistoryService;
+import com.almondia.meca.cardhistory.controller.dto.CardHistoryDto;
 import com.almondia.meca.cardhistory.controller.dto.CardHistoryRequestDto;
-import com.almondia.meca.cardhistory.controller.dto.CardHistoryResponseDto;
 import com.almondia.meca.cardhistory.controller.dto.SaveRequestCardHistoryDto;
 import com.almondia.meca.cardhistory.domain.vo.Answer;
 import com.almondia.meca.cardhistory.domain.vo.Score;
@@ -134,7 +134,7 @@ class CardHistoryControllerTest {
 		@WithMockMember
 		void shouldReturn200WhenSuccessTest() throws Exception {
 			// given
-			Mockito.doReturn(CursorPage.<CardHistoryResponseDto>builder()
+			Mockito.doReturn(CursorPage.<CardHistoryDto>builder()
 				.contents(List.of(CardHistoryTestHelper.generateCardHistoryResponseDto()))
 				.hasNext(null)
 				.pageSize(2)
@@ -186,7 +186,7 @@ class CardHistoryControllerTest {
 		@WithMockMember
 		void shouldReturn200WhenSuccessTest() throws Exception {
 			// given
-			Mockito.doReturn(CursorPage.<CardHistoryResponseDto>builder()
+			Mockito.doReturn(CursorPage.<CardHistoryDto>builder()
 				.contents(List.of(CardHistoryTestHelper.generateCardHistoryResponseDto()))
 				.hasNext(null)
 				.pageSize(2)
@@ -236,7 +236,7 @@ class CardHistoryControllerTest {
 		@WithMockMember
 		void shouldReturn200WhenSuccessTest() throws Exception {
 			// given
-			Mockito.doReturn(CursorPage.<CardHistoryResponseDto>builder()
+			Mockito.doReturn(CursorPage.<CardHistoryDto>builder()
 				.contents(List.of(CardHistoryTestHelper.generateCardHistoryResponseDto()))
 				.hasNext(null)
 				.pageSize(2)

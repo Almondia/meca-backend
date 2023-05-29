@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 
 import com.almondia.meca.card.domain.entity.Card;
-import com.almondia.meca.cardhistory.controller.dto.CardHistoryResponseDto;
+import com.almondia.meca.cardhistory.controller.dto.CardHistoryDto;
 import com.almondia.meca.cardhistory.domain.entity.CardHistory;
 import com.almondia.meca.cardhistory.domain.repository.CardHistoryRepository;
 import com.almondia.meca.category.domain.entity.Category;
@@ -59,7 +59,7 @@ class CardHistoryQueryDslRepositoryImplTest {
 			em.persist(cardHistory);
 
 			// when
-			CursorPage<CardHistoryResponseDto> result = cardHistoryRepository.findCardHistoriesByCardId(cardId, 10,
+			CursorPage<CardHistoryDto> result = cardHistoryRepository.findCardHistoriesByCardId(cardId, 10,
 				null);
 
 			// then
@@ -112,7 +112,7 @@ class CardHistoryQueryDslRepositoryImplTest {
 			persistAll(member, solvedMember, solvedMember2, category, card, cardHistory1, cardHistory2);
 
 			// when
-			CursorPage<CardHistoryResponseDto> result = cardHistoryRepository.findCardHistoriesByCardId(
+			CursorPage<CardHistoryDto> result = cardHistoryRepository.findCardHistoriesByCardId(
 				card.getCardId(), 100, cardHistory2.getCardHistoryId());
 
 			// then
@@ -142,7 +142,7 @@ class CardHistoryQueryDslRepositoryImplTest {
 			em.persist(cardHistory);
 
 			// when
-			CursorPage<CardHistoryResponseDto> result = cardHistoryRepository.findCardHistoriesByCategoryId(categoryId,
+			CursorPage<CardHistoryDto> result = cardHistoryRepository.findCardHistoriesByCategoryId(categoryId,
 				10, null);
 
 			// then
@@ -198,7 +198,7 @@ class CardHistoryQueryDslRepositoryImplTest {
 			persistAll(member, solvedMember, solvedMember1, category, card, cardHistory1, cardHistory2);
 
 			// when
-			CursorPage<CardHistoryResponseDto> result = cardHistoryRepository.findCardHistoriesByCategoryId(categoryId,
+			CursorPage<CardHistoryDto> result = cardHistoryRepository.findCardHistoriesByCategoryId(categoryId,
 				10, cardHistory2.getCardHistoryId());
 
 			// then
@@ -229,7 +229,7 @@ class CardHistoryQueryDslRepositoryImplTest {
 			persistAll(category, cardHistory);
 
 			// when
-			CursorPage<CardHistoryResponseDto> result = cardHistoryRepository.findCardHistoriesBySolvedMemberId(
+			CursorPage<CardHistoryDto> result = cardHistoryRepository.findCardHistoriesBySolvedMemberId(
 				cardHistory.getSolvedUserId(), 10, null);
 
 			// then
@@ -285,7 +285,7 @@ class CardHistoryQueryDslRepositoryImplTest {
 			persistAll(member, solvedMember, category, card, cardHistory1, cardHistory2);
 
 			// when
-			CursorPage<CardHistoryResponseDto> result = cardHistoryRepository.findCardHistoriesBySolvedMemberId(
+			CursorPage<CardHistoryDto> result = cardHistoryRepository.findCardHistoriesBySolvedMemberId(
 				solvedMemberId, 10, cardHistory2.getCardHistoryId());
 
 			// then

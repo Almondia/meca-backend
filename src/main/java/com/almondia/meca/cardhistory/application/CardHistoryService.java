@@ -9,8 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.almondia.meca.card.domain.repository.CardRepository;
 import com.almondia.meca.cardhistory.application.helper.CardHistoryFactory;
+import com.almondia.meca.cardhistory.controller.dto.CardHistoryDto;
 import com.almondia.meca.cardhistory.controller.dto.CardHistoryRequestDto;
-import com.almondia.meca.cardhistory.controller.dto.CardHistoryResponseDto;
 import com.almondia.meca.cardhistory.controller.dto.SaveRequestCardHistoryDto;
 import com.almondia.meca.cardhistory.domain.entity.CardHistory;
 import com.almondia.meca.cardhistory.domain.repository.CardHistoryRepository;
@@ -40,19 +40,19 @@ public class CardHistoryService {
 	}
 
 	@Transactional(readOnly = true)
-	public CursorPage<CardHistoryResponseDto> findCardHistoriesByCardId(@NonNull Id cardId, int pageSize,
+	public CursorPage<CardHistoryDto> findCardHistoriesByCardId(@NonNull Id cardId, int pageSize,
 		Id lastCardHistoryId) {
 		return cardHistoryRepository.findCardHistoriesByCardId(cardId, pageSize, lastCardHistoryId);
 	}
 
 	@Transactional(readOnly = true)
-	public CursorPage<CardHistoryResponseDto> findCardHistoriesByCategoryId(@NonNull Id categoryId, int pageSize,
+	public CursorPage<CardHistoryDto> findCardHistoriesByCategoryId(@NonNull Id categoryId, int pageSize,
 		Id lastCardHistoryId) {
 		return cardHistoryRepository.findCardHistoriesByCategoryId(categoryId, pageSize, lastCardHistoryId);
 	}
 
 	@Transactional(readOnly = true)
-	public CursorPage<CardHistoryResponseDto> findCardHistoriesBySolvedMemberId(@NonNull Id solvedMemberId,
+	public CursorPage<CardHistoryDto> findCardHistoriesBySolvedMemberId(@NonNull Id solvedMemberId,
 		int pageSize,
 		Id lastCardHistoryId) {
 		return cardHistoryRepository.findCardHistoriesBySolvedMemberId(solvedMemberId, pageSize, lastCardHistoryId);

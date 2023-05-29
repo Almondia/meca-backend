@@ -3,7 +3,7 @@ package com.almondia.meca.helper;
 import java.time.LocalDateTime;
 import java.util.Random;
 
-import com.almondia.meca.cardhistory.controller.dto.CardHistoryResponseDto;
+import com.almondia.meca.cardhistory.controller.dto.CardHistoryDto;
 import com.almondia.meca.cardhistory.domain.entity.CardHistory;
 import com.almondia.meca.cardhistory.domain.vo.Answer;
 import com.almondia.meca.cardhistory.domain.vo.Score;
@@ -36,8 +36,8 @@ public class CardHistoryTestHelper {
 			.build();
 	}
 
-	public static CardHistoryResponseDto generateCardHistoryResponseDto() {
-		return CardHistoryResponseDto.builder()
+	public static CardHistoryDto generateCardHistoryResponseDto() {
+		return CardHistoryDto.builder()
 			.cardHistoryId(Id.generateNextId())
 			.solvedUserId(Id.generateNextId())
 			.solvedUserName(Name.of("name"))
