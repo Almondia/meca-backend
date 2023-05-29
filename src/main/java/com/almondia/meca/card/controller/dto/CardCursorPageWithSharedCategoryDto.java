@@ -23,7 +23,7 @@ public class CardCursorPageWithSharedCategoryDto extends CursorPage<SharedCardRe
 	}
 
 	public void setCategory(Category category) {
-		this.category = CategoryMapper.entityToCategoryResponseDto(category);
+		this.category = CategoryMapper.entityToCategoryDto(category);
 	}
 
 	public void setCategoryLikeCount(long categoryLikeCount) {

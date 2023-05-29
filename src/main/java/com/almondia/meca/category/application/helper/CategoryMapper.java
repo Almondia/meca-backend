@@ -5,7 +5,7 @@ import com.almondia.meca.category.domain.entity.Category;
 
 public class CategoryMapper {
 
-	public static CategoryDto entityToCategoryResponseDto(Category category) {
+	public static CategoryDto entityToCategoryDto(Category category) {
 		return CategoryDto.builder()
 			.categoryId(category.getCategoryId())
 			.memberId(category.getMemberId())

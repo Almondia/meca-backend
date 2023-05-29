@@ -20,7 +20,7 @@ class CategoryMapperTest {
 	@Test
 	@DisplayName("성공적으로 응답 포맷으로 변환해야 함")
 	void shouldReturnResponseFormatWhenCallToCategoryResponseDtoTest() {
-		CategoryDto dto = CategoryMapper.entityToCategoryResponseDto(makeCategory());
+		CategoryDto dto = CategoryMapper.entityToCategoryDto(makeCategory());
 		assertThat(dto)
 			.hasFieldOrProperty("categoryId")
 			.hasFieldOrProperty("memberId")
