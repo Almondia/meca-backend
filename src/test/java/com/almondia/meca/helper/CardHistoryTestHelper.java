@@ -8,7 +8,6 @@ import com.almondia.meca.cardhistory.domain.entity.CardHistory;
 import com.almondia.meca.cardhistory.domain.vo.Answer;
 import com.almondia.meca.cardhistory.domain.vo.Score;
 import com.almondia.meca.common.domain.vo.Id;
-import com.almondia.meca.member.domain.vo.Name;
 
 public class CardHistoryTestHelper {
 
@@ -39,12 +38,8 @@ public class CardHistoryTestHelper {
 	public static CardHistoryDto generateCardHistoryResponseDto() {
 		return CardHistoryDto.builder()
 			.cardHistoryId(Id.generateNextId())
-			.solvedUserId(Id.generateNextId())
-			.solvedUserName(Name.of("name"))
 			.userAnswer(new Answer("answer"))
 			.score(new Score(random.nextInt(100)))
-			.categoryId(Id.generateNextId())
-			.cardId(Id.generateNextId())
 			.createdAt(LocalDateTime.now())
 			.build();
 	}

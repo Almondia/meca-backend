@@ -40,12 +40,8 @@ public class CardHistoryQueryDslRepositoryImpl implements CardHistoryQueryDslRep
 		List<CardHistoryDto> contents = jpaQueryFactory.select(
 				Projections.constructor(CardHistoryDto.class,
 					cardHistory.cardHistoryId,
-					cardHistory.solvedUserId,
-					member.name,
 					cardHistory.userAnswer,
 					cardHistory.score,
-					category.categoryId,
-					cardHistory.cardId,
 					cardHistory.createdAt
 				))
 			.from(cardHistory)
@@ -90,12 +86,8 @@ public class CardHistoryQueryDslRepositoryImpl implements CardHistoryQueryDslRep
 		List<CardHistoryDto> contents = jpaQueryFactory.select(
 				Projections.constructor(CardHistoryDto.class,
 					cardHistory.cardHistoryId,
-					cardHistory.solvedUserId,
-					member.name,
 					cardHistory.userAnswer,
 					cardHistory.score,
-					category.categoryId,
-					cardHistory.cardId,
 					cardHistory.createdAt
 				))
 			.from(cardHistory)
@@ -138,12 +130,8 @@ public class CardHistoryQueryDslRepositoryImpl implements CardHistoryQueryDslRep
 		List<CardHistoryDto> contents = jpaQueryFactory.select(
 				Projections.constructor(CardHistoryDto.class,
 					cardHistory.cardHistoryId,
-					cardHistory.solvedUserId,
-					member.name,
 					cardHistory.userAnswer,
 					cardHistory.score,
-					category.categoryId,
-					cardHistory.cardId,
 					cardHistory.createdAt
 				))
 			.from(cardHistory)
