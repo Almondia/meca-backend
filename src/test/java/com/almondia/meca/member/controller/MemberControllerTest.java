@@ -34,7 +34,7 @@ import com.almondia.meca.common.domain.vo.Image;
 import com.almondia.meca.helper.MemberTestHelper;
 import com.almondia.meca.member.application.MemberService;
 import com.almondia.meca.member.application.helper.MemberMapper;
-import com.almondia.meca.member.controller.dto.MemberResponseDto;
+import com.almondia.meca.member.controller.dto.MemberDto;
 import com.almondia.meca.member.controller.dto.UpdateMemberRequestDto;
 import com.almondia.meca.member.domain.entity.Member;
 import com.almondia.meca.member.domain.vo.Name;
@@ -136,8 +136,8 @@ class MemberControllerTest {
 			Member member = MemberTestHelper.generateMember(Id.generateNextId());
 			member.updateName(updateMemberRequestDto.getName());
 			member.updateProfile(updateMemberRequestDto.getProfile());
-			MemberResponseDto memberResponseDto = MemberMapper.fromEntityToDto(member);
-			Mockito.doReturn(memberResponseDto)
+			MemberDto memberDto = MemberMapper.fromEntityToDto(member);
+			Mockito.doReturn(memberDto)
 				.when(memberService)
 				.update(any(), any());
 
