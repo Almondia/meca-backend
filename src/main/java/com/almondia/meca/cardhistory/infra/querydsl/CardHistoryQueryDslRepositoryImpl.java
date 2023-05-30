@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.util.Assert;
 
 import com.almondia.meca.card.domain.entity.QCard;
-import com.almondia.meca.cardhistory.controller.dto.CardHistoryDto;
+import com.almondia.meca.cardhistory.controller.dto.CardHistoryWithCardAndMemberResponseDto;
 import com.almondia.meca.cardhistory.domain.entity.QCardHistory;
 import com.almondia.meca.category.domain.entity.QCategory;
 import com.almondia.meca.common.controller.dto.CursorPage;
@@ -32,17 +32,18 @@ public class CardHistoryQueryDslRepositoryImpl implements CardHistoryQueryDslRep
 	private final JPAQueryFactory jpaQueryFactory;
 
 	@Override
-	public CursorPage<CardHistoryDto> findCardHistoriesByCardId(@NonNull Id cardId, int pageSize,
+	public CursorPage<CardHistoryWithCardAndMemberResponseDto> findCardHistoriesByCardId(@NonNull Id cardId,
+		int pageSize,
 		Id lastCardHistoryId) {
 		Assert.isTrue(pageSize >= 0, "pageSize must be greater than or equal to 0");
 		Assert.isTrue(pageSize <= 1000, "pageSize must be less than or equal to 1000");
 
-		List<CardHistoryDto> contents = jpaQueryFactory.select(
-				Projections.constructor(CardHistoryDto.class,
-					cardHistory.cardHistoryId,
-					cardHistory.userAnswer,
-					cardHistory.score,
-					cardHistory.createdAt
+		List<CardHistoryWithCardAndMemberResponseDto> contents = jpaQueryFactory.select(
+				Projections.constructor(CardHistoryWithCardAndMemberResponseDto.class,
+					cardHistory,
+					card,
+					member.memberId,
+					member.name
 				))
 			.from(cardHistory)
 			.innerJoin(card)
@@ -70,7 +71,7 @@ public class CardHistoryQueryDslRepositoryImpl implements CardHistoryQueryDslRep
 
 		Id hasNext = null;
 		if (contents.size() > pageSize) {
-			hasNext = contents.get(pageSize).getCardHistoryId();
+			hasNext = contents.get(pageSize).getCardHistory().getCardHistoryId();
 			contents.remove(pageSize);
 		}
 
@@ -78,17 +79,18 @@ public class CardHistoryQueryDslRepositoryImpl implements CardHistoryQueryDslRep
 	}
 
 	@Override
-	public CursorPage<CardHistoryDto> findCardHistoriesByCategoryId(@NonNull Id categoryId, int pageSize,
+	public CursorPage<CardHistoryWithCardAndMemberResponseDto> findCardHistoriesByCategoryId(@NonNull Id categoryId,
+		int pageSize,
 		Id lastCardHistoryId) {
 		Assert.isTrue(pageSize >= 0, "pageSize must be greater than or equal to 0");
 		Assert.isTrue(pageSize <= 1000, "pageSize must be less than or equal to 1000");
 
-		List<CardHistoryDto> contents = jpaQueryFactory.select(
-				Projections.constructor(CardHistoryDto.class,
-					cardHistory.cardHistoryId,
-					cardHistory.userAnswer,
-					cardHistory.score,
-					cardHistory.createdAt
+		List<CardHistoryWithCardAndMemberResponseDto> contents = jpaQueryFactory.select(
+				Projections.constructor(CardHistoryWithCardAndMemberResponseDto.class,
+					cardHistory,
+					card,
+					member.memberId,
+					member.name
 				))
 			.from(cardHistory)
 			.innerJoin(card)
@@ -115,24 +117,25 @@ public class CardHistoryQueryDslRepositoryImpl implements CardHistoryQueryDslRep
 
 		Id hasNext = null;
 		if (contents.size() > pageSize) {
-			hasNext = contents.get(pageSize).getCardHistoryId();
+			hasNext = contents.get(pageSize).getCardHistory().getCardHistoryId();
 			contents.remove(pageSize);
 		}
 		return new CursorPage<>(contents, hasNext, pageSize, SortOrder.DESC);
 	}
 
 	@Override
-	public CursorPage<CardHistoryDto> findCardHistoriesBySolvedMemberId(@NonNull Id solvedMemberId,
+	public CursorPage<CardHistoryWithCardAndMemberResponseDto> findCardHistoriesBySolvedMemberId(
+		@NonNull Id solvedMemberId,
 		int pageSize, Id lastCardHistoryId) {
 		Assert.isTrue(pageSize >= 0, "pageSize must be greater than or equal to 0");
 		Assert.isTrue(pageSize <= 1000, "pageSize must be less than or equal to 1000");
 
-		List<CardHistoryDto> contents = jpaQueryFactory.select(
-				Projections.constructor(CardHistoryDto.class,
-					cardHistory.cardHistoryId,
-					cardHistory.userAnswer,
-					cardHistory.score,
-					cardHistory.createdAt
+		List<CardHistoryWithCardAndMemberResponseDto> contents = jpaQueryFactory.select(
+				Projections.constructor(CardHistoryWithCardAndMemberResponseDto.class,
+					cardHistory,
+					card,
+					member.memberId,
+					member.name
 				))
 			.from(cardHistory)
 			.innerJoin(card)
@@ -159,7 +162,7 @@ public class CardHistoryQueryDslRepositoryImpl implements CardHistoryQueryDslRep
 
 		Id hasNext = null;
 		if (contents.size() > pageSize) {
-			hasNext = contents.get(pageSize).getCardHistoryId();
+			hasNext = contents.get(pageSize).getCardHistory().getCardHistoryId();
 			contents.remove(pageSize);
 		}
 		return new CursorPage<>(contents, hasNext, pageSize, SortOrder.DESC);
