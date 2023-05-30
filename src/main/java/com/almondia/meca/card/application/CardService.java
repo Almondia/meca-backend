@@ -10,7 +10,7 @@ import com.almondia.meca.card.application.helper.CardFactory;
 import com.almondia.meca.card.application.helper.CardMapper;
 import com.almondia.meca.card.controller.dto.CardCursorPageWithCategory;
 import com.almondia.meca.card.controller.dto.CardCursorPageWithSharedCategoryDto;
-import com.almondia.meca.card.controller.dto.CardResponseDto;
+import com.almondia.meca.card.controller.dto.CardDto;
 import com.almondia.meca.card.controller.dto.SaveCardRequestDto;
 import com.almondia.meca.card.controller.dto.SharedCardResponseDto;
 import com.almondia.meca.card.controller.dto.UpdateCardRequestDto;
@@ -41,21 +41,21 @@ public class CardService {
 	private final CategoryRecommendRepository categoryRecommendRepository;
 
 	@Transactional
-	public CardResponseDto saveCard(SaveCardRequestDto saveCardRequestDto, Id memberId) {
+	public CardDto saveCard(SaveCardRequestDto saveCardRequestDto, Id memberId) {
 		Card card = CardFactory.genCard(saveCardRequestDto, memberId);
 		Card savedCard = cardRepository.save(card);
 		return CardMapper.cardToDto(savedCard);
 	}
 
 	@Transactional
-	public CardResponseDto updateCard(UpdateCardRequestDto updateCardRequestDto, Id cardId, Id memberId) {
+	public CardDto updateCard(UpdateCardRequestDto updateCardRequestDto, Id cardId, Id memberId) {
 		Card card = cardChecker.checkAuthority(cardId, memberId);
 		updateCard(updateCardRequestDto, memberId, card);
 		return CardMapper.cardToDto(card);
 	}
 
 	@Transactional(readOnly = true)
-	public CursorPage<CardResponseDto> searchCursorPagingCard(
+	public CursorPage<CardDto> searchCursorPagingCard(
 		int pageSize,
 		Id lastCardId,
 		Id categoryId,
@@ -80,7 +80,7 @@ public class CardService {
 	}
 
 	@Transactional(readOnly = true)
-	public CardResponseDto findCardById(Id cardId, Id memberId) {
+	public CardDto findCardById(Id cardId, Id memberId) {
 		Card card = cardChecker.checkAuthority(cardId, memberId);
 		if (card.isDeleted()) {
 			throw new IllegalArgumentException("삭제된 카드입니다");

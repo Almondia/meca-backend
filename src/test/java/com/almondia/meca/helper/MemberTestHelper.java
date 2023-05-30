@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 import com.almondia.meca.common.domain.vo.Id;
 import com.almondia.meca.common.domain.vo.Image;
-import com.almondia.meca.member.controller.dto.MemberResponseDto;
+import com.almondia.meca.member.controller.dto.MemberDto;
 import com.almondia.meca.member.domain.entity.Member;
 import com.almondia.meca.member.domain.vo.Email;
 import com.almondia.meca.member.domain.vo.Name;
@@ -27,8 +27,8 @@ public class MemberTestHelper {
 			.build();
 	}
 
-	public static MemberResponseDto genMemberResponseDto() {
-		return MemberResponseDto.builder()
+	public static MemberDto genMemberResponseDto() {
+		return MemberDto.builder()
 			.memberId(Id.generateNextId())
 			.name(Name.of("name"))
 			.email(new Email("email@naver.com"))
@@ -41,8 +41,8 @@ public class MemberTestHelper {
 			.build();
 	}
 
-	public static MemberResponseDto generateMemberResponseDto(Id memberId) {
-		return MemberResponseDto.builder()
+	public static MemberDto generateMemberResponseDto(Id memberId) {
+		return MemberDto.builder()
 			.memberId(memberId)
 			.name(Name.of("name"))
 			.email(new Email("email@naver.com"))

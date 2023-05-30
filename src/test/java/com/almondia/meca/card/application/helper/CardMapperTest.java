@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 
 import org.junit.jupiter.api.Test;
 
-import com.almondia.meca.card.controller.dto.CardResponseDto;
+import com.almondia.meca.card.controller.dto.CardDto;
 import com.almondia.meca.card.domain.entity.KeywordCard;
 import com.almondia.meca.card.domain.entity.MultiChoiceCard;
 import com.almondia.meca.card.domain.entity.OxCard;
@@ -26,7 +26,7 @@ class CardMapperTest {
 
 	@Test
 	void shouldReturnCardResponseWhenCardTypeOxCardAndCardTest() {
-		CardResponseDto dto = CardMapper.cardToDto(makeOxCard());
+		CardDto dto = CardMapper.cardToDto(makeOxCard());
 		assertThat(dto)
 			.hasFieldOrProperty("cardId")
 			.hasFieldOrProperty("title")
@@ -41,7 +41,7 @@ class CardMapperTest {
 
 	@Test
 	void mapperOxCardTest() {
-		CardResponseDto dto = CardMapper.oxCardToDto(makeOxCard());
+		CardDto dto = CardMapper.oxCardToDto(makeOxCard());
 		assertThat(dto)
 			.hasFieldOrProperty("cardId")
 			.hasFieldOrProperty("title")
@@ -56,7 +56,7 @@ class CardMapperTest {
 
 	@Test
 	void mapperKeywordCardTest() {
-		CardResponseDto dto = CardMapper.keywordCardToDto(makeKeywordCard());
+		CardDto dto = CardMapper.keywordCardToDto(makeKeywordCard());
 		assertThat(dto)
 			.hasFieldOrProperty("cardId")
 			.hasFieldOrProperty("title")
@@ -71,7 +71,7 @@ class CardMapperTest {
 
 	@Test
 	void mapperMultiChoiceCardTest() {
-		CardResponseDto dto = CardMapper.multiChoiceCardToDto(multiChoiceCard());
+		CardDto dto = CardMapper.multiChoiceCardToDto(multiChoiceCard());
 		assertThat(dto)
 			.hasFieldOrProperty("cardId")
 			.hasFieldOrProperty("title")

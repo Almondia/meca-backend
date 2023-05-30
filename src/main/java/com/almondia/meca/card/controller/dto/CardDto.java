@@ -15,7 +15,7 @@ import lombok.RequiredArgsConstructor;
 @Builder
 @Getter
 @RequiredArgsConstructor
-public class CardResponseDto {
+public class CardDto {
 
 	private final Id cardId;
 	private final Title title;

@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.security.access.AccessDeniedException;
 
-import com.almondia.meca.card.controller.dto.CardResponseDto;
+import com.almondia.meca.card.controller.dto.CardDto;
 import com.almondia.meca.card.domain.repository.CardRepository;
 import com.almondia.meca.category.domain.repository.CategoryRepository;
 import com.almondia.meca.common.domain.vo.Id;
@@ -85,7 +85,7 @@ class CardSimulationServiceTest {
 			Mockito.doReturn(List.of()).when(cardRepository).findByCategoryIdAndIsDeleted(any(), anyBoolean());
 
 			// when
-			List<CardResponseDto> randoms = cardSimulationService.simulateRandom(Id.generateNextId(),
+			List<CardDto> randoms = cardSimulationService.simulateRandom(Id.generateNextId(),
 				Id.generateNextId(), 100);
 
 			// then
@@ -109,7 +109,7 @@ class CardSimulationServiceTest {
 			final int limit = 2;
 
 			// when
-			List<CardResponseDto> randoms = cardSimulationService.simulateRandom(Id.generateNextId(),
+			List<CardDto> randoms = cardSimulationService.simulateRandom(Id.generateNextId(),
 				Id.generateNextId(), limit);
 
 			// then
@@ -175,7 +175,7 @@ class CardSimulationServiceTest {
 			Mockito.doReturn(List.of()).when(cardRepository).findByCategoryIdAndIsDeleted(any(), anyBoolean());
 
 			// when
-			List<CardResponseDto> result = cardSimulationService.simulateScore(Id.generateNextId(),
+			List<CardDto> result = cardSimulationService.simulateScore(Id.generateNextId(),
 				Id.generateNextId(), 100);
 
 			// then
@@ -197,7 +197,7 @@ class CardSimulationServiceTest {
 			final int limit = 2;
 
 			// when
-			List<CardResponseDto> result = cardSimulationService.simulateScore(Id.generateNextId(),
+			List<CardDto> result = cardSimulationService.simulateScore(Id.generateNextId(),
 				Id.generateNextId(), limit);
 
 			// then

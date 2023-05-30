@@ -17,7 +17,7 @@ import com.almondia.meca.common.configuration.jpa.QueryDslConfiguration;
 import com.almondia.meca.common.domain.vo.Id;
 import com.almondia.meca.common.domain.vo.Image;
 import com.almondia.meca.helper.MemberTestHelper;
-import com.almondia.meca.member.controller.dto.MemberResponseDto;
+import com.almondia.meca.member.controller.dto.MemberDto;
 import com.almondia.meca.member.controller.dto.UpdateMemberRequestDto;
 import com.almondia.meca.member.domain.entity.Member;
 import com.almondia.meca.member.domain.vo.Email;
@@ -99,7 +99,7 @@ class MemberServiceTest {
 			.modifiedAt(LocalDateTime.now())
 			.build();
 		memberRepository.save(member);
-		MemberResponseDto result = memberService.findMyProfile(id);
+		MemberDto result = memberService.findMyProfile(id);
 		assertThat(result)
 			.hasFieldOrPropertyWithValue("memberId", member.getMemberId())
 			.hasFieldOrPropertyWithValue("name", member.getName())

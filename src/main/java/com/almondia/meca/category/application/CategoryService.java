@@ -39,7 +39,7 @@ public class CategoryService {
 	public CategoryDto saveCategory(SaveCategoryRequestDto saveCategoryRequestDto, Id memberId) {
 		Category category = CategoryFactory.genCategory(saveCategoryRequestDto, memberId);
 		Category result = categoryRepository.save(category);
-		return CategoryMapper.entityToCategoryResponseDto(result);
+		return CategoryMapper.entityToCategoryDto(result);
 	}
 
 	@Transactional
@@ -55,7 +55,7 @@ public class CategoryService {
 		if (updateCategoryRequestDto.getIsShared() != null) {
 			category.changeShare(updateCategoryRequestDto.getIsShared());
 		}
-		return CategoryMapper.entityToCategoryResponseDto(category);
+		return CategoryMapper.entityToCategoryDto(category);
 	}
 
 	@Transactional

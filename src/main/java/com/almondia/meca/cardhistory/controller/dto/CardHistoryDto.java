@@ -2,10 +2,10 @@ package com.almondia.meca.cardhistory.controller.dto;
 
 import java.time.LocalDateTime;
 
+import com.almondia.meca.cardhistory.domain.entity.CardHistory;
 import com.almondia.meca.cardhistory.domain.vo.Answer;
 import com.almondia.meca.cardhistory.domain.vo.Score;
 import com.almondia.meca.common.domain.vo.Id;
-import com.almondia.meca.member.domain.vo.Name;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -19,14 +19,18 @@ import lombok.ToString;
 @Builder
 @AllArgsConstructor
 @ToString
-public class CardHistoryResponseDto {
+public class CardHistoryDto {
 
 	private Id cardHistoryId;
-	private Id solvedUserId;
-	private Name solvedUserName;
 	private Answer userAnswer;
 	private Score score;
-	private Id categoryId;
-	private Id cardId;
 	private LocalDateTime createdAt;
+
+	public CardHistoryDto(CardHistory cardHistory) {
+		this.cardHistoryId = cardHistory.getCardHistoryId();
+		this.userAnswer = cardHistory.getUserAnswer();
+		this.score = cardHistory.getScore();
+		this.createdAt = cardHistory.getCreatedAt();
+	}
+
 }

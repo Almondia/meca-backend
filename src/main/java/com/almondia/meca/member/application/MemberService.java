@@ -6,7 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.almondia.meca.auth.oauth.infra.attribute.OAuth2UserAttribute;
 import com.almondia.meca.common.domain.vo.Id;
 import com.almondia.meca.member.application.helper.MemberMapper;
-import com.almondia.meca.member.controller.dto.MemberResponseDto;
+import com.almondia.meca.member.controller.dto.MemberDto;
 import com.almondia.meca.member.controller.dto.UpdateMemberRequestDto;
 import com.almondia.meca.member.domain.entity.Member;
 import com.almondia.meca.member.domain.vo.Email;
@@ -38,7 +38,7 @@ public class MemberService {
 	}
 
 	@Transactional
-	public MemberResponseDto update(UpdateMemberRequestDto updateMemberRequestDto, Member member) {
+	public MemberDto update(UpdateMemberRequestDto updateMemberRequestDto, Member member) {
 		if (updateMemberRequestDto.getName() != null) {
 			member.updateName(updateMemberRequestDto.getName());
 		}
@@ -60,7 +60,7 @@ public class MemberService {
 	}
 
 	@Transactional(readOnly = true)
-	public MemberResponseDto findMyProfile(Id memberId) {
+	public MemberDto findMyProfile(Id memberId) {
 		Member member = findMember(memberId);
 		return MemberMapper.fromEntityToDto(member);
 	}

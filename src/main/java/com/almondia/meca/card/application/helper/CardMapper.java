@@ -2,7 +2,7 @@ package com.almondia.meca.card.application.helper;
 
 import java.util.Arrays;
 
-import com.almondia.meca.card.controller.dto.CardResponseDto;
+import com.almondia.meca.card.controller.dto.CardDto;
 import com.almondia.meca.card.domain.entity.Card;
 import com.almondia.meca.card.domain.entity.KeywordCard;
 import com.almondia.meca.card.domain.entity.MultiChoiceCard;
@@ -11,7 +11,7 @@ import com.almondia.meca.card.domain.vo.CardType;
 
 public class CardMapper {
 
-	public static CardResponseDto cardToDto(Card card) {
+	public static CardDto cardToDto(Card card) {
 		if (card.getCardType().equals(CardType.OX_QUIZ)) {
 			return oxCardToDto((OxCard)card);
 		}
@@ -24,8 +24,8 @@ public class CardMapper {
 		throw new IllegalArgumentException(String.format("카드 타입은 %s 만 가능합니다", Arrays.toString(CardType.values())));
 	}
 
-	public static CardResponseDto oxCardToDto(OxCard oxCard) {
-		return CardResponseDto.builder()
+	public static CardDto oxCardToDto(OxCard oxCard) {
+		return CardDto.builder()
 			.cardId(oxCard.getCardId())
 			.title(oxCard.getTitle())
 			.memberId(oxCard.getMemberId())
@@ -39,8 +39,8 @@ public class CardMapper {
 			.build();
 	}
 
-	public static CardResponseDto keywordCardToDto(KeywordCard keywordCard) {
-		return CardResponseDto.builder()
+	public static CardDto keywordCardToDto(KeywordCard keywordCard) {
+		return CardDto.builder()
 			.cardId(keywordCard.getCardId())
 			.title(keywordCard.getTitle())
 			.memberId(keywordCard.getMemberId())
@@ -54,8 +54,8 @@ public class CardMapper {
 			.build();
 	}
 
-	public static CardResponseDto multiChoiceCardToDto(MultiChoiceCard multiChoiceCard) {
-		return CardResponseDto.builder()
+	public static CardDto multiChoiceCardToDto(MultiChoiceCard multiChoiceCard) {
+		return CardDto.builder()
 			.cardId(multiChoiceCard.getCardId())
 			.title(multiChoiceCard.getTitle())
 			.memberId(multiChoiceCard.getMemberId())

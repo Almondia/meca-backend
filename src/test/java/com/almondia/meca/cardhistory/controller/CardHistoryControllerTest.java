@@ -32,10 +32,12 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import com.almondia.meca.card.domain.entity.Card;
 import com.almondia.meca.cardhistory.application.CardHistoryService;
 import com.almondia.meca.cardhistory.controller.dto.CardHistoryRequestDto;
-import com.almondia.meca.cardhistory.controller.dto.CardHistoryResponseDto;
+import com.almondia.meca.cardhistory.controller.dto.CardHistoryWithCardAndMemberResponseDto;
 import com.almondia.meca.cardhistory.controller.dto.SaveRequestCardHistoryDto;
+import com.almondia.meca.cardhistory.domain.entity.CardHistory;
 import com.almondia.meca.cardhistory.domain.vo.Answer;
 import com.almondia.meca.cardhistory.domain.vo.Score;
 import com.almondia.meca.common.configuration.jackson.JacksonConfiguration;
@@ -44,6 +46,8 @@ import com.almondia.meca.common.controller.dto.CursorPage;
 import com.almondia.meca.common.domain.vo.Id;
 import com.almondia.meca.common.infra.querydsl.SortOrder;
 import com.almondia.meca.helper.CardHistoryTestHelper;
+import com.almondia.meca.helper.CardTestHelper;
+import com.almondia.meca.member.domain.vo.Name;
 import com.almondia.meca.mock.security.WithMockMember;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -134,8 +138,8 @@ class CardHistoryControllerTest {
 		@WithMockMember
 		void shouldReturn200WhenSuccessTest() throws Exception {
 			// given
-			Mockito.doReturn(CursorPage.<CardHistoryResponseDto>builder()
-				.contents(List.of(CardHistoryTestHelper.generateCardHistoryResponseDto()))
+			Mockito.doReturn(CursorPage.<CardHistoryWithCardAndMemberResponseDto>builder()
+				.contents(List.of(generateCardHistoryWithCardAndMemberResponseDto()))
 				.hasNext(null)
 				.pageSize(2)
 				.sortOrder(SortOrder.DESC)
@@ -161,14 +165,22 @@ class CardHistoryControllerTest {
 					),
 					pathParameters(parameterWithName("cardId").description("카드 ID")),
 					responseFields(
-						fieldWithPath("contents[].cardHistoryId").description("카드 히스토리 ID"),
-						fieldWithPath("contents[].categoryId").description("카테고리 ID"),
-						fieldWithPath("contents[].cardId").description("카드 ID"),
-						fieldWithPath("contents[].solvedUserId").description("문제를 푼 사용자 ID"),
-						fieldWithPath("contents[].solvedUserName").description("문제를 푼 사용자 이름"),
-						fieldWithPath("contents[].userAnswer").description("사용자 답안"),
-						fieldWithPath("contents[].score").description("점수"),
-						fieldWithPath("contents[].createdAt").description("생성일"),
+						fieldWithPath("contents[].cardHistory.cardHistoryId").description("카드 히스토리 ID"),
+						fieldWithPath("contents[].cardHistory.userAnswer").description("사용자 답안"),
+						fieldWithPath("contents[].cardHistory.score").description("점수"),
+						fieldWithPath("contents[].cardHistory.createdAt").description("생성일"),
+						fieldWithPath("contents[].solvedMember.solvedMemberId").description("문제를 푼 사용자 ID"),
+						fieldWithPath("contents[].solvedMember.solvedMemberName").description("문제를 푼 사용자 이름"),
+						fieldWithPath("contents[].card.cardId").description("카드 ID"),
+						fieldWithPath("contents[].card.title").description("카드 제목"),
+						fieldWithPath("contents[].card.memberId").description("카드 작성자 ID"),
+						fieldWithPath("contents[].card.question").description("카드 질문"),
+						fieldWithPath("contents[].card.categoryId").description("카테고리 ID"),
+						fieldWithPath("contents[].card.cardType").description("카드 타입"),
+						fieldWithPath("contents[].card.createdAt").description("카드 생성일"),
+						fieldWithPath("contents[].card.modifiedAt").description("카드 수정일"),
+						fieldWithPath("contents[].card.answer").description("카드 정답"),
+						fieldWithPath("contents[].card.description").description("카드 설명"),
 						fieldWithPath("hasNext").description("다음 페이지 존재 여부"),
 						fieldWithPath("pageSize").description("페이지 사이즈"),
 						fieldWithPath("sortOrder").description("정렬 방식")
@@ -186,8 +198,8 @@ class CardHistoryControllerTest {
 		@WithMockMember
 		void shouldReturn200WhenSuccessTest() throws Exception {
 			// given
-			Mockito.doReturn(CursorPage.<CardHistoryResponseDto>builder()
-				.contents(List.of(CardHistoryTestHelper.generateCardHistoryResponseDto()))
+			Mockito.doReturn(CursorPage.<CardHistoryWithCardAndMemberResponseDto>builder()
+				.contents(List.of(generateCardHistoryWithCardAndMemberResponseDto()))
 				.hasNext(null)
 				.pageSize(2)
 				.sortOrder(SortOrder.DESC)
@@ -211,14 +223,22 @@ class CardHistoryControllerTest {
 					),
 					pathParameters(parameterWithName("categoryId").description("카테고리 ID")),
 					responseFields(
-						fieldWithPath("contents[].cardHistoryId").description("카드 히스토리 ID"),
-						fieldWithPath("contents[].categoryId").description("카테고리 ID"),
-						fieldWithPath("contents[].cardId").description("카드 ID"),
-						fieldWithPath("contents[].solvedUserId").description("문제를 푼 사용자 ID"),
-						fieldWithPath("contents[].solvedUserName").description("문제를 푼 사용자 이름"),
-						fieldWithPath("contents[].userAnswer").description("사용자 답안"),
-						fieldWithPath("contents[].score").description("점수"),
-						fieldWithPath("contents[].createdAt").description("생성일"),
+						fieldWithPath("contents[].cardHistory.cardHistoryId").description("카드 히스토리 ID"),
+						fieldWithPath("contents[].cardHistory.userAnswer").description("사용자 답안"),
+						fieldWithPath("contents[].cardHistory.score").description("점수"),
+						fieldWithPath("contents[].cardHistory.createdAt").description("생성일"),
+						fieldWithPath("contents[].solvedMember.solvedMemberId").description("문제를 푼 사용자 ID"),
+						fieldWithPath("contents[].solvedMember.solvedMemberName").description("문제를 푼 사용자 이름"),
+						fieldWithPath("contents[].card.cardId").description("카드 ID"),
+						fieldWithPath("contents[].card.title").description("카드 제목"),
+						fieldWithPath("contents[].card.memberId").description("카드 작성자 ID"),
+						fieldWithPath("contents[].card.question").description("카드 질문"),
+						fieldWithPath("contents[].card.categoryId").description("카테고리 ID"),
+						fieldWithPath("contents[].card.cardType").description("카드 타입"),
+						fieldWithPath("contents[].card.createdAt").description("카드 생성일"),
+						fieldWithPath("contents[].card.modifiedAt").description("카드 수정일"),
+						fieldWithPath("contents[].card.answer").description("카드 정답"),
+						fieldWithPath("contents[].card.description").description("카드 설명"),
 						fieldWithPath("hasNext").description("다음 페이지 존재 여부"),
 						fieldWithPath("pageSize").description("페이지 사이즈"),
 						fieldWithPath("sortOrder").description("정렬 방식")
@@ -236,8 +256,8 @@ class CardHistoryControllerTest {
 		@WithMockMember
 		void shouldReturn200WhenSuccessTest() throws Exception {
 			// given
-			Mockito.doReturn(CursorPage.<CardHistoryResponseDto>builder()
-				.contents(List.of(CardHistoryTestHelper.generateCardHistoryResponseDto()))
+			Mockito.doReturn(CursorPage.<CardHistoryWithCardAndMemberResponseDto>builder()
+				.contents(List.of(generateCardHistoryWithCardAndMemberResponseDto()))
 				.hasNext(null)
 				.pageSize(2)
 				.sortOrder(SortOrder.DESC)
@@ -261,19 +281,36 @@ class CardHistoryControllerTest {
 					),
 					pathParameters(parameterWithName("solvedMemberId").description("문제를 푼 사용자 ID")),
 					responseFields(
-						fieldWithPath("contents[].cardHistoryId").description("카드 히스토리 ID"),
-						fieldWithPath("contents[].categoryId").description("카테고리 ID"),
-						fieldWithPath("contents[].cardId").description("카드 ID"),
-						fieldWithPath("contents[].solvedUserId").description("문제를 푼 사용자 ID"),
-						fieldWithPath("contents[].solvedUserName").description("문제를 푼 사용자 이름"),
-						fieldWithPath("contents[].userAnswer").description("사용자 답안"),
-						fieldWithPath("contents[].score").description("점수"),
-						fieldWithPath("contents[].createdAt").description("생성일"),
+						fieldWithPath("contents[].cardHistory.cardHistoryId").description("카드 히스토리 ID"),
+						fieldWithPath("contents[].cardHistory.userAnswer").description("사용자 답안"),
+						fieldWithPath("contents[].cardHistory.score").description("점수"),
+						fieldWithPath("contents[].cardHistory.createdAt").description("생성일"),
+						fieldWithPath("contents[].solvedMember.solvedMemberId").description("문제를 푼 사용자 ID"),
+						fieldWithPath("contents[].solvedMember.solvedMemberName").description("문제를 푼 사용자 이름"),
+						fieldWithPath("contents[].card.cardId").description("카드 ID"),
+						fieldWithPath("contents[].card.title").description("카드 제목"),
+						fieldWithPath("contents[].card.memberId").description("카드 작성자 ID"),
+						fieldWithPath("contents[].card.question").description("카드 질문"),
+						fieldWithPath("contents[].card.categoryId").description("카테고리 ID"),
+						fieldWithPath("contents[].card.cardType").description("카드 타입"),
+						fieldWithPath("contents[].card.createdAt").description("카드 생성일"),
+						fieldWithPath("contents[].card.modifiedAt").description("카드 수정일"),
+						fieldWithPath("contents[].card.answer").description("카드 정답"),
+						fieldWithPath("contents[].card.description").description("카드 설명"),
 						fieldWithPath("hasNext").description("다음 페이지 존재 여부"),
 						fieldWithPath("pageSize").description("페이지 사이즈"),
 						fieldWithPath("sortOrder").description("정렬 방식")
 					)
 				));
 		}
+	}
+
+	CardHistoryWithCardAndMemberResponseDto generateCardHistoryWithCardAndMemberResponseDto() {
+		final Id solvedMemberId = Id.generateNextId();
+		final Id cardId = Id.generateNextId();
+		final Id categoryId = Id.generateNextId();
+		CardHistory cardHistory = CardHistoryTestHelper.generateCardHistory(cardId, solvedMemberId);
+		Card card = CardTestHelper.genOxCard(solvedMemberId, categoryId, cardId);
+		return new CardHistoryWithCardAndMemberResponseDto(cardHistory, card, solvedMemberId, Name.of("simon"));
 	}
 }

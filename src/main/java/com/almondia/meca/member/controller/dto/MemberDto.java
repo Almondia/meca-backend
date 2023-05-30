@@ -16,7 +16,7 @@ import lombok.RequiredArgsConstructor;
 @Builder
 @RequiredArgsConstructor
 @Getter
-public class MemberResponseDto {
+public class MemberDto {
 
 	private final Id memberId;
 	private final Name name;

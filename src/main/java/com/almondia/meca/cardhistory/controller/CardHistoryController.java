@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.almondia.meca.cardhistory.application.CardHistoryService;
-import com.almondia.meca.cardhistory.controller.dto.CardHistoryResponseDto;
+import com.almondia.meca.cardhistory.controller.dto.CardHistoryWithCardAndMemberResponseDto;
 import com.almondia.meca.cardhistory.controller.dto.SaveRequestCardHistoryDto;
 import com.almondia.meca.common.controller.dto.CursorPage;
 import com.almondia.meca.common.domain.vo.Id;
@@ -38,34 +38,36 @@ public class CardHistoryController {
 	}
 
 	@GetMapping("/cards/{cardId}")
-	public ResponseEntity<CursorPage<CardHistoryResponseDto>> findCardHistoriesByCardId(
+	public ResponseEntity<CursorPage<CardHistoryWithCardAndMemberResponseDto>> findCardHistoriesByCardId(
 		@PathVariable("cardId") Id cardId,
 		@RequestParam(value = "pageSize", defaultValue = "1000") int pageSize,
 		@RequestParam(value = "hasNext", required = false) Id lastCardHistoryId
 	) {
-		CursorPage<CardHistoryResponseDto> cursorPage = cardHistoryService.findCardHistoriesByCardId(cardId,
+		CursorPage<CardHistoryWithCardAndMemberResponseDto> cursorPage = cardHistoryService.findCardHistoriesByCardId(
+			cardId,
 			pageSize, lastCardHistoryId);
 		return ResponseEntity.ok(cursorPage);
 	}
 
 	@GetMapping("/categories/{categoryId}")
-	public ResponseEntity<CursorPage<CardHistoryResponseDto>> findCardHistoriesByCategoryId(
+	public ResponseEntity<CursorPage<CardHistoryWithCardAndMemberResponseDto>> findCardHistoriesByCategoryId(
 		@PathVariable("categoryId") Id categoryId,
 		@RequestParam(value = "pageSize", defaultValue = "1000") int pageSize,
 		@RequestParam(value = "hasNext", required = false) Id lastCardHistoryId
 	) {
-		CursorPage<CardHistoryResponseDto> cursorPage = cardHistoryService.findCardHistoriesByCategoryId(categoryId,
+		CursorPage<CardHistoryWithCardAndMemberResponseDto> cursorPage = cardHistoryService.findCardHistoriesByCategoryId(
+			categoryId,
 			pageSize, lastCardHistoryId);
 		return ResponseEntity.ok(cursorPage);
 	}
 
 	@GetMapping("/members/{solvedMemberId}")
-	public ResponseEntity<CursorPage<CardHistoryResponseDto>> findCardHistoriesBySolvedMemberId(
+	public ResponseEntity<CursorPage<CardHistoryWithCardAndMemberResponseDto>> findCardHistoriesBySolvedMemberId(
 		@PathVariable("solvedMemberId") Id solvedMemberId,
 		@RequestParam(value = "pageSize", defaultValue = "1000") int pageSize,
 		@RequestParam(value = "hasNext", required = false) Id lastCardHistoryId
 	) {
-		CursorPage<CardHistoryResponseDto> cursorPage = cardHistoryService.findCardHistoriesBySolvedMemberId(
+		CursorPage<CardHistoryWithCardAndMemberResponseDto> cursorPage = cardHistoryService.findCardHistoriesBySolvedMemberId(
 			solvedMemberId,
 			pageSize, lastCardHistoryId);
 		return ResponseEntity.ok(cursorPage);
