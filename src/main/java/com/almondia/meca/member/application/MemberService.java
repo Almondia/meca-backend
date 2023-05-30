@@ -45,6 +45,7 @@ public class MemberService {
 		if (updateMemberRequestDto.getProfile() != null) {
 			member.updateProfile(updateMemberRequestDto.getProfile());
 		}
+		memberRepository.save(member);
 		return MemberMapper.fromEntityToDto(member);
 	}
 

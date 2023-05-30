@@ -137,7 +137,7 @@ class MemberServiceTest {
 		// given
 		final Id memberId = Id.generateNextId();
 		Member member = MemberTestHelper.generateMember(memberId);
-		member = memberRepository.save(member);
+		memberRepository.save(member);
 		UpdateMemberRequestDto updateMemberRequest = UpdateMemberRequestDto.builder()
 			.profile(new Image("profile"))
 			.build();
