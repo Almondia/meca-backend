@@ -242,23 +242,31 @@ class CategoryControllerTest {
 				.findCursorPagingCategoryWithHistoryResponse(anyInt(), any(), any(), any());
 
 			// when
-			ResultActions resultActions = mockMvc.perform(
-				get("/api/v1/categories/me").header("Authorization", "Bearer " + jwtToken)
-					.queryParam("pageSize", "4")
-					.queryParam("hasNext", Id.generateNextId().toString())
-					.queryParam("containTitle", "title"));
+			ResultActions resultActions = mockMvc.perform(get("/api/v1/categories/me")
+				.header("Authorization", "Bearer " + jwtToken)
+				.queryParam("pageSize", "4")
+				.queryParam("hasNext", Id.generateNextId().toString())
+				.queryParam("containTitle", "title"));
 
 			// then
 			resultActions.andExpect(status().isOk())
 				.andExpect(jsonPath("pageSize").exists())
 				.andExpect(jsonPath("hasNext").exists())
 				.andExpect(jsonPath("sortOrder").exists())
-				.andDo(document("{class-name}/{method-name}", getDocumentRequest(), getDocumentResponse(),
-					requestHeaders(headerWithName("Authorization").description("JWT Bearer 토큰")),
-					requestParameters(parameterWithName("pageSize").description("페이지 사이즈"),
+				.andDo(document(
+					"{class-name}/{method-name}",
+					getDocumentRequest(),
+					getDocumentResponse(),
+					requestHeaders(
+						headerWithName("Authorization").description("JWT Bearer 토큰")
+					),
+					requestParameters(
+						parameterWithName("pageSize").description("페이지 사이즈"),
 						parameterWithName("hasNext").description("다음 페이지 커서").optional(),
-						parameterWithName("containTitle").description("카테고리 제목 포함 여부(null인 경우 전체 검색)").optional()),
-					responseFields(fieldWithPath("pageSize").description("페이지 사이즈"),
+						parameterWithName("containTitle").description("카테고리 제목 포함 여부(null인 경우 전체 검색)").optional()
+					),
+					responseFields(
+						fieldWithPath("pageSize").description("페이지 사이즈"),
 						fieldWithPath("hasNext").description("다음 페이지 커서"),
 						fieldWithPath("sortOrder").description("정렬 방식"),
 						fieldWithPath("contents[].categoryId").description("카테고리 아이디"),
@@ -272,7 +280,9 @@ class CategoryControllerTest {
 						fieldWithPath("contents[].totalCount").description("카테고리 문제 수"),
 						fieldWithPath("contents[].deleted").description("카테고리 삭제 여부"),
 						fieldWithPath("contents[].shared").description("카테고리 공유 여부"),
-						fieldWithPath("contents[].likeCount").description("카테고리 좋아요 수"))));
+						fieldWithPath("contents[].likeCount").description("카테고리 좋아요 수")
+					)
+				));
 		}
 	}
 
@@ -288,13 +298,21 @@ class CategoryControllerTest {
 			Id categoryId = Id.generateNextId();
 
 			// when
-			ResultActions resultActions = mockMvc.perform(
-				delete("/api/v1/categories/{categoryId}", categoryId).header("Authorization", "Bearer " + jwtToken));
+			ResultActions resultActions = mockMvc.perform(delete("/api/v1/categories/{categoryId}", categoryId)
+				.header("Authorization", "Bearer " + jwtToken));
 
 			resultActions.andExpect(status().isOk())
-				.andDo(document("{class-name}/{method-name}", getDocumentRequest(), getDocumentResponse(),
-					requestHeaders(headerWithName("Authorization").description("JWT Bearer 토큰")),
-					pathParameters(parameterWithName("categoryId").description("카테고리 아이디"))));
+				.andDo(document(
+					"{class-name}/{method-name}",
+					getDocumentRequest(),
+					getDocumentResponse(),
+					requestHeaders(
+						headerWithName("Authorization").description("JWT Bearer 토큰")
+					),
+					pathParameters(
+						parameterWithName("categoryId").description("카테고리 아이디")
+					)
+				));
 		}
 	}
 
@@ -310,7 +328,8 @@ class CategoryControllerTest {
 				.pageSize(2)
 				.contents(List.of(new SharedCategoryResponseDto(
 					CategoryTestHelper.generateSharedCategory("title", Id.generateNextId(), Id.generateNextId()),
-					MemberTestHelper.generateMember(Id.generateNextId()), 1L)))
+					MemberTestHelper.generateMember(Id.generateNextId()),
+					1L)))
 				.hasNext(Id.generateNextId())
 				.sortOrder(SortOrder.DESC)
 				.build();
@@ -319,10 +338,10 @@ class CategoryControllerTest {
 				.findCursorPagingCategoryResponseDto(anyInt(), any(), any());
 
 			// when
-			ResultActions resultActions = mockMvc.perform(
-				get("/api/v1/categories/share").queryParam("hasNext", Id.generateNextId().toString())
-					.queryParam("containTitle", "title")
-					.queryParam("pageSize", "2"));
+			ResultActions resultActions = mockMvc.perform(get("/api/v1/categories/share")
+				.queryParam("hasNext", Id.generateNextId().toString())
+				.queryParam("containTitle", "title")
+				.queryParam("pageSize", "2"));
 
 			// then
 			resultActions.andExpect(status().isOk())
@@ -330,11 +349,17 @@ class CategoryControllerTest {
 				.andExpect(jsonPath("hasNext").exists())
 				.andExpect(jsonPath("sortOrder").exists())
 				.andExpect(jsonPath("contents").exists())
-				.andDo(document("{class-name}/{method-name}", getDocumentRequest(), getDocumentResponse(),
-					requestParameters(parameterWithName("hasNext").description("다음 페이지 커서").optional(),
+				.andDo(document(
+					"{class-name}/{method-name}",
+					getDocumentRequest(),
+					getDocumentResponse(),
+					requestParameters(
+						parameterWithName("hasNext").description("다음 페이지 커서").optional(),
 						parameterWithName("containTitle").description("카테고리 제목 포함 여부(null인 경우 전체 검색)").optional(),
-						parameterWithName("pageSize").description("페이지 사이즈")),
-					responseFields(fieldWithPath("pageSize").description("페이지 사이즈"),
+						parameterWithName("pageSize").description("페이지 사이즈")
+					),
+					responseFields(
+						fieldWithPath("pageSize").description("페이지 사이즈"),
 						fieldWithPath("hasNext").description("다음 페이지 커서"),
 						fieldWithPath("sortOrder").description("정렬 방식"),
 						fieldWithPath("contents[].categoryInfo.categoryId").description("카테고리 아이디"),
@@ -354,7 +379,9 @@ class CategoryControllerTest {
 						fieldWithPath("contents[].memberInfo.modifiedAt").description("회원 수정일"),
 						fieldWithPath("contents[].memberInfo.oauthType").description("Oauth 타입"),
 						fieldWithPath("contents[].memberInfo.deleted").description("회원 삭제 여부"),
-						fieldWithPath("contents[].likeCount").description("카테고리 좋아요 수"))));
+						fieldWithPath("contents[].likeCount").description("카테고리 좋아요 수")
+					)
+				));
 		}
 	}
 
@@ -370,14 +397,21 @@ class CategoryControllerTest {
 
 			// when
 			ResultActions resultActions = mockMvc.perform(
-				post("/api/v1/categories/{categoryId}/like/like", Id.generateNextId()).header("Authorization",
-					"Bearer " + jwtToken));
+				post("/api/v1/categories/{categoryId}/like/like", Id.generateNextId())
+					.header("Authorization", "Bearer " + jwtToken));
 
 			// then
 			resultActions.andExpect(status().isOk())
-				.andDo(document("{class-name}/{method-name}", getDocumentRequest(), getDocumentResponse(),
-					requestHeaders(headerWithName("Authorization").description("JWT Bearer 토큰")),
-					pathParameters(parameterWithName("categoryId").description("카테고리 아이디"))));
+				.andDo(document("{class-name}/{method-name}",
+					getDocumentRequest(),
+					getDocumentResponse(),
+					requestHeaders(
+						headerWithName("Authorization").description("JWT Bearer 토큰")
+					),
+					pathParameters(
+						parameterWithName("categoryId").description("카테고리 아이디")
+					)
+				));
 		}
 	}
 
@@ -394,14 +428,21 @@ class CategoryControllerTest {
 
 			// when
 			ResultActions resultActions = mockMvc.perform(
-				post("/api/v1/categories/{categoryId}/like/unlike", categoryId).header("Authorization",
-					"Bearer " + jwtToken));
+				post("/api/v1/categories/{categoryId}/like/unlike", categoryId)
+					.header("Authorization", "Bearer " + jwtToken));
 
 			// then
 			resultActions.andExpect(status().isOk())
-				.andDo(document("{class-name}/{method-name}", getDocumentRequest(), getDocumentResponse(),
-					requestHeaders(headerWithName("Authorization").description("JWT Bearer 토큰")),
-					pathParameters(parameterWithName("categoryId").description("카테고리 아이디"))));
+				.andDo(document("{class-name}/{method-name}",
+					getDocumentRequest(),
+					getDocumentResponse(),
+					requestHeaders(
+						headerWithName("Authorization").description("JWT Bearer 토큰")
+					),
+					pathParameters(
+						parameterWithName("categoryId").description("카테고리 아이디")
+					)
+				));
 		}
 	}
 
@@ -428,11 +469,20 @@ class CategoryControllerTest {
 
 			// then
 			resultActions.andExpect(status().isOk())
-				.andDo(document("{class-name}/{method-name}", getDocumentRequest(), getDocumentResponse(),
-					requestHeaders(headerWithName("Authorization").description("JWT Bearer 토큰")),
-					requestParameters(parameterWithName("categoryIds").description("카테고리 아이디 목록")),
-					responseFields(fieldWithPath("recommendedCategories").description("좋아요한 카테고리 아이디 목록"),
-						fieldWithPath("unRecommendedCategories").description("좋아요하지 않은 카테고리 아이디 목록"))));
+				.andDo(document("{class-name}/{method-name}",
+					getDocumentRequest(),
+					getDocumentResponse(),
+					requestHeaders(
+						headerWithName("Authorization").description("JWT Bearer 토큰")
+					),
+					requestParameters(
+						parameterWithName("categoryIds").description("카테고리 아이디 목록")
+					),
+					responseFields(
+						fieldWithPath("recommendedCategories").description("좋아요한 카테고리 아이디 목록"),
+						fieldWithPath("unRecommendedCategories").description("좋아요하지 않은 카테고리 아이디 목록")
+					)
+				));
 		}
 	}
 }
