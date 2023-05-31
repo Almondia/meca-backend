@@ -14,6 +14,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 
+import com.almondia.meca.category.controller.dto.CategoryRecommendCheckDto;
 import com.almondia.meca.category.domain.entity.Category;
 import com.almondia.meca.common.configuration.jpa.JpaAuditingConfiguration;
 import com.almondia.meca.common.configuration.jpa.QueryDslConfiguration;
@@ -210,5 +211,41 @@ class CategoryRecommendServiceTest {
 			assertThat(fetch).isNotNull();
 			assertThat(fetch.isDeleted()).isEqualTo(true);
 		}
+	}
+
+	/**
+	 * 추천을 누른 카테고리와 추천을 누르지 않은 카테고리 정보가 정확히 일치해야 함
+	 */
+	@Nested
+	@DisplayName("추천 여부 확인")
+	class IsRecommendedTest {
+
+		@Test
+		@DisplayName("추천을 누른 카테고리와 추천을 누르지 않은 카테고리 정보가 정확히 일치해야 함")
+		void shouldReturnTrueWhenCategoryIsRecommended() {
+			// given
+			final Id categoryId1 = Id.generateNextId();
+			final Id categoryId2 = Id.generateNextId();
+			final Id memberId = Id.generateNextId();
+			final Id memberId2 = Id.generateNextId();
+			Member member = MemberTestHelper.generateMember(memberId);
+			Member member2 = MemberTestHelper.generateMember(memberId2);
+			Category category1 = CategoryTestHelper.generateUnSharedCategory("hello", memberId, categoryId1);
+			Category category2 = CategoryTestHelper.generateUnSharedCategory("hello", memberId, categoryId2);
+			CategoryRecommend categoryRecommend1 = CategoryRecommendTestHelper.generateCategoryRecommend(categoryId1,
+				memberId);
+			CategoryRecommend categoryRecommend2 = CategoryRecommendTestHelper.generateCategoryRecommend(categoryId2,
+				memberId2);
+			persistAll(member, member2, category1, category2, categoryRecommend1, categoryRecommend2);
+
+			// when
+			CategoryRecommendCheckDto result = categoryRecommendService.isRecommended(
+				List.of(categoryId1, categoryId2), memberId);
+
+			// then
+			assertThat(result.getRecommendedCategories().contains(categoryId1)).isTrue();
+			assertThat(result.getUnRecommendedCategories().contains(categoryId2)).isTrue();
+		}
+
 	}
 }
