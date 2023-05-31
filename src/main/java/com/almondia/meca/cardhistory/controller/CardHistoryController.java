@@ -1,5 +1,8 @@
 package com.almondia.meca.cardhistory.controller;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -13,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.almondia.meca.cardhistory.application.CardHistoryService;
+import com.almondia.meca.cardhistory.controller.dto.CardHistoryResponseDto;
 import com.almondia.meca.cardhistory.controller.dto.CardHistoryWithCardAndMemberResponseDto;
 import com.almondia.meca.cardhistory.controller.dto.SaveRequestCardHistoryDto;
 import com.almondia.meca.common.controller.dto.CursorPage;
@@ -37,32 +41,8 @@ public class CardHistoryController {
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 
-	@GetMapping("/cards/{cardId}")
-	public ResponseEntity<CursorPage<CardHistoryWithCardAndMemberResponseDto>> findCardHistoriesByCardId(
-		@PathVariable("cardId") Id cardId,
-		@RequestParam(value = "pageSize", defaultValue = "1000") int pageSize,
-		@RequestParam(value = "hasNext", required = false) Id lastCardHistoryId
-	) {
-		CursorPage<CardHistoryWithCardAndMemberResponseDto> cursorPage = cardHistoryService.findCardHistoriesByCardId(
-			cardId,
-			pageSize, lastCardHistoryId);
-		return ResponseEntity.ok(cursorPage);
-	}
-
-	@GetMapping("/categories/{categoryId}")
-	public ResponseEntity<CursorPage<CardHistoryWithCardAndMemberResponseDto>> findCardHistoriesByCategoryId(
-		@PathVariable("categoryId") Id categoryId,
-		@RequestParam(value = "pageSize", defaultValue = "1000") int pageSize,
-		@RequestParam(value = "hasNext", required = false) Id lastCardHistoryId
-	) {
-		CursorPage<CardHistoryWithCardAndMemberResponseDto> cursorPage = cardHistoryService.findCardHistoriesByCategoryId(
-			categoryId,
-			pageSize, lastCardHistoryId);
-		return ResponseEntity.ok(cursorPage);
-	}
-
 	@GetMapping("/members/{solvedMemberId}")
-	public ResponseEntity<CursorPage<CardHistoryWithCardAndMemberResponseDto>> findCardHistoriesBySolvedMemberId(
+	public ResponseEntity<CursorPage<CardHistoryResponseDto>> findCardHistoriesBySolvedMemberId(
 		@PathVariable("solvedMemberId") Id solvedMemberId,
 		@RequestParam(value = "pageSize", defaultValue = "1000") int pageSize,
 		@RequestParam(value = "hasNext", required = false) Id lastCardHistoryId
@@ -70,6 +50,30 @@ public class CardHistoryController {
 		CursorPage<CardHistoryWithCardAndMemberResponseDto> cursorPage = cardHistoryService.findCardHistoriesBySolvedMemberId(
 			solvedMemberId,
 			pageSize, lastCardHistoryId);
-		return ResponseEntity.ok(cursorPage);
+		List<CardHistoryResponseDto> contents = cursorPage.getContents().stream()
+			.map(this::convertHistory)
+			.collect(Collectors.toList());
+		CursorPage<CardHistoryResponseDto> result = new CursorPage<>(contents, cursorPage.getHasNext(),
+			cursorPage.getPageSize(), cursorPage.getSortOrder());
+		return ResponseEntity.ok(result);
+	}
+
+	private CardHistoryResponseDto convertHistory(
+		CardHistoryWithCardAndMemberResponseDto cardHistoryWithCardAndMemberResponseDto) {
+		return CardHistoryResponseDto.builder()
+			.cardHistoryId(cardHistoryWithCardAndMemberResponseDto.getCardHistory().getCardHistoryId())
+			.solvedUserId(cardHistoryWithCardAndMemberResponseDto.getSolvedMember().getSolvedMemberId())
+			.solvedUserName(cardHistoryWithCardAndMemberResponseDto.getSolvedMember().getSolvedMemberName())
+			.userAnswer(cardHistoryWithCardAndMemberResponseDto.getCardHistory().getUserAnswer())
+			.score(cardHistoryWithCardAndMemberResponseDto.getCardHistory().getScore())
+			.categoryId(cardHistoryWithCardAndMemberResponseDto.getCard().getCategoryId())
+			.cardId(cardHistoryWithCardAndMemberResponseDto.getCard().getCardId())
+			.title(cardHistoryWithCardAndMemberResponseDto.getCard().getTitle().toString())
+			.cardType(cardHistoryWithCardAndMemberResponseDto.getCard().getCardType())
+			.question(cardHistoryWithCardAndMemberResponseDto.getCard().getQuestion())
+			.answer(cardHistoryWithCardAndMemberResponseDto.getCard().getAnswer())
+			.createdAt(cardHistoryWithCardAndMemberResponseDto.getCardHistory().getCreatedAt())
+			.build();
+
 	}
 }
