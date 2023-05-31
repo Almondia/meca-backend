@@ -194,7 +194,7 @@ class CardHistoryController2Test {
 
 	@Nested
 	@DisplayName("푼 사용자 기반 카드 히스토리 조회 API")
-	class FindCardHistoriesBySolvedMemberIdTest {
+	class FindCardHistoriesBySolvedMemberIdTest2 {
 
 		@Test
 		@DisplayName("정상 응답 테스트")
