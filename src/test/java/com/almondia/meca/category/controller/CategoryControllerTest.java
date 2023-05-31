@@ -36,6 +36,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import com.almondia.meca.category.application.CategoryRecommendService;
 import com.almondia.meca.category.application.CategoryService;
+import com.almondia.meca.category.controller.dto.CategoryRecommendCheckDto;
 import com.almondia.meca.category.controller.dto.CategoryWithHistoryResponseDto;
 import com.almondia.meca.category.controller.dto.SharedCategoryResponseDto;
 import com.almondia.meca.category.controller.dto.UpdateCategoryRequestDto;
@@ -440,6 +441,46 @@ class CategoryControllerTest {
 					),
 					pathParameters(
 						parameterWithName("categoryId").description("카테고리 아이디")
+					)
+				));
+		}
+	}
+
+	@Nested
+	@DisplayName("카테고리 추천 여부 확인 API")
+	class IsRecommendCategoriesTest {
+
+		@Test
+		@DisplayName("카테고리 추천 여부 확인 성공시 응답 200")
+		@WithMockMember
+		void shouldReturnStatus200WhenSuccessTest() throws Exception {
+			// given
+			Id id1 = Id.generateNextId();
+			Id id2 = Id.generateNextId();
+			Id id3 = Id.generateNextId();
+			Mockito.doReturn(new CategoryRecommendCheckDto(List.of(id1, id2, id3), List.of(id1, id2)))
+				.when(categoryRecommendService)
+				.isRecommended(any(), any());
+
+			// when
+			ResultActions resultActions = mockMvc.perform(
+				get("/api/v1/categories/like?categoryIds=" + id1 + "," + id2 + "," + id3).header("Authorization",
+					"Bearer " + jwtToken));
+
+			// then
+			resultActions.andExpect(status().isOk())
+				.andDo(document("{class-name}/{method-name}",
+					getDocumentRequest(),
+					getDocumentResponse(),
+					requestHeaders(
+						headerWithName("Authorization").description("JWT Bearer 토큰")
+					),
+					requestParameters(
+						parameterWithName("categoryIds").description("카테고리 아이디 목록")
+					),
+					responseFields(
+						fieldWithPath("recommendedCategories").description("좋아요한 카테고리 아이디 목록"),
+						fieldWithPath("unRecommendedCategories").description("좋아요하지 않은 카테고리 아이디 목록")
 					)
 				));
 		}

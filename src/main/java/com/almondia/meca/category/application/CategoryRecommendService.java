@@ -1,8 +1,11 @@
 package com.almondia.meca.category.application;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.almondia.meca.category.controller.dto.CategoryRecommendCheckDto;
 import com.almondia.meca.category.domain.repository.CategoryRepository;
 import com.almondia.meca.common.domain.vo.Id;
 import com.almondia.meca.recommand.domain.entity.CategoryRecommend;
@@ -46,6 +49,13 @@ public class CategoryRecommendService {
 			categoryRecommendRepository.findByCategoryIdAndRecommendMemberIdAndIsDeletedFalse(categoryId, memberId)
 				.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 카테고리 추천을 취소할 수 없습니다"));
 		categoryRecommend.delete();
+	}
+
+	@Transactional(readOnly = true)
+	public CategoryRecommendCheckDto isRecommended(List<Id> categoryIds, Id memberId) {
+		List<Id> recommendedCategoryIds = categoryRecommendRepository.findRecommendCategoryIdsByMemberId(
+			categoryIds, memberId);
+		return new CategoryRecommendCheckDto(categoryIds, recommendedCategoryIds);
 	}
 
 }
