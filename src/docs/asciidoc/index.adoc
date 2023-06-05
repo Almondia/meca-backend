@@ -131,7 +131,7 @@ operation::save-card-test/should-return201-when-enroll-success-test[snippets='ht
 [[Card-카드-수정]]
 === Card 카드 수정
 
-operation::update-category-test/should-return200-when-success-update-category-test[snippets='http-request,path-parameters,request-fields,http-response,response-fields']
+operation::update-card-test/should-return200-when-success-test[snippets='http-request,path-parameters,request-fields,http-response,response-fields']
 
 [[Card-카드-삭제]]
 === Card 카드 삭제
