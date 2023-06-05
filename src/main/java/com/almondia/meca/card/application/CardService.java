@@ -138,5 +138,8 @@ public class CardService {
 			categoryChecker.checkAuthority(updateCardRequestDto.getCategoryId(), memberId);
 			card.changeCategoryId(updateCardRequestDto.getCategoryId());
 		}
+		if (updateCardRequestDto.getAnswer() != null) {
+			card.changeAnswer(updateCardRequestDto.getAnswer());
+		}
 	}
 }

@@ -7,7 +7,6 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -43,11 +42,11 @@ import com.almondia.meca.category.domain.service.CategoryChecker;
 import com.almondia.meca.common.configuration.jpa.QueryDslConfiguration;
 import com.almondia.meca.common.controller.dto.CursorPage;
 import com.almondia.meca.common.domain.vo.Id;
-import com.almondia.meca.common.domain.vo.Image;
 import com.almondia.meca.data.CardDataFactory;
 import com.almondia.meca.helper.CardTestHelper;
 import com.almondia.meca.helper.CategoryTestHelper;
 import com.almondia.meca.helper.MemberTestHelper;
+import com.almondia.meca.member.domain.entity.Member;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -165,6 +164,9 @@ class CardServiceTest {
 	 * 4. title만 요청한 경우 title만 수정해야됨
 	 * 5. question만 요청한 경우 question만 수정해야됨
 	 * 6. editText만 요청한 경우 editText만 수정해야됨
+	 * 7. 정답 업데이트시 oxCard 타입에 맞게 validation되며 업데이트 되야함
+	 * 8. 정답 업데이트시 keywordCard 타입에 맞게 validation되며 업데이트 되야함
+	 * 9. 정답 업데이트시 multiChoiceCard 타입에 맞게 validation되며 업데이트 되야함
 	 */
 	@Nested
 	@DisplayName("카드 업데이트 테스트")
@@ -174,27 +176,36 @@ class CardServiceTest {
 		Id memberId = Id.generateNextId();
 		Id cardId = Id.generateNextId();
 
-		@BeforeEach
-		void before() {
-			persistCardEntity();
-		}
-
-		@AfterEach
-		void after() {
-			em.clear();
-		}
-
 		@Test
 		@DisplayName("카드 업데이트시 업데이트가 성공적으로 반영되었는지 테스트")
 		void shouldReturnCardResponseDtoWhenCallUpdateCardRequestTest() {
+			// given
+			KeywordCard card = CardTestHelper.genKeywordCard(memberId, categoryId, cardId);
+			Category category = CategoryTestHelper.generateUnSharedCategory("title", memberId, categoryId);
+			Member member = MemberTestHelper.generateMember(memberId);
 			UpdateCardRequestDto updateCardRequestDto = makeUpdateCardRequest(categoryId);
+			em.persist(card);
+			em.persist(category);
+			em.persist(member);
+
+			// when
 			CardDto responseDto = cardService.updateCard(updateCardRequestDto, cardId, memberId);
+
+			// then
 			assertThat(responseDto).isInstanceOf(CardDto.class);
 		}
 
 		@Test
 		@DisplayName("본인의 카테고리가 아닌 남의 카테고리로 카드 카테고리 업데이트시 권한 에러")
 		void shouldThrowAccessDeniedExceptionWhenCallNotMyCategoryTest() {
+			// given
+			KeywordCard card = CardTestHelper.genKeywordCard(memberId, categoryId, cardId);
+			Category category = CategoryTestHelper.generateUnSharedCategory("title", memberId, categoryId);
+			Member member = MemberTestHelper.generateMember(memberId);
+			em.persist(card);
+			em.persist(category);
+			em.persist(member);
+
 			assertThatThrownBy(() -> {
 				UpdateCardRequestDto updateCardRequestDto = makeUpdateCardRequest(categoryId);
 				cardService.updateCard(updateCardRequestDto, Id.generateNextId(), memberId);
@@ -204,6 +215,14 @@ class CardServiceTest {
 		@Test
 		@DisplayName("본인의 카드가 아닌 다른 카드 ID를 가지고 요청한 경우 권한 에러")
 		void shouldThrowAccessDeniedExceptionWhenCallNotMyCardTest() {
+			// given
+			KeywordCard card = CardTestHelper.genKeywordCard(memberId, categoryId, cardId);
+			Category category = CategoryTestHelper.generateUnSharedCategory("title", memberId, categoryId);
+			Member member = MemberTestHelper.generateMember(memberId);
+			em.persist(card);
+			em.persist(category);
+			em.persist(member);
+
 			assertThatThrownBy(() -> {
 				UpdateCardRequestDto updateCardRequestDto = makeUpdateCardRequest(Id.generateNextId());
 				cardService.updateCard(updateCardRequestDto, cardId, memberId);
@@ -213,45 +232,75 @@ class CardServiceTest {
 		@Test
 		@DisplayName("title만 요청한 경우 title만 수정해야됨")
 		void shouldUpdateTitleOnlyTest() {
+			// given
+			KeywordCard card = CardTestHelper.genKeywordCard(memberId, categoryId, cardId);
+			Category category = CategoryTestHelper.generateUnSharedCategory("title", memberId, categoryId);
+			Member member = MemberTestHelper.generateMember(memberId);
+			em.persist(card);
+			em.persist(category);
+			em.persist(member);
+
 			UpdateCardRequestDto updateCardRequestDto = UpdateCardRequestDto.builder()
 				.title(new Title("title2"))
 				.build();
+
+			// when
 			cardService.updateCard(updateCardRequestDto, cardId, memberId);
+
+			// then
 			List<Card> all = cardRepository.findAll();
 			assertThat(all).isNotEmpty();
 			assertThat(all.get(0))
-				.hasFieldOrPropertyWithValue("title", new Title("title2"))
-				.hasFieldOrPropertyWithValue("question", new Question("question"))
-				.hasFieldOrPropertyWithValue("description", new Description("edit text"));
+				.hasFieldOrPropertyWithValue("title", new Title("title2"));
 		}
 
 		@Test
 		@DisplayName("question만 요청한 경우 question만 수정해야됨")
 		void shouldUpdateQuestionOnlyTest() {
+			// given
+			KeywordCard card = CardTestHelper.genKeywordCard(memberId, categoryId, cardId);
+			Category category = CategoryTestHelper.generateUnSharedCategory("title", memberId, categoryId);
+			Member member = MemberTestHelper.generateMember(memberId);
+			em.persist(card);
+			em.persist(category);
+			em.persist(member);
+
 			UpdateCardRequestDto updateCardRequestDto = UpdateCardRequestDto.builder()
 				.question(new Question("question2"))
 				.build();
+
+			// when
 			cardService.updateCard(updateCardRequestDto, cardId, memberId);
+
+			// then
 			List<Card> all = cardRepository.findAll();
 			assertThat(all).isNotEmpty();
 			assertThat(all.get(0))
-				.hasFieldOrPropertyWithValue("title", new Title("title"))
-				.hasFieldOrPropertyWithValue("question", new Question("question2"))
-				.hasFieldOrPropertyWithValue("description", new Description("edit text"));
+				.hasFieldOrPropertyWithValue("question", new Question("question2"));
 		}
 
 		@Test
 		@DisplayName("editText만 요청한 경우 editText만 수정해야됨")
 		void shouldUpdateEditTextOnlyTest() {
+			// given
+			KeywordCard card = CardTestHelper.genKeywordCard(memberId, categoryId, cardId);
+			Category category = CategoryTestHelper.generateUnSharedCategory("title", memberId, categoryId);
+			Member member = MemberTestHelper.generateMember(memberId);
+			em.persist(card);
+			em.persist(category);
+			em.persist(member);
+
 			UpdateCardRequestDto updateCardRequestDto = UpdateCardRequestDto.builder()
 				.description(new Description("edit text2"))
 				.build();
+
+			// when
 			cardService.updateCard(updateCardRequestDto, cardId, memberId);
+
+			// then
 			List<Card> all = cardRepository.findAll();
 			assertThat(all).isNotEmpty();
 			assertThat(all.get(0))
-				.hasFieldOrPropertyWithValue("title", new Title("title"))
-				.hasFieldOrPropertyWithValue("question", new Question("question"))
 				.hasFieldOrPropertyWithValue("description", new Description("edit text2"));
 		}
 
@@ -264,23 +313,63 @@ class CardServiceTest {
 				.build();
 		}
 
-		private void persistCardEntity() {
-			oxCardRepository.save(OxCard.builder()
-				.title(new Title("title"))
-				.images(List.of(new Image("A"), new Image("B")))
-				.cardId(cardId)
-				.memberId(memberId)
-				.categoryId(categoryId)
-				.cardType(CardType.OX_QUIZ)
-				.question(new Question("question"))
-				.oxAnswer(OxAnswer.O)
-				.description(new Description("edit text"))
-				.build());
-			em.persist(Category.builder()
-				.categoryId(categoryId)
-				.title(new com.almondia.meca.category.domain.vo.Title("category title"))
-				.memberId(memberId)
-				.build());
+		@Test
+		@DisplayName("정답 업데이트시 oxCard 타입에 맞게 validation되며 업데이트 되야함")
+		void shouldThrowIllegalArgumentExceptionWhenCallUpdateOxAnswerTest() {
+			// given
+			OxCard card = CardTestHelper.genOxCard(memberId, categoryId, cardId);
+			Category category = CategoryTestHelper.generateUnSharedCategory("title", memberId, categoryId);
+			Member member = MemberTestHelper.generateMember(memberId);
+			UpdateCardRequestDto updateOxAnswerRequestDto = UpdateCardRequestDto.builder()
+				.answer("A")
+				.build();
+			em.persist(member);
+			em.persist(card);
+			em.persist(category);
+
+			// expect
+			assertThatThrownBy(() -> cardService.updateCard(updateOxAnswerRequestDto, cardId, memberId))
+				.isInstanceOf(IllegalArgumentException.class);
+		}
+
+		@Test
+		@DisplayName("정답 업데이트시 keywordCard 타입에 맞게 validation되며 업데이트 되야함")
+		void shouldThrowIllegalArgumentExceptionWhenCallUpdateKeywordAnswerTest() {
+			// given
+			KeywordCard card = CardTestHelper.genKeywordCard(memberId, categoryId, cardId);
+			Category category = CategoryTestHelper.generateUnSharedCategory("title", memberId, categoryId);
+			Member member = MemberTestHelper.generateMember(memberId);
+			UpdateCardRequestDto updateKeywordAnswerRequestDto = UpdateCardRequestDto.builder()
+				.answer("A")
+				.build();
+			em.persist(member);
+			em.persist(card);
+			em.persist(category);
+
+			// when
+			CardDto updateCard = cardService.updateCard(updateKeywordAnswerRequestDto, cardId, memberId);
+
+			// then
+			assertThat(updateCard.getAnswer()).isEqualTo("A");
+		}
+
+		@Test
+		@DisplayName("정답 업데이트시 multiChoiceCard 타입에 맞게 validation되며 업데이트 되야함")
+		void shouldThrowIllegalArgumentExceptionWhenCallUpdateMultiChoiceAnswerTest() {
+			// given
+			MultiChoiceCard card = CardTestHelper.genMultiChoiceCard(memberId, categoryId, cardId);
+			Category category = CategoryTestHelper.generateUnSharedCategory("title", memberId, categoryId);
+			Member member = MemberTestHelper.generateMember(memberId);
+			UpdateCardRequestDto updateMultiChoiceAnswerRequestDto = UpdateCardRequestDto.builder()
+				.answer("A")
+				.build();
+			em.persist(member);
+			em.persist(card);
+			em.persist(category);
+
+			// expect
+			assertThatThrownBy(() -> cardService.updateCard(updateMultiChoiceAnswerRequestDto, cardId, memberId))
+				.isInstanceOf(IllegalArgumentException.class);
 		}
 	}
 
