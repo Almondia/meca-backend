@@ -22,4 +22,5 @@ public class UpdateCardRequestDto {
 	private Question question;
 	private Id categoryId;
 	private Description description;
+	private String answer;
 }

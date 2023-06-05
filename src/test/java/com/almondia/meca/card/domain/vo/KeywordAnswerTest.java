@@ -15,4 +15,10 @@ class KeywordAnswerTest {
 	void validationTest() {
 		assertThatThrownBy(() -> new KeywordAnswer("a".repeat(501))).isInstanceOf(IllegalArgumentException.class);
 	}
+
+	@Test
+	@DisplayName("toString시 자기 자신의 타입 이름을 호출히야 한다")
+	void toStringTest() {
+		assertThat(KeywordAnswer.valueOf("test").toString()).isEqualTo("test");
+	}
 }

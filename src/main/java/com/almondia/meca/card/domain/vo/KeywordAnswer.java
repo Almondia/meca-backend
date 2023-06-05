@@ -22,14 +22,18 @@ public class KeywordAnswer implements Wrapper {
 		this.keywordAnswer = keywordAnswer;
 	}
 
-	private void validateKeywordAnswer(String keywordAnswer) {
-		if (keywordAnswer.length() > MAX_LENGTH) {
-			throw new IllegalArgumentException("%d 초과해서 문자열 길이를 늘릴 수 없습니다");
-		}
+	public static KeywordAnswer valueOf(String keywordAnswer) {
+		return new KeywordAnswer(keywordAnswer);
 	}
 
 	@Override
 	public String toString() {
 		return keywordAnswer;
+	}
+
+	private void validateKeywordAnswer(String keywordAnswer) {
+		if (keywordAnswer.length() > MAX_LENGTH) {
+			throw new IllegalArgumentException("%d 초과해서 문자열 길이를 늘릴 수 없습니다");
+		}
 	}
 }

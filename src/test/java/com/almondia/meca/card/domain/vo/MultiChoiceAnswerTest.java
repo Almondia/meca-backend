@@ -3,6 +3,7 @@ package com.almondia.meca.card.domain.vo;
 import static org.assertj.core.api.Assertions.*;
 
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
@@ -19,5 +20,11 @@ class MultiChoiceAnswerTest {
 	})
 	void validateTest(int number) {
 		assertThatThrownBy(() -> new MultiChoiceAnswer(number)).isInstanceOf(IllegalArgumentException.class);
+	}
+
+	@Test
+	@DisplayName("toString시 본인 타입이 그대로 호출되야 함")
+	void toStringTest() {
+		assertThat(MultiChoiceAnswer.valueOf("1").toString()).isEqualTo("1");
 	}
 }
