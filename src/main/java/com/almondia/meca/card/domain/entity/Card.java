@@ -101,4 +101,6 @@ public abstract class Card extends DateEntity {
 	public void changeCategoryId(Id categoryId) {
 		this.categoryId = categoryId;
 	}
+
+	public abstract void changeAnswer(String answer);
 }

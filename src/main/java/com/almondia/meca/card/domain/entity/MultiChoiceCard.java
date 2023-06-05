@@ -31,4 +31,9 @@ public class MultiChoiceCard extends Card {
 	public CardType getCardType() {
 		return CardType.MULTI_CHOICE;
 	}
+
+	@Override
+	public void changeAnswer(String answer) {
+		this.multiChoiceAnswer = MultiChoiceAnswer.valueOf(answer);
+	}
 }
