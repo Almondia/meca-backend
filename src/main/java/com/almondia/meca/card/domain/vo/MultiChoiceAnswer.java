@@ -23,6 +23,10 @@ public class MultiChoiceAnswer implements Wrapper {
 		this.number = number;
 	}
 
+	public static MultiChoiceAnswer valueOf(String number) {
+		return new MultiChoiceAnswer(Integer.parseInt(number));
+	}
+
 	@Override
 	public String toString() {
 		return number.toString();
