@@ -191,6 +191,7 @@ class CardControllerTest {
 				.question(new Question("question"))
 				.description(new Description("editText"))
 				.categoryId(Id.generateNextId())
+				.answer("O")
 				.build();
 			Mockito.doReturn(makeResponse()).when(cardService).updateCard(any(), any(), any());
 
@@ -215,7 +216,8 @@ class CardControllerTest {
 				.andExpect(jsonPath("answer").exists())
 				.andDo(document("{class-name}/{method-name}", getDocumentRequest(), getDocumentResponse(),
 					requestHeaders(headerWithName("Authorization").description("jwt token")),
-					pathParameters(parameterWithName("cardId").description("카드 아이디")), requestFields(
+					pathParameters(parameterWithName("cardId").description("카드 아이디")),
+					requestFields(
 						fieldWithPath("title").description("변경할 카드 제목")
 							.optional()
 							.attributes(key("constraints").value("2 ~ 40 글자")),
@@ -225,7 +227,8 @@ class CardControllerTest {
 						fieldWithPath("description").description("변경할 카드 설명")
 							.optional()
 							.attributes(key("constraints").value("2,1000자 이하 글자")),
-						fieldWithPath("categoryId").description("변경할 카테고리 아이디").optional()),
+						fieldWithPath("categoryId").description("변경할 카테고리 아이디").optional(),
+						fieldWithPath("answer").description("변경할 카드 정답").optional()),
 					responseFields(fieldWithPath("cardId").description("카드 아이디"),
 						fieldWithPath("title").description("카드 제목"), fieldWithPath("memberId").description("멤버 아이디"),
 						fieldWithPath("question").description("카드 질문"),
