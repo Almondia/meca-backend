@@ -233,7 +233,7 @@ class CardHistoryQueryDslRepositoryImplTest {
 
 			// when
 			CursorPage<CardHistoryWithCardAndMemberResponseDto> result = cardHistoryRepository.findCardHistoriesBySolvedMemberId(
-				cardHistory.getSolvedUserId(), 10, null);
+				cardHistory.getSolvedMemberId(), 10, null);
 
 			// then
 			assertThat(result.getContents()).isEmpty();
@@ -252,7 +252,7 @@ class CardHistoryQueryDslRepositoryImplTest {
 
 			// expect
 			assertThatThrownBy(
-				() -> cardHistoryRepository.findCardHistoriesBySolvedMemberId(cardHistory.getSolvedUserId(), 1001,
+				() -> cardHistoryRepository.findCardHistoriesBySolvedMemberId(cardHistory.getSolvedMemberId(), 1001,
 					null)).isInstanceOf(InvalidDataAccessApiUsageException.class);
 		}
 
@@ -268,7 +268,7 @@ class CardHistoryQueryDslRepositoryImplTest {
 
 			// expect
 			assertThatThrownBy(
-				() -> cardHistoryRepository.findCardHistoriesBySolvedMemberId(cardHistory.getSolvedUserId(), -1,
+				() -> cardHistoryRepository.findCardHistoriesBySolvedMemberId(cardHistory.getSolvedMemberId(), -1,
 					null)).isInstanceOf(InvalidDataAccessApiUsageException.class);
 		}
 
