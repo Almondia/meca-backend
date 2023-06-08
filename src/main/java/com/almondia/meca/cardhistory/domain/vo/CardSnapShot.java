@@ -24,34 +24,34 @@ import lombok.ToString;
 @ToString
 public final class CardSnapShot {
 
-	private Title cardTitle;
-	private Question cardQuestion;
-	private String cardAnswer;
+	private Title title;
+	private Question question;
+	private String answer;
 	private CardType cardType;
-	private Description cardDescription;
-	private LocalDateTime cardCreatedAt;
-	private LocalDateTime cardModifiedAt;
+	private Description description;
+	private LocalDateTime createdAt;
+	private LocalDateTime modifiedAt;
 
 	@Builder
 	public CardSnapShot(
-		Title cardTitle,
-		Question cardQuestion,
-		String cardAnswer,
+		Title title,
+		Question question,
+		String answer,
 		CardType cardType,
-		Description cardDescription,
-		LocalDateTime cardCreatedAt,
-		LocalDateTime cardModifiedAt
+		Description description,
+		LocalDateTime createdAt,
+		LocalDateTime modifiedAt
 	) {
 		Assert.noNullElements(
-			new Object[] {cardTitle, cardQuestion, cardAnswer, cardType, cardDescription, cardCreatedAt,
-				cardModifiedAt},
+			new Object[] {title, question, answer, cardType, description, createdAt,
+				modifiedAt},
 			"CardSnapShot must not be null");
-		this.cardTitle = cardTitle;
-		this.cardQuestion = cardQuestion;
-		this.cardAnswer = cardAnswer;
+		this.title = title;
+		this.question = question;
+		this.answer = answer;
 		this.cardType = cardType;
-		this.cardDescription = cardDescription;
-		this.cardCreatedAt = cardCreatedAt;
-		this.cardModifiedAt = cardModifiedAt;
+		this.description = description;
+		this.createdAt = createdAt;
+		this.modifiedAt = modifiedAt;
 	}
 }
