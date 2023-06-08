@@ -21,7 +21,7 @@ public class CardHistoryFactory {
 		return CardHistory.builder()
 			.cardHistoryId(Id.generateNextId())
 			.cardId(cardHistoryRequestDto.getCardId())
-			.solvedUserId(solvedMemberId)
+			.solvedMemberId(solvedMemberId)
 			.userAnswer(cardHistoryRequestDto.getUserAnswer())
 			.score(cardHistoryRequestDto.getScore())
 			.build();
