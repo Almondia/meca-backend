@@ -37,4 +37,9 @@ public class OxCard extends Card {
 		this.oxAnswer = OxAnswer.valueOf(answer);
 	}
 
+	@Override
+	public String getAnswer() {
+		return this.oxAnswer.toString();
+	}
+
 }

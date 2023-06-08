@@ -103,4 +103,6 @@ public abstract class Card extends DateEntity {
 	}
 
 	public abstract void changeAnswer(String answer);
+
+	public abstract String getAnswer();
 }
