@@ -32,7 +32,14 @@ class TitleTest {
 
 	@Test
 	@DisplayName("공백만 입력할 수 없다")
-	void test() {
+	void notBlankTest() {
 		assertThatThrownBy(() -> new Title(" ".repeat(2))).isInstanceOf(IllegalArgumentException.class);
+	}
+
+	@Test
+	@DisplayName("of 인스턴스 테스트")
+	void ofInstanceTest() {
+		Title title = Title.of("aa");
+		assertThat(title).isNotNull();
 	}
 }
