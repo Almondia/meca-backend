@@ -54,9 +54,6 @@ public class CardHistory {
 	private Score score;
 
 	@Embedded
-	// @AttributeOverrides({
-	// 	@AttributeOverride(name = "title", column = @Column(name = "card_title", nullable = false)),
-	// })
 	private CardSnapShot cardSnapShot;
 
 	private boolean isDeleted;
