@@ -58,7 +58,7 @@ public class CardHistoryQueryDslRepositoryImpl implements CardHistoryQueryDslRep
 			)
 			.innerJoin(member)
 			.on(
-				cardHistory.solvedUserId.eq(member.memberId),
+				cardHistory.solvedMemberId.eq(member.memberId),
 				member.isDeleted.eq(false)
 			)
 			.where(
@@ -104,7 +104,7 @@ public class CardHistoryQueryDslRepositoryImpl implements CardHistoryQueryDslRep
 			)
 			.innerJoin(member)
 			.on(
-				cardHistory.solvedUserId.eq(member.memberId),
+				cardHistory.solvedMemberId.eq(member.memberId),
 				member.isDeleted.eq(false)
 			)
 			.where(
@@ -149,11 +149,11 @@ public class CardHistoryQueryDslRepositoryImpl implements CardHistoryQueryDslRep
 			)
 			.innerJoin(member)
 			.on(
-				cardHistory.solvedUserId.eq(member.memberId),
+				cardHistory.solvedMemberId.eq(member.memberId),
 				member.isDeleted.eq(false)
 			)
 			.where(
-				cardHistory.solvedUserId.eq(solvedMemberId),
+				cardHistory.solvedMemberId.eq(solvedMemberId),
 				cardHistory.isDeleted.eq(false),
 				lessOrEqCardHistoryId(lastCardHistoryId))
 			.orderBy(cardHistory.cardHistoryId.uuid.desc())

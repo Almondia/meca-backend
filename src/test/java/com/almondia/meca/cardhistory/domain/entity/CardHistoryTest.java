@@ -40,18 +40,18 @@ class CardHistoryTest {
 		assertThat(entityType).isNotNull();
 		assertThat(entityType.getName()).isEqualTo("CardHistory");
 		assertThat(entityType.getAttributes()).extracting("name")
-			.containsExactlyInAnyOrder("solvedUserId", "isDeleted", "cardId", "cardHistoryId", "score",
-				"userAnswer",
-				"createdAt");
+			.containsExactlyInAnyOrder("cardHistoryId", "solvedMemberId", "cardId", "userAnswer", "score",
+				"cardSnapShot",
+				"isDeleted", "createdAt");
 	}
 
 	@Test
 	@DisplayName("엔티티 생성일자 자동 생성 테스트")
 	void autogenCreatedAtWhenSaveEntityTest() {
 		CardHistory cardHistory = CardHistory.builder()
-			.cardId(Id.generateNextId())
 			.cardHistoryId(Id.generateNextId())
-			.solvedUserId(Id.generateNextId())
+			.cardId(Id.generateNextId())
+			.solvedMemberId(Id.generateNextId())
 			.userAnswer(new Answer("answer asdfa"))
 			.score(new Score(100))
 			.build();
@@ -65,7 +65,6 @@ class CardHistoryTest {
 	void shouldChangeTrueWhenCallDeleteTest() {
 		CardHistory cardHistory = CardHistory.builder()
 			.cardHistoryId(Id.generateNextId())
-			.cardId(Id.generateNextId())
 			.score(new Score(100))
 			.userAnswer(new Answer("answer"))
 			.build();
@@ -78,7 +77,6 @@ class CardHistoryTest {
 	void shouldChangeFalseWhenCallRollbackTest() {
 		CardHistory cardHistory = CardHistory.builder()
 			.cardHistoryId(Id.generateNextId())
-			.cardId(Id.generateNextId())
 			.score(new Score(100))
 			.userAnswer(new Answer("answer"))
 			.isDeleted(false)

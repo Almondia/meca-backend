@@ -40,7 +40,7 @@ class CardHistoryFactoryTest {
 			.hasFieldOrPropertyWithValue("cardId", cardHistoryRequestDto.getCardId())
 			.hasFieldOrPropertyWithValue("score", cardHistoryRequestDto.getScore())
 			.hasFieldOrPropertyWithValue("userAnswer", cardHistoryRequestDto.getUserAnswer())
-			.hasFieldOrPropertyWithValue("solvedUserId", solvedMemberId);
+			.hasFieldOrPropertyWithValue("solvedMemberId", solvedMemberId);
 
 	}
 }
