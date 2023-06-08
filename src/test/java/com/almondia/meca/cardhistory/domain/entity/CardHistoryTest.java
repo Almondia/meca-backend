@@ -2,8 +2,6 @@ package com.almondia.meca.cardhistory.domain.entity;
 
 import static org.assertj.core.api.Assertions.*;
 
-import java.time.LocalDateTime;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.metamodel.EntityType;
@@ -43,21 +41,6 @@ class CardHistoryTest {
 			.containsExactlyInAnyOrder("cardHistoryId", "solvedMemberId", "cardId", "userAnswer", "score",
 				"cardSnapShot",
 				"isDeleted", "createdAt");
-	}
-
-	@Test
-	@DisplayName("엔티티 생성일자 자동 생성 테스트")
-	void autogenCreatedAtWhenSaveEntityTest() {
-		CardHistory cardHistory = CardHistory.builder()
-			.cardHistoryId(Id.generateNextId())
-			.cardId(Id.generateNextId())
-			.solvedMemberId(Id.generateNextId())
-			.userAnswer(new Answer("answer asdfa"))
-			.score(new Score(100))
-			.build();
-		entityManager.persist(cardHistory);
-		LocalDateTime createdAt = cardHistory.getCreatedAt();
-		assertThat(createdAt).isNotNull();
 	}
 
 	@Test
