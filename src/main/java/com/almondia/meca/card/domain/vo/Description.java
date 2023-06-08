@@ -22,6 +22,10 @@ public class Description implements Wrapper {
 		this.description = description;
 	}
 
+	public static Description of(String description) {
+		return new Description(description);
+	}
+
 	private void validateEditText(String editText) {
 		if (editText.length() > MAX_LENGTH) {
 			throw new IllegalArgumentException(String.format("%d 초과해서 문자열 길이를 늘릴 수 없습니다", MAX_LENGTH));
