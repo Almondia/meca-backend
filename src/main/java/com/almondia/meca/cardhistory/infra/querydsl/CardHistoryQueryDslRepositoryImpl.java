@@ -70,51 +70,6 @@ public class CardHistoryQueryDslRepositoryImpl implements CardHistoryQueryDslRep
 	}
 
 	@Override
-	public CursorPage<CardHistoryWithCardAndMemberResponseDto> findCardHistoriesByCategoryId(@NonNull Id categoryId,
-		int pageSize,
-		Id lastCardHistoryId) {
-		Assert.isTrue(pageSize >= 0, "pageSize must be greater than or equal to 0");
-		Assert.isTrue(pageSize <= 1000, "pageSize must be less than or equal to 1000");
-
-		List<CardHistoryWithCardAndMemberResponseDto> contents = jpaQueryFactory.select(
-				Projections.constructor(CardHistoryWithCardAndMemberResponseDto.class,
-					cardHistory,
-					card,
-					member.memberId,
-					member.name
-				))
-			.from(cardHistory)
-			.innerJoin(card)
-			.on(
-				cardHistory.cardId.eq(card.cardId),
-				card.isDeleted.eq(false))
-			.innerJoin(category)
-			.on(
-				card.categoryId.eq(category.categoryId),
-				category.isDeleted.eq(false)
-			)
-			.innerJoin(member)
-			.on(
-				cardHistory.solvedMemberId.eq(member.memberId),
-				member.isDeleted.eq(false)
-			)
-			.where(
-				category.categoryId.eq(categoryId),
-				cardHistory.isDeleted.eq(false),
-				lessOrEqCardHistoryId(lastCardHistoryId))
-			.orderBy(cardHistory.cardHistoryId.uuid.desc())
-			.limit(pageSize + 1)
-			.fetch();
-
-		Id hasNext = null;
-		if (contents.size() > pageSize) {
-			hasNext = contents.get(pageSize).getCardHistory().getCardHistoryId();
-			contents.remove(pageSize);
-		}
-		return new CursorPage<>(contents, hasNext, pageSize, SortOrder.DESC);
-	}
-
-	@Override
 	public CursorPage<CardHistoryWithCardAndMemberResponseDto> findCardHistoriesBySolvedMemberId(
 		@NonNull Id solvedMemberId,
 		int pageSize, Id lastCardHistoryId) {

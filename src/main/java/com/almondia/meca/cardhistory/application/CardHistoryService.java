@@ -49,13 +49,6 @@ public class CardHistoryService {
 	}
 
 	@Transactional(readOnly = true)
-	public CursorPage<CardHistoryWithCardAndMemberResponseDto> findCardHistoriesByCategoryId(@NonNull Id categoryId,
-		int pageSize,
-		Id lastCardHistoryId) {
-		return cardHistoryRepository.findCardHistoriesByCategoryId(categoryId, pageSize, lastCardHistoryId);
-	}
-
-	@Transactional(readOnly = true)
 	public CursorPage<CardHistoryWithCardAndMemberResponseDto> findCardHistoriesBySolvedMemberId(
 		@NonNull Id solvedMemberId,
 		int pageSize,

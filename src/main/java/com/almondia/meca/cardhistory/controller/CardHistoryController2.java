@@ -21,18 +21,6 @@ public class CardHistoryController2 {
 
 	private final CardHistoryService cardHistoryService;
 
-	@GetMapping("/categories/{categoryId}")
-	public ResponseEntity<CursorPage<CardHistoryWithCardAndMemberResponseDto>> findCardHistoriesByCategoryId(
-		@PathVariable("categoryId") Id categoryId,
-		@RequestParam(value = "pageSize", defaultValue = "1000") int pageSize,
-		@RequestParam(value = "hasNext", required = false) Id lastCardHistoryId
-	) {
-		CursorPage<CardHistoryWithCardAndMemberResponseDto> cursorPage = cardHistoryService.findCardHistoriesByCategoryId(
-			categoryId,
-			pageSize, lastCardHistoryId);
-		return ResponseEntity.ok(cursorPage);
-	}
-
 	@GetMapping("/cards/{cardId}")
 	public ResponseEntity<CursorPage<CardHistoryWithCardAndMemberResponseDto>> findCardHistoriesByCardId(
 		@PathVariable("cardId") Id cardId,
