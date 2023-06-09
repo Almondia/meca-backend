@@ -14,6 +14,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.almondia.meca.cardhistory.domain.vo.Answer;
+import com.almondia.meca.cardhistory.domain.vo.CardSnapShot;
 import com.almondia.meca.cardhistory.domain.vo.Score;
 import com.almondia.meca.common.domain.vo.Id;
 
@@ -37,12 +38,12 @@ public class CardHistory {
 	private Id cardHistoryId;
 
 	@Embedded
-	@AttributeOverride(name = "uuid", column = @Column(name = "card_id", nullable = false, columnDefinition = "BINARY(16)"))
-	private Id cardId;
+	@AttributeOverride(name = "uuid", column = @Column(name = "solved_user_id", nullable = false, columnDefinition = "BINARY(16)"))
+	private Id solvedMemberId;
 
 	@Embedded
-	@AttributeOverride(name = "uuid", column = @Column(name = "solved_user_id", nullable = false, columnDefinition = "BINARY(16)"))
-	private Id solvedUserId;
+	@AttributeOverride(name = "uuid", column = @Column(name = "card_id", nullable = false, columnDefinition = "BINARY(16)"))
+	private Id cardId;
 
 	@Embedded
 	@AttributeOverride(name = "answer", column = @Column(name = "user_answer", nullable = false))
@@ -51,6 +52,9 @@ public class CardHistory {
 	@Embedded
 	@AttributeOverride(name = "score", column = @Column(name = "score", nullable = false))
 	private Score score;
+
+	@Embedded
+	private CardSnapShot cardSnapShot;
 
 	private boolean isDeleted;
 

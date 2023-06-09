@@ -21,6 +21,10 @@ public class Question implements Wrapper {
 		this.question = question;
 	}
 
+	public static Question of(String question) {
+		return new Question(question);
+	}
+
 	@Override
 	public String toString() {
 		return question;

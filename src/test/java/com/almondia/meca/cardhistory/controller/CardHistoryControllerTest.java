@@ -39,6 +39,7 @@ import com.almondia.meca.cardhistory.controller.dto.CardHistoryWithCardAndMember
 import com.almondia.meca.cardhistory.controller.dto.SaveRequestCardHistoryDto;
 import com.almondia.meca.cardhistory.domain.entity.CardHistory;
 import com.almondia.meca.cardhistory.domain.vo.Answer;
+import com.almondia.meca.cardhistory.domain.vo.CardSnapShot;
 import com.almondia.meca.cardhistory.domain.vo.Score;
 import com.almondia.meca.common.configuration.jackson.JacksonConfiguration;
 import com.almondia.meca.common.configuration.security.filter.JwtAuthenticationFilter;
@@ -185,7 +186,8 @@ class CardHistoryControllerTest {
 		final Id categoryId = Id.generateNextId();
 		CardHistory cardHistory = CardHistoryTestHelper.generateCardHistory(cardId, solvedMemberId);
 		Card card = CardTestHelper.genOxCard(solvedMemberId, categoryId, cardId);
-		return new CardHistoryWithCardAndMemberResponseDto(cardHistory, card, solvedMemberId, Name.of("simon"));
+		return new CardHistoryWithCardAndMemberResponseDto(cardHistory, card.getCardId(), solvedMemberId,
+			Name.of("simon"), CardSnapShot.copyShot(card));
 	}
 
 }

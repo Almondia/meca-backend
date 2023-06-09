@@ -28,6 +28,10 @@ public class Title implements Wrapper {
 		return title;
 	}
 
+	public static Title of(String title) {
+		return new Title(title);
+	}
+
 	private void validateTitle(String title) {
 		if (title.length() < TITLE_MIN_LENGTH || title.length() > TITLE_MAX_LENGTH) {
 			throw new IllegalArgumentException(

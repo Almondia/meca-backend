@@ -3,9 +3,14 @@ package com.almondia.meca.helper;
 import java.time.LocalDateTime;
 import java.util.Random;
 
+import com.almondia.meca.card.domain.vo.CardType;
+import com.almondia.meca.card.domain.vo.Description;
+import com.almondia.meca.card.domain.vo.Question;
+import com.almondia.meca.card.domain.vo.Title;
 import com.almondia.meca.cardhistory.controller.dto.CardHistoryDto;
 import com.almondia.meca.cardhistory.domain.entity.CardHistory;
 import com.almondia.meca.cardhistory.domain.vo.Answer;
+import com.almondia.meca.cardhistory.domain.vo.CardSnapShot;
 import com.almondia.meca.cardhistory.domain.vo.Score;
 import com.almondia.meca.common.domain.vo.Id;
 
@@ -17,10 +22,11 @@ public class CardHistoryTestHelper {
 		return CardHistory.builder()
 			.cardHistoryId(cardHistoryId)
 			.cardId(cardId)
-			.solvedUserId(Id.generateNextId())
+			.solvedMemberId(Id.generateNextId())
 			.userAnswer(new Answer("answer"))
 			.score(new Score(score))
 			.createdAt(LocalDateTime.now())
+			.cardSnapShot(makeCardSnapShot())
 			.build();
 	}
 
@@ -28,10 +34,11 @@ public class CardHistoryTestHelper {
 		return CardHistory.builder()
 			.cardHistoryId(Id.generateNextId())
 			.cardId(cardId)
-			.solvedUserId(solvedUserId)
+			.solvedMemberId(solvedUserId)
 			.userAnswer(new Answer("answer"))
 			.score(new Score(random.nextInt(100)))
 			.createdAt(LocalDateTime.now())
+			.cardSnapShot(makeCardSnapShot())
 			.build();
 	}
 
@@ -41,6 +48,18 @@ public class CardHistoryTestHelper {
 			.userAnswer(new Answer("answer"))
 			.score(new Score(random.nextInt(100)))
 			.createdAt(LocalDateTime.now())
+			.build();
+	}
+
+	private static CardSnapShot makeCardSnapShot() {
+		return CardSnapShot.builder()
+			.title(Title.of("title"))
+			.question(Question.of("question"))
+			.answer("O")
+			.cardType(CardType.OX_QUIZ)
+			.description(Description.of("description"))
+			.createdAt(LocalDateTime.now())
+			.modifiedAt(LocalDateTime.now())
 			.build();
 	}
 }

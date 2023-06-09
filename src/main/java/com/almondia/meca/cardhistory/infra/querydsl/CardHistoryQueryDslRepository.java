@@ -11,10 +11,6 @@ public interface CardHistoryQueryDslRepository {
 	CursorPage<CardHistoryWithCardAndMemberResponseDto> findCardHistoriesByCardId(@NonNull Id cardId, int pageSize,
 		Id lastCardHistoryId);
 
-	CursorPage<CardHistoryWithCardAndMemberResponseDto> findCardHistoriesByCategoryId(@NonNull Id categoryId,
-		int pageSize,
-		Id lastCardHistoryId);
-
 	CursorPage<CardHistoryWithCardAndMemberResponseDto> findCardHistoriesBySolvedMemberId(@NonNull Id solvedMemberId,
 		int pageSize,
 		Id lastCardHistoryId);

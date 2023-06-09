@@ -33,4 +33,9 @@ public class KeywordCard extends Card {
 	public void changeAnswer(String answer) {
 		this.keywordAnswer = KeywordAnswer.valueOf(answer);
 	}
+
+	@Override
+	public String getAnswer() {
+		return this.keywordAnswer.toString();
+	}
 }

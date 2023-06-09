@@ -7,6 +7,7 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.almondia.meca.card.domain.entity.Card;
 import com.almondia.meca.card.domain.repository.CardRepository;
 import com.almondia.meca.cardhistory.application.helper.CardHistoryFactory;
 import com.almondia.meca.cardhistory.controller.dto.CardHistoryRequestDto;
@@ -31,10 +32,11 @@ public class CardHistoryService {
 		List<Id> cardIds = saveRequestCardHistoryDto.getCardHistories().stream()
 			.map(CardHistoryRequestDto::getCardId)
 			.collect(Collectors.toList());
-		if (cardRepository.countByIsDeletedFalseAndCardIdIn(cardIds) != cardIds.size()) {
+		List<Card> findCards = cardRepository.findByCardIdInAndIsDeletedFalse(cardIds);
+		if (findCards.size() != cardIds.size()) {
 			throw new IllegalArgumentException("존재하지 않는 카드가 포함되어 있습니다.");
 		}
-		List<CardHistory> cardHistories = CardHistoryFactory.makeCardHistories(saveRequestCardHistoryDto,
+		List<CardHistory> cardHistories = CardHistoryFactory.makeCardHistories(saveRequestCardHistoryDto, findCards,
 			solvedMemberId);
 		cardHistoryRepository.saveAll(cardHistories);
 	}
@@ -44,13 +46,6 @@ public class CardHistoryService {
 		int pageSize,
 		Id lastCardHistoryId) {
 		return cardHistoryRepository.findCardHistoriesByCardId(cardId, pageSize, lastCardHistoryId);
-	}
-
-	@Transactional(readOnly = true)
-	public CursorPage<CardHistoryWithCardAndMemberResponseDto> findCardHistoriesByCategoryId(@NonNull Id categoryId,
-		int pageSize,
-		Id lastCardHistoryId) {
-		return cardHistoryRepository.findCardHistoriesByCategoryId(categoryId, pageSize, lastCardHistoryId);
 	}
 
 	@Transactional(readOnly = true)

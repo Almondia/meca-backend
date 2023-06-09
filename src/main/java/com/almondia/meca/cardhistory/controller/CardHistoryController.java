@@ -66,7 +66,6 @@ public class CardHistoryController {
 			.solvedUserName(cardHistoryWithCardAndMemberResponseDto.getSolvedMember().getSolvedMemberName())
 			.userAnswer(cardHistoryWithCardAndMemberResponseDto.getCardHistory().getUserAnswer())
 			.score(cardHistoryWithCardAndMemberResponseDto.getCardHistory().getScore())
-			.categoryId(cardHistoryWithCardAndMemberResponseDto.getCard().getCategoryId())
 			.cardId(cardHistoryWithCardAndMemberResponseDto.getCard().getCardId())
 			.title(cardHistoryWithCardAndMemberResponseDto.getCard().getTitle().toString())
 			.cardType(cardHistoryWithCardAndMemberResponseDto.getCard().getCardType())
