@@ -278,14 +278,12 @@ class CardHistoryQueryDslRepositoryImplTest {
 			// given
 			final Id memberId = Id.generateNextId();
 			final Id solvedMemberId = Id.generateNextId();
-			final Id categoryId = Id.generateNextId();
+			final Id cardId = Id.generateNextId();
 			Member member = MemberTestHelper.generateMember(memberId);
 			Member solvedMember = MemberTestHelper.generateMember(solvedMemberId);
-			Category category = CategoryTestHelper.generateUnSharedCategory("hello", memberId, categoryId);
-			Card card = CardTestHelper.genOxCard(memberId, categoryId, Id.generateNextId());
-			CardHistory cardHistory1 = CardHistoryTestHelper.generateCardHistory(card.getCardId(), solvedMemberId);
-			CardHistory cardHistory2 = CardHistoryTestHelper.generateCardHistory(card.getCardId(), solvedMemberId);
-			persistAll(member, solvedMember, category, card, cardHistory1, cardHistory2);
+			CardHistory cardHistory1 = CardHistoryTestHelper.generateCardHistory(cardId, solvedMemberId);
+			CardHistory cardHistory2 = CardHistoryTestHelper.generateCardHistory(cardId, solvedMemberId);
+			persistAll(member, solvedMember, cardHistory1, cardHistory2);
 
 			// when
 			CursorPage<CardHistoryWithCardAndMemberResponseDto> result = cardHistoryRepository.findCardHistoriesBySolvedMemberId(

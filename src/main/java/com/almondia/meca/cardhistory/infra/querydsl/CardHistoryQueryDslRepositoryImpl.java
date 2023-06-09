@@ -41,21 +41,12 @@ public class CardHistoryQueryDslRepositoryImpl implements CardHistoryQueryDslRep
 		List<CardHistoryWithCardAndMemberResponseDto> contents = jpaQueryFactory.select(
 				Projections.constructor(CardHistoryWithCardAndMemberResponseDto.class,
 					cardHistory,
-					card,
+					cardHistory.cardId,
 					member.memberId,
-					member.name
+					member.name,
+					cardHistory.cardSnapShot
 				))
 			.from(cardHistory)
-			.innerJoin(card)
-			.on(
-				cardHistory.cardId.eq(card.cardId),
-				card.isDeleted.eq(false)
-			)
-			.innerJoin(category)
-			.on(
-				card.categoryId.eq(category.categoryId),
-				category.isDeleted.eq(false)
-			)
 			.innerJoin(member)
 			.on(
 				cardHistory.solvedMemberId.eq(member.memberId),
@@ -63,7 +54,7 @@ public class CardHistoryQueryDslRepositoryImpl implements CardHistoryQueryDslRep
 			)
 			.where(
 				cardHistory.isDeleted.eq(false),
-				card.cardId.eq(cardId),
+				cardHistory.cardId.eq(cardId),
 				lessOrEqCardHistoryId(lastCardHistoryId))
 			.orderBy(cardHistory.cardHistoryId.uuid.desc())
 			.limit(pageSize + 1)
@@ -133,20 +124,12 @@ public class CardHistoryQueryDslRepositoryImpl implements CardHistoryQueryDslRep
 		List<CardHistoryWithCardAndMemberResponseDto> contents = jpaQueryFactory.select(
 				Projections.constructor(CardHistoryWithCardAndMemberResponseDto.class,
 					cardHistory,
-					card,
+					cardHistory.cardId,
 					member.memberId,
-					member.name
+					member.name,
+					cardHistory.cardSnapShot
 				))
 			.from(cardHistory)
-			.innerJoin(card)
-			.on(
-				cardHistory.cardId.eq(card.cardId),
-				card.isDeleted.eq(false))
-			.innerJoin(category)
-			.on(
-				card.categoryId.eq(category.categoryId),
-				category.isDeleted.eq(false)
-			)
 			.innerJoin(member)
 			.on(
 				cardHistory.solvedMemberId.eq(member.memberId),
