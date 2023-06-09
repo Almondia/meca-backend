@@ -77,7 +77,7 @@ class CardHistoryController2Test {
 
 	@Nested
 	@DisplayName("카드 ID 기반 카드 히스토리 조회 API")
-	class FindCardHistoriesByCardIdTest {
+	class FindCardHistoriesByCardIdTest2 {
 
 		@Test
 		@DisplayName("정상 응답 테스트")
