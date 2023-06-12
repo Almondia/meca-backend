@@ -22,7 +22,7 @@ public class MemberDto {
 	private final Name name;
 	private final Email email;
 	private final Image profile;
-	private final OAuthType oAuthType;
+	private final OAuthType oauthType;
 	private final Role role;
 	private final boolean isDeleted;
 	private final LocalDateTime createdAt;
