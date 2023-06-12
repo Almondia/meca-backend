@@ -1,5 +1,7 @@
 package com.almondia.meca.member.controller.dto;
 
+import org.springframework.lang.Nullable;
+
 import com.almondia.meca.common.domain.vo.Image;
 import com.almondia.meca.member.domain.vo.Name;
 
@@ -15,10 +17,13 @@ import lombok.ToString;
 @ToString
 public class UpdateMemberRequestDto {
 
+	@Nullable
 	private Name name;
+
+	@Nullable
 	private Image profile;
 
-	public UpdateMemberRequestDto(Name name, Image profile) {
+	public UpdateMemberRequestDto(@Nullable Name name, @Nullable Image profile) {
 		this.name = name;
 		this.profile = profile;
 	}
