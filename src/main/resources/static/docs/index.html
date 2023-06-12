@@ -495,6 +495,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#CardHistory-카드ID-기반-카드-히스토리-페이징-조회">CardHistory 카드ID 기반 카드 히스토리 페이징 조회</a></li>
 <li><a href="#CardHistory-푼-사용자ID-기반-카드-히스토리-페이징-조회">CardHistory 푼 사용자ID 기반 카드 히스토리 페이징 조회</a></li>
 <li><a href="#CardHistory-카드ID-기반-카드-히스토리-페이징-조회-v2">CardHistory 카드ID 기반 카드 히스토리 페이징 조회-v2</a></li>
+<li><a href="#CardHistory-푼-사용자ID-기반-카드-히스토리-페이징-조회-v2">CardHistory 푼 사용자 기반 카드 히스토리 페이징 조회 v2</a></li>
 </ul>
 </li>
 </ul>
@@ -743,7 +744,7 @@ Content-Length: 161
 
 {
   "url" : "https://www.abc.com",
-  "expirationDate" : "2023-06-09T16:26:55.695",
+  "expirationDate" : "2023-06-12T09:48:12.071",
   "objectKey" : "2825b9a9-d89a-4301-99b5-a7668a5b5fff/thumbnail/abc.jpg"
 }</code></pre>
 </div>
@@ -776,15 +777,15 @@ Content-Type: application/json
 Content-Length: 302
 
 {
-  "memberId" : "01889f08-efc4-e9f9-81c3-67e437a96856",
+  "memberId" : "0188ad0f-102c-6596-b649-6f75caef1b3a",
   "name" : "name",
   "email" : "email@naver.com",
   "profile" : "profile",
   "role" : "USER",
-  "createdAt" : "2023-06-09T16:22:23.0446663",
-  "modifiedAt" : "2023-06-09T16:22:23.0446663",
-  "deleted" : false,
-  "oauthType" : "KAKAO"
+  "createdAt" : "2023-06-12T09:43:45.5800373",
+  "modifiedAt" : "2023-06-12T09:43:45.5800373",
+  "oauthType" : "KAKAO",
+  "deleted" : false
 }</code></pre>
 </div>
 </div>
@@ -919,15 +920,15 @@ Content-Type: application/json
 Content-Length: 317
 
 {
-  "memberId" : "01889f08-ef9b-a5f1-d8cb-544ab2287314",
+  "memberId" : "0188ad0f-0ff9-64ca-d2c8-926a587ed2ef",
   "name" : "name",
   "email" : "www@gmail.com",
   "profile" : "https://aws.s3.com/1234",
   "role" : "USER",
-  "createdAt" : "2023-06-09T16:22:23.0036666",
-  "modifiedAt" : "2023-06-09T16:22:23.0036666",
-  "deleted" : false,
-  "oauthType" : "GOOGLE"
+  "createdAt" : "2023-06-12T09:43:45.5290379",
+  "modifiedAt" : "2023-06-12T09:43:45.5290379",
+  "oauthType" : "GOOGLE",
+  "deleted" : false
 }</code></pre>
 </div>
 </div>
@@ -1008,7 +1009,7 @@ Content-Length: 317
 <h4 id="Category-개인-카테고리-페이징-조회_http_request"><a class="link" href="#Category-개인-카테고리-페이징-조회_http_request">HTTP request</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /api/v1/categories/me?pageSize=4&amp;hasNext=01889f08-bcee-2de1-f01d-be4d49813d00&amp;containTitle=title HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /api/v1/categories/me?pageSize=4&amp;hasNext=0188ad0e-d398-dfde-c0a9-65f5b115a71d&amp;containTitle=title HTTP/1.1
 Authorization: Bearer jwt token
 Host: mecastudy.com</code></pre>
 </div>
@@ -1058,12 +1059,12 @@ Content-Length: 554
 
 {
   "contents" : [ {
-    "categoryId" : "01889f08-bced-fd13-4479-ffd91cd5a3be",
-    "memberId" : "01889f08-bced-fd13-4479-ffd91cd5a3bf",
+    "categoryId" : "0188ad0e-d395-f416-1552-483bba819ae8",
+    "memberId" : "0188ad0e-d396-5ba3-059b-4e21430ff567",
     "thumbnail" : "https://aws.s3.com",
     "title" : "title",
-    "createdAt" : "2023-06-09T16:22:10.0299318",
-    "modifiedAt" : "2023-06-09T16:22:10.0299318",
+    "createdAt" : "2023-06-12T09:43:30.0701925",
+    "modifiedAt" : "2023-06-12T09:43:30.0701925",
     "scoreAvg" : 12.3,
     "solveCount" : 10,
     "totalCount" : 20,
@@ -1071,7 +1072,7 @@ Content-Length: 554
     "shared" : false,
     "deleted" : false
   } ],
-  "hasNext" : "01889f08-bced-fd13-4479-ffd91cd5a3c0",
+  "hasNext" : "0188ad0e-d396-5ba3-059b-4e21430ff568",
   "pageSize" : 1,
   "sortOrder" : "DESC"
 }</code></pre>
@@ -1179,7 +1180,7 @@ Content-Length: 554
 <h4 id="Category-공유-카테고리-페이징-조회_http_request"><a class="link" href="#Category-공유-카테고리-페이징-조회_http_request">HTTP request</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /api/v1/categories/share?hasNext=01889f08-bcbc-ffba-be11-dd5d7bb5c3dd&amp;containTitle=title&amp;pageSize=2 HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /api/v1/categories/share?hasNext=0188ad0e-d2fe-129c-6ced-fb84e6e2fb64&amp;containTitle=title&amp;pageSize=2 HTTP/1.1
 Host: mecastudy.com</code></pre>
 </div>
 </div>
@@ -1229,29 +1230,29 @@ Content-Length: 886
 {
   "contents" : [ {
     "categoryInfo" : {
-      "categoryId" : "01889f08-bcbc-ffba-be11-dd5d7bb5c3d9",
-      "memberId" : "01889f08-bcbc-ffba-be11-dd5d7bb5c3d8",
+      "categoryId" : "0188ad0e-d2fe-129c-6ced-fb84e6e2fb60",
+      "memberId" : "0188ad0e-d2fe-129c-6ced-fb84e6e2fb5f",
       "thumbnail" : null,
       "title" : "title",
-      "createdAt" : "2023-06-09T16:22:09.9809322",
-      "modifiedAt" : "2023-06-09T16:22:09.9809322",
+      "createdAt" : "2023-06-12T09:43:29.9180026",
+      "modifiedAt" : "2023-06-12T09:43:29.9180026",
       "shared" : true,
       "deleted" : false
     },
     "memberInfo" : {
-      "memberId" : "01889f08-bcbc-ffba-be11-dd5d7bb5c3da",
+      "memberId" : "0188ad0e-d2fe-129c-6ced-fb84e6e2fb61",
       "name" : "name",
       "email" : "www@gmail.com",
       "profile" : "https://aws.s3.com",
       "role" : "USER",
-      "createdAt" : "2023-06-09T16:22:09.9809322",
-      "modifiedAt" : "2023-06-09T16:22:09.9809322",
-      "deleted" : false,
-      "oauthType" : "GOOGLE"
+      "createdAt" : "2023-06-12T09:43:29.9180026",
+      "modifiedAt" : "2023-06-12T09:43:29.9180026",
+      "oauthType" : "GOOGLE",
+      "deleted" : false
     },
     "likeCount" : 1
   } ],
-  "hasNext" : "01889f08-bcbc-ffba-be11-dd5d7bb5c3dc",
+  "hasNext" : "0188ad0e-d2fe-129c-6ced-fb84e6e2fb63",
   "pageSize" : 2,
   "sortOrder" : "DESC"
 }</code></pre>
@@ -1448,12 +1449,12 @@ Content-Type: application/json
 Content-Length: 318
 
 {
-  "categoryId" : "01889f08-bd27-b7aa-82e9-4bbe85702b25",
-  "memberId" : "01889f08-bd27-b7aa-82e9-4bbe85702b26",
+  "categoryId" : "0188ad0e-d42b-eed9-ef08-4118a6bbafa4",
+  "memberId" : "0188ad0e-d42b-eed9-ef08-4118a6bbafa5",
   "thumbnail" : "https://aws.s3.com",
   "title" : "title",
-  "createdAt" : "2023-06-09T16:22:10.0879323",
-  "modifiedAt" : "2023-06-09T16:22:10.0879323",
+  "createdAt" : "2023-06-12T09:43:30.2192606",
+  "modifiedAt" : "2023-06-12T09:43:30.2192606",
   "shared" : false,
   "deleted" : false
 }</code></pre>
@@ -1526,7 +1527,7 @@ Content-Length: 318
 <h4 id="Category-카테고리-수정_http_request"><a class="link" href="#Category-카테고리-수정_http_request">HTTP request</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PUT /api/v1/categories/01889f08-bd07-ff23-957d-9eea7188db2a HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PUT /api/v1/categories/0188ad0e-d3db-c905-aea8-fd10c802a730 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
 Authorization: jwt token
 Content-Length: 89
@@ -1615,12 +1616,12 @@ Content-Type: application/json
 Content-Length: 318
 
 {
-  "categoryId" : "01889f08-bd07-ff23-957d-9eea7188db28",
-  "memberId" : "01889f08-bd07-ff23-957d-9eea7188db29",
+  "categoryId" : "0188ad0e-d3da-1162-d139-b80a29d6f081",
+  "memberId" : "0188ad0e-d3da-1162-d139-b80a29d6f082",
   "thumbnail" : "https://aws.s3.com",
   "title" : "title",
-  "createdAt" : "2023-06-09T16:22:10.0559318",
-  "modifiedAt" : "2023-06-09T16:22:10.0559318",
+  "createdAt" : "2023-06-12T09:43:30.1382625",
+  "modifiedAt" : "2023-06-12T09:43:30.1382625",
   "shared" : false,
   "deleted" : false
 }</code></pre>
@@ -1693,7 +1694,7 @@ Content-Length: 318
 <h4 id="Cateogory-카테고리-삭제_http_request"><a class="link" href="#Cateogory-카테고리-삭제_http_request">HTTP request</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">DELETE /api/v1/categories/01889f08-bcd9-5dc6-4bbe-de644cb21ff1 HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">DELETE /api/v1/categories/0188ad0e-d358-cd0e-3841-4e057a77d990 HTTP/1.1
 Authorization: Bearer jwt token
 Host: mecastudy.com</code></pre>
 </div>
@@ -1737,7 +1738,7 @@ Content-Type: text/plain;charset=UTF-8</code></pre>
 <h4 id="Category-카테고리-추천_http_request"><a class="link" href="#Category-카테고리-추천_http_request">HTTP request</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /api/v1/categories/01889f08-bca7-7d8a-72fc-574c4418f8d8/like/like HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /api/v1/categories/0188ad0e-d2b4-10be-10f6-dcf672109d06/like/like HTTP/1.1
 Authorization: Bearer jwt token
 Host: mecastudy.com</code></pre>
 </div>
@@ -1780,7 +1781,7 @@ Host: mecastudy.com</code></pre>
 <h4 id="Category-카테고리-추천-취소_http_request"><a class="link" href="#Category-카테고리-추천-취소_http_request">HTTP request</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /api/v1/categories/01889f08-bc92-35a8-7ab4-3e7ad18a289d/like/unlike HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /api/v1/categories/0188ad0e-d263-865f-0260-d4dcd4bf4570/like/unlike HTTP/1.1
 Authorization: Bearer jwt token
 Host: mecastudy.com</code></pre>
 </div>
@@ -1823,7 +1824,7 @@ Host: mecastudy.com</code></pre>
 <h4 id="Category-본인이-카테고리-추천-여부-확인_http_request"><a class="link" href="#Category-본인이-카테고리-추천-여부-확인_http_request">HTTP request</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /api/v1/categories/like?categoryIds=01889f08-bc4c-012a-e654-ea83988fe35c,01889f08-bc4c-012a-e654-ea83988fe35d,01889f08-bc4c-012a-e654-ea83988fe35e HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /api/v1/categories/like?categoryIds=0188ad0e-d217-4090-aa4c-4b6077f76219,0188ad0e-d217-4090-aa4c-4b6077f7621a,0188ad0e-d217-4090-aa4c-4b6077f7621b HTTP/1.1
 Authorization: Bearer jwt token
 Host: mecastudy.com</code></pre>
 </div>
@@ -1862,8 +1863,8 @@ Content-Type: application/json
 Content-Length: 191
 
 {
-  "recommendedCategories" : [ "01889f08-bc4c-012a-e654-ea83988fe35c", "01889f08-bc4c-012a-e654-ea83988fe35d" ],
-  "unRecommendedCategories" : [ "01889f08-bc4c-012a-e654-ea83988fe35e" ]
+  "recommendedCategories" : [ "0188ad0e-d217-4090-aa4c-4b6077f76219", "0188ad0e-d217-4090-aa4c-4b6077f7621a" ],
+  "unRecommendedCategories" : [ "0188ad0e-d217-4090-aa4c-4b6077f7621b" ]
 }</code></pre>
 </div>
 </div>
@@ -1909,7 +1910,7 @@ Content-Length: 191
 <h4 id="Card-개인-카드-단일-조회_http_request"><a class="link" href="#Card-개인-카드-단일-조회_http_request">HTTP request</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /api/v1/cards/01889f08-930e-e2c7-29b8-21b24adb0864/me HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /api/v1/cards/0188ad0e-9c1b-15f1-08d4-f84b75089861/me HTTP/1.1
 Authorization: Bearer jwt token
 Host: mecastudy.com</code></pre>
 </div>
@@ -1946,14 +1947,14 @@ Content-Type: application/json
 Content-Length: 393
 
 {
-  "cardId" : "01889f08-930d-ed45-3e88-65d698139c19",
+  "cardId" : "0188ad0e-9c1a-af27-3937-e0df27baf6f2",
   "title" : "title1",
-  "memberId" : "01889f08-930d-ed45-3e88-65d698139c1a",
+  "memberId" : "0188ad0e-9c1a-af27-3937-e0df27baf6f3",
   "question" : "question",
-  "categoryId" : "01889f08-930d-ed45-3e88-65d698139c1b",
+  "categoryId" : "0188ad0e-9c1a-af27-3937-e0df27baf6f4",
   "cardType" : "OX_QUIZ",
-  "createdAt" : "2023-06-09T16:21:59.3093898",
-  "modifiedAt" : "2023-06-09T16:21:59.3093898",
+  "createdAt" : "2023-06-12T09:43:15.8661333",
+  "modifiedAt" : "2023-06-12T09:43:15.8661333",
   "answer" : "O",
   "description" : "hello"
 }</code></pre>
@@ -2036,7 +2037,7 @@ Content-Length: 393
 <h4 id="Card-공유-카드-단일-조회_http_request"><a class="link" href="#Card-공유-카드-단일-조회_http_request">HTTP request</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /api/v1/cards/01889f08-92e8-f9ba-ca07-81e756729157/share HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /api/v1/cards/0188ad0e-9bf9-4996-bc44-5c1347c442b4/share HTTP/1.1
 Host: mecastudy.com</code></pre>
 </div>
 </div>
@@ -2069,31 +2070,31 @@ Host: mecastudy.com</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 780
+Content-Length: 776
 
 {
   "cardInfo" : {
-    "cardId" : "01889f08-92e7-cf76-c5b1-5c84827b3e85",
+    "cardId" : "0188ad0e-9bf8-d734-1eff-e53822bc897b",
     "title" : "title",
-    "memberId" : "01889f08-92e7-cf76-c5b1-5c84827b3e87",
+    "memberId" : "0188ad0e-9bf8-d734-1eff-e53822bc897d",
     "question" : "question",
-    "categoryId" : "01889f08-92e7-cf76-c5b1-5c84827b3e86",
+    "categoryId" : "0188ad0e-9bf8-d734-1eff-e53822bc897c",
     "cardType" : "OX_QUIZ",
-    "createdAt" : "2023-06-09T16:21:59.2713928",
-    "modifiedAt" : "2023-06-09T16:21:59.2713928",
+    "createdAt" : "2023-06-12T09:43:15.832132",
+    "modifiedAt" : "2023-06-12T09:43:15.832132",
     "answer" : "O",
     "description" : "description"
   },
   "memberInfo" : {
-    "memberId" : "01889f08-92e7-cf76-c5b1-5c84827b3e88",
+    "memberId" : "0188ad0e-9bf8-d734-1eff-e53822bc897e",
     "name" : "nickname",
     "email" : "abc@gamil.com",
     "profile" : null,
     "role" : "USER",
-    "createdAt" : "2023-06-09T16:21:59.2713928",
-    "modifiedAt" : "2023-06-09T16:21:59.2713928",
-    "deleted" : false,
-    "oauthType" : "KAKAO"
+    "createdAt" : "2023-06-12T09:43:15.832132",
+    "modifiedAt" : "2023-06-12T09:43:15.832132",
+    "oauthType" : "KAKAO",
+    "deleted" : false
   }
 }</code></pre>
 </div>
@@ -2220,7 +2221,7 @@ Content-Length: 780
 <h4 id="Card-카드-페이징-조회_http_request"><a class="link" href="#Card-카드-페이징-조회_http_request">HTTP request</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /api/v1/cards/categories/01889f08-92b9-bab3-09fc-2b7ce35ec6a3/me?hasNext=01889f08-92ba-41e0-43ca-6d3eb6aae1b4&amp;pageSize=5&amp;containTitle=title HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /api/v1/cards/categories/0188ad0e-9bcb-65b2-2800-5d1209ce34cd/me?hasNext=0188ad0e-9bcb-65b2-2800-5d1209ce34ce&amp;pageSize=5&amp;containTitle=title HTTP/1.1
 Authorization: Bearer jwt token
 Host: mecastudy.com</code></pre>
 </div>
@@ -2292,22 +2293,22 @@ Content-Length: 817
 
 {
   "contents" : [ {
-    "cardId" : "01889f08-92b8-ec52-42e1-dce25c7c8912",
+    "cardId" : "0188ad0e-9bca-6736-ed84-624a87707075",
     "title" : "title",
-    "memberId" : "01889f08-92b8-ec52-42e1-dce25c7c8913",
+    "memberId" : "0188ad0e-9bca-6736-ed84-624a87707076",
     "question" : "hello",
-    "categoryId" : "01889f08-92b8-ec52-42e1-dce25c7c8914",
+    "categoryId" : "0188ad0e-9bca-6736-ed84-624a87707077",
     "cardType" : "OX_QUIZ",
-    "createdAt" : "2023-06-09T16:21:59.2243898",
-    "modifiedAt" : "2023-06-09T16:21:59.2243898",
+    "createdAt" : "2023-06-12T09:43:15.7861344",
+    "modifiedAt" : "2023-06-12T09:43:15.7861344",
     "answer" : "O",
     "description" : "hello"
   } ],
-  "hasNext" : "01889f08-92b8-ec52-42e1-dce25c7c8915",
+  "hasNext" : "0188ad0e-9bca-6736-ed84-624a87707078",
   "pageSize" : 5,
   "sortOrder" : "DESC",
   "category" : {
-    "categoryId" : "01889f08-92b8-ec52-42e1-dce25c7c8916",
+    "categoryId" : "0188ad0e-9bca-6736-ed84-624a87707079",
     "memberId" : null,
     "thumbnail" : null,
     "title" : "title",
@@ -2457,7 +2458,7 @@ Content-Length: 817
 <h4 id="Card-공유-카드-페이징-조회_http_request"><a class="link" href="#Card-공유-카드-페이징-조회_http_request">HTTP request</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /api/v1/cards/categories/01889f08-9282-e209-db6a-0527f94341cd/share?hasNext=01889f08-9282-e209-db6a-0527f94341ce&amp;pageSize=5&amp;containTitle=title HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /api/v1/cards/categories/0188ad0e-9b95-fdaa-fabd-6f0f4f41084c/share?hasNext=0188ad0e-9b95-fdaa-fabd-6f0f4f41084d&amp;pageSize=5&amp;containTitle=title HTTP/1.1
 Host: mecastudy.com</code></pre>
 </div>
 </div>
@@ -2529,34 +2530,34 @@ Content-Length: 1247
 {
   "contents" : [ {
     "cardInfo" : {
-      "cardId" : "01889f08-927f-d1c8-b0d6-0612461b498f",
+      "cardId" : "0188ad0e-9b92-0b57-030a-de478eacb905",
       "title" : "title",
-      "memberId" : "01889f08-927e-63f9-24f6-727c4d9ff089",
+      "memberId" : "0188ad0e-9b91-0d3c-2934-a223dd73de03",
       "question" : "question",
-      "categoryId" : "01889f08-927f-d1c8-b0d6-0612461b498e",
+      "categoryId" : "0188ad0e-9b92-0b57-030a-de478eacb904",
       "cardType" : "OX_QUIZ",
-      "createdAt" : "2023-06-09T16:21:59.1670023",
-      "modifiedAt" : "2023-06-09T16:21:59.1670023",
+      "createdAt" : "2023-06-12T09:43:15.7301322",
+      "modifiedAt" : "2023-06-12T09:43:15.7301322",
       "answer" : "O",
       "description" : "description"
     },
     "memberInfo" : {
-      "memberId" : "01889f08-927f-d1c8-b0d6-0612461b4990",
+      "memberId" : "0188ad0e-9b92-0b57-030a-de478eacb906",
       "name" : "name",
       "email" : "www@gmail.com",
       "profile" : "https://aws.s3.com",
       "role" : "USER",
-      "createdAt" : "2023-06-09T16:21:59.1670023",
-      "modifiedAt" : "2023-06-09T16:21:59.1670023",
-      "deleted" : false,
-      "oauthType" : "GOOGLE"
+      "createdAt" : "2023-06-12T09:43:15.7301322",
+      "modifiedAt" : "2023-06-12T09:43:15.7301322",
+      "oauthType" : "GOOGLE",
+      "deleted" : false
     }
   } ],
-  "hasNext" : "01889f08-9281-32c2-d12a-85e7b20067a0",
+  "hasNext" : "0188ad0e-9b94-cba4-daf0-ee5138293613",
   "pageSize" : 5,
   "sortOrder" : "DESC",
   "category" : {
-    "categoryId" : "01889f08-9281-32c2-d12a-85e7b20067a1",
+    "categoryId" : "0188ad0e-9b94-cba4-daf0-ee5138293614",
     "memberId" : null,
     "thumbnail" : null,
     "title" : "title",
@@ -2751,7 +2752,7 @@ Content-Length: 1247
 <h4 id="Card-카드-시뮬레이션-조회_http_request"><a class="link" href="#Card-카드-시뮬레이션-조회_http_request">HTTP request</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /api/v1/cards/categories/01889f08-9246-825b-0468-f9af5328670b/simulation?limit=3&amp;algorithm=random HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /api/v1/cards/categories/0188ad0e-9b64-cfd7-beb8-092915811f1c/simulation?limit=3&amp;algorithm=random HTTP/1.1
 Authorization: Bearer jwt token
 Host: mecastudy.com</code></pre>
 </div>
@@ -2817,14 +2818,14 @@ Content-Type: application/json
 Content-Length: 397
 
 [ {
-  "cardId" : "01889f08-9246-825b-0468-f9af53286708",
+  "cardId" : "0188ad0e-9b64-cfd7-beb8-092915811f19",
   "title" : "title1",
-  "memberId" : "01889f08-9246-825b-0468-f9af53286709",
+  "memberId" : "0188ad0e-9b64-cfd7-beb8-092915811f1a",
   "question" : "question",
-  "categoryId" : "01889f08-9246-825b-0468-f9af5328670a",
+  "categoryId" : "0188ad0e-9b64-cfd7-beb8-092915811f1b",
   "cardType" : "OX_QUIZ",
-  "createdAt" : "2023-06-09T16:21:59.1102348",
-  "modifiedAt" : "2023-06-09T16:21:59.1102348",
+  "createdAt" : "2023-06-12T09:43:15.6841331",
+  "modifiedAt" : "2023-06-12T09:43:15.6841331",
   "answer" : "O",
   "description" : "hello"
 } ]</code></pre>
@@ -2907,7 +2908,7 @@ Content-Length: 397
 <h4 id="Card-카테고리별-카드-갯수-조회_http_request"><a class="link" href="#Card-카테고리별-카드-갯수-조회_http_request">HTTP request</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /api/v1/cards/categories/01889f08-91ff-06e1-cb7f-1714a562e7f3/me/count HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /api/v1/cards/categories/0188ad0e-9b3f-f63c-dc21-957315b6afc3/me/count HTTP/1.1
 Authorization: Bearer jwt token
 Host: mecastudy.com</code></pre>
 </div>
@@ -2989,7 +2990,7 @@ Host: mecastudy.com
 {
   "title" : "title",
   "question" : "hello",
-  "categoryId" : "01889f08-9376-ec0d-f748-786c4c4d6995",
+  "categoryId" : "0188ad0e-9c91-2931-00c2-ab8ff2bc83e0",
   "cardType" : "OX_QUIZ",
   "answer" : "O",
   "description" : "hello"
@@ -3049,7 +3050,7 @@ Host: mecastudy.com
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>cardType</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">OX_QUIZ, CHOICE_QUIZ, SHORT_ANSWER_QUIZ</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OX_QUIZ, KEYWORD, MULTI_CHOICE</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">카드 타입</p></td>
 </tr>
 <tr>
@@ -3071,14 +3072,14 @@ Content-Type: application/json
 Content-Length: 389
 
 {
-  "cardId" : "01889f08-9376-ec0d-f748-786c4c4d6996",
+  "cardId" : "0188ad0e-9c91-2931-00c2-ab8ff2bc83e1",
   "title" : "title",
-  "memberId" : "01889f08-9376-ec0d-f748-786c4c4d6997",
+  "memberId" : "0188ad0e-9c91-2931-00c2-ab8ff2bc83e2",
   "question" : "hello",
-  "categoryId" : "01889f08-9376-ec0d-f748-786c4c4d6998",
+  "categoryId" : "0188ad0e-9c91-2931-00c2-ab8ff2bc83e3",
   "cardType" : "OX_QUIZ",
-  "createdAt" : "2023-06-09T16:21:59.4143893",
-  "modifiedAt" : "2023-06-09T16:21:59.4143893",
+  "createdAt" : "2023-06-12T09:43:15.9851328",
+  "modifiedAt" : "2023-06-12T09:43:15.9851328",
   "answer" : "O",
   "description" : "hello"
 }</code></pre>
@@ -3166,7 +3167,7 @@ Content-Length: 389
 <h4 id="Card-카드-수정_http_request"><a class="link" href="#Card-카드-수정_http_request">HTTP request</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PUT /api/v1/cards/01889f08-9349-5a84-bf1e-fd59918cfd71 HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PUT /api/v1/cards/0188ad0e-9c5e-2860-7138-9a7816f64ef1 HTTP/1.1
 Content-Type: application/json
 Authorization: Bearer jwt token
 Content-Length: 161
@@ -3175,7 +3176,7 @@ Host: mecastudy.com
 {
   "title" : "title",
   "question" : "question",
-  "categoryId" : "01889f08-9348-1287-6a42-924a2d1ba00a",
+  "categoryId" : "0188ad0e-9c5d-6ef0-869f-99342765c66a",
   "description" : "editText",
   "answer" : "O"
 }</code></pre>
@@ -3268,17 +3269,17 @@ Host: mecastudy.com
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 387
+Content-Length: 389
 
 {
-  "cardId" : "01889f08-9348-1287-6a42-924a2d1ba00b",
+  "cardId" : "0188ad0e-9c5d-6ef0-869f-99342765c66b",
   "title" : "title",
-  "memberId" : "01889f08-9348-1287-6a42-924a2d1ba00c",
+  "memberId" : "0188ad0e-9c5d-6ef0-869f-99342765c66c",
   "question" : "hello",
-  "categoryId" : "01889f08-9348-1287-6a42-924a2d1ba00d",
+  "categoryId" : "0188ad0e-9c5d-6ef0-869f-99342765c66d",
   "cardType" : "OX_QUIZ",
-  "createdAt" : "2023-06-09T16:21:59.368392",
-  "modifiedAt" : "2023-06-09T16:41:59.368392",
+  "createdAt" : "2023-06-12T09:43:15.9331318",
+  "modifiedAt" : "2023-06-12T10:03:15.9331318",
   "answer" : "O",
   "description" : "hello"
 }</code></pre>
@@ -3366,7 +3367,7 @@ Content-Length: 387
 <h4 id="Card-카드-삭제_http_request"><a class="link" href="#Card-카드-삭제_http_request">HTTP request</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">DELETE /api/v1/categories/01889f08-bcd9-5dc6-4bbe-de644cb21ff1 HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">DELETE /api/v1/categories/0188ad0e-d358-cd0e-3841-4e057a77d990 HTTP/1.1
 Authorization: Bearer jwt token
 Host: mecastudy.com</code></pre>
 </div>
@@ -3423,7 +3424,7 @@ Host: mecastudy.com
 
 {
   "cardHistories" : [ {
-    "cardId" : "01889f08-acec-198e-54b9-6e4a3e680455",
+    "cardId" : "0188ad0e-beb9-7692-3051-3427bbf8cb28",
     "userAnswer" : "answer",
     "score" : 100
   } ]
@@ -3488,33 +3489,188 @@ Host: mecastudy.com
 <h3 id="CardHistory-카드ID-기반-카드-히스토리-페이징-조회"><a class="link" href="#CardHistory-카드ID-기반-카드-히스토리-페이징-조회">CardHistory 카드ID 기반 카드 히스토리 페이징 조회</a></h3>
 <div class="sect3">
 <h4 id="CardHistory-카드ID-기반-카드-히스토리-페이징-조회_http_request"><a class="link" href="#CardHistory-카드ID-기반-카드-히스토리-페이징-조회_http_request">HTTP request</a></h4>
-<div class="paragraph">
-<p>Snippet http-request not found for operation::find-card-histories-by-card-id-test/should-return200-when-success-test</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /api/v1/histories/cards/0188ad0e-be9d-070d-4a7c-1389f1191ba1?hasNext=0188ad0e-be9d-070d-4a7c-1389f1191ba2&amp;pageSize=2 HTTP/1.1
+Content-Type: application/json;charset=UTF-8
+Host: mecastudy.com</code></pre>
+</div>
 </div>
 </div>
 <div class="sect3">
 <h4 id="CardHistory-카드ID-기반-카드-히스토리-페이징-조회_path_parameters"><a class="link" href="#CardHistory-카드ID-기반-카드-히스토리-페이징-조회_path_parameters">Path parameters</a></h4>
-<div class="paragraph">
-<p>Snippet path-parameters not found for operation::find-card-histories-by-card-id-test/should-return200-when-success-test</p>
-</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. /api/v1/histories/cards/{cardId}</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">파라미터</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>cardId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">카드 ID</p></td>
+</tr>
+</tbody>
+</table>
 </div>
 <div class="sect3">
 <h4 id="CardHistory-카드ID-기반-카드-히스토리-페이징-조회_request_parameters"><a class="link" href="#CardHistory-카드ID-기반-카드-히스토리-페이징-조회_request_parameters">Request parameters</a></h4>
-<div class="paragraph">
-<p>Snippet request-parameters not found for operation::find-card-histories-by-card-id-test/should-return200-when-success-test</p>
-</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">파라미터</th>
+<th class="tableblock halign-left valign-top">필수여부</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>hasNext</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">다음 페이지 존재 여부</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>pageSize</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">페이지 사이즈</p></td>
+</tr>
+</tbody>
+</table>
 </div>
 <div class="sect3">
 <h4 id="CardHistory-카드ID-기반-카드-히스토리-페이징-조회_http_response"><a class="link" href="#CardHistory-카드ID-기반-카드-히스토리-페이징-조회_http_response">HTTP response</a></h4>
-<div class="paragraph">
-<p>Snippet http-response not found for operation::find-card-histories-by-card-id-test/should-return200-when-success-test</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
+Content-Type: application/json
+Content-Length: 538
+
+{
+  "contents" : [ {
+    "cardHistoryId" : "0188ad0e-be9c-0f7b-09a4-257f6ddf3681",
+    "solvedUserId" : "0188ad0e-be9c-0f7b-09a4-257f6ddf367e",
+    "solvedUserName" : "simon",
+    "userAnswer" : "answer",
+    "score" : 86,
+    "categoryId" : null,
+    "cardId" : "0188ad0e-be9c-0f7b-09a4-257f6ddf367f",
+    "title" : "title",
+    "cardType" : "OX_QUIZ",
+    "question" : "question",
+    "answer" : "O",
+    "createdAt" : "2023-06-12T09:43:24.7003752"
+  } ],
+  "hasNext" : null,
+  "pageSize" : 2,
+  "sortOrder" : "DESC"
+}</code></pre>
+</div>
 </div>
 </div>
 <div class="sect3">
 <h4 id="CardHistory-카드ID-기반-카드-히스토리-페이징-조회_response_fields"><a class="link" href="#CardHistory-카드ID-기반-카드-히스토리-페이징-조회_response_fields">Response fields</a></h4>
-<div class="paragraph">
-<p>Snippet response-fields not found for operation::find-card-histories-by-card-id-test/should-return200-when-success-test</p>
-</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드명</th>
+<th class="tableblock halign-left valign-top">타입</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>contents[].cardHistoryId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">카드 히스토리 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>contents[].solvedUserId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">문제를 푼 사용자 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>contents[].solvedUserName</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">문제를 푼 사용자 이름</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>contents[].userAnswer</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">사용자 답안</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>contents[].score</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">점수</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>contents[].categoryId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">카테고리 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>contents[].cardId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">카드 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>contents[].cardType</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">카드 타입</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>contents[].question</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">문제</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>contents[].answer</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">정답</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>contents[].title</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">카드 제목</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>contents[].createdAt</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">생성일</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>hasNext</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">다음 페이지 존재 여부</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>pageSize</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">페이지 사이즈</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>sortOrder</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">정렬 방식</p></td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 <div class="sect2">
@@ -3523,7 +3679,7 @@ Host: mecastudy.com
 <h4 id="CardHistory-푼-사용자ID-기반-카드-히스토리-페이징-조회_http_request"><a class="link" href="#CardHistory-푼-사용자ID-기반-카드-히스토리-페이징-조회_http_request">HTTP request</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /api/v1/histories/members/01889f08-aca8-4a02-4421-10c3cad4dbf9?hasNext=01889f08-aca8-4a02-4421-10c3cad4dbfa&amp;pageSize=2 HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /api/v1/histories/members/0188ad0e-be58-7a08-2471-8a45fc849022?hasNext=0188ad0e-be58-7a08-2471-8a45fc849023&amp;pageSize=2 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
 Host: mecastudy.com</code></pre>
 </div>
@@ -3586,22 +3742,22 @@ Host: mecastudy.com</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 538
+Content-Length: 537
 
 {
   "contents" : [ {
-    "cardHistoryId" : "01889f08-aca8-4a02-4421-10c3cad4dbf8",
-    "solvedUserId" : "01889f08-aca8-4a02-4421-10c3cad4dbf5",
+    "cardHistoryId" : "0188ad0e-be58-7a08-2471-8a45fc849021",
+    "solvedUserId" : "0188ad0e-be58-7a08-2471-8a45fc84901e",
     "solvedUserName" : "simon",
     "userAnswer" : "answer",
-    "score" : 33,
+    "score" : 5,
     "categoryId" : null,
-    "cardId" : "01889f08-aca8-4a02-4421-10c3cad4dbf6",
+    "cardId" : "0188ad0e-be58-7a08-2471-8a45fc84901f",
     "title" : "title",
     "cardType" : "OX_QUIZ",
     "question" : "question",
     "answer" : "O",
-    "createdAt" : "2023-06-09T16:22:05.8643489"
+    "createdAt" : "2023-06-12T09:43:24.6323758"
   } ],
   "hasNext" : null,
   "pageSize" : 2,
@@ -3711,7 +3867,7 @@ Content-Length: 538
 <h4 id="CardHistory-카드ID-기반-카드-히스토리-페이징-조회-v2_http_request"><a class="link" href="#CardHistory-카드ID-기반-카드-히스토리-페이징-조회-v2_http_request">HTTP request</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /api/v2/histories/cards/01889f08-a9a1-e776-1f3f-3c22a593b1a1?pageSize=2&amp;hasNext=01889f08-a9a1-e776-1f3f-3c22a593b1a2 HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /api/v2/histories/cards/0188ad0e-bb4b-c217-0e12-3eee46983b3f?pageSize=2&amp;hasNext=0188ad0e-bb4b-c217-0e12-3eee46983b40 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
 Host: mecastudy.com</code></pre>
 </div>
@@ -3779,24 +3935,24 @@ Content-Length: 765
 {
   "contents" : [ {
     "cardHistory" : {
-      "cardHistoryId" : "01889f08-a9a0-9d55-835a-1215683ba3c7",
+      "cardHistoryId" : "0188ad0e-bb4a-83d8-9faa-6e6699f65ed8",
       "userAnswer" : "answer",
-      "score" : 88,
-      "createdAt" : "2023-06-09T16:22:05.0886941"
+      "score" : 12,
+      "createdAt" : "2023-06-12T09:43:23.8501974"
     },
     "solvedMember" : {
-      "solvedMemberId" : "01889f08-a9a0-9d55-835a-1215683ba3c4",
+      "solvedMemberId" : "0188ad0e-bb4a-83d8-9faa-6e6699f65ed5",
       "solvedMemberName" : "simon"
     },
     "card" : {
-      "cardId" : "01889f08-a9a0-9d55-835a-1215683ba3c5",
+      "cardId" : "0188ad0e-bb4a-83d8-9faa-6e6699f65ed6",
       "title" : "title",
       "question" : "question",
       "answer" : "O",
       "cardType" : "OX_QUIZ",
       "description" : "description",
-      "createdAt" : "2023-06-09T16:22:05.0886941",
-      "modifiedAt" : "2023-06-09T16:22:05.0886941"
+      "createdAt" : "2023-06-12T09:43:23.8501974",
+      "modifiedAt" : "2023-06-12T09:43:23.8501974"
     }
   } ],
   "hasNext" : null,
@@ -3910,18 +4066,21 @@ Content-Length: 765
 </tbody>
 </table>
 </div>
+</div>
+<div class="sect2">
+<h3 id="CardHistory-푼-사용자ID-기반-카드-히스토리-페이징-조회-v2"><a class="link" href="#CardHistory-푼-사용자ID-기반-카드-히스토리-페이징-조회-v2">CardHistory 푼 사용자 기반 카드 히스토리 페이징 조회 v2</a></h3>
 <div class="sect3">
-<h4 id="CardHistory-카드ID-기반-카드-히스토리-페이징-조회-v2_http_request"><a class="link" href="#CardHistory-카드ID-기반-카드-히스토리-페이징-조회-v2_http_request">HTTP request</a></h4>
+<h4 id="CardHistory-푼-사용자ID-기반-카드-히스토리-페이징-조회-v2_http_request"><a class="link" href="#CardHistory-푼-사용자ID-기반-카드-히스토리-페이징-조회-v2_http_request">HTTP request</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /api/v2/histories/members/01889f08-a97e-20a8-304b-340a8ede7dcf?hasNext=01889f08-a97e-20a8-304b-340a8ede7dd0&amp;pageSize=2 HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /api/v2/histories/members/0188ad0e-baf4-a7f4-b8a7-442b6698f3ce?hasNext=0188ad0e-baf4-a7f4-b8a7-442b6698f3cf&amp;pageSize=2 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
 Host: mecastudy.com</code></pre>
 </div>
 </div>
 </div>
 <div class="sect3">
-<h4 id="CardHistory-카드ID-기반-카드-히스토리-페이징-조회-v2_path_parameters"><a class="link" href="#CardHistory-카드ID-기반-카드-히스토리-페이징-조회-v2_path_parameters">Path parameters</a></h4>
+<h4 id="CardHistory-푼-사용자ID-기반-카드-히스토리-페이징-조회-v2_path_parameters"><a class="link" href="#CardHistory-푼-사용자ID-기반-카드-히스토리-페이징-조회-v2_path_parameters">Path parameters</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <caption class="title">Table 1. /api/v2/histories/members/{solvedMemberId}</caption>
 <colgroup>
@@ -3943,7 +4102,7 @@ Host: mecastudy.com</code></pre>
 </table>
 </div>
 <div class="sect3">
-<h4 id="CardHistory-카드ID-기반-카드-히스토리-페이징-조회-v2_request_parameters"><a class="link" href="#CardHistory-카드ID-기반-카드-히스토리-페이징-조회-v2_request_parameters">Request parameters</a></h4>
+<h4 id="CardHistory-푼-사용자ID-기반-카드-히스토리-페이징-조회-v2_request_parameters"><a class="link" href="#CardHistory-푼-사용자ID-기반-카드-히스토리-페이징-조회-v2_request_parameters">Request parameters</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -3972,34 +4131,34 @@ Host: mecastudy.com</code></pre>
 </table>
 </div>
 <div class="sect3">
-<h4 id="CardHistory-카드ID-기반-카드-히스토리-페이징-조회-v2_http_response"><a class="link" href="#CardHistory-카드ID-기반-카드-히스토리-페이징-조회-v2_http_response">HTTP response</a></h4>
+<h4 id="CardHistory-푼-사용자ID-기반-카드-히스토리-페이징-조회-v2_http_response"><a class="link" href="#CardHistory-푼-사용자ID-기반-카드-히스토리-페이징-조회-v2_http_response">HTTP response</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 765
+Content-Length: 762
 
 {
   "contents" : [ {
     "cardHistory" : {
-      "cardHistoryId" : "01889f08-a97c-301b-1ba9-c4323bed14b3",
+      "cardHistoryId" : "0188ad0e-baf2-9210-93d0-efb9d346efd6",
       "userAnswer" : "answer",
-      "score" : 70,
-      "createdAt" : "2023-06-09T16:22:05.0526948"
+      "score" : 30,
+      "createdAt" : "2023-06-12T09:43:23.762386"
     },
     "solvedMember" : {
-      "solvedMemberId" : "01889f08-a97c-301b-1ba9-c4323bed14b0",
+      "solvedMemberId" : "0188ad0e-baf2-9210-93d0-efb9d346efd3",
       "solvedMemberName" : "simon"
     },
     "card" : {
-      "cardId" : "01889f08-a97c-301b-1ba9-c4323bed14b1",
+      "cardId" : "0188ad0e-baf2-9210-93d0-efb9d346efd4",
       "title" : "title",
       "question" : "question",
       "answer" : "O",
       "cardType" : "OX_QUIZ",
       "description" : "description",
-      "createdAt" : "2023-06-09T16:22:05.0526948",
-      "modifiedAt" : "2023-06-09T16:22:05.0526948"
+      "createdAt" : "2023-06-12T09:43:23.762386",
+      "modifiedAt" : "2023-06-12T09:43:23.762386"
     }
   } ],
   "hasNext" : null,
@@ -4010,7 +4169,7 @@ Content-Length: 765
 </div>
 </div>
 <div class="sect3">
-<h4 id="CardHistory-카드ID-기반-카드-히스토리-페이징-조회-v2_response_fields"><a class="link" href="#CardHistory-카드ID-기반-카드-히스토리-페이징-조회-v2_response_fields">Response fields</a></h4>
+<h4 id="CardHistory-푼-사용자ID-기반-카드-히스토리-페이징-조회-v2_response_fields"><a class="link" href="#CardHistory-푼-사용자ID-기반-카드-히스토리-페이징-조회-v2_response_fields">Response fields</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -4120,7 +4279,7 @@ Content-Length: 765
 <div id="footer">
 <div id="footer-text">
 Version 0.0.1-SNAPSHOT<br>
-Last updated 2023-06-09 16:21:24 +0900
+Last updated 2023-06-09 19:06:01 +0900
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/github.min.css">
