@@ -41,6 +41,23 @@ public class CardHistoryController {
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 
+	@GetMapping("/cards/{cardId}")
+	public ResponseEntity<CursorPage<CardHistoryResponseDto>> findCardHistoriesByCardId(
+		@PathVariable("cardId") Id cardId,
+		@RequestParam(value = "pageSize", defaultValue = "1000") int pageSize,
+		@RequestParam(value = "hasNext", required = false) Id lastCardHistoryId
+	) {
+		CursorPage<CardHistoryWithCardAndMemberResponseDto> cursorPage = cardHistoryService.findCardHistoriesByCardId(
+			cardId,
+			pageSize, lastCardHistoryId);
+		List<CardHistoryResponseDto> contents = cursorPage.getContents().stream()
+			.map(this::convertHistory)
+			.collect(Collectors.toList());
+		CursorPage<CardHistoryResponseDto> result = new CursorPage<>(contents, cursorPage.getHasNext(),
+			cursorPage.getPageSize(), cursorPage.getSortOrder());
+		return ResponseEntity.ok(result);
+	}
+
 	@GetMapping("/members/{solvedMemberId}")
 	public ResponseEntity<CursorPage<CardHistoryResponseDto>> findCardHistoriesBySolvedMemberId(
 		@PathVariable("solvedMemberId") Id solvedMemberId,
