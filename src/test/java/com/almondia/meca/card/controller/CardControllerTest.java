@@ -136,7 +136,8 @@ class CardControllerTest {
 				.andExpect(jsonPath("title").exists())
 				.andExpect(jsonPath("answer").exists())
 				.andDo(document("{class-name}/{method-name}", getDocumentRequest(), getDocumentResponse(),
-					requestHeaders(headerWithName("Authorization").description("jwt token")), requestFields(
+					requestHeaders(headerWithName("Authorization").description("jwt token")),
+					requestFields(
 						fieldWithPath("title").description("카드 제목").attributes(key("constraints").value("2 ~ 40 글자")),
 						fieldWithPath("question").description("카드 질문")
 							.attributes(key("constraints").value("공백 없이 500 글자 이하")),
@@ -145,8 +146,9 @@ class CardControllerTest {
 							.attributes(key("constraints").value("2,1000자 이하 글자")),
 						fieldWithPath("categoryId").description("카테고리 아이디"),
 						fieldWithPath("cardType").description("카드 타입")
-							.attributes(key("constraints").value("OX_QUIZ, CHOICE_QUIZ, SHORT_ANSWER_QUIZ")),
-						fieldWithPath("answer").description("카드 정답")),
+							.attributes(key("constraints").value("OX_QUIZ, KEYWORD, MULTI_CHOICE")),
+						fieldWithPath("answer").description("카드 정답")
+					),
 					responseFields(fieldWithPath("cardId").description("카드 아이디"),
 						fieldWithPath("title").description("카드 제목"), fieldWithPath("memberId").description("멤버 아이디"),
 						fieldWithPath("question").description("카드 질문"),
