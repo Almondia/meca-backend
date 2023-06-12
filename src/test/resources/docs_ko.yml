@@ -1,0 +1,24 @@
+member:
+  description:
+    memberId: 회원 아이디
+    name: 회원 이름
+    email: 회원 이메일
+    profile: 회원 프로필 이미지
+    oauthType: 회원 OAuth 타입
+    role: 회원 권한
+    isDeleted: 회원 삭제 여부
+    createdAt: 회원 생성일
+    modifiedAt: 회원 수정일
+    solvedMemberId: 푼 문제 회원 아이디
+    solvedMemberName: 푼 문제 회원 이름
+
+  constraints:
+    memberId: UUID
+    name: 공백 없이 2 ~ 10자
+    email: 이메일 형식, 최대 255자
+    profile: URL 형식, 최대 255자
+    oauthType: GOOGLE, NAVER, KAKAO
+    role: ADMIN, USER
+    isDeleted: true, false
+    solvedMemberId: UUID
+    solvedMemberName: 공백 없이 2 ~ 10자
