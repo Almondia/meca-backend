@@ -14,6 +14,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Locale;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -34,10 +35,13 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import com.almondia.meca.asciidocs.fields.DocsFieldGeneratorUtils;
 import com.almondia.meca.category.application.CategoryRecommendService;
 import com.almondia.meca.category.application.CategoryService;
+import com.almondia.meca.category.controller.dto.CategoryDto;
 import com.almondia.meca.category.controller.dto.CategoryRecommendCheckDto;
 import com.almondia.meca.category.controller.dto.CategoryWithHistoryResponseDto;
+import com.almondia.meca.category.controller.dto.SaveCategoryRequestDto;
 import com.almondia.meca.category.controller.dto.SharedCategoryResponseDto;
 import com.almondia.meca.category.controller.dto.UpdateCategoryRequestDto;
 import com.almondia.meca.category.domain.vo.Title;
@@ -118,19 +122,13 @@ class CategoryControllerTest {
 				.andExpect(jsonPath("shared").exists())
 				.andExpect(jsonPath("createdAt").exists())
 				.andExpect(jsonPath("modifiedAt").exists())
-				.andDo(document("{class-name}/{method-name}", getDocumentRequest(), getDocumentResponse(),
-					requestHeaders(headerWithName("Authorization").description("JWT Bearer 토큰")), requestFields(
-						fieldWithPath("title").description("카테고리 제목").attributes(key("constraints").value("최대 40자")),
-						fieldWithPath("thumbnail").description("카테고리 썸네일 이미지 링크(s3)")
-							.optional()
-							.attributes(key("constraints").value("최대 255자"))),
-					responseFields(fieldWithPath("categoryId").description("카테고리 아이디"),
-						fieldWithPath("memberId").description("회원 아이디"), fieldWithPath("title").description("카테고리 제목"),
-						fieldWithPath("thumbnail").description("카테고리 썸네일 이미지"),
-						fieldWithPath("deleted").description("카테고리 삭제 여부"),
-						fieldWithPath("shared").description("카테고리 공유 여부"),
-						fieldWithPath("createdAt").description("카테고리 생성일"),
-						fieldWithPath("modifiedAt").description("카테고리 수정일"))));
+				.andDo(document("{class-name}/{method-name}",
+					getDocumentRequest(),
+					getDocumentResponse(),
+					DocsFieldGeneratorUtils.generateRequestFieldSnippet(SaveCategoryRequestDto.class, "category",
+						Locale.KOREAN),
+					DocsFieldGeneratorUtils.generateResponseFieldSnippet(CategoryDto.class, "category",
+						Locale.KOREAN)));
 		}
 	}
 

@@ -22,3 +22,22 @@ member:
     isDeleted: true, false
     solvedMemberId: UUID
     solvedMemberName: 공백 없이 2 ~ 10자
+
+category:
+  description:
+    categoryId: 카테고리 아이디
+    memberId: 카테고리를 가진 회원 이름
+    thumbnail: 카테고리 썸네일 이미지
+    title: 카테고리 제목
+    isDeleted: 카테고리 삭제 여부
+    isShared: 카테고리 공유 여부
+    createdAt: 카테고리 생성일
+    modifiedAt: 카테고리 수정일
+
+  constraints:
+    categoryId: UUID
+    memberId: UUID
+    thumbnail: URL 형식, 최대 255자
+    title: 공백 없이 최대 40자
+    isDeleted: true, false
+    isShared: true, false
