@@ -1,5 +1,7 @@
 package com.almondia.meca.category.controller.dto;
 
+import org.springframework.lang.Nullable;
+
 import com.almondia.meca.category.domain.vo.Title;
 import com.almondia.meca.common.domain.vo.Image;
 
@@ -15,7 +17,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UpdateCategoryRequestDto {
 
+	@Nullable
 	private Title title;
+
+	@Nullable
 	private Image thumbnail;
+
+	@Nullable
 	private Boolean isShared;
 }
