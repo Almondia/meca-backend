@@ -2,89 +2,79 @@ package com.almondia.meca.asciidocs.fields;
 
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.lang.Nullable;
 import org.springframework.restdocs.payload.FieldDescriptor;
 import org.springframework.restdocs.payload.RequestFieldsSnippet;
 import org.springframework.restdocs.payload.ResponseFieldsSnippet;
-import org.springframework.restdocs.snippet.Attributes;
+import org.springframework.util.StringUtils;
 
-import com.querydsl.core.util.StringUtils;
+import com.almondia.meca.asciidocs.fields.reflection.FieldVisitor;
 
 public class DocsFieldGeneratorUtils {
 
-	private static final YamlPropertiesFactoryBean yamlFactory = new YamlPropertiesFactoryBean();
-	private static final ReloadableResourceBundleMessageSource restDocsMessageSource = new ReloadableResourceBundleMessageSource();
+	private final YamlPropertiesFactoryBean yamlFactory = new YamlPropertiesFactoryBean();
+	private final ReloadableResourceBundleMessageSource restDocsMessageSource = new ReloadableResourceBundleMessageSource();
+	private final FieldVisitor fieldVisitor;
 
 	private static final String DESCRIPTION = "description";
 	private static final String CONSTRAINTS = "constraints";
 
-	static {
+	public DocsFieldGeneratorUtils(FieldVisitor fieldVisitor) {
 		savePropertiesFile("docs_ko.yml", "docs_ko.properties");
 		savePropertiesFile("docs_en.yml", "docs_en.properties");
 		restDocsMessageSource.setBasename("classpath:docs");
 		restDocsMessageSource.setDefaultEncoding("UTF-8");
 		restDocsMessageSource.setDefaultLocale(Locale.KOREAN);
+		this.fieldVisitor = fieldVisitor;
 	}
 
-	public static ResponseFieldsSnippet generateResponseFieldSnippet(Class<?> clazz, String domainName, Locale locale) {
-		List<FieldDescriptor> fieldDescriptors = new ArrayList<>();
-		Field[] declaredFields = clazz.getDeclaredFields();
-		for (Field declaredField : declaredFields) {
-			declaredField.setAccessible(true);
-			String attributeName = declaredField.getName();
-			if (attributeName.startsWith("is")) {
-				attributeName = StringUtils.uncapitalize(attributeName.substring(2));
-			}
-			fieldDescriptors.add(fieldWithPath(attributeName).description(
-				getFieldDescription(domainName, declaredField.getName(), locale)));
+	public ResponseFieldsSnippet generateResponseFieldSnippet(ParameterizedTypeReference<?> typeReference,
+		String domainName, Locale locale) {
+		List<String> pathNames = fieldVisitor.extractFieldNames(typeReference);
+		List<FieldDescriptor> descriptors = pathNames.stream()
+			.map(pathFieldName -> {
+				String fieldName = getFieldName(pathFieldName);
+				return fieldWithPath(convertFieldPathName(pathFieldName)).description(
+					getFieldValue(domainName, DESCRIPTION, fieldName, locale));
+			})
+			.collect(Collectors.toList());
+		return responseFields(descriptors);
+	}
+
+	public RequestFieldsSnippet generateRequestFieldSnippet(Class<?> clazz,
+		String domainName, Locale locale) {
+
+		return null;
+	}
+
+	private String getFieldValue(String domainName, String infoType, String fieldName, Locale locale) {
+		return restDocsMessageSource.getMessage(domainName + "." + infoType + "." + fieldName, new String[] {},
+			locale);
+	}
+
+	private String convertFieldPathName(String pathFieldName) {
+		String[] split = pathFieldName.split("\\.");
+		int lastIndex = split.length - 1;
+		if (split[lastIndex].startsWith("is")) {
+			split[lastIndex] = StringUtils.uncapitalize(split[lastIndex].substring(2));
 		}
-		return responseFields(fieldDescriptors);
+		return String.join(".", split);
 	}
 
-	public static RequestFieldsSnippet generateRequestFieldSnippet(Class<?> clazz, String domainName, Locale locale) {
-		List<FieldDescriptor> fieldDescriptors = new ArrayList<>();
-		Field[] declaredFields = clazz.getDeclaredFields();
-		for (Field declaredField : declaredFields) {
-			declaredField.setAccessible(true);
-			String attributeName = declaredField.getName();
-			if (attributeName.startsWith("is")) {
-				attributeName = StringUtils.uncapitalize(attributeName.substring(2));
-			}
-			FieldDescriptor fieldDescriptor = fieldWithPath(attributeName).description(
-				getFieldDescription(domainName, declaredField.getName(), locale));
-
-			Annotation annotation = declaredField.getAnnotation(Nullable.class);
-			if (annotation != null) {
-				fieldDescriptor.optional();
-			}
-			fieldDescriptor.attributes(
-				Attributes.key(CONSTRAINTS).value(getFieldConstraint(domainName, declaredField.getName(), locale)));
-			fieldDescriptors.add(fieldDescriptor);
-		}
-		return requestFields(fieldDescriptors);
+	private String getFieldName(String pathFieldName) {
+		String[] split = pathFieldName.split("\\.");
+		return split[split.length - 1];
 	}
 
-	private static String getFieldDescription(String domainName, String fieldName, Locale locale) {
-		return restDocsMessageSource.getMessage(domainName + "." + DESCRIPTION + "." + fieldName,
-			new String[] {}, locale);
-	}
-
-	private static String getFieldConstraint(String domainName, String fieldName, Locale locale) {
-		return restDocsMessageSource.getMessage(domainName + "." + CONSTRAINTS + "." + fieldName,
-			new String[] {}, locale);
-	}
-
-	private static void savePropertiesFile(String ymlPath, String fileName) {
+	private void savePropertiesFile(String ymlPath, String fileName) {
 		String testResourcePath = "src/test/resources/";
 		ClassPathResource classPathResource = new ClassPathResource(ymlPath);
 		try {
