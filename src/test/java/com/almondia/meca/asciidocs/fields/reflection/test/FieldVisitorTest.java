@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.lang.Nullable;
 
 import com.almondia.meca.asciidocs.fields.reflection.CommonTypeCheckerManagerImpl;
 import com.almondia.meca.asciidocs.fields.reflection.FieldVisitor;
@@ -57,6 +58,15 @@ public class FieldVisitorTest {
 			"content[].address.name", "content[].hobbies", "pageSize", "hasNext"));
 		log.info("result: " + result.toString());
 	}
+
+	@Test
+	void helloTest() {
+		ParameterizedTypeReference<Hello> typeReference = new ParameterizedTypeReference<>() {
+		};
+		List<String> result = fieldVisitor.extractFieldNames(typeReference);
+		assertThat(result).containsAll(List.of("name?", "hello?"));
+		log.info("result: " + result.toString());
+	}
 }
 
 @AllArgsConstructor
@@ -100,4 +110,13 @@ class OriginPerson {
 @Getter
 enum Hobby {
 	SPORTS, MUSIC, MOVIE
+}
+
+@Getter
+class Hello {
+	@Nullable
+	private List<String> name;
+
+	@Nullable
+	private String hello;
 }

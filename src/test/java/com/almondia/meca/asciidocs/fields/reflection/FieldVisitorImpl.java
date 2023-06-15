@@ -1,5 +1,6 @@
 package com.almondia.meca.asciidocs.fields.reflection;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -11,6 +12,7 @@ import org.springframework.lang.Nullable;
 
 public class FieldVisitorImpl implements FieldVisitor {
 
+	private static final String OPTIONAL_MARK = "?";
 	private final CommonTypeCheckerManager commonTypeCheckerManager;
 
 	public FieldVisitorImpl(CommonTypeCheckerManager commonTypeCheckerManager) {
@@ -48,6 +50,11 @@ public class FieldVisitorImpl implements FieldVisitor {
 		List<String> result = new ArrayList<>();
 		for (Field field : fields) {
 			if (commonTypeCheckerManager.isCommonField(field)) {
+				Annotation annotation = field.getAnnotation(Nullable.class);
+				if (annotation != null) {
+					result.add(makePath(path, field) + OPTIONAL_MARK);
+					continue;
+				}
 				result.add(makePath(path, field));
 			}
 		}
@@ -62,6 +69,11 @@ public class FieldVisitorImpl implements FieldVisitor {
 				ParameterizedType parameterizedType = (ParameterizedType)type;
 				Type actualTypeArgument = parameterizedType.getActualTypeArguments()[0];
 				if (commonTypeCheckerManager.isCommonType(actualTypeArgument)) {
+					Annotation annotation = field.getAnnotation(Nullable.class);
+					if (annotation != null) {
+						result.add(makePath(path, field) + OPTIONAL_MARK);
+						continue;
+					}
 					result.add(makePath(path, field));
 					continue;
 				}
