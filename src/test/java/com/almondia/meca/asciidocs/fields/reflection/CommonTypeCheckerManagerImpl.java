@@ -39,12 +39,12 @@ public class CommonTypeCheckerManagerImpl implements CommonTypeCheckerManager {
 	@Override
 	public boolean isCommonType(Type type) {
 		return commonTypeCheckers.stream()
-			.allMatch(commonTypeChecker -> commonTypeChecker.isCommonType(type));
+			.anyMatch(commonTypeChecker -> commonTypeChecker.isCommonType(type));
 	}
 
 	@Override
 	public boolean isCommonField(Field field) {
 		return commonTypeCheckers.stream()
-			.allMatch(commonTypeChecker -> commonTypeChecker.isCommonType(field.getGenericType()));
+			.anyMatch(commonTypeChecker -> commonTypeChecker.isCommonType(field.getGenericType()));
 	}
 }
