@@ -14,18 +14,20 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.restdocs.payload.FieldDescriptor;
 import org.springframework.restdocs.payload.RequestFieldsSnippet;
 import org.springframework.restdocs.payload.ResponseFieldsSnippet;
+import org.springframework.restdocs.snippet.Attributes;
 import org.springframework.util.StringUtils;
 
 import com.almondia.meca.asciidocs.fields.reflection.FieldVisitor;
 
 public class DocsFieldGeneratorUtils {
 
+	private static final String DESCRIPTION = "description";
+	private static final String CONSTRAINTS = "constraints";
+	private static final String OPTIONAL_MARK = "?";
+
 	private final YamlPropertiesFactoryBean yamlFactory = new YamlPropertiesFactoryBean();
 	private final ReloadableResourceBundleMessageSource restDocsMessageSource = new ReloadableResourceBundleMessageSource();
 	private final FieldVisitor fieldVisitor;
-
-	private static final String DESCRIPTION = "description";
-	private static final String CONSTRAINTS = "constraints";
 
 	public DocsFieldGeneratorUtils(FieldVisitor fieldVisitor) {
 		savePropertiesFile("docs_ko.yml", "docs_ko.properties");
@@ -49,10 +51,23 @@ public class DocsFieldGeneratorUtils {
 		return responseFields(descriptors);
 	}
 
-	public RequestFieldsSnippet generateRequestFieldSnippet(Class<?> clazz,
+	public RequestFieldsSnippet generateRequestFieldSnippet(ParameterizedTypeReference<?> typeReference,
 		String domainName, Locale locale) {
-
-		return null;
+		List<String> pathNames = fieldVisitor.extractFieldNames(typeReference);
+		List<FieldDescriptor> descriptors = pathNames.stream()
+			.map(pathFieldName -> {
+				String fieldName = getFieldName(pathFieldName);
+				FieldDescriptor fieldDescriptor = fieldWithPath(convertFieldPathName(pathFieldName)).description(
+						getFieldValue(domainName, DESCRIPTION, fieldName, locale))
+					.attributes(
+						Attributes.key(CONSTRAINTS).value(getFieldValue(domainName, CONSTRAINTS, fieldName, locale)));
+				if (hasOptionalMark(fieldName)) {
+					fieldDescriptor.optional();
+				}
+				return fieldDescriptor;
+			})
+			.collect(Collectors.toList());
+		return requestFields(descriptors);
 	}
 
 	private String getFieldValue(String domainName, String infoType, String fieldName, Locale locale) {
@@ -66,12 +81,25 @@ public class DocsFieldGeneratorUtils {
 		if (split[lastIndex].startsWith("is")) {
 			split[lastIndex] = StringUtils.uncapitalize(split[lastIndex].substring(2));
 		}
+		if (split[lastIndex].endsWith(OPTIONAL_MARK)) {
+			split[lastIndex] = split[lastIndex].substring(0, split[lastIndex].length() - 1);
+		}
 		return String.join(".", split);
+	}
+
+	private boolean hasOptionalMark(String pathFieldName) {
+		String[] split = pathFieldName.split("\\.");
+		int lastIndex = split.length - 1;
+		return split[lastIndex].endsWith(OPTIONAL_MARK);
 	}
 
 	private String getFieldName(String pathFieldName) {
 		String[] split = pathFieldName.split("\\.");
-		return split[split.length - 1];
+		int lastIndex = split.length - 1;
+		if (split[lastIndex].endsWith(OPTIONAL_MARK)) {
+			split[lastIndex] = split[lastIndex].substring(0, split[lastIndex].length() - 1);
+		}
+		return split[lastIndex];
 	}
 
 	private void savePropertiesFile(String ymlPath, String fileName) {
