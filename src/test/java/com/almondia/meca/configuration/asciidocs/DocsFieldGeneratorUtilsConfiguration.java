@@ -32,6 +32,14 @@ public class DocsFieldGeneratorUtilsConfiguration {
 			}
 			return false;
 		});
+
+		commonTypeCheckerManager.addChecker(type -> {
+			if (type instanceof Class) {
+				Class<?> classType = (Class<?>)type;
+				return Boolean.class.isAssignableFrom(classType);
+			}
+			return false;
+		});
 		FieldVisitor fieldVisitor = new FieldVisitorImpl(commonTypeCheckerManager);
 		return new DocsFieldGeneratorUtils(fieldVisitor);
 	}
