@@ -15,11 +15,20 @@ public class SharedCategoryResponseDto {
 
 	private final CategoryDto categoryInfo;
 	private final MemberDto memberInfo;
-	private final long likeCount;
+	private long likeCount;
 
 	public SharedCategoryResponseDto(Category category, Member member, long likeCount) {
 		this.categoryInfo = CategoryMapper.entityToCategoryDto(category);
 		this.memberInfo = MemberMapper.fromEntityToDto(member);
+		this.likeCount = likeCount;
+	}
+
+	public SharedCategoryResponseDto(Category category, Member member) {
+		this.categoryInfo = CategoryMapper.entityToCategoryDto(category);
+		this.memberInfo = MemberMapper.fromEntityToDto(member);
+	}
+
+	public void setLikeCount(long likeCount) {
 		this.likeCount = likeCount;
 	}
 }
