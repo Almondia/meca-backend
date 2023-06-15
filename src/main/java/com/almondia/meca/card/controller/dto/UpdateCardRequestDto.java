@@ -1,5 +1,7 @@
 package com.almondia.meca.card.controller.dto;
 
+import org.springframework.lang.Nullable;
+
 import com.almondia.meca.card.domain.vo.Description;
 import com.almondia.meca.card.domain.vo.Question;
 import com.almondia.meca.card.domain.vo.Title;
@@ -18,9 +20,19 @@ import lombok.ToString;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString
 public class UpdateCardRequestDto {
+
+	@Nullable
 	private Title title;
+
+	@Nullable
 	private Question question;
+
+	@Nullable
 	private Id categoryId;
+
+	@Nullable
 	private Description description;
+
+	@Nullable
 	private String answer;
 }
