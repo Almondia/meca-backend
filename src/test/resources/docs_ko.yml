@@ -27,12 +27,24 @@ category:
   description:
     categoryId: 카테고리 아이디
     memberId: 카테고리를 가진 회원 이름
-    thumbnail: 카테고리 썸네일 이미지
-    title: 카테고리 제목
-    isDeleted: 카테고리 삭제 여부
-    isShared: 카테고리 공유 여부
-    createdAt: 카테고리 생성일
-    modifiedAt: 카테고리 수정일
+    thumbnail: 썸네일 이미지
+    title: 제목
+    isDeleted: 삭제 여부
+    isShared: 공유 여부
+    createdAt: 생성일
+    modifiedAt: 수정일
+    totalCount: 전체 문제 수
+    scoreAvg: 평균 점수
+    solveCount: 문제 풀이 수
+    likeCount: 좋아요 수
+    name: 이름
+    email: 이메일
+    profile: 프로필 이미지
+    role: 역할
+    oauthType: OAuth 타입
+    hasNext: 다음 페이지 ID
+    pageSize: page 사이즈
+    sortOrder: 정렬 기준
 
   constraints:
     categoryId: UUID
