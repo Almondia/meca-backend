@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.test.web.servlet.MockMvc;
@@ -32,6 +33,7 @@ import com.almondia.meca.common.configuration.jackson.JacksonConfiguration;
 import com.almondia.meca.common.configuration.security.filter.JwtAuthenticationFilter;
 import com.almondia.meca.common.domain.vo.Id;
 import com.almondia.meca.common.domain.vo.Image;
+import com.almondia.meca.configuration.asciidocs.DocsFieldGeneratorUtilsConfiguration;
 import com.almondia.meca.helper.MemberTestHelper;
 import com.almondia.meca.member.application.MemberService;
 import com.almondia.meca.member.application.helper.MemberMapper;
@@ -44,7 +46,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @WebMvcTest(MemberController.class)
 @ExtendWith({RestDocumentationExtension.class})
-@Import({JacksonConfiguration.class})
+@Import({JacksonConfiguration.class, DocsFieldGeneratorUtilsConfiguration.class})
 class MemberControllerTest {
 
 	private static final String jwtToken = "jwt token";
@@ -62,6 +64,9 @@ class MemberControllerTest {
 
 	@Autowired
 	private ObjectMapper objectMapper;
+
+	@Autowired
+	private DocsFieldGeneratorUtils docsFieldGeneratorUtils;
 
 	@BeforeEach
 	public void setUp(RestDocumentationContextProvider restDocumentation) {
@@ -108,7 +113,8 @@ class MemberControllerTest {
 					requestHeaders(
 						headerWithName("Authorization").description("Bearer Token")
 					),
-					DocsFieldGeneratorUtils.generateResponseFieldSnippet(MemberDto.class, "member", Locale.KOREA)
+					docsFieldGeneratorUtils.generateResponseFieldSnippet(new ParameterizedTypeReference<MemberDto>() {
+					}, "member", Locale.KOREA)
 				));
 		}
 	}
@@ -155,9 +161,13 @@ class MemberControllerTest {
 					requestHeaders(
 						headerWithName("Authorization").description("Bearer Token")
 					),
-					DocsFieldGeneratorUtils.generateRequestFieldSnippet(UpdateMemberRequestDto.class, "member",
+					docsFieldGeneratorUtils.generateRequestFieldSnippet(
+						new ParameterizedTypeReference<UpdateMemberRequestDto>() {
+						}, "member",
 						Locale.KOREA),
-					DocsFieldGeneratorUtils.generateRequestFieldSnippet(UpdateMemberRequestDto.class, "member",
+					docsFieldGeneratorUtils.generateRequestFieldSnippet(
+						new ParameterizedTypeReference<UpdateMemberRequestDto>() {
+						}, "member",
 						Locale.KOREA)
 				));
 		}
