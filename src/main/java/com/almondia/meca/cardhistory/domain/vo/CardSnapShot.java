@@ -13,6 +13,7 @@ import com.almondia.meca.card.domain.vo.CardType;
 import com.almondia.meca.card.domain.vo.Description;
 import com.almondia.meca.card.domain.vo.Question;
 import com.almondia.meca.card.domain.vo.Title;
+import com.almondia.meca.common.domain.vo.Id;
 
 import io.jsonwebtoken.lang.Assert;
 import lombok.AccessLevel;
@@ -29,6 +30,8 @@ import lombok.ToString;
 @ToString
 public final class CardSnapShot {
 
+	@AttributeOverride(name = "title", column = @Column(name = "card_title", nullable = false, length = 120))
+	private Id memberId;
 	@AttributeOverride(name = "title", column = @Column(name = "card_title", nullable = false, length = 120))
 	private Title title;
 
@@ -52,6 +55,7 @@ public final class CardSnapShot {
 
 	@Builder
 	public CardSnapShot(
+		Id memberId,
 		Title title,
 		Question question,
 		String answer,
@@ -61,9 +65,10 @@ public final class CardSnapShot {
 		LocalDateTime modifiedAt
 	) {
 		Assert.noNullElements(
-			new Object[] {title, question, answer, cardType, description, createdAt,
+			new Object[] {memberId, title, question, answer, cardType, description, createdAt,
 				modifiedAt},
 			"CardSnapShot must not be null");
+		this.memberId = memberId;
 		this.title = title;
 		this.question = question;
 		this.answer = answer;
@@ -75,6 +80,7 @@ public final class CardSnapShot {
 
 	public static CardSnapShot copyShot(Card card) {
 		return CardSnapShot.builder()
+			.memberId(card.getMemberId())
 			.title(card.getTitle())
 			.question(card.getQuestion())
 			.answer(card.getAnswer())
