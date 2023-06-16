@@ -337,11 +337,17 @@ class CategoryQueryDslRepositoryImplTest {
 			// given
 			Id memberId = Id.generateNextId();
 			int pageSize = 3;
-			Id categoryId = Id.generateNextId();
-			em.persist(CategoryTestHelper.generateUnSharedCategory("title1", memberId, categoryId));
-			em.persist(CategoryTestHelper.generateUnSharedCategory("title2", memberId, Id.generateNextId()));
-			em.persist(CategoryRecommendTestHelper.generateCategoryRecommend(categoryId, Id.generateNextId()));
-			em.persist(CategoryRecommendTestHelper.generateCategoryRecommend(categoryId, Id.generateNextId()));
+			Id categoryId1 = Id.generateNextId();
+			Id categoryId2 = Id.generateNextId();
+			Id cardId1 = Id.generateNextId();
+			Id cardId2 = Id.generateNextId();
+			em.persist(CategoryTestHelper.generateUnSharedCategory("title1", memberId, categoryId1));
+			em.persist(CategoryTestHelper.generateUnSharedCategory("title2", memberId, categoryId2));
+			em.persist(CardTestHelper.genOxCard(memberId, categoryId1, cardId1));
+			em.persist(CardTestHelper.genOxCard(memberId, categoryId1, cardId2));
+			em.persist(CategoryRecommendTestHelper.generateCategoryRecommend(categoryId1, Id.generateNextId()));
+			em.persist(CategoryRecommendTestHelper.generateCategoryRecommend(categoryId1, Id.generateNextId()));
+			em.persist(CategoryRecommendTestHelper.generateCategoryRecommend(categoryId1, Id.generateNextId()));
 
 			// when
 			CursorPage<CategoryWithHistoryResponseDto> result = categoryRepository.findCategoryWithStatisticsByMemberId(
@@ -351,8 +357,8 @@ class CategoryQueryDslRepositoryImplTest {
 
 			// then
 			assertThat(result).isNotNull();
-			assertThat(result.getContents().get(0).getLikeCount()).isEqualTo(0);
-			assertThat(result.getContents().get(1).getLikeCount()).isEqualTo(2);
+			assertThat(result.getContents().get(0).getLikeCount()).isEqualTo(0L);
+			assertThat(result.getContents().get(1).getLikeCount()).isEqualTo(3L);
 		}
 	}
 
@@ -366,7 +372,6 @@ class CategoryQueryDslRepositoryImplTest {
 	 * shared가 false인 카테고리는 조회하면 안된다
 	 * lastCategoryId를 입력받은 경우, lastCategoryId와 같거나 큰 카테고리는 조회되어야 한다
 	 * CategorySearchOption의 containTitle을 입력받은 경우 해당 문자열을 포함하는 카테고리만 조회할 수 있어야 한다
-	 * 추천수가 0인 경우 추천수는 0개여야 한다
 	 */
 	@Nested
 	@DisplayName("findCategoryShared 테스트")
@@ -599,6 +604,42 @@ class CategoryQueryDslRepositoryImplTest {
 				.hasFieldOrProperty("categoryInfo")
 				.hasFieldOrProperty("memberInfo");
 			assertThat(result.getContents().get(0).getLikeCount()).isEqualTo(0);
+		}
+
+		@Test
+		@DisplayName("사람들이 추천한 추천수만크 추천해야한다")
+		void shouldReturnLikeCountWhenPeopleRequestLikeCount() {
+			// given
+			Id memberId = Id.generateNextId();
+			int pageSize = 100;
+			Id categoryId1 = Id.generateNextId();
+			Id categoryId2 = Id.generateNextId();
+			Id cardId1 = Id.generateNextId();
+			Id cardId2 = Id.generateNextId();
+			em.persist(MemberTestHelper.generateMember(memberId));
+			em.persist(CategoryTestHelper.generateSharedCategory("title1", memberId, categoryId1));
+			em.persist(CategoryTestHelper.generateSharedCategory("title2", memberId, categoryId2));
+			em.persist(CardTestHelper.genOxCard(memberId, categoryId1, cardId1));
+			em.persist(CardTestHelper.genOxCard(memberId, categoryId2, cardId2));
+			em.persist(CardTestHelper.genOxCard(memberId, categoryId1, Id.generateNextId()));
+			em.persist(CategoryRecommendTestHelper.generateCategoryRecommend(categoryId1, Id.generateNextId()));
+			em.persist(CategoryRecommendTestHelper.generateCategoryRecommend(categoryId1, Id.generateNextId()));
+			em.persist(CategoryRecommendTestHelper.generateCategoryRecommend(categoryId1, Id.generateNextId()));
+
+			// when
+			CursorPage<SharedCategoryResponseDto> result = categoryRepository.findCategoryShared(
+				pageSize,
+				null);
+
+			// then
+			assertThat(result).isNotNull();
+			assertThat(result.getContents()).isNotEmpty();
+			assertThat(result.getContents().get(0))
+				.hasFieldOrProperty("categoryInfo")
+				.hasFieldOrProperty("memberInfo");
+
+			assertThat(result.getContents().get(0).getLikeCount()).isEqualTo(0L);
+			assertThat(result.getContents().get(1).getLikeCount()).isEqualTo(3L);
 		}
 	}
 
