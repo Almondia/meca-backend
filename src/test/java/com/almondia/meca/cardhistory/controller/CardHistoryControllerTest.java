@@ -167,6 +167,7 @@ class CardHistoryControllerTest {
 						fieldWithPath("contents[].score").description("점수"),
 						fieldWithPath("contents[].categoryId").description("카테고리 ID"),
 						fieldWithPath("contents[].cardId").description("카드 ID"),
+						fieldWithPath("contents[].memberId").description("카드를 생성한 사용자 ID"),
 						fieldWithPath("contents[].cardType").description("카드 타입"),
 						fieldWithPath("contents[].question").description("문제"),
 						fieldWithPath("contents[].answer").description("정답"),
