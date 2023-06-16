@@ -14,6 +14,7 @@ import lombok.Getter;
 @Getter
 public class CardSnapShotDto {
 	private final Id cardId;
+	private final Id memberId;
 	private final Title title;
 	private final Question question;
 	private final String answer;
@@ -24,6 +25,7 @@ public class CardSnapShotDto {
 
 	public CardSnapShotDto(Id cardId, CardSnapShot cardSnapShot) {
 		this.cardId = cardId;
+		this.memberId = cardSnapShot.getMemberId();
 		this.title = cardSnapShot.getTitle();
 		this.question = cardSnapShot.getQuestion();
 		this.answer = cardSnapShot.getAnswer();
