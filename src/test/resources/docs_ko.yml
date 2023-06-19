@@ -31,6 +31,7 @@ category:
     title: 제목
     isDeleted: 삭제 여부
     isShared: 공유 여부
+    shared: 공유 여부
     createdAt: 생성일
     modifiedAt: 수정일
     totalCount: 전체 문제 수
@@ -52,6 +53,7 @@ category:
     thumbnail: URL 형식, 최대 255자
     title: 공백 없이 최대 40자
     isDeleted: true, false
+    shared: true, false
     isShared: true, false
 
 card:

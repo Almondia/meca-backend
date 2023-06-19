@@ -160,7 +160,7 @@ class CategoryServiceTest {
 			UpdateCategoryRequestDto updateCategoryRequestDto = UpdateCategoryRequestDto.builder()
 				.title(Title.of("title"))
 				.thumbnail(Image.of("thumbnail"))
-				.isShared(true)
+				.shared(true)
 				.build();
 
 			// when
@@ -234,7 +234,7 @@ class CategoryServiceTest {
 			Mockito.doReturn(savedCategory).when(categoryChecker).checkAuthority(any(), any());
 
 			UpdateCategoryRequestDto updateCategoryRequestDto = UpdateCategoryRequestDto.builder()
-				.isShared(true)
+				.shared(true)
 				.build();
 
 			// when
@@ -264,7 +264,7 @@ class CategoryServiceTest {
 			UpdateCategoryRequestDto updateCategoryRequestDto = UpdateCategoryRequestDto.builder()
 				.title(Title.of("update title"))
 				.thumbnail(Image.of("update thumbnail"))
-				.isShared(true)
+				.shared(true)
 				.build();
 
 			// when
