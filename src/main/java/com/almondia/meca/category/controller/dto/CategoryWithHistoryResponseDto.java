@@ -28,5 +28,25 @@ public class CategoryWithHistoryResponseDto {
 	private final double scoreAvg;
 	private final long solveCount;
 	private final long totalCount;
-	private final long likeCount;
+	private long likeCount;
+
+	public CategoryWithHistoryResponseDto(Id categoryId, Id memberId, Image thumbnail, Title title, boolean isDeleted,
+		boolean isShared, LocalDateTime createdAt, LocalDateTime modifiedAt, double scoreAvg, long solveCount,
+		long totalCount) {
+		this.categoryId = categoryId;
+		this.memberId = memberId;
+		this.thumbnail = thumbnail;
+		this.title = title;
+		this.isDeleted = isDeleted;
+		this.isShared = isShared;
+		this.createdAt = createdAt;
+		this.modifiedAt = modifiedAt;
+		this.scoreAvg = scoreAvg;
+		this.solveCount = solveCount;
+		this.totalCount = totalCount;
+	}
+
+	public void setLikeCount(long likeCount) {
+		this.likeCount = likeCount;
+	}
 }

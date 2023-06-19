@@ -15,6 +15,7 @@ import com.almondia.meca.common.infra.querydsl.SortOrder;
 import com.almondia.meca.member.domain.entity.QMember;
 import com.almondia.meca.recommand.domain.entity.QCategoryRecommend;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.SubQueryExpression;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
@@ -35,6 +36,11 @@ public class CategoryQueryDslRepositoryImpl implements CategoryQueryDslRepositor
 	@Override
 	public CursorPage<CategoryWithHistoryResponseDto> findCategoryWithStatisticsByMemberId(int pageSize, Id memberId,
 		Id lastCategoryId) {
+		SubQueryExpression<Long> subQuery = jpaQueryFactory.select(categoryRecommend.count())
+			.from(categoryRecommend)
+			.where(categoryRecommend.categoryId.eq(category.categoryId),
+				categoryRecommend.isDeleted.eq(false));
+
 		List<CategoryWithHistoryResponseDto> response = jpaQueryFactory.select(Projections.constructor(
 				CategoryWithHistoryResponseDto.class,
 				category.categoryId,
@@ -48,7 +54,7 @@ public class CategoryQueryDslRepositoryImpl implements CategoryQueryDslRepositor
 				cardHistory.score.score.avg(),
 				cardHistory.cardId.countDistinct(),
 				card.cardId.countDistinct(),
-				categoryRecommend.categoryRecommendId.count()
+				subQuery
 			))
 			.from(category)
 			.leftJoin(card)
@@ -58,11 +64,7 @@ public class CategoryQueryDslRepositoryImpl implements CategoryQueryDslRepositor
 			.leftJoin(cardHistory)
 			.on(
 				card.cardId.eq(cardHistory.cardId),
-				cardHistory.isDeleted.eq(false))
-			.leftJoin(categoryRecommend)
-			.on(
-				category.categoryId.eq(categoryRecommend.categoryId),
-				categoryRecommend.isDeleted.eq(false)
+				cardHistory.isDeleted.eq(false)
 			)
 			.where(
 				category.isDeleted.eq(false),
@@ -80,6 +82,11 @@ public class CategoryQueryDslRepositoryImpl implements CategoryQueryDslRepositor
 	public CursorPage<CategoryWithHistoryResponseDto> findCategoryWithStatisticsByMemberId(int pageSize, Id memberId,
 		Id lastCategoryId, CategorySearchOption categorySearchOption
 	) {
+		SubQueryExpression<Long> subQuery = jpaQueryFactory.select(categoryRecommend.count())
+			.from(categoryRecommend)
+			.where(categoryRecommend.categoryId.eq(category.categoryId),
+				categoryRecommend.isDeleted.eq(false));
+
 		List<CategoryWithHistoryResponseDto> response = jpaQueryFactory.select(Projections.constructor(
 				CategoryWithHistoryResponseDto.class,
 				category.categoryId,
@@ -93,7 +100,7 @@ public class CategoryQueryDslRepositoryImpl implements CategoryQueryDslRepositor
 				cardHistory.score.score.avg(),
 				cardHistory.cardId.countDistinct(),
 				card.cardId.countDistinct(),
-				categoryRecommend.categoryRecommendId.count()
+				subQuery
 			))
 			.from(category)
 			.leftJoin(card)
@@ -104,11 +111,6 @@ public class CategoryQueryDslRepositoryImpl implements CategoryQueryDslRepositor
 			.on(
 				card.cardId.eq(cardHistory.cardId),
 				cardHistory.isDeleted.eq(false)
-			)
-			.leftJoin(categoryRecommend)
-			.on(
-				category.categoryId.eq(categoryRecommend.categoryId),
-				categoryRecommend.isDeleted.eq(false)
 			)
 			.where(
 				category.isDeleted.eq(false),
@@ -125,11 +127,17 @@ public class CategoryQueryDslRepositoryImpl implements CategoryQueryDslRepositor
 
 	@Override
 	public CursorPage<SharedCategoryResponseDto> findCategoryShared(int pageSize, Id lastCategoryId) {
+		SubQueryExpression<Long> subQuery = jpaQueryFactory.select(categoryRecommend.count())
+			.from(categoryRecommend)
+			.where(categoryRecommend.categoryId.eq(category.categoryId),
+				categoryRecommend.isDeleted.eq(false));
+
 		List<SharedCategoryResponseDto> response = jpaQueryFactory.select(
 				Projections.constructor(SharedCategoryResponseDto.class,
 					category,
 					member,
-					categoryRecommend.categoryRecommendId.count()))
+					subQuery)
+			)
 			.from(category)
 			.where(
 				category.isShared.eq(true),
@@ -143,10 +151,6 @@ public class CategoryQueryDslRepositoryImpl implements CategoryQueryDslRepositor
 			.on(category.categoryId.eq(card.categoryId),
 				card.isDeleted.eq(false)
 			)
-			.leftJoin(categoryRecommend)
-			.on(category.categoryId.eq(categoryRecommend.categoryId),
-				categoryRecommend.isDeleted.eq(false)
-			)
 			.groupBy(category.categoryId)
 			.having(card.cardId.countDistinct().gt(0))
 			.orderBy(category.categoryId.uuid.desc())
@@ -158,11 +162,18 @@ public class CategoryQueryDslRepositoryImpl implements CategoryQueryDslRepositor
 	@Override
 	public CursorPage<SharedCategoryResponseDto> findCategoryShared(int pageSize, Id lastCategoryId,
 		CategorySearchOption categorySearchOption) {
+		SubQueryExpression<Long> subQuery = jpaQueryFactory.select(categoryRecommend.count())
+			.from(categoryRecommend)
+			.where(categoryRecommend.categoryId.eq(category.categoryId),
+				categoryRecommend.isDeleted.eq(false));
+
 		List<SharedCategoryResponseDto> response = jpaQueryFactory.select(
 				Projections.constructor(SharedCategoryResponseDto.class,
 					category,
 					member,
-					categoryRecommend.categoryRecommendId.count()))
+					subQuery
+				)
+			)
 			.from(category)
 			.innerJoin(member)
 			.on(
@@ -173,11 +184,6 @@ public class CategoryQueryDslRepositoryImpl implements CategoryQueryDslRepositor
 			.on(
 				category.categoryId.eq(card.categoryId),
 				card.isDeleted.eq(false)
-			)
-			.leftJoin(categoryRecommend)
-			.on(
-				category.categoryId.eq(categoryRecommend.categoryId),
-				categoryRecommend.isDeleted.eq(false)
 			)
 			.groupBy(category.categoryId)
 			.having(card.cardId.countDistinct().gt(0))

@@ -27,6 +27,7 @@ public class CardHistoryResponseDto {
 	private Score score;
 	private Id categoryId;
 	private Id cardId;
+	private Id memberId;
 	private String title;
 	private CardType cardType;
 	private Question question;

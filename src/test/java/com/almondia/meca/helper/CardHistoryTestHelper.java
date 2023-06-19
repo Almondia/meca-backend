@@ -53,6 +53,7 @@ public class CardHistoryTestHelper {
 
 	private static CardSnapShot makeCardSnapShot() {
 		return CardSnapShot.builder()
+			.memberId(Id.generateNextId())
 			.title(Title.of("title"))
 			.question(Question.of("question"))
 			.answer("O")
