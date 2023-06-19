@@ -7,12 +7,12 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
-import static org.springframework.restdocs.snippet.Attributes.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Locale;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
@@ -32,6 +33,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import com.almondia.meca.asciidocs.fields.DocsFieldGeneratorUtils;
 import com.almondia.meca.card.application.CardService;
 import com.almondia.meca.card.application.CardSimulationService;
 import com.almondia.meca.card.controller.dto.CardCursorPageWithCategory;
@@ -52,6 +54,7 @@ import com.almondia.meca.common.configuration.jackson.JacksonConfiguration;
 import com.almondia.meca.common.configuration.security.filter.JwtAuthenticationFilter;
 import com.almondia.meca.common.domain.vo.Id;
 import com.almondia.meca.common.infra.querydsl.SortOrder;
+import com.almondia.meca.configuration.asciidocs.DocsFieldGeneratorUtilsConfiguration;
 import com.almondia.meca.helper.CardTestHelper;
 import com.almondia.meca.helper.MemberTestHelper;
 import com.almondia.meca.member.domain.entity.Member;
@@ -64,7 +67,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @WebMvcTest(CardController.class)
 @ExtendWith({RestDocumentationExtension.class})
-@Import({JacksonConfiguration.class})
+@Import({JacksonConfiguration.class, DocsFieldGeneratorUtilsConfiguration.class})
 class CardControllerTest {
 
 	private static final String jwtToken = "Bearer jwt token";
@@ -86,6 +89,9 @@ class CardControllerTest {
 
 	@Autowired
 	ObjectMapper objectMapper;
+
+	@Autowired
+	DocsFieldGeneratorUtils docsFieldGeneratorUtils;
 
 	@BeforeEach
 	public void setUp(RestDocumentationContextProvider restDocumentation) {
@@ -136,26 +142,14 @@ class CardControllerTest {
 				.andExpect(jsonPath("title").exists())
 				.andExpect(jsonPath("answer").exists())
 				.andDo(document("{class-name}/{method-name}", getDocumentRequest(), getDocumentResponse(),
-					requestHeaders(headerWithName("Authorization").description("jwt token")), requestFields(
-						fieldWithPath("title").description("카드 제목").attributes(key("constraints").value("2 ~ 40 글자")),
-						fieldWithPath("question").description("카드 질문")
-							.attributes(key("constraints").value("공백 없이 500 글자 이하")),
-						fieldWithPath("description").description("카드 설명")
-							.optional()
-							.attributes(key("constraints").value("2,1000자 이하 글자")),
-						fieldWithPath("categoryId").description("카테고리 아이디"),
-						fieldWithPath("cardType").description("카드 타입")
-							.attributes(key("constraints").value("OX_QUIZ, CHOICE_QUIZ, SHORT_ANSWER_QUIZ")),
-						fieldWithPath("answer").description("카드 정답")),
-					responseFields(fieldWithPath("cardId").description("카드 아이디"),
-						fieldWithPath("title").description("카드 제목"), fieldWithPath("memberId").description("멤버 아이디"),
-						fieldWithPath("question").description("카드 질문"),
-						fieldWithPath("description").description("카드 설명"),
-						fieldWithPath("categoryId").description("카테고리 아이디"),
-						fieldWithPath("cardType").description("카드 타입"),
-						fieldWithPath("createdAt").description("카드 생성일"),
-						fieldWithPath("modifiedAt").description("카드 수정일"), fieldWithPath("title").description("카드 제목"),
-						fieldWithPath("answer").description("카드 정답"))));
+					requestHeaders(headerWithName("Authorization").description("jwt token")),
+					docsFieldGeneratorUtils.generateRequestFieldSnippet(
+						new ParameterizedTypeReference<SaveCardRequestDto>() {
+						}, "card", Locale.KOREAN),
+					docsFieldGeneratorUtils.generateResponseFieldSnippet(
+						new ParameterizedTypeReference<CardDto>() {
+						}, "card", Locale.KOREAN))
+				);
 		}
 
 		private CardDto makeResponse() {
@@ -217,27 +211,13 @@ class CardControllerTest {
 				.andDo(document("{class-name}/{method-name}", getDocumentRequest(), getDocumentResponse(),
 					requestHeaders(headerWithName("Authorization").description("jwt token")),
 					pathParameters(parameterWithName("cardId").description("카드 아이디")),
-					requestFields(
-						fieldWithPath("title").description("변경할 카드 제목")
-							.optional()
-							.attributes(key("constraints").value("2 ~ 40 글자")),
-						fieldWithPath("question").description("변경할 카드 질문")
-							.optional()
-							.attributes(key("constraints").value("공백 없이 500 글자 이하")),
-						fieldWithPath("description").description("변경할 카드 설명")
-							.optional()
-							.attributes(key("constraints").value("2,1000자 이하 글자")),
-						fieldWithPath("categoryId").description("변경할 카테고리 아이디").optional(),
-						fieldWithPath("answer").description("변경할 카드 정답").optional()),
-					responseFields(fieldWithPath("cardId").description("카드 아이디"),
-						fieldWithPath("title").description("카드 제목"), fieldWithPath("memberId").description("멤버 아이디"),
-						fieldWithPath("question").description("카드 질문"),
-						fieldWithPath("description").description("카드 설명"),
-						fieldWithPath("categoryId").description("카테고리 아이디"),
-						fieldWithPath("cardType").description("카드 타입"),
-						fieldWithPath("createdAt").description("카드 생성일"),
-						fieldWithPath("modifiedAt").description("카드 수정일"), fieldWithPath("title").description("카드 제목"),
-						fieldWithPath("answer").description("카드 정답"))));
+					docsFieldGeneratorUtils.generateRequestFieldSnippet(
+						new ParameterizedTypeReference<UpdateCardRequestDto>() {
+						}, "card", Locale.KOREA)
+					,
+					docsFieldGeneratorUtils.generateResponseFieldSnippet(
+						new ParameterizedTypeReference<CardDto>() {
+						}, "card", Locale.KOREAN)));
 		}
 
 		private CardDto makeResponse() {
@@ -324,13 +304,10 @@ class CardControllerTest {
 				.andDo(document("{class-name}/{method-name}", getDocumentRequest(), getDocumentResponse(),
 					requestHeaders(headerWithName("Authorization").description("jwt token")),
 					pathParameters(parameterWithName("cardId").description("카드 아이디")),
-					responseFields(fieldWithPath("cardId").description("카드 아이디"),
-						fieldWithPath("question").description("카드 질문"), fieldWithPath("memberId").description("멤버 아이디"),
-						fieldWithPath("cardType").description("카드 타입"), fieldWithPath("answer").description("카드 정답"),
-						fieldWithPath("description").description("카드 설명"), fieldWithPath("title").description("카드 제목"),
-						fieldWithPath("createdAt").description("카드 생성일"),
-						fieldWithPath("modifiedAt").description("카드 수정일"),
-						fieldWithPath("categoryId").description("카테고리 아이디"))));
+					docsFieldGeneratorUtils.generateResponseFieldSnippet(
+						new ParameterizedTypeReference<CardDto>() {
+						}, "card", Locale.KOREAN)));
+
 		}
 	}
 
@@ -562,7 +539,7 @@ class CardControllerTest {
 	}
 
 	/**
-	 *  정상 동작시 200 응답 및 응답 포맷 테스트
+	 * 정상 동작시 200 응답 및 응답 포맷 테스트
 	 */
 	@Nested
 	@DisplayName("카드 시뮬레이션 테스트")

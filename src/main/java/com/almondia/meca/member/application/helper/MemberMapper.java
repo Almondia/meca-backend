@@ -11,7 +11,7 @@ public class MemberMapper {
 			.name(member.getName())
 			.email(member.getEmail())
 			.profile(member.getProfile())
-			.oAuthType(member.getOAuthType())
+			.oauthType(member.getOAuthType())
 			.role(member.getRole())
 			.isDeleted(member.isDeleted())
 			.createdAt(member.getCreatedAt())

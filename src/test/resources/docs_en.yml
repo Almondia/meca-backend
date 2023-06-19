@@ -1,0 +1,13 @@
+member:
+  description:
+    memberId: member ID
+    name: member name
+    email: member email
+    profile: member profile image
+    oauthType: member OAuth type
+    role: member role
+    isDeleted: member delete status
+    createdAt: member create date
+    modifiedAt: member modify date
+    solvedMemberId: ID who solved the problem
+    solvedMemberName: name who solved the problem

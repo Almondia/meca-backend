@@ -1,0 +1,83 @@
+member:
+  description:
+    memberId: 회원 아이디
+    name: 회원 이름
+    email: 회원 이메일
+    profile: 회원 프로필 이미지
+    oauthType: 회원 OAuth 타입
+    role: 회원 권한
+    isDeleted: 회원 삭제 여부
+    createdAt: 회원 생성일
+    modifiedAt: 회원 수정일
+    solvedMemberId: 푼 문제 회원 아이디
+    solvedMemberName: 푼 문제 회원 이름
+
+  constraints:
+    memberId: UUID
+    name: 공백 없이 2 ~ 10자
+    email: 이메일 형식, 최대 255자
+    profile: URL 형식, 최대 255자
+    oauthType: GOOGLE, NAVER, KAKAO
+    role: ADMIN, USER
+    isDeleted: true, false
+    solvedMemberId: UUID
+    solvedMemberName: 공백 없이 2 ~ 10자
+
+category:
+  description:
+    categoryId: 카테고리 아이디
+    memberId: 카테고리를 가진 회원 이름
+    thumbnail: 썸네일 이미지
+    title: 제목
+    isDeleted: 삭제 여부
+    isShared: 공유 여부
+    createdAt: 생성일
+    modifiedAt: 수정일
+    totalCount: 전체 문제 수
+    scoreAvg: 평균 점수
+    solveCount: 문제 풀이 수
+    likeCount: 좋아요 수
+    name: 이름
+    email: 이메일
+    profile: 프로필 이미지
+    role: 역할
+    oauthType: OAuth 타입
+    hasNext: 다음 페이지 ID
+    pageSize: page 사이즈
+    sortOrder: 정렬 기준
+
+  constraints:
+    categoryId: UUID
+    memberId: UUID
+    thumbnail: URL 형식, 최대 255자
+    title: 공백 없이 최대 40자
+    isDeleted: true, false
+    isShared: true, false
+
+card:
+  description:
+    cardId: 카드 아이디
+    memberId: 회원 아이디
+    title: 제목
+    question: 질문 내용
+    description: 자세한 설명(HTML 형태 text)
+    categoryId: 카테고리 아이디
+    cardType: 카드 타입
+    createdAt: 생성일
+    modifiedAt: 수정일
+    answer: 정답
+    name: 이름
+    email: 이메일
+    profile: 프로필 이미지
+    role: 권한
+    oauthType: OAuth 타입
+    isDeleted: 삭제 여부
+
+  constraints:
+    cardId: UUID
+    title: 공백 없이 2 ~ 40자
+    question: 공백 없이 500 글자 이하
+    description: 21,000자 이하 HTML 형태 text
+    categoryId: UUID
+    cardType: OX_QUIZ, KEYWORD, MULTI_CHOICE
+    answer: text

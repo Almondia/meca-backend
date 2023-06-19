@@ -162,4 +162,6 @@ operation::find-card-histories-by-solved-member-id-test/should-return200-when-su
 operation::find-card-histories-by-card-id-test2/should-return200-when-success-test[snippets='http-request,path-parameters,request-parameters,http-response,response-fields']
 
 [[CardHistory-푼-사용자ID-기반-카드-히스토리-페이징-조회-v2]]
+=== CardHistory 푼 사용자 기반 카드 히스토리 페이징 조회 v2
+
 operation::find-card-histories-by-solved-member-id-test2/should-return200-when-success-test[snippets='http-request,path-parameters,request-parameters,http-response,response-fields']

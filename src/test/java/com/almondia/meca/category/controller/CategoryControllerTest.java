@@ -7,13 +7,13 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
-import static org.springframework.restdocs.snippet.Attributes.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Locale;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -25,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
@@ -34,10 +35,13 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import com.almondia.meca.asciidocs.fields.DocsFieldGeneratorUtils;
 import com.almondia.meca.category.application.CategoryRecommendService;
 import com.almondia.meca.category.application.CategoryService;
+import com.almondia.meca.category.controller.dto.CategoryDto;
 import com.almondia.meca.category.controller.dto.CategoryRecommendCheckDto;
 import com.almondia.meca.category.controller.dto.CategoryWithHistoryResponseDto;
+import com.almondia.meca.category.controller.dto.SaveCategoryRequestDto;
 import com.almondia.meca.category.controller.dto.SharedCategoryResponseDto;
 import com.almondia.meca.category.controller.dto.UpdateCategoryRequestDto;
 import com.almondia.meca.category.domain.vo.Title;
@@ -48,6 +52,7 @@ import com.almondia.meca.common.controller.dto.CursorPage;
 import com.almondia.meca.common.domain.vo.Id;
 import com.almondia.meca.common.domain.vo.Image;
 import com.almondia.meca.common.infra.querydsl.SortOrder;
+import com.almondia.meca.configuration.asciidocs.DocsFieldGeneratorUtilsConfiguration;
 import com.almondia.meca.helper.CategoryTestHelper;
 import com.almondia.meca.helper.MemberTestHelper;
 import com.almondia.meca.mock.security.WithMockMember;
@@ -56,7 +61,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @WebMvcTest(CategoryController.class)
 @ExtendWith({RestDocumentationExtension.class})
-@Import({WebMvcConfiguration.class, JacksonConfiguration.class})
+@Import({WebMvcConfiguration.class, JacksonConfiguration.class, DocsFieldGeneratorUtilsConfiguration.class})
 class CategoryControllerTest {
 
 	private static final String jwtToken = "jwt token";
@@ -77,6 +82,9 @@ class CategoryControllerTest {
 
 	@Autowired
 	ObjectMapper objectMapper;
+
+	@Autowired
+	DocsFieldGeneratorUtils docsFieldGeneratorUtils;
 
 	@BeforeEach
 	public void setUp(RestDocumentationContextProvider restDocumentation) {
@@ -118,19 +126,16 @@ class CategoryControllerTest {
 				.andExpect(jsonPath("shared").exists())
 				.andExpect(jsonPath("createdAt").exists())
 				.andExpect(jsonPath("modifiedAt").exists())
-				.andDo(document("{class-name}/{method-name}", getDocumentRequest(), getDocumentResponse(),
-					requestHeaders(headerWithName("Authorization").description("JWT Bearer 토큰")), requestFields(
-						fieldWithPath("title").description("카테고리 제목").attributes(key("constraints").value("최대 40자")),
-						fieldWithPath("thumbnail").description("카테고리 썸네일 이미지 링크(s3)")
-							.optional()
-							.attributes(key("constraints").value("최대 255자"))),
-					responseFields(fieldWithPath("categoryId").description("카테고리 아이디"),
-						fieldWithPath("memberId").description("회원 아이디"), fieldWithPath("title").description("카테고리 제목"),
-						fieldWithPath("thumbnail").description("카테고리 썸네일 이미지"),
-						fieldWithPath("deleted").description("카테고리 삭제 여부"),
-						fieldWithPath("shared").description("카테고리 공유 여부"),
-						fieldWithPath("createdAt").description("카테고리 생성일"),
-						fieldWithPath("modifiedAt").description("카테고리 수정일"))));
+				.andDo(document("{class-name}/{method-name}",
+					getDocumentRequest(),
+					getDocumentResponse(),
+					docsFieldGeneratorUtils.generateRequestFieldSnippet(
+						new ParameterizedTypeReference<SaveCategoryRequestDto>() {
+						}, "category",
+						Locale.KOREAN),
+					docsFieldGeneratorUtils.generateResponseFieldSnippet(new ParameterizedTypeReference<CategoryDto>() {
+																		 }, "category",
+						Locale.KOREAN)));
 		}
 	}
 
@@ -169,23 +174,14 @@ class CategoryControllerTest {
 				.andExpect(jsonPath("modifiedAt").exists())
 				.andDo(document("{class-name}/{method-name}", getDocumentRequest(), getDocumentResponse(),
 					requestHeaders(headerWithName("Authorization").description("JWT Bearer 토큰")),
-					pathParameters(parameterWithName("categoryId").description("카테고리 아이디")), requestFields(
-						fieldWithPath("title").description("카테고리 제목")
-							.optional()
-							.attributes(key("constraints").value("최대 40자")),
-						fieldWithPath("thumbnail").description("카테고리 썸네일 이미지 링크(s3)")
-							.optional()
-							.attributes(key("constraints").value("최대 255자")),
-						fieldWithPath("isShared").description("카테고리 공유 여부")
-							.optional()
-							.attributes(key("constraints").value("true or false"))),
-					responseFields(fieldWithPath("categoryId").description("카테고리 아이디"),
-						fieldWithPath("memberId").description("회원 아이디"), fieldWithPath("title").description("카테고리 제목"),
-						fieldWithPath("thumbnail").description("카테고리 썸네일 이미지"),
-						fieldWithPath("deleted").description("카테고리 삭제 여부"),
-						fieldWithPath("shared").description("카테고리 공유 여부"),
-						fieldWithPath("createdAt").description("카테고리 생성일"),
-						fieldWithPath("modifiedAt").description("카테고리 수정일"))));
+					pathParameters(parameterWithName("categoryId").description("카테고리 아이디")),
+					docsFieldGeneratorUtils.generateRequestFieldSnippet(
+						new ParameterizedTypeReference<UpdateCategoryRequestDto>() {
+						}, "category",
+						Locale.KOREAN),
+					docsFieldGeneratorUtils.generateResponseFieldSnippet(new ParameterizedTypeReference<CategoryDto>() {
+																		 }, "category",
+						Locale.KOREAN)));
 		}
 
 		@Test
@@ -265,22 +261,10 @@ class CategoryControllerTest {
 						parameterWithName("hasNext").description("다음 페이지 커서").optional(),
 						parameterWithName("containTitle").description("카테고리 제목 포함 여부(null인 경우 전체 검색)").optional()
 					),
-					responseFields(
-						fieldWithPath("pageSize").description("페이지 사이즈"),
-						fieldWithPath("hasNext").description("다음 페이지 커서"),
-						fieldWithPath("sortOrder").description("정렬 방식"),
-						fieldWithPath("contents[].categoryId").description("카테고리 아이디"),
-						fieldWithPath("contents[].memberId").description("회원 아이디"),
-						fieldWithPath("contents[].title").description("카테고리 제목"),
-						fieldWithPath("contents[].thumbnail").description("카테고리 썸네일 이미지"),
-						fieldWithPath("contents[].createdAt").description("카테고리 생성일"),
-						fieldWithPath("contents[].modifiedAt").description("카테고리 수정일"),
-						fieldWithPath("contents[].scoreAvg").description("카테고리 평균 점수"),
-						fieldWithPath("contents[].solveCount").description("카테고리 문제 풀이 수"),
-						fieldWithPath("contents[].totalCount").description("카테고리 문제 수"),
-						fieldWithPath("contents[].deleted").description("카테고리 삭제 여부"),
-						fieldWithPath("contents[].shared").description("카테고리 공유 여부"),
-						fieldWithPath("contents[].likeCount").description("카테고리 좋아요 수")
+					docsFieldGeneratorUtils.generateResponseFieldSnippet(
+						new ParameterizedTypeReference<CursorPage<CategoryWithHistoryResponseDto>>() {
+						}, "category",
+						Locale.KOREAN
 					)
 				));
 		}
@@ -350,38 +334,21 @@ class CategoryControllerTest {
 				.andExpect(jsonPath("sortOrder").exists())
 				.andExpect(jsonPath("contents").exists())
 				.andDo(document(
-					"{class-name}/{method-name}",
-					getDocumentRequest(),
-					getDocumentResponse(),
-					requestParameters(
-						parameterWithName("hasNext").description("다음 페이지 커서").optional(),
-						parameterWithName("containTitle").description("카테고리 제목 포함 여부(null인 경우 전체 검색)").optional(),
-						parameterWithName("pageSize").description("페이지 사이즈")
-					),
-					responseFields(
-						fieldWithPath("pageSize").description("페이지 사이즈"),
-						fieldWithPath("hasNext").description("다음 페이지 커서"),
-						fieldWithPath("sortOrder").description("정렬 방식"),
-						fieldWithPath("contents[].categoryInfo.categoryId").description("카테고리 아이디"),
-						fieldWithPath("contents[].categoryInfo.memberId").description("회원 아이디"),
-						fieldWithPath("contents[].categoryInfo.title").description("카테고리 제목"),
-						fieldWithPath("contents[].categoryInfo.thumbnail").description("카테고리 썸네일 이미지"),
-						fieldWithPath("contents[].categoryInfo.createdAt").description("카테고리 생성일"),
-						fieldWithPath("contents[].categoryInfo.modifiedAt").description("카테고리 수정일"),
-						fieldWithPath("contents[].categoryInfo.deleted").description("카테고리 삭제 여부"),
-						fieldWithPath("contents[].categoryInfo.shared").description("카테고리 공유 여부"),
-						fieldWithPath("contents[].memberInfo.memberId").description("회원 아이디"),
-						fieldWithPath("contents[].memberInfo.name").description("회원 이름"),
-						fieldWithPath("contents[].memberInfo.email").description("회원 email"),
-						fieldWithPath("contents[].memberInfo.profile").description("회원 프로필 이미지"),
-						fieldWithPath("contents[].memberInfo.role").description("회원 역할"),
-						fieldWithPath("contents[].memberInfo.createdAt").description("회원 생성일"),
-						fieldWithPath("contents[].memberInfo.modifiedAt").description("회원 수정일"),
-						fieldWithPath("contents[].memberInfo.oauthType").description("Oauth 타입"),
-						fieldWithPath("contents[].memberInfo.deleted").description("회원 삭제 여부"),
-						fieldWithPath("contents[].likeCount").description("카테고리 좋아요 수")
+						"{class-name}/{method-name}",
+						getDocumentRequest(),
+						getDocumentResponse(),
+						requestParameters(
+							parameterWithName("hasNext").description("다음 페이지 커서").optional(),
+							parameterWithName("containTitle").description("카테고리 제목 포함 여부(null인 경우 전체 검색)").optional(),
+							parameterWithName("pageSize").description("페이지 사이즈")
+						),
+						docsFieldGeneratorUtils.generateResponseFieldSnippet(
+							new ParameterizedTypeReference<CursorPage<SharedCategoryResponseDto>>() {
+							}, "category",
+							Locale.KOREAN
+						)
 					)
-				));
+				);
 		}
 	}
 

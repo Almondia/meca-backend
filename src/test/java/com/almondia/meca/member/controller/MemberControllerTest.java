@@ -4,10 +4,11 @@ import static com.almondia.meca.asciidocs.ApiDocumentUtils.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.springframework.restdocs.headers.HeaderDocumentation.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;
-import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import java.util.Locale;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -19,18 +20,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
-import org.springframework.restdocs.snippet.Attributes;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import com.almondia.meca.asciidocs.fields.DocsFieldGeneratorUtils;
 import com.almondia.meca.common.configuration.jackson.JacksonConfiguration;
 import com.almondia.meca.common.configuration.security.filter.JwtAuthenticationFilter;
 import com.almondia.meca.common.domain.vo.Id;
 import com.almondia.meca.common.domain.vo.Image;
+import com.almondia.meca.configuration.asciidocs.DocsFieldGeneratorUtilsConfiguration;
 import com.almondia.meca.helper.MemberTestHelper;
 import com.almondia.meca.member.application.MemberService;
 import com.almondia.meca.member.application.helper.MemberMapper;
@@ -43,7 +46,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @WebMvcTest(MemberController.class)
 @ExtendWith({RestDocumentationExtension.class})
-@Import({JacksonConfiguration.class})
+@Import({JacksonConfiguration.class, DocsFieldGeneratorUtilsConfiguration.class})
 class MemberControllerTest {
 
 	private static final String jwtToken = "jwt token";
@@ -61,6 +64,9 @@ class MemberControllerTest {
 
 	@Autowired
 	private ObjectMapper objectMapper;
+
+	@Autowired
+	private DocsFieldGeneratorUtils docsFieldGeneratorUtils;
 
 	@BeforeEach
 	public void setUp(RestDocumentationContextProvider restDocumentation) {
@@ -107,17 +113,8 @@ class MemberControllerTest {
 					requestHeaders(
 						headerWithName("Authorization").description("Bearer Token")
 					),
-					responseFields(
-						fieldWithPath("memberId").description("회원 아이디"),
-						fieldWithPath("name").description("회원 이름"),
-						fieldWithPath("email").description("회원 이메일"),
-						fieldWithPath("profile").description("회원 프로필 사진"),
-						fieldWithPath("oauthType").description("회원 소셜 로그인 타입"),
-						fieldWithPath("role").description("회원 권한"),
-						fieldWithPath("deleted").description("회원 삭제 여부"),
-						fieldWithPath("createdAt").description("회원 생성일"),
-						fieldWithPath("modifiedAt").description("회원 수정일")
-					)
+					docsFieldGeneratorUtils.generateResponseFieldSnippet(new ParameterizedTypeReference<MemberDto>() {
+					}, "member", Locale.KOREA)
 				));
 		}
 	}
@@ -164,24 +161,14 @@ class MemberControllerTest {
 					requestHeaders(
 						headerWithName("Authorization").description("Bearer Token")
 					),
-					requestFields(
-						fieldWithPath("name").description("수정할 회원 이름").optional().attributes(
-							Attributes.key("constraints").value("이름은 빈 공백 없이 2자 이상 10자 이하로 입력해주세요.")),
-						fieldWithPath("profile").description("수정할 회원 프로필 사진").optional().attributes(
-							Attributes.key("constraints").value("프로필 사진 URI는 255 이하로 입력해주세요.")
-						)
-					),
-					responseFields(
-						fieldWithPath("memberId").description("회원 아이디"),
-						fieldWithPath("name").description("회원 이름"),
-						fieldWithPath("email").description("회원 이메일"),
-						fieldWithPath("profile").description("회원 프로필 사진"),
-						fieldWithPath("oauthType").description("회원 소셜 로그인 타입"),
-						fieldWithPath("role").description("회원 권한"),
-						fieldWithPath("deleted").description("회원 삭제 여부"),
-						fieldWithPath("createdAt").description("회원 생성일"),
-						fieldWithPath("modifiedAt").description("회원 수정일")
-					)
+					docsFieldGeneratorUtils.generateRequestFieldSnippet(
+						new ParameterizedTypeReference<UpdateMemberRequestDto>() {
+						}, "member",
+						Locale.KOREA),
+					docsFieldGeneratorUtils.generateRequestFieldSnippet(
+						new ParameterizedTypeReference<UpdateMemberRequestDto>() {
+						}, "member",
+						Locale.KOREA)
 				));
 		}
 
