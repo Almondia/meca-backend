@@ -13,8 +13,8 @@ import com.almondia.meca.card.domain.vo.CardType;
 import com.almondia.meca.card.domain.vo.Description;
 import com.almondia.meca.card.domain.vo.Question;
 import com.almondia.meca.card.domain.vo.Title;
+import com.almondia.meca.common.domain.vo.Id;
 
-import io.jsonwebtoken.lang.Assert;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -29,6 +29,8 @@ import lombok.ToString;
 @ToString
 public final class CardSnapShot {
 
+	@AttributeOverride(name = "uuid", column = @Column(name = "card_member_id", nullable = false, length = 120))
+	private Id memberId;
 	@AttributeOverride(name = "title", column = @Column(name = "card_title", nullable = false, length = 120))
 	private Title title;
 
@@ -41,7 +43,7 @@ public final class CardSnapShot {
 	@Enumerated(EnumType.STRING)
 	private CardType cardType;
 
-	@AttributeOverride(name = "description", column = @Column(name = "card_description", nullable = false, length = 2_1000, columnDefinition = "TEXT"))
+	@AttributeOverride(name = "description", column = @Column(name = "card_description", length = 2_1000, columnDefinition = "TEXT"))
 	private Description description;
 
 	@Column(name = "card_created_at", nullable = false, updatable = false)
@@ -52,6 +54,7 @@ public final class CardSnapShot {
 
 	@Builder
 	public CardSnapShot(
+		Id memberId,
 		Title title,
 		Question question,
 		String answer,
@@ -60,10 +63,7 @@ public final class CardSnapShot {
 		LocalDateTime createdAt,
 		LocalDateTime modifiedAt
 	) {
-		Assert.noNullElements(
-			new Object[] {title, question, answer, cardType, description, createdAt,
-				modifiedAt},
-			"CardSnapShot must not be null");
+		this.memberId = memberId;
 		this.title = title;
 		this.question = question;
 		this.answer = answer;
@@ -75,6 +75,7 @@ public final class CardSnapShot {
 
 	public static CardSnapShot copyShot(Card card) {
 		return CardSnapShot.builder()
+			.memberId(card.getMemberId())
 			.title(card.getTitle())
 			.question(card.getQuestion())
 			.answer(card.getAnswer())
