@@ -744,7 +744,7 @@ Content-Length: 161
 
 {
   "url" : "https://www.abc.com",
-  "expirationDate" : "2023-06-12T09:48:12.071",
+  "expirationDate" : "2023-06-19T09:49:35.317",
   "objectKey" : "2825b9a9-d89a-4301-99b5-a7668a5b5fff/thumbnail/abc.jpg"
 }</code></pre>
 </div>
@@ -777,14 +777,14 @@ Content-Type: application/json
 Content-Length: 302
 
 {
-  "memberId" : "0188ad0f-102c-6596-b649-6f75caef1b3a",
+  "memberId" : "0188d11c-c62e-dc74-bc48-34cd7b96f56f",
   "name" : "name",
   "email" : "email@naver.com",
   "profile" : "profile",
-  "role" : "USER",
-  "createdAt" : "2023-06-12T09:43:45.5800373",
-  "modifiedAt" : "2023-06-12T09:43:45.5800373",
   "oauthType" : "KAKAO",
+  "role" : "USER",
+  "createdAt" : "2023-06-19T09:45:03.9189037",
+  "modifiedAt" : "2023-06-19T09:45:03.9189037",
   "deleted" : false
 }</code></pre>
 </div>
@@ -824,12 +824,12 @@ Content-Length: 302
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>profile</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">회원 프로필 사진</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">회원 프로필 이미지</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>oauthType</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">회원 소셜 로그인 타입</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">회원 OAuth 타입</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>role</code></p></td>
@@ -897,16 +897,16 @@ Host: mecastudy.com
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>name</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">이름은 빈 공백 없이 2자 이상 10자 이하로 입력해주세요.</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">수정할 회원 이름</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">공백 없이 2 ~ 10자</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">회원 이름</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>profile</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">프로필 사진 URI는 255 이하로 입력해주세요.</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">수정할 회원 프로필 사진</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">URL 형식, 최대 255자</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">회원 프로필 이미지</p></td>
 </tr>
 </tbody>
 </table>
@@ -920,14 +920,14 @@ Content-Type: application/json
 Content-Length: 317
 
 {
-  "memberId" : "0188ad0f-0ff9-64ca-d2c8-926a587ed2ef",
+  "memberId" : "0188d11c-c5e3-ece7-d6e6-8abacbf1e3b6",
   "name" : "name",
   "email" : "www@gmail.com",
   "profile" : "https://aws.s3.com/1234",
-  "role" : "USER",
-  "createdAt" : "2023-06-12T09:43:45.5290379",
-  "modifiedAt" : "2023-06-12T09:43:45.5290379",
   "oauthType" : "GOOGLE",
+  "role" : "USER",
+  "createdAt" : "2023-06-19T09:45:03.8439031",
+  "modifiedAt" : "2023-06-19T09:45:03.8439031",
   "deleted" : false
 }</code></pre>
 </div>
@@ -935,67 +935,9 @@ Content-Length: 317
 </div>
 <div class="sect3">
 <h4 id="Member-개인-프로필-수정_response_fields"><a class="link" href="#Member-개인-프로필-수정_response_fields">Response fields</a></h4>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 33.3333%;">
-<col style="width: 33.3334%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">필드명</th>
-<th class="tableblock halign-left valign-top">타입</th>
-<th class="tableblock halign-left valign-top">설명</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>memberId</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">회원 아이디</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>name</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">회원 이름</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>email</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">회원 이메일</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>profile</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">회원 프로필 사진</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>oauthType</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">회원 소셜 로그인 타입</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>role</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">회원 권한</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>deleted</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">회원 삭제 여부</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>createdAt</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">회원 생성일</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>modifiedAt</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">회원 수정일</p></td>
-</tr>
-</tbody>
-</table>
+<div class="paragraph">
+<p>Snippet response-fields not found for operation::update-my-profile-test/should-return-member-response-dto-attributes-when-return200-test</p>
+</div>
 </div>
 </div>
 </div>
@@ -1009,7 +951,7 @@ Content-Length: 317
 <h4 id="Category-개인-카테고리-페이징-조회_http_request"><a class="link" href="#Category-개인-카테고리-페이징-조회_http_request">HTTP request</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /api/v1/categories/me?pageSize=4&amp;hasNext=0188ad0e-d398-dfde-c0a9-65f5b115a71d&amp;containTitle=title HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /api/v1/categories/me?pageSize=4&amp;hasNext=0188d11c-954c-4bc3-3839-cb17c9b5d42b&amp;containTitle=title HTTP/1.1
 Authorization: Bearer jwt token
 Host: mecastudy.com</code></pre>
 </div>
@@ -1059,12 +1001,12 @@ Content-Length: 554
 
 {
   "contents" : [ {
-    "categoryId" : "0188ad0e-d395-f416-1552-483bba819ae8",
-    "memberId" : "0188ad0e-d396-5ba3-059b-4e21430ff567",
+    "categoryId" : "0188d11c-954b-a220-addb-48b1d1cccdbd",
+    "memberId" : "0188d11c-954b-a220-addb-48b1d1cccdbe",
     "thumbnail" : "https://aws.s3.com",
     "title" : "title",
-    "createdAt" : "2023-06-12T09:43:30.0701925",
-    "modifiedAt" : "2023-06-12T09:43:30.0701925",
+    "createdAt" : "2023-06-19T09:44:51.4031335",
+    "modifiedAt" : "2023-06-19T09:44:51.4031335",
     "scoreAvg" : 12.3,
     "solveCount" : 10,
     "totalCount" : 20,
@@ -1072,7 +1014,7 @@ Content-Length: 554
     "shared" : false,
     "deleted" : false
   } ],
-  "hasNext" : "0188ad0e-d396-5ba3-059b-4e21430ff568",
+  "hasNext" : "0188d11c-954b-a220-addb-48b1d1cccdbf",
   "pageSize" : 1,
   "sortOrder" : "DESC"
 }</code></pre>
@@ -1096,19 +1038,19 @@ Content-Length: 554
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>pageSize</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">페이지 사이즈</p></td>
-</tr>
-<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>hasNext</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">다음 페이지 커서</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">다음 페이지 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>pageSize</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">page 사이즈</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>sortOrder</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">정렬 방식</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">정렬 기준</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>contents[].categoryId</code></p></td>
@@ -1118,57 +1060,57 @@ Content-Length: 554
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>contents[].memberId</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">회원 아이디</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>contents[].title</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">카테고리 제목</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">카테고리를 가진 회원 이름</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>contents[].thumbnail</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">카테고리 썸네일 이미지</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">썸네일 이미지</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>contents[].createdAt</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>contents[].title</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">카테고리 생성일</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>contents[].modifiedAt</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">카테고리 수정일</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>contents[].scoreAvg</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">카테고리 평균 점수</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>contents[].solveCount</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">카테고리 문제 풀이 수</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>contents[].totalCount</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">카테고리 문제 수</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">제목</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>contents[].deleted</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">카테고리 삭제 여부</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">삭제 여부</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>contents[].shared</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">카테고리 공유 여부</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">공유 여부</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>contents[].createdAt</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">생성일</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>contents[].modifiedAt</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">수정일</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>contents[].scoreAvg</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">평균 점수</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>contents[].solveCount</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">문제 풀이 수</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>contents[].totalCount</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">전체 문제 수</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>contents[].likeCount</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">카테고리 좋아요 수</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">좋아요 수</p></td>
 </tr>
 </tbody>
 </table>
@@ -1180,7 +1122,7 @@ Content-Length: 554
 <h4 id="Category-공유-카테고리-페이징-조회_http_request"><a class="link" href="#Category-공유-카테고리-페이징-조회_http_request">HTTP request</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /api/v1/categories/share?hasNext=0188ad0e-d2fe-129c-6ced-fb84e6e2fb64&amp;containTitle=title&amp;pageSize=2 HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /api/v1/categories/share?hasNext=0188d11c-9511-ccf7-a99a-9a2fe72f7044&amp;containTitle=title&amp;pageSize=2 HTTP/1.1
 Host: mecastudy.com</code></pre>
 </div>
 </div>
@@ -1225,34 +1167,34 @@ Host: mecastudy.com</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 882
+Content-Length: 886
 
 {
   "contents" : [ {
     "categoryInfo" : {
-      "categoryId" : "0188ad0e-d2fe-129c-6ced-fb84e6e2fb60",
-      "memberId" : "0188ad0e-d2fe-129c-6ced-fb84e6e2fb5f",
+      "categoryId" : "0188d11c-9510-e8c2-a65b-37022953ff26",
+      "memberId" : "0188d11c-9510-e8c2-a65b-37022953ff25",
       "thumbnail" : null,
       "title" : "title",
-      "createdAt" : "2023-06-12T09:43:29.9180026",
-      "modifiedAt" : "2023-06-12T09:43:29.9180026",
+      "createdAt" : "2023-06-19T09:44:51.3441314",
+      "modifiedAt" : "2023-06-19T09:44:51.3441314",
       "shared" : true,
       "deleted" : false
     },
     "memberInfo" : {
-      "memberId" : "0188ad0e-d2fe-129c-6ced-fb84e6e2fb61",
+      "memberId" : "0188d11c-9510-e8c2-a65b-37022953ff27",
       "name" : "name",
       "email" : "www@gmail.com",
       "profile" : "https://aws.s3.com",
-      "role" : "USER",
-      "createdAt" : "2023-06-12T09:43:29.9180026",
-      "modifiedAt" : "2023-06-12T09:43:29.9180026",
       "oauthType" : "GOOGLE",
+      "role" : "USER",
+      "createdAt" : "2023-06-19T09:44:51.3441314",
+      "modifiedAt" : "2023-06-19T09:44:51.3441314",
       "deleted" : false
     },
     "likeCount" : 1
   } ],
-  "hasNext" : "0188ad0e-d2fe-129c-6ced-fb84e6e2fb63",
+  "hasNext" : "0188d11c-9511-ccf7-a99a-9a2fe72f7043",
   "pageSize" : 2,
   "sortOrder" : "DESC"
 }</code></pre>
@@ -1276,19 +1218,24 @@ Content-Length: 882
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>pageSize</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">페이지 사이즈</p></td>
-</tr>
-<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>hasNext</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">다음 페이지 커서</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">다음 페이지 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>pageSize</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">page 사이즈</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>sortOrder</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">정렬 방식</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">정렬 기준</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>contents[].likeCount</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">좋아요 수</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>contents[].categoryInfo.categoryId</code></p></td>
@@ -1298,87 +1245,82 @@ Content-Length: 882
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>contents[].categoryInfo.memberId</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">회원 아이디</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>contents[].categoryInfo.title</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">카테고리 제목</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">카테고리를 가진 회원 이름</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>contents[].categoryInfo.thumbnail</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">카테고리 썸네일 이미지</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">썸네일 이미지</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>contents[].categoryInfo.createdAt</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>contents[].categoryInfo.title</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">카테고리 생성일</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>contents[].categoryInfo.modifiedAt</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">카테고리 수정일</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">제목</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>contents[].categoryInfo.deleted</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">카테고리 삭제 여부</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">삭제 여부</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>contents[].categoryInfo.shared</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">카테고리 공유 여부</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">공유 여부</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>contents[].categoryInfo.createdAt</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">생성일</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>contents[].categoryInfo.modifiedAt</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">수정일</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>contents[].memberInfo.memberId</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">회원 아이디</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">카테고리를 가진 회원 이름</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>contents[].memberInfo.name</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">회원 이름</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">이름</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>contents[].memberInfo.email</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">회원 email</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">이메일</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>contents[].memberInfo.profile</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">회원 프로필 이미지</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>contents[].memberInfo.role</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">회원 역할</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>contents[].memberInfo.createdAt</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">회원 생성일</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>contents[].memberInfo.modifiedAt</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">회원 수정일</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">프로필 이미지</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>contents[].memberInfo.oauthType</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Oauth 타입</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OAuth 타입</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>contents[].memberInfo.role</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">역할</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>contents[].memberInfo.deleted</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">회원 삭제 여부</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">삭제 여부</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>contents[].likeCount</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">카테고리 좋아요 수</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>contents[].memberInfo.createdAt</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">생성일</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>contents[].memberInfo.modifiedAt</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">수정일</p></td>
 </tr>
 </tbody>
 </table>
@@ -1424,18 +1366,18 @@ Host: mecastudy.com
 </thead>
 <tbody>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>thumbnail</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">URL 형식, 최대 255자</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">썸네일 이미지</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>title</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">최대 40자</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">카테고리 제목</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>thumbnail</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">최대 255자</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">카테고리 썸네일 이미지 링크(s3)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">공백 없이 최대 40자</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">제목</p></td>
 </tr>
 </tbody>
 </table>
@@ -1449,12 +1391,12 @@ Content-Type: application/json
 Content-Length: 318
 
 {
-  "categoryId" : "0188ad0e-d42b-eed9-ef08-4118a6bbafa4",
-  "memberId" : "0188ad0e-d42b-eed9-ef08-4118a6bbafa5",
+  "categoryId" : "0188d11c-958a-7bf8-316c-b9b8f1254355",
+  "memberId" : "0188d11c-958a-7bf8-316c-b9b8f1254356",
   "thumbnail" : "https://aws.s3.com",
   "title" : "title",
-  "createdAt" : "2023-06-12T09:43:30.2192606",
-  "modifiedAt" : "2023-06-12T09:43:30.2192606",
+  "createdAt" : "2023-06-19T09:44:51.4661315",
+  "modifiedAt" : "2023-06-19T09:44:51.4661315",
   "shared" : false,
   "deleted" : false
 }</code></pre>
@@ -1485,37 +1427,37 @@ Content-Length: 318
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>memberId</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">회원 아이디</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>title</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">카테고리 제목</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">카테고리를 가진 회원 이름</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>thumbnail</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">카테고리 썸네일 이미지</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">썸네일 이미지</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>title</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">제목</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>deleted</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">카테고리 삭제 여부</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">삭제 여부</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>shared</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">카테고리 공유 여부</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">공유 여부</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>createdAt</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">카테고리 생성일</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">생성일</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>modifiedAt</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">카테고리 수정일</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">수정일</p></td>
 </tr>
 </tbody>
 </table>
@@ -1527,16 +1469,16 @@ Content-Length: 318
 <h4 id="Category-카테고리-수정_http_request"><a class="link" href="#Category-카테고리-수정_http_request">HTTP request</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PUT /api/v1/categories/0188ad0e-d3db-c905-aea8-fd10c802a730 HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PUT /api/v1/categories/0188d11c-9568-8fa6-8427-dc33a9b632ff HTTP/1.1
 Content-Type: application/json;charset=UTF-8
 Authorization: jwt token
-Content-Length: 89
+Content-Length: 87
 Host: mecastudy.com
 
 {
   "title" : "title",
   "thumbnail" : "https://mecastudy.com",
-  "isShared" : true
+  "shared" : true
 }</code></pre>
 </div>
 </div>
@@ -1586,23 +1528,23 @@ Host: mecastudy.com
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>title</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">최대 40자</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">카테고리 제목</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">공백 없이 최대 40자</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">제목</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>thumbnail</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">최대 255자</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">카테고리 썸네일 이미지 링크(s3)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">URL 형식, 최대 255자</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">썸네일 이미지</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isShared</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>shared</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">true or false</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">카테고리 공유 여부</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true, false</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">공유 여부</p></td>
 </tr>
 </tbody>
 </table>
@@ -1616,12 +1558,12 @@ Content-Type: application/json
 Content-Length: 318
 
 {
-  "categoryId" : "0188ad0e-d3da-1162-d139-b80a29d6f081",
-  "memberId" : "0188ad0e-d3da-1162-d139-b80a29d6f082",
+  "categoryId" : "0188d11c-9567-7643-310a-59a891f78f51",
+  "memberId" : "0188d11c-9567-7643-310a-59a891f78f52",
   "thumbnail" : "https://aws.s3.com",
   "title" : "title",
-  "createdAt" : "2023-06-12T09:43:30.1382625",
-  "modifiedAt" : "2023-06-12T09:43:30.1382625",
+  "createdAt" : "2023-06-19T09:44:51.4311326",
+  "modifiedAt" : "2023-06-19T09:44:51.4311326",
   "shared" : false,
   "deleted" : false
 }</code></pre>
@@ -1652,37 +1594,37 @@ Content-Length: 318
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>memberId</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">회원 아이디</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>title</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">카테고리 제목</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">카테고리를 가진 회원 이름</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>thumbnail</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">카테고리 썸네일 이미지</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">썸네일 이미지</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>title</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">제목</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>deleted</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">카테고리 삭제 여부</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">삭제 여부</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>shared</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">카테고리 공유 여부</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">공유 여부</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>createdAt</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">카테고리 생성일</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">생성일</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>modifiedAt</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">카테고리 수정일</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">수정일</p></td>
 </tr>
 </tbody>
 </table>
@@ -1694,7 +1636,7 @@ Content-Length: 318
 <h4 id="Cateogory-카테고리-삭제_http_request"><a class="link" href="#Cateogory-카테고리-삭제_http_request">HTTP request</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">DELETE /api/v1/categories/0188ad0e-d358-cd0e-3841-4e057a77d990 HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">DELETE /api/v1/categories/0188d11c-9531-bace-3cad-8d5a19852e85 HTTP/1.1
 Authorization: Bearer jwt token
 Host: mecastudy.com</code></pre>
 </div>
@@ -1738,7 +1680,7 @@ Content-Type: text/plain;charset=UTF-8</code></pre>
 <h4 id="Category-카테고리-추천_http_request"><a class="link" href="#Category-카테고리-추천_http_request">HTTP request</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /api/v1/categories/0188ad0e-d2b4-10be-10f6-dcf672109d06/like/like HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /api/v1/categories/0188d11c-94fd-2fb0-329d-0c883781a202/like/like HTTP/1.1
 Authorization: Bearer jwt token
 Host: mecastudy.com</code></pre>
 </div>
@@ -1781,7 +1723,7 @@ Host: mecastudy.com</code></pre>
 <h4 id="Category-카테고리-추천-취소_http_request"><a class="link" href="#Category-카테고리-추천-취소_http_request">HTTP request</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /api/v1/categories/0188ad0e-d263-865f-0260-d4dcd4bf4570/like/unlike HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /api/v1/categories/0188d11c-94e7-e3ff-a3f5-3b4de6e6f25e/like/unlike HTTP/1.1
 Authorization: Bearer jwt token
 Host: mecastudy.com</code></pre>
 </div>
@@ -1824,7 +1766,7 @@ Host: mecastudy.com</code></pre>
 <h4 id="Category-본인이-카테고리-추천-여부-확인_http_request"><a class="link" href="#Category-본인이-카테고리-추천-여부-확인_http_request">HTTP request</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /api/v1/categories/like?categoryIds=0188ad0e-d217-4090-aa4c-4b6077f76219,0188ad0e-d217-4090-aa4c-4b6077f7621a,0188ad0e-d217-4090-aa4c-4b6077f7621b HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /api/v1/categories/like?categoryIds=0188d11c-94c7-57ca-40f6-0ea9da909907,0188d11c-94c7-57ca-40f6-0ea9da909908,0188d11c-94c7-57ca-40f6-0ea9da909909 HTTP/1.1
 Authorization: Bearer jwt token
 Host: mecastudy.com</code></pre>
 </div>
@@ -1863,8 +1805,8 @@ Content-Type: application/json
 Content-Length: 191
 
 {
-  "recommendedCategories" : [ "0188ad0e-d217-4090-aa4c-4b6077f76219", "0188ad0e-d217-4090-aa4c-4b6077f7621a" ],
-  "unRecommendedCategories" : [ "0188ad0e-d217-4090-aa4c-4b6077f7621b" ]
+  "recommendedCategories" : [ "0188d11c-94c7-57ca-40f6-0ea9da909907", "0188d11c-94c7-57ca-40f6-0ea9da909908" ],
+  "unRecommendedCategories" : [ "0188d11c-94c7-57ca-40f6-0ea9da909909" ]
 }</code></pre>
 </div>
 </div>
@@ -1910,7 +1852,7 @@ Content-Length: 191
 <h4 id="Card-개인-카드-단일-조회_http_request"><a class="link" href="#Card-개인-카드-단일-조회_http_request">HTTP request</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /api/v1/cards/0188ad0e-9c1b-15f1-08d4-f84b75089861/me HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /api/v1/cards/0188d11c-655b-64ca-e57c-56b166c34c7e/me HTTP/1.1
 Authorization: Bearer jwt token
 Host: mecastudy.com</code></pre>
 </div>
@@ -1947,14 +1889,14 @@ Content-Type: application/json
 Content-Length: 393
 
 {
-  "cardId" : "0188ad0e-9c1a-af27-3937-e0df27baf6f2",
+  "cardId" : "0188d11c-655b-64ca-e57c-56b166c34c7b",
   "title" : "title1",
-  "memberId" : "0188ad0e-9c1a-af27-3937-e0df27baf6f3",
+  "memberId" : "0188d11c-655b-64ca-e57c-56b166c34c7c",
   "question" : "question",
-  "categoryId" : "0188ad0e-9c1a-af27-3937-e0df27baf6f4",
+  "categoryId" : "0188d11c-655b-64ca-e57c-56b166c34c7d",
   "cardType" : "OX_QUIZ",
-  "createdAt" : "2023-06-12T09:43:15.8661333",
-  "modifiedAt" : "2023-06-12T09:43:15.8661333",
+  "createdAt" : "2023-06-19T09:44:39.1310958",
+  "modifiedAt" : "2023-06-19T09:44:39.1310958",
   "answer" : "O",
   "description" : "hello"
 }</code></pre>
@@ -1983,14 +1925,24 @@ Content-Length: 393
 <td class="tableblock halign-left valign-top"><p class="tableblock">카드 아이디</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>question</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>title</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">카드 질문</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">제목</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>memberId</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">멤버 아이디</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">회원 아이디</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>question</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">질문 내용</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>categoryId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">카테고리 아이디</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>cardType</code></p></td>
@@ -1998,34 +1950,24 @@ Content-Length: 393
 <td class="tableblock halign-left valign-top"><p class="tableblock">카드 타입</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>answer</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">카드 정답</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>description</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">카드 설명</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>title</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">카드 제목</p></td>
-</tr>
-<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>createdAt</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">카드 생성일</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">생성일</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>modifiedAt</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">카드 수정일</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">수정일</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>categoryId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>answer</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">카테고리 아이디</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">정답</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">자세한 설명(HTML 형태 text)</p></td>
 </tr>
 </tbody>
 </table>
@@ -2037,7 +1979,7 @@ Content-Length: 393
 <h4 id="Card-공유-카드-단일-조회_http_request"><a class="link" href="#Card-공유-카드-단일-조회_http_request">HTTP request</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /api/v1/cards/0188ad0e-9bf9-4996-bc44-5c1347c442b4/share HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /api/v1/cards/0188d11c-6536-e39e-cc48-0214981e21d0/share HTTP/1.1
 Host: mecastudy.com</code></pre>
 </div>
 </div>
@@ -2070,30 +2012,30 @@ Host: mecastudy.com</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 776
+Content-Length: 780
 
 {
   "cardInfo" : {
-    "cardId" : "0188ad0e-9bf8-d734-1eff-e53822bc897b",
+    "cardId" : "0188d11c-6535-9210-299e-377feb2a855b",
     "title" : "title",
-    "memberId" : "0188ad0e-9bf8-d734-1eff-e53822bc897d",
+    "memberId" : "0188d11c-6535-9210-299e-377feb2a855d",
     "question" : "question",
-    "categoryId" : "0188ad0e-9bf8-d734-1eff-e53822bc897c",
+    "categoryId" : "0188d11c-6535-9210-299e-377feb2a855c",
     "cardType" : "OX_QUIZ",
-    "createdAt" : "2023-06-12T09:43:15.832132",
-    "modifiedAt" : "2023-06-12T09:43:15.832132",
+    "createdAt" : "2023-06-19T09:44:39.0930965",
+    "modifiedAt" : "2023-06-19T09:44:39.0930965",
     "answer" : "O",
     "description" : "description"
   },
   "memberInfo" : {
-    "memberId" : "0188ad0e-9bf8-d734-1eff-e53822bc897e",
+    "memberId" : "0188d11c-6535-9210-299e-377feb2a855e",
     "name" : "nickname",
     "email" : "abc@gamil.com",
     "profile" : null,
-    "role" : "USER",
-    "createdAt" : "2023-06-12T09:43:15.832132",
-    "modifiedAt" : "2023-06-12T09:43:15.832132",
     "oauthType" : "KAKAO",
+    "role" : "USER",
+    "createdAt" : "2023-06-19T09:44:39.0930965",
+    "modifiedAt" : "2023-06-19T09:44:39.0930965",
     "deleted" : false
   }
 }</code></pre>
@@ -2221,7 +2163,7 @@ Content-Length: 776
 <h4 id="Card-카드-페이징-조회_http_request"><a class="link" href="#Card-카드-페이징-조회_http_request">HTTP request</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /api/v1/cards/categories/0188ad0e-9bcb-65b2-2800-5d1209ce34cd/me?hasNext=0188ad0e-9bcb-65b2-2800-5d1209ce34ce&amp;pageSize=5&amp;containTitle=title HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /api/v1/cards/categories/0188d11c-6503-0eca-e7a9-e35c3a7cc8d3/me?hasNext=0188d11c-6503-0eca-e7a9-e35c3a7cc8d4&amp;pageSize=5&amp;containTitle=title HTTP/1.1
 Authorization: Bearer jwt token
 Host: mecastudy.com</code></pre>
 </div>
@@ -2293,22 +2235,22 @@ Content-Length: 817
 
 {
   "contents" : [ {
-    "cardId" : "0188ad0e-9bca-6736-ed84-624a87707075",
+    "cardId" : "0188d11c-6502-c21e-6267-c0bebaa93a64",
     "title" : "title",
-    "memberId" : "0188ad0e-9bca-6736-ed84-624a87707076",
+    "memberId" : "0188d11c-6502-c21e-6267-c0bebaa93a65",
     "question" : "hello",
-    "categoryId" : "0188ad0e-9bca-6736-ed84-624a87707077",
+    "categoryId" : "0188d11c-6502-c21e-6267-c0bebaa93a66",
     "cardType" : "OX_QUIZ",
-    "createdAt" : "2023-06-12T09:43:15.7861344",
-    "modifiedAt" : "2023-06-12T09:43:15.7861344",
+    "createdAt" : "2023-06-19T09:44:39.0420971",
+    "modifiedAt" : "2023-06-19T09:44:39.0420971",
     "answer" : "O",
     "description" : "hello"
   } ],
-  "hasNext" : "0188ad0e-9bca-6736-ed84-624a87707078",
+  "hasNext" : "0188d11c-6502-c21e-6267-c0bebaa93a67",
   "pageSize" : 5,
   "sortOrder" : "DESC",
   "category" : {
-    "categoryId" : "0188ad0e-9bca-6736-ed84-624a87707079",
+    "categoryId" : "0188d11c-6502-c21e-6267-c0bebaa93a68",
     "memberId" : null,
     "thumbnail" : null,
     "title" : "title",
@@ -2458,7 +2400,7 @@ Content-Length: 817
 <h4 id="Card-공유-카드-페이징-조회_http_request"><a class="link" href="#Card-공유-카드-페이징-조회_http_request">HTTP request</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /api/v1/cards/categories/0188ad0e-9b95-fdaa-fabd-6f0f4f41084c/share?hasNext=0188ad0e-9b95-fdaa-fabd-6f0f4f41084d&amp;pageSize=5&amp;containTitle=title HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /api/v1/cards/categories/0188d11c-64c8-3f33-4c07-01b7b745811d/share?hasNext=0188d11c-64c8-3f33-4c07-01b7b745811e&amp;pageSize=5&amp;containTitle=title HTTP/1.1
 Host: mecastudy.com</code></pre>
 </div>
 </div>
@@ -2530,34 +2472,34 @@ Content-Length: 1247
 {
   "contents" : [ {
     "cardInfo" : {
-      "cardId" : "0188ad0e-9b92-0b57-030a-de478eacb905",
+      "cardId" : "0188d11c-64c3-e0e1-9315-d65b1e8439eb",
       "title" : "title",
-      "memberId" : "0188ad0e-9b91-0d3c-2934-a223dd73de03",
+      "memberId" : "0188d11c-64c3-e0e1-9315-d65b1e8439e9",
       "question" : "question",
-      "categoryId" : "0188ad0e-9b92-0b57-030a-de478eacb904",
+      "categoryId" : "0188d11c-64c3-e0e1-9315-d65b1e8439ea",
       "cardType" : "OX_QUIZ",
-      "createdAt" : "2023-06-12T09:43:15.7301322",
-      "modifiedAt" : "2023-06-12T09:43:15.7301322",
+      "createdAt" : "2023-06-19T09:44:38.9800973",
+      "modifiedAt" : "2023-06-19T09:44:38.9800973",
       "answer" : "O",
       "description" : "description"
     },
     "memberInfo" : {
-      "memberId" : "0188ad0e-9b92-0b57-030a-de478eacb906",
+      "memberId" : "0188d11c-64c4-378d-9531-77b6179afb48",
       "name" : "name",
       "email" : "www@gmail.com",
       "profile" : "https://aws.s3.com",
-      "role" : "USER",
-      "createdAt" : "2023-06-12T09:43:15.7301322",
-      "modifiedAt" : "2023-06-12T09:43:15.7301322",
       "oauthType" : "GOOGLE",
+      "role" : "USER",
+      "createdAt" : "2023-06-19T09:44:38.9800973",
+      "modifiedAt" : "2023-06-19T09:44:38.9800973",
       "deleted" : false
     }
   } ],
-  "hasNext" : "0188ad0e-9b94-cba4-daf0-ee5138293613",
+  "hasNext" : "0188d11c-64c6-ebb1-3ac4-c13166e3bf41",
   "pageSize" : 5,
   "sortOrder" : "DESC",
   "category" : {
-    "categoryId" : "0188ad0e-9b94-cba4-daf0-ee5138293614",
+    "categoryId" : "0188d11c-64c6-ebb1-3ac4-c13166e3bf42",
     "memberId" : null,
     "thumbnail" : null,
     "title" : "title",
@@ -2752,7 +2694,7 @@ Content-Length: 1247
 <h4 id="Card-카드-시뮬레이션-조회_http_request"><a class="link" href="#Card-카드-시뮬레이션-조회_http_request">HTTP request</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /api/v1/cards/categories/0188ad0e-9b64-cfd7-beb8-092915811f1c/simulation?limit=3&amp;algorithm=random HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /api/v1/cards/categories/0188d11c-6496-7f99-4505-9d68e840f207/simulation?limit=3&amp;algorithm=random HTTP/1.1
 Authorization: Bearer jwt token
 Host: mecastudy.com</code></pre>
 </div>
@@ -2818,14 +2760,14 @@ Content-Type: application/json
 Content-Length: 397
 
 [ {
-  "cardId" : "0188ad0e-9b64-cfd7-beb8-092915811f19",
+  "cardId" : "0188d11c-6495-55ab-83b1-56f2fd2e104f",
   "title" : "title1",
-  "memberId" : "0188ad0e-9b64-cfd7-beb8-092915811f1a",
+  "memberId" : "0188d11c-6495-55ab-83b1-56f2fd2e1050",
   "question" : "question",
-  "categoryId" : "0188ad0e-9b64-cfd7-beb8-092915811f1b",
+  "categoryId" : "0188d11c-6495-55ab-83b1-56f2fd2e1051",
   "cardType" : "OX_QUIZ",
-  "createdAt" : "2023-06-12T09:43:15.6841331",
-  "modifiedAt" : "2023-06-12T09:43:15.6841331",
+  "createdAt" : "2023-06-19T09:44:38.9330969",
+  "modifiedAt" : "2023-06-19T09:44:38.9330969",
   "answer" : "O",
   "description" : "hello"
 } ]</code></pre>
@@ -2908,7 +2850,7 @@ Content-Length: 397
 <h4 id="Card-카테고리별-카드-갯수-조회_http_request"><a class="link" href="#Card-카테고리별-카드-갯수-조회_http_request">HTTP request</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /api/v1/cards/categories/0188ad0e-9b3f-f63c-dc21-957315b6afc3/me/count HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /api/v1/cards/categories/0188d11c-6474-d0b1-1a22-37b415c389d8/me/count HTTP/1.1
 Authorization: Bearer jwt token
 Host: mecastudy.com</code></pre>
 </div>
@@ -2990,7 +2932,7 @@ Host: mecastudy.com
 {
   "title" : "title",
   "question" : "hello",
-  "categoryId" : "0188ad0e-9c91-2931-00c2-ab8ff2bc83e0",
+  "categoryId" : "0188d11c-65c8-ec00-70d0-a7cbab76d646",
   "cardType" : "OX_QUIZ",
   "answer" : "O",
   "description" : "hello"
@@ -3022,28 +2964,21 @@ Host: mecastudy.com
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>title</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">2 ~ 40 글자</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">카드 제목</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">공백 없이 2 ~ 40자</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">제목</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>question</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">공백 없이 500 글자 이하</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">카드 질문</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>description</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">2,1000자 이하 글자</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">카드 설명</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">질문 내용</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>categoryId</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
-<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">UUID</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">카테고리 아이디</p></td>
 </tr>
 <tr>
@@ -3057,8 +2992,15 @@ Host: mecastudy.com
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>answer</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
-<td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">카드 정답</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">text</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">정답</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">21,000자 이하 HTML 형태 text</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">자세한 설명(HTML 형태 text)</p></td>
 </tr>
 </tbody>
 </table>
@@ -3072,14 +3014,14 @@ Content-Type: application/json
 Content-Length: 389
 
 {
-  "cardId" : "0188ad0e-9c91-2931-00c2-ab8ff2bc83e1",
+  "cardId" : "0188d11c-65c8-ec00-70d0-a7cbab76d647",
   "title" : "title",
-  "memberId" : "0188ad0e-9c91-2931-00c2-ab8ff2bc83e2",
+  "memberId" : "0188d11c-65c8-ec00-70d0-a7cbab76d648",
   "question" : "hello",
-  "categoryId" : "0188ad0e-9c91-2931-00c2-ab8ff2bc83e3",
+  "categoryId" : "0188d11c-65c8-ec00-70d0-a7cbab76d649",
   "cardType" : "OX_QUIZ",
-  "createdAt" : "2023-06-12T09:43:15.9851328",
-  "modifiedAt" : "2023-06-12T09:43:15.9851328",
+  "createdAt" : "2023-06-19T09:44:39.2400977",
+  "modifiedAt" : "2023-06-19T09:44:39.2400977",
   "answer" : "O",
   "description" : "hello"
 }</code></pre>
@@ -3110,22 +3052,17 @@ Content-Length: 389
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>title</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">카드 제목</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">제목</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>memberId</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">멤버 아이디</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">회원 아이디</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>question</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">카드 질문</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>description</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">카드 설명</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">질문 내용</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>categoryId</code></p></td>
@@ -3140,22 +3077,22 @@ Content-Length: 389
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>createdAt</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">카드 생성일</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">생성일</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>modifiedAt</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">카드 수정일</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>title</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">카드 제목</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">수정일</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>answer</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">카드 정답</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">정답</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">자세한 설명(HTML 형태 text)</p></td>
 </tr>
 </tbody>
 </table>
@@ -3167,7 +3104,7 @@ Content-Length: 389
 <h4 id="Card-카드-수정_http_request"><a class="link" href="#Card-카드-수정_http_request">HTTP request</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PUT /api/v1/cards/0188ad0e-9c5e-2860-7138-9a7816f64ef1 HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PUT /api/v1/cards/0188d11c-659a-ca61-8fdf-7196fc785ef4 HTTP/1.1
 Content-Type: application/json
 Authorization: Bearer jwt token
 Content-Length: 161
@@ -3176,7 +3113,7 @@ Host: mecastudy.com
 {
   "title" : "title",
   "question" : "question",
-  "categoryId" : "0188ad0e-9c5d-6ef0-869f-99342765c66a",
+  "categoryId" : "0188d11c-659a-ca61-8fdf-7196fc785ef0",
   "description" : "editText",
   "answer" : "O"
 }</code></pre>
@@ -3228,37 +3165,37 @@ Host: mecastudy.com
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>title</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">2 ~ 40 글자</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">변경할 카드 제목</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">공백 없이 2 ~ 40자</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">제목</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>question</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">공백 없이 500 글자 이하</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">변경할 카드 질문</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>description</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">2,1000자 이하 글자</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">변경할 카드 설명</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">질문 내용</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>categoryId</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
-<td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">변경할 카테고리 아이디</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">UUID</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">카테고리 아이디</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">21,000자 이하 HTML 형태 text</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">자세한 설명(HTML 형태 text)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>answer</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
-<td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">변경할 카드 정답</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">text</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">정답</p></td>
 </tr>
 </tbody>
 </table>
@@ -3272,14 +3209,14 @@ Content-Type: application/json
 Content-Length: 389
 
 {
-  "cardId" : "0188ad0e-9c5d-6ef0-869f-99342765c66b",
+  "cardId" : "0188d11c-659a-ca61-8fdf-7196fc785ef1",
   "title" : "title",
-  "memberId" : "0188ad0e-9c5d-6ef0-869f-99342765c66c",
+  "memberId" : "0188d11c-659a-ca61-8fdf-7196fc785ef2",
   "question" : "hello",
-  "categoryId" : "0188ad0e-9c5d-6ef0-869f-99342765c66d",
+  "categoryId" : "0188d11c-659a-ca61-8fdf-7196fc785ef3",
   "cardType" : "OX_QUIZ",
-  "createdAt" : "2023-06-12T09:43:15.9331318",
-  "modifiedAt" : "2023-06-12T10:03:15.9331318",
+  "createdAt" : "2023-06-19T09:44:39.1940965",
+  "modifiedAt" : "2023-06-19T10:04:39.1940965",
   "answer" : "O",
   "description" : "hello"
 }</code></pre>
@@ -3310,22 +3247,17 @@ Content-Length: 389
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>title</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">카드 제목</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">제목</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>memberId</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">멤버 아이디</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">회원 아이디</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>question</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">카드 질문</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>description</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">카드 설명</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">질문 내용</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>categoryId</code></p></td>
@@ -3340,22 +3272,22 @@ Content-Length: 389
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>createdAt</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">카드 생성일</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">생성일</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>modifiedAt</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">카드 수정일</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>title</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">카드 제목</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">수정일</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>answer</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">카드 정답</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">정답</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">자세한 설명(HTML 형태 text)</p></td>
 </tr>
 </tbody>
 </table>
@@ -3367,7 +3299,7 @@ Content-Length: 389
 <h4 id="Card-카드-삭제_http_request"><a class="link" href="#Card-카드-삭제_http_request">HTTP request</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">DELETE /api/v1/categories/0188ad0e-d358-cd0e-3841-4e057a77d990 HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">DELETE /api/v1/categories/0188d11c-9531-bace-3cad-8d5a19852e85 HTTP/1.1
 Authorization: Bearer jwt token
 Host: mecastudy.com</code></pre>
 </div>
@@ -3424,7 +3356,7 @@ Host: mecastudy.com
 
 {
   "cardHistories" : [ {
-    "cardId" : "0188ad0e-beb9-7692-3051-3427bbf8cb28",
+    "cardId" : "0188d11c-8121-f537-4842-b6ecaac4f8d3",
     "userAnswer" : "answer",
     "score" : 100
   } ]
@@ -3491,7 +3423,7 @@ Host: mecastudy.com
 <h4 id="CardHistory-카드ID-기반-카드-히스토리-페이징-조회_http_request"><a class="link" href="#CardHistory-카드ID-기반-카드-히스토리-페이징-조회_http_request">HTTP request</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /api/v1/histories/cards/0188ad0e-be9d-070d-4a7c-1389f1191ba1?hasNext=0188ad0e-be9d-070d-4a7c-1389f1191ba2&amp;pageSize=2 HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /api/v1/histories/cards/0188d11c-8105-be30-b671-76f696bd0241?hasNext=0188d11c-8105-be30-b671-76f696bd0242&amp;pageSize=2 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
 Host: mecastudy.com</code></pre>
 </div>
@@ -3554,22 +3486,23 @@ Host: mecastudy.com</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 538
+Content-Length: 596
 
 {
   "contents" : [ {
-    "cardHistoryId" : "0188ad0e-be9c-0f7b-09a4-257f6ddf3681",
-    "solvedUserId" : "0188ad0e-be9c-0f7b-09a4-257f6ddf367e",
+    "cardHistoryId" : "0188d11c-8104-2ae6-5888-f3c7891d17e8",
+    "solvedUserId" : "0188d11c-8104-2ae6-5888-f3c7891d17e5",
     "solvedUserName" : "simon",
     "userAnswer" : "answer",
-    "score" : 86,
+    "score" : 63,
     "categoryId" : null,
-    "cardId" : "0188ad0e-be9c-0f7b-09a4-257f6ddf367f",
+    "cardId" : "0188d11c-8104-2ae6-5888-f3c7891d17e6",
+    "memberId" : "0188d11c-8104-2ae6-5888-f3c7891d17e5",
     "title" : "title",
     "cardType" : "OX_QUIZ",
     "question" : "question",
     "answer" : "O",
-    "createdAt" : "2023-06-12T09:43:24.7003752"
+    "createdAt" : "2023-06-19T09:44:46.2126777"
   } ],
   "hasNext" : null,
   "pageSize" : 2,
@@ -3630,6 +3563,11 @@ Content-Length: 538
 <td class="tableblock halign-left valign-top"><p class="tableblock">카드 ID</p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>contents[].memberId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">카드 작성자 ID</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>contents[].cardType</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">카드 타입</p></td>
@@ -3679,7 +3617,7 @@ Content-Length: 538
 <h4 id="CardHistory-푼-사용자ID-기반-카드-히스토리-페이징-조회_http_request"><a class="link" href="#CardHistory-푼-사용자ID-기반-카드-히스토리-페이징-조회_http_request">HTTP request</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /api/v1/histories/members/0188ad0e-be58-7a08-2471-8a45fc849022?hasNext=0188ad0e-be58-7a08-2471-8a45fc849023&amp;pageSize=2 HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /api/v1/histories/members/0188d11c-80df-2440-9e52-8a66e46ddc7a?hasNext=0188d11c-80df-2440-9e52-8a66e46ddc7b&amp;pageSize=2 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
 Host: mecastudy.com</code></pre>
 </div>
@@ -3742,22 +3680,23 @@ Host: mecastudy.com</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 537
+Content-Length: 596
 
 {
   "contents" : [ {
-    "cardHistoryId" : "0188ad0e-be58-7a08-2471-8a45fc849021",
-    "solvedUserId" : "0188ad0e-be58-7a08-2471-8a45fc84901e",
+    "cardHistoryId" : "0188d11c-80df-2440-9e52-8a66e46ddc78",
+    "solvedUserId" : "0188d11c-80de-3b3e-f900-b61fc43fb4b3",
     "solvedUserName" : "simon",
     "userAnswer" : "answer",
-    "score" : 5,
+    "score" : 20,
     "categoryId" : null,
-    "cardId" : "0188ad0e-be58-7a08-2471-8a45fc84901f",
+    "cardId" : "0188d11c-80df-2440-9e52-8a66e46ddc76",
+    "memberId" : "0188d11c-80de-3b3e-f900-b61fc43fb4b3",
     "title" : "title",
     "cardType" : "OX_QUIZ",
     "question" : "question",
     "answer" : "O",
-    "createdAt" : "2023-06-12T09:43:24.6323758"
+    "createdAt" : "2023-06-19T09:44:46.1756741"
   } ],
   "hasNext" : null,
   "pageSize" : 2,
@@ -3872,7 +3811,7 @@ Content-Length: 537
 <h4 id="CardHistory-카드ID-기반-카드-히스토리-페이징-조회-v2_http_request"><a class="link" href="#CardHistory-카드ID-기반-카드-히스토리-페이징-조회-v2_http_request">HTTP request</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /api/v2/histories/cards/0188ad0e-bb4b-c217-0e12-3eee46983b3f?pageSize=2&amp;hasNext=0188ad0e-bb4b-c217-0e12-3eee46983b40 HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /api/v2/histories/cards/0188d11c-7da7-71dd-0d28-ee3675f71aea?pageSize=2&amp;hasNext=0188d11c-7da7-71dd-0d28-ee3675f71aeb HTTP/1.1
 Content-Type: application/json;charset=UTF-8
 Host: mecastudy.com</code></pre>
 </div>
@@ -3940,24 +3879,25 @@ Content-Length: 825
 {
   "contents" : [ {
     "cardHistory" : {
-      "cardHistoryId" : "0188ad0e-bb4a-83d8-9faa-6e6699f65ed8",
+      "cardHistoryId" : "0188d11c-7da6-dd63-12ce-a028273bff10",
       "userAnswer" : "answer",
-      "score" : 12,
-      "createdAt" : "2023-06-12T09:43:23.8501974"
+      "score" : 90,
+      "createdAt" : "2023-06-19T09:44:45.3506788"
     },
     "solvedMember" : {
-      "solvedMemberId" : "0188ad0e-bb4a-83d8-9faa-6e6699f65ed5",
+      "solvedMemberId" : "0188d11c-7da6-dd63-12ce-a028273bff0d",
       "solvedMemberName" : "simon"
     },
     "card" : {
-      "cardId" : "0188ad0e-bb4a-83d8-9faa-6e6699f65ed6",
+      "cardId" : "0188d11c-7da6-dd63-12ce-a028273bff0e",
+      "memberId" : "0188d11c-7da6-dd63-12ce-a028273bff0d",
       "title" : "title",
       "question" : "question",
       "answer" : "O",
       "cardType" : "OX_QUIZ",
       "description" : "description",
-      "createdAt" : "2023-06-12T09:43:23.8501974",
-      "modifiedAt" : "2023-06-12T09:43:23.8501974"
+      "createdAt" : "2023-06-19T09:44:45.3506788",
+      "modifiedAt" : "2023-06-19T09:44:45.3506788"
     }
   } ],
   "hasNext" : null,
@@ -4083,7 +4023,7 @@ Content-Length: 825
 <h4 id="CardHistory-푼-사용자ID-기반-카드-히스토리-페이징-조회-v2_http_request"><a class="link" href="#CardHistory-푼-사용자ID-기반-카드-히스토리-페이징-조회-v2_http_request">HTTP request</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /api/v2/histories/members/0188ad0e-baf4-a7f4-b8a7-442b6698f3ce?hasNext=0188ad0e-baf4-a7f4-b8a7-442b6698f3cf&amp;pageSize=2 HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /api/v2/histories/members/0188d11c-7d5e-c35b-a310-706d4b0d79f3?hasNext=0188d11c-7d5e-c35b-a310-706d4b0d79f4&amp;pageSize=2 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
 Host: mecastudy.com</code></pre>
 </div>
@@ -4146,29 +4086,30 @@ Host: mecastudy.com</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 762
+Content-Length: 825
 
 {
   "contents" : [ {
     "cardHistory" : {
-      "cardHistoryId" : "0188ad0e-baf2-9210-93d0-efb9d346efd6",
+      "cardHistoryId" : "0188d11c-7d5c-d0b4-0078-8af6303e0d3a",
       "userAnswer" : "answer",
-      "score" : 30,
-      "createdAt" : "2023-06-12T09:43:23.762386"
+      "score" : 66,
+      "createdAt" : "2023-06-19T09:44:45.2766738"
     },
     "solvedMember" : {
-      "solvedMemberId" : "0188ad0e-baf2-9210-93d0-efb9d346efd3",
+      "solvedMemberId" : "0188d11c-7d5c-d0b4-0078-8af6303e0d37",
       "solvedMemberName" : "simon"
     },
     "card" : {
-      "cardId" : "0188ad0e-baf2-9210-93d0-efb9d346efd4",
+      "cardId" : "0188d11c-7d5c-d0b4-0078-8af6303e0d38",
+      "memberId" : "0188d11c-7d5c-d0b4-0078-8af6303e0d37",
       "title" : "title",
       "question" : "question",
       "answer" : "O",
       "cardType" : "OX_QUIZ",
       "description" : "description",
-      "createdAt" : "2023-06-12T09:43:23.762386",
-      "modifiedAt" : "2023-06-12T09:43:23.762386"
+      "createdAt" : "2023-06-19T09:44:45.2766738",
+      "modifiedAt" : "2023-06-19T09:44:45.2766738"
     }
   } ],
   "hasNext" : null,
@@ -4294,7 +4235,7 @@ Content-Length: 762
 <div id="footer">
 <div id="footer-text">
 Version 0.0.1-SNAPSHOT<br>
-Last updated 2023-06-09 19:06:01 +0900
+Last updated 2023-06-19 09:14:37 +0900
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/github.min.css">
