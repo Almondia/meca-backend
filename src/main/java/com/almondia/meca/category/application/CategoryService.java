@@ -52,8 +52,8 @@ public class CategoryService {
 		if (updateCategoryRequestDto.getThumbnail() != null) {
 			category.changeThumbnail(updateCategoryRequestDto.getThumbnail());
 		}
-		if (updateCategoryRequestDto.isShared() != null) {
-			category.changeShare(updateCategoryRequestDto.isShared());
+		if (updateCategoryRequestDto.getShared() != null) {
+			category.changeShare(updateCategoryRequestDto.getShared());
 		}
 		return CategoryMapper.entityToCategoryDto(category);
 	}

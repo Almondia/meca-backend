@@ -14,20 +14,15 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@Getter
 public class UpdateCategoryRequestDto {
 
-	@Getter
 	@Nullable
 	private Title title;
 
-	@Getter
 	@Nullable
 	private Image thumbnail;
 
 	@Nullable
-	private Boolean isShared;
-
-	public Boolean isShared() {
-		return isShared;
-	}
+	private Boolean shared;
 }

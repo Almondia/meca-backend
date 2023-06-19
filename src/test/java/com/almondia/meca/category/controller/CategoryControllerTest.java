@@ -201,7 +201,7 @@ class CategoryControllerTest {
 			UpdateCategoryRequestDto updateCategoryRequestDto = UpdateCategoryRequestDto.builder()
 				.title(new Title("title"))
 				.thumbnail(new Image("https://aws.s3.com"))
-				.isShared(true)
+				.shared(true)
 				.build();
 			return objectMapper.writeValueAsString(updateCategoryRequestDto);
 		}
