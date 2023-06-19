@@ -104,7 +104,7 @@ class MemberServiceTest {
 			.hasFieldOrPropertyWithValue("memberId", member.getMemberId())
 			.hasFieldOrPropertyWithValue("name", member.getName())
 			.hasFieldOrPropertyWithValue("email", member.getEmail())
-			.hasFieldOrPropertyWithValue("oAuthType", member.getOAuthType())
+			.hasFieldOrPropertyWithValue("oauthType", member.getOAuthType())
 			.hasFieldOrPropertyWithValue("role", member.getRole())
 			.hasFieldOrPropertyWithValue("isDeleted", member.isDeleted())
 			.hasFieldOrProperty("createdAt")
