@@ -45,10 +45,10 @@ public class NlpToken {
 
 	@Override
 	public String toString() {
-		return "Token{" +
+		return "NlpToken{" +
 			"morph='" + morph + '\'' +
 			", pos=" + pos +
-			", startIndex=" + beginIndex +
+			", beginIndex=" + beginIndex +
 			", endIndex=" + endIndex +
 			'}';
 	}
