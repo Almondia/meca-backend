@@ -1,8 +1,5 @@
 package com.almondia.meca.cardhistory.application;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,9 +9,12 @@ import com.almondia.meca.card.domain.repository.CardRepository;
 import com.almondia.meca.cardhistory.application.helper.CardHistoryFactory;
 import com.almondia.meca.cardhistory.controller.dto.CardHistoryRequestDto;
 import com.almondia.meca.cardhistory.controller.dto.CardHistoryWithCardAndMemberResponseDto;
-import com.almondia.meca.cardhistory.controller.dto.SaveRequestCardHistoryDto;
 import com.almondia.meca.cardhistory.domain.entity.CardHistory;
 import com.almondia.meca.cardhistory.domain.repository.CardHistoryRepository;
+import com.almondia.meca.cardhistory.domain.service.DefaultScoringMachine;
+import com.almondia.meca.cardhistory.domain.service.MorphemeAnalyzer;
+import com.almondia.meca.cardhistory.domain.service.ScoringMachine;
+import com.almondia.meca.cardhistory.domain.vo.Score;
 import com.almondia.meca.common.controller.dto.CursorPage;
 import com.almondia.meca.common.domain.vo.Id;
 
@@ -24,21 +24,21 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CardHistoryService {
 
+	private static final ScoringMachine scoringMachine = new DefaultScoringMachine();
 	private final CardHistoryRepository cardHistoryRepository;
 	private final CardRepository cardRepository;
+	private final MorphemeAnalyzer morphemeAnalyzer;
 
 	@Transactional
-	public void saveCardHistories(SaveRequestCardHistoryDto saveRequestCardHistoryDto, Id solvedMemberId) {
-		List<Id> cardIds = saveRequestCardHistoryDto.getCardHistories().stream()
-			.map(CardHistoryRequestDto::getCardId)
-			.collect(Collectors.toList());
-		List<Card> findCards = cardRepository.findByCardIdInAndIsDeletedFalse(cardIds);
-		if (findCards.size() != cardIds.size()) {
-			throw new IllegalArgumentException("존재하지 않는 카드가 포함되어 있습니다.");
-		}
-		List<CardHistory> cardHistories = CardHistoryFactory.makeCardHistories(saveRequestCardHistoryDto, findCards,
-			solvedMemberId);
-		cardHistoryRepository.saveAll(cardHistories);
+	public Score saveCardHistory(CardHistoryRequestDto cardHistoryRequestDto, Id solvedMemberId) {
+		Card findCard = cardRepository.findByCardIdAndIsDeletedFalse(cardHistoryRequestDto.getCardId())
+			.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 카드입니다."));
+
+		Score score = scoringMachine.giveScore(morphemeAnalyzer, findCard, cardHistoryRequestDto.getUserAnswer());
+		CardHistory cardHistory = CardHistoryFactory.makeCardHistory(cardHistoryRequestDto, findCard, solvedMemberId,
+			score);
+		cardHistoryRepository.save(cardHistory);
+		return score;
 	}
 
 	@Transactional(readOnly = true)
