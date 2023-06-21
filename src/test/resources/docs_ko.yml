@@ -81,5 +81,5 @@ card:
     question: 공백 없이 500 글자 이하
     description: 21,000자 이하 HTML 형태 text
     categoryId: UUID
-    cardType: OX_QUIZ, KEYWORD, MULTI_CHOICE
+    cardType: OX_QUIZ, KEYWORD, MULTI_CHOICE, ESSAY
     answer: text
