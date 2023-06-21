@@ -12,8 +12,13 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 
+import com.almondia.meca.card.domain.vo.Description;
+import com.almondia.meca.card.domain.vo.KeywordAnswer;
+import com.almondia.meca.card.domain.vo.Question;
+import com.almondia.meca.card.domain.vo.Title;
 import com.almondia.meca.common.configuration.jpa.JpaAuditingConfiguration;
 import com.almondia.meca.common.configuration.jpa.QueryDslConfiguration;
+import com.almondia.meca.common.domain.vo.Id;
 
 /**
  * 데이터 속성 생성 테스트
@@ -37,5 +42,28 @@ class KeywordCardTest {
 				"images",
 				"createdAt",
 				"modifiedAt", "keywordAnswer");
+	}
+
+	@Test
+	@DisplayName("영속성 가능 여부 테스트")
+	void shouldPersistEntityTest() {
+		KeywordCard keywordCard = KeywordCard.builder()
+			.cardId(Id.generateNextId())
+			.memberId(Id.generateNextId())
+			.categoryId(Id.generateNextId())
+			.title(Title.of("title"))
+			.description(Description.of("description"))
+			.question(Question.of("question"))
+			.keywordAnswer(KeywordAnswer.valueOf("keyword,Answer"))
+			.build();
+		entityManager.persist(keywordCard);
+		entityManager.flush();
+		entityManager.clear();
+		KeywordCard findKeywordCard = entityManager.find(KeywordCard.class, keywordCard.getCardId());
+		assertThat(findKeywordCard).isNotNull();
+		assertThat(findKeywordCard.getTitle().toString()).isEqualTo("title");
+		assertThat(findKeywordCard.getDescription().toString()).isEqualTo("description");
+		assertThat(findKeywordCard.getQuestion().toString()).isEqualTo("question");
+		assertThat(findKeywordCard.getKeywordAnswer()).isEqualTo(KeywordAnswer.valueOf("keyword,Answer"));
 	}
 }
