@@ -16,9 +16,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.almondia.meca.cardhistory.application.CardHistoryService;
+import com.almondia.meca.cardhistory.controller.dto.CardHistoryRequestDto;
 import com.almondia.meca.cardhistory.controller.dto.CardHistoryResponseDto;
 import com.almondia.meca.cardhistory.controller.dto.CardHistoryWithCardAndMemberResponseDto;
-import com.almondia.meca.cardhistory.controller.dto.SaveRequestCardHistoryDto;
+import com.almondia.meca.cardhistory.controller.dto.SaveResponseCardHistoryDto;
+import com.almondia.meca.cardhistory.domain.vo.Score;
 import com.almondia.meca.common.controller.dto.CursorPage;
 import com.almondia.meca.common.domain.vo.Id;
 import com.almondia.meca.member.domain.entity.Member;
@@ -34,11 +36,11 @@ public class CardHistoryController {
 
 	@PostMapping("/simulation")
 	@Secured("ROLE_USER")
-	public ResponseEntity<String> saveHistories(
+	public ResponseEntity<SaveResponseCardHistoryDto> saveHistories(
 		@AuthenticationPrincipal Member member,
-		@RequestBody SaveRequestCardHistoryDto saveRequestCardHistoryDto) {
-		cardHistoryService.saveCardHistories(saveRequestCardHistoryDto, member.getMemberId());
-		return ResponseEntity.status(HttpStatus.CREATED).build();
+		@RequestBody CardHistoryRequestDto cardHistoryRequestDto) {
+		Score score = cardHistoryService.saveCardHistory(cardHistoryRequestDto, member.getMemberId());
+		return ResponseEntity.status(HttpStatus.CREATED).body(new SaveResponseCardHistoryDto(score));
 	}
 
 	@GetMapping("/cards/{cardId}")

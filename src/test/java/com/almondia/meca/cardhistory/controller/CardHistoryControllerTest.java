@@ -40,7 +40,6 @@ import com.almondia.meca.cardhistory.controller.dto.SaveRequestCardHistoryDto;
 import com.almondia.meca.cardhistory.domain.entity.CardHistory;
 import com.almondia.meca.cardhistory.domain.vo.Answer;
 import com.almondia.meca.cardhistory.domain.vo.CardSnapShot;
-import com.almondia.meca.cardhistory.domain.vo.Score;
 import com.almondia.meca.common.configuration.jackson.JacksonConfiguration;
 import com.almondia.meca.common.configuration.security.filter.JwtAuthenticationFilter;
 import com.almondia.meca.common.controller.dto.CursorPage;
@@ -96,7 +95,6 @@ class CardHistoryControllerTest {
 			CardHistoryRequestDto historyDto = CardHistoryRequestDto.builder()
 				.cardId(Id.generateNextId())
 				.userAnswer(new Answer("answer"))
-				.score(new Score(100))
 				.build();
 			Id categoryId = Id.generateNextId();
 			SaveRequestCardHistoryDto saveRequestCardHistoryDto = new SaveRequestCardHistoryDto(List.of(historyDto));
@@ -119,9 +117,10 @@ class CardHistoryControllerTest {
 					requestFields(
 						fieldWithPath("cardHistories[].cardId").description("카드 ID"),
 						fieldWithPath("cardHistories[].userAnswer").description("사용자 답안")
-							.attributes(key("constraints").value("100글자 이내")),
-						fieldWithPath("cardHistories[].score").description("점수")
-							.attributes(key("constraints").value("0 ~ 100 정수"))
+							.attributes(key("constraints").value("100글자 이내"))
+					),
+					responseFields(
+						fieldWithPath("score").description("점수")
 					)
 				));
 		}
