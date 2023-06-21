@@ -17,4 +17,6 @@ public interface CardRepository extends JpaRepository<Card, Id>, CardQueryDslRep
 
 	List<Card> findByCardIdInAndIsDeletedFalse(Collection<Id> cardIds);
 
+	Optional<Card> findByCardIdAndIsDeletedFalse(Id cardId);
+
 }
