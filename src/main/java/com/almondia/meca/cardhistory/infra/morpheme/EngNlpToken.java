@@ -9,7 +9,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @EqualsAndHashCode
 @ToString
-public class EngNlpToken {
+public class EngNlpToken implements NlpToken {
 
 	private final String morph;
 	private final String pos;

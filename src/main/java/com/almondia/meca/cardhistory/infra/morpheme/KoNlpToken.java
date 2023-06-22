@@ -5,7 +5,7 @@ import java.util.Objects;
 import lombok.Getter;
 
 @Getter
-public class KoNlpToken {
+public class KoNlpToken implements NlpToken {
 
 	private final String morph;
 	private final MorphemePosition pos;
