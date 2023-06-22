@@ -1,6 +1,6 @@
 package com.almondia.meca.common.configuration.jackson.module.nlp;
 
-import com.almondia.meca.cardhistory.domain.vo.NlpToken;
+import com.almondia.meca.cardhistory.infra.morpheme.NlpToken;
 import com.fasterxml.jackson.databind.module.SimpleDeserializers;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 

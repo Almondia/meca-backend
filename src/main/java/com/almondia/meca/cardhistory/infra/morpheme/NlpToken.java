@@ -1,8 +1,6 @@
-package com.almondia.meca.cardhistory.domain.vo;
+package com.almondia.meca.cardhistory.infra.morpheme;
 
 import java.util.Objects;
-
-import com.almondia.meca.cardhistory.infra.morpheme.MorphemePosition;
 
 import lombok.Getter;
 
