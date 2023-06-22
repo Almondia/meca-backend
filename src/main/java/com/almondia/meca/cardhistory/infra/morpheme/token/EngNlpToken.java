@@ -1,4 +1,4 @@
-package com.almondia.meca.cardhistory.infra.morpheme;
+package com.almondia.meca.cardhistory.infra.morpheme.token;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;

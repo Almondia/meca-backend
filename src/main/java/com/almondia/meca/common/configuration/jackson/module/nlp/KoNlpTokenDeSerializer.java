@@ -2,7 +2,7 @@ package com.almondia.meca.common.configuration.jackson.module.nlp;
 
 import java.io.IOException;
 
-import com.almondia.meca.cardhistory.infra.morpheme.KoNlpToken;
+import com.almondia.meca.cardhistory.infra.morpheme.token.KoNlpToken;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
