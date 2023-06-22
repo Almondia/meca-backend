@@ -2,29 +2,29 @@ package com.almondia.meca.common.configuration.jackson.module.nlp;
 
 import java.io.IOException;
 
-import com.almondia.meca.cardhistory.infra.morpheme.NlpToken;
+import com.almondia.meca.cardhistory.infra.morpheme.KoNlpToken;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 
-public class NlpTokenDeSerializer extends StdDeserializer<NlpToken> {
+public class KoNlpTokenDeSerializer extends StdDeserializer<KoNlpToken> {
 
-	protected NlpTokenDeSerializer() {
+	protected KoNlpTokenDeSerializer() {
 		this(null);
 	}
 
-	protected NlpTokenDeSerializer(Class<?> vc) {
+	protected KoNlpTokenDeSerializer(Class<?> vc) {
 		super(vc);
 	}
 
 	@Override
-	public NlpToken deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
+	public KoNlpToken deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
 		JsonNode jsonNode = p.getCodec().readTree(p);
 		String morph = jsonNode.get("morph").asText();
 		String pos = jsonNode.get("pos").asText();
 		int startIndex = jsonNode.get("beginIndex").asInt();
 		int endIndex = jsonNode.get("endIndex").asInt();
-		return new NlpToken(morph, pos, startIndex, endIndex);
+		return new KoNlpToken(morph, pos, startIndex, endIndex);
 	}
 }

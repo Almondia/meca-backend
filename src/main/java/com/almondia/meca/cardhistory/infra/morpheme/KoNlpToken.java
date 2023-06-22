@@ -5,21 +5,21 @@ import java.util.Objects;
 import lombok.Getter;
 
 @Getter
-public class NlpToken {
+public class KoNlpToken {
 
 	private final String morph;
 	private final MorphemePosition pos;
 	private final int beginIndex;
 	private final int endIndex;
 
-	public NlpToken(String morph, String pos, int beginIndex, int endIndex) {
+	public KoNlpToken(String morph, String pos, int beginIndex, int endIndex) {
 		this.morph = morph;
 		this.pos = MorphemePosition.valueOf(pos.toUpperCase());
 		this.beginIndex = beginIndex;
 		this.endIndex = endIndex;
 	}
 
-	public NlpToken(String morph, MorphemePosition pos, int beginIndex, int endIndex) {
+	public KoNlpToken(String morph, MorphemePosition pos, int beginIndex, int endIndex) {
 		this.morph = morph;
 		this.pos = pos;
 		this.beginIndex = beginIndex;
@@ -32,10 +32,10 @@ public class NlpToken {
 			return true;
 		if (o == null || getClass() != o.getClass())
 			return false;
-		NlpToken nlpToken = (NlpToken)o;
-		return beginIndex == nlpToken.beginIndex && endIndex == nlpToken.endIndex && Objects.equals(morph,
-			nlpToken.morph)
-			&& pos == nlpToken.pos;
+		KoNlpToken koNlpToken = (KoNlpToken)o;
+		return beginIndex == koNlpToken.beginIndex && endIndex == koNlpToken.endIndex && Objects.equals(morph,
+			koNlpToken.morph)
+			&& pos == koNlpToken.pos;
 	}
 
 	@Override
