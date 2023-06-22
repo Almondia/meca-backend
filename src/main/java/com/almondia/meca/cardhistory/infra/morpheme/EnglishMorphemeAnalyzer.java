@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import com.almondia.meca.cardhistory.domain.service.MorphemeAnalyzer;
+import com.almondia.meca.cardhistory.infra.morpheme.token.EngNlpToken;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
