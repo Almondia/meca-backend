@@ -15,6 +15,7 @@ import com.almondia.meca.cardhistory.domain.service.DefaultScoringMachine;
 import com.almondia.meca.cardhistory.domain.service.MorphemeAnalyzer;
 import com.almondia.meca.cardhistory.domain.service.ScoringMachine;
 import com.almondia.meca.cardhistory.domain.vo.Score;
+import com.almondia.meca.cardhistory.infra.morpheme.token.NlpToken;
 import com.almondia.meca.common.controller.dto.CursorPage;
 import com.almondia.meca.common.domain.vo.Id;
 
@@ -24,10 +25,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CardHistoryService {
 
-	private static final ScoringMachine scoringMachine = new DefaultScoringMachine();
+	private static final ScoringMachine<NlpToken> scoringMachine = new DefaultScoringMachine();
 	private final CardHistoryRepository cardHistoryRepository;
 	private final CardRepository cardRepository;
-	private final MorphemeAnalyzer morphemeAnalyzer;
+	private final MorphemeAnalyzer<NlpToken> morphemeAnalyzer;
 
 	@Transactional
 	public Score saveCardHistory(CardHistoryRequestDto cardHistoryRequestDto, Id solvedMemberId) {
