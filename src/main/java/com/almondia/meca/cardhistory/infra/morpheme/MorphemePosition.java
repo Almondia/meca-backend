@@ -1,4 +1,4 @@
-package com.almondia.meca.cardhistory.domain.vo;
+package com.almondia.meca.cardhistory.infra.morpheme;
 
 import lombok.Getter;
 
