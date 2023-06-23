@@ -25,10 +25,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CardHistoryService {
 
-	private static final ScoringMachine<NlpToken> scoringMachine = new DefaultScoringMachine();
+	private static final ScoringMachine scoringMachine = new DefaultScoringMachine();
 	private final CardHistoryRepository cardHistoryRepository;
 	private final CardRepository cardRepository;
-	private final MorphemeAnalyzer<NlpToken> morphemeAnalyzer;
+	private final MorphemeAnalyzer<? extends NlpToken> morphemeAnalyzer;
 
 	@Transactional
 	public Score saveCardHistory(CardHistoryRequestDto cardHistoryRequestDto, Id solvedMemberId) {
