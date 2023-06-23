@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 import com.almondia.meca.card.controller.dto.CardDto;
 import com.almondia.meca.card.domain.entity.Card;
+import com.almondia.meca.card.domain.entity.EssayCard;
 import com.almondia.meca.card.domain.entity.KeywordCard;
 import com.almondia.meca.card.domain.entity.MultiChoiceCard;
 import com.almondia.meca.card.domain.entity.OxCard;
@@ -21,7 +22,25 @@ public class CardMapper {
 		if (card.getCardType().equals(CardType.MULTI_CHOICE)) {
 			return multiChoiceCardToDto((MultiChoiceCard)card);
 		}
+		if (card.getCardType().equals(CardType.ESSAY)) {
+			return essayCardToDto((EssayCard)card);
+		}
 		throw new IllegalArgumentException(String.format("카드 타입은 %s 만 가능합니다", Arrays.toString(CardType.values())));
+	}
+
+	private static CardDto essayCardToDto(EssayCard essayCard) {
+		return CardDto.builder()
+			.cardId(essayCard.getCardId())
+			.title(essayCard.getTitle())
+			.memberId(essayCard.getMemberId())
+			.question(essayCard.getQuestion())
+			.categoryId(essayCard.getCategoryId())
+			.cardType(essayCard.getCardType())
+			.createdAt(essayCard.getCreatedAt())
+			.modifiedAt(essayCard.getModifiedAt())
+			.description(essayCard.getDescription())
+			.answer(essayCard.getAnswer())
+			.build();
 	}
 
 	public static CardDto oxCardToDto(OxCard oxCard) {
