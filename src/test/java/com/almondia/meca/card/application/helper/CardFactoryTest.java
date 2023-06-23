@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import com.almondia.meca.card.controller.dto.SaveCardRequestDto;
 import com.almondia.meca.card.domain.entity.Card;
+import com.almondia.meca.card.domain.entity.EssayCard;
 import com.almondia.meca.card.domain.entity.KeywordCard;
 import com.almondia.meca.card.domain.entity.MultiChoiceCard;
 import com.almondia.meca.card.domain.entity.OxCard;
@@ -22,6 +23,7 @@ import com.almondia.meca.common.domain.vo.Id;
  * 2. KeywordCard 속성별 인스턴스를 잘 생성했는지 검증
  * 3. MultiChoiceCard 속성별 인스턴스 잘 생성했는지 검증
  * 4. EditText가 null이더라도, 인스턴스 생성을 할 수 있어야 한다
+ * 5. EssayCard 인스턴스 생성 검증 테스트
  */
 class CardFactoryTest {
 
@@ -102,6 +104,22 @@ class CardFactoryTest {
 			.hasFieldOrProperty("cardType")
 			.hasFieldOrProperty("cardId")
 			.hasFieldOrProperty("oxAnswer");
+	}
+
+	@Test
+	@DisplayName("EssayCard 인스턴스 생성 검증 테스트")
+	void shouldCreateInstanceEssayCard() {
+		Card card = CardFactory.genCard(makeSaveCardRequest()
+			.cardType(CardType.ESSAY)
+			.answer("essayAnswer")
+			.build(), Id.generateNextId());
+		assertThat(card).isInstanceOf(EssayCard.class);
+		assertThat(card).hasFieldOrProperty("title")
+			.hasFieldOrProperty("question")
+			.hasFieldOrProperty("memberId")
+			.hasFieldOrProperty("categoryId")
+			.hasFieldOrProperty("cardType")
+			.hasFieldOrProperty("cardId");
 	}
 
 	private SaveCardRequestDto.SaveCardRequestDtoBuilder makeSaveCardRequestWithoutEditText() {
