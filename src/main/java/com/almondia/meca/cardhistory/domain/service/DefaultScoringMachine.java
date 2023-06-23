@@ -20,10 +20,10 @@ import com.almondia.meca.cardhistory.infra.morpheme.Morphemes;
 import com.almondia.meca.cardhistory.infra.morpheme.token.NlpToken;
 
 @Component
-public class DefaultScoringMachine implements ScoringMachine<NlpToken> {
+public class DefaultScoringMachine implements ScoringMachine {
 
 	@Override
-	public Score giveScore(MorphemeAnalyzer<NlpToken> morphemeAnalyzer, Card card, Answer userAnswer) {
+	public Score giveScore(MorphemeAnalyzer<? extends NlpToken> morphemeAnalyzer, Card card, Answer userAnswer) {
 		if (card.getCardType().equals(CardType.OX_QUIZ)) {
 			return scoringOxCard(((OxCard)card), userAnswer);
 		}
@@ -62,9 +62,9 @@ public class DefaultScoringMachine implements ScoringMachine<NlpToken> {
 		return new Score(0);
 	}
 
-	private Score scoringEssayCard(MorphemeAnalyzer<NlpToken> morphemeAnalyzer, EssayCard essayCard,
+	private Score scoringEssayCard(MorphemeAnalyzer<? extends NlpToken> morphemeAnalyzer, EssayCard essayCard,
 		Answer userAnswer) {
-		Morphemes<NlpToken> morphemes = morphemeAnalyzer.analyze(essayCard.getAnswer(), userAnswer.getText());
+		Morphemes<? extends NlpToken> morphemes = morphemeAnalyzer.analyze(essayCard.getAnswer(), userAnswer.getText());
 		List<String> cardAnswerMorpheme = morphemes.getCardAnswerMorpheme()
 			.stream()
 			.map(NlpToken::getMorph)
