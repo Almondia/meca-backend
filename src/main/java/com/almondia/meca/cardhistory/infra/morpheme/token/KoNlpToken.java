@@ -41,6 +41,11 @@ public class KoNlpToken implements NlpToken {
 	}
 
 	@Override
+	public String getPos() {
+		return pos.name();
+	}
+
+	@Override
 	public int hashCode() {
 		return Objects.hash(morph, pos, beginIndex, endIndex);
 	}
