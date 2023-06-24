@@ -28,13 +28,7 @@ public class KeywordAnswer implements Wrapper {
 	public KeywordAnswer(String keywordAnswer) {
 		validateKeywordAnswer(keywordAnswer);
 		this.keywordAnswer = keywordAnswer;
-		try {
-			this.keywords = Arrays.stream(this.keywordAnswer.split(","))
-				.map(String::trim)
-				.collect(Collectors.toSet());
-		} catch (PatternSyntaxException patternSyntaxException) {
-			throw new IllegalArgumentException("키워드를 분리할 수 없습니다. 키워드는 ,로 구분되어야 합니다.");
-		}
+		makeKeywords();
 	}
 
 	public static KeywordAnswer valueOf(String keywordAnswer) {
@@ -42,6 +36,9 @@ public class KeywordAnswer implements Wrapper {
 	}
 
 	public boolean contains(String keyword) {
+		if (keywords == null) {
+			makeKeywords();
+		}
 		return keywords.contains(keyword.trim());
 	}
 
@@ -52,5 +49,15 @@ public class KeywordAnswer implements Wrapper {
 
 	private void validateKeywordAnswer(String keywordAnswer) {
 		Assert.isTrue(keywordAnswer.length() < MAX_LENGTH, () -> String.format("%d 이하로만 입력 가능합니다", MAX_LENGTH));
+	}
+
+	private void makeKeywords() {
+		try {
+			this.keywords = Arrays.stream(this.keywordAnswer.split(","))
+				.map(String::trim)
+				.collect(Collectors.toSet());
+		} catch (PatternSyntaxException patternSyntaxException) {
+			throw new IllegalArgumentException("키워드를 분리할 수 없습니다. 키워드는 ,로 구분되어야 합니다.");
+		}
 	}
 }
