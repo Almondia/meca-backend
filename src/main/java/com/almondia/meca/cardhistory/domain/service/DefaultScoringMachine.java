@@ -19,7 +19,10 @@ import com.almondia.meca.cardhistory.domain.vo.Score;
 import com.almondia.meca.cardhistory.infra.morpheme.Morphemes;
 import com.almondia.meca.cardhistory.infra.morpheme.token.NlpToken;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Component
+@Slf4j
 public class DefaultScoringMachine implements ScoringMachine {
 
 	@Override
@@ -79,6 +82,10 @@ public class DefaultScoringMachine implements ScoringMachine {
 			if (cardAnswerMorpheme.contains(morph)) {
 				correctSize++;
 			}
+		}
+		if (totalSize == 0) {
+			log.warn("EssayCard의 정답 형태소가 존재하지 않습니다. cardAnswerMorpheme: {}", cardAnswerMorpheme);
+			return new Score(0);
 		}
 		return new Score(correctSize * 100 / totalSize);
 	}
