@@ -27,6 +27,9 @@ public class DefaultScoringMachine implements ScoringMachine {
 
 	@Override
 	public Score giveScore(MorphemeAnalyzer<? extends NlpToken> morphemeAnalyzer, Card card, Answer userAnswer) {
+		if (userAnswer.getText().isBlank()) {
+			return new Score(0);
+		}
 		if (card.getCardType().equals(CardType.OX_QUIZ)) {
 			return scoringOxCard(((OxCard)card), userAnswer);
 		}
