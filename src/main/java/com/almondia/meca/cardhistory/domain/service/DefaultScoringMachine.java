@@ -46,7 +46,7 @@ public class DefaultScoringMachine implements ScoringMachine {
 	}
 
 	private Score scoringOxCard(OxCard card, Answer userAnswer) {
-		if (card.getAnswer().equals(userAnswer.toString())) {
+		if (card.getAnswer().equals(userAnswer.getText())) {
 			return new Score(100);
 		}
 		return new Score(0);
@@ -54,7 +54,7 @@ public class DefaultScoringMachine implements ScoringMachine {
 
 	private Score scoringKeywordCard(KeywordCard card, Answer userAnswer) {
 		KeywordAnswer keywordAnswer = card.getKeywordAnswer();
-		if (keywordAnswer.contains(userAnswer.toString())) {
+		if (keywordAnswer.contains(userAnswer.getText())) {
 			return new Score(100);
 		}
 		return new Score(0);
@@ -62,7 +62,7 @@ public class DefaultScoringMachine implements ScoringMachine {
 
 	private Score scoringMultiChoiceCard(MultiChoiceCard multiChoiceCard, Answer userAnswer) {
 		MultiChoiceAnswer multiChoiceAnswer = multiChoiceCard.getMultiChoiceAnswer();
-		if (multiChoiceAnswer.toString().equals(userAnswer.toString())) {
+		if (multiChoiceAnswer.toString().equals(userAnswer.getText())) {
 			return new Score(100);
 		}
 		return new Score(0);
@@ -74,10 +74,14 @@ public class DefaultScoringMachine implements ScoringMachine {
 		List<String> cardAnswerMorpheme = morphemes.getCardAnswerMorpheme()
 			.stream()
 			.map(NlpToken::getMorph)
+			.map(String::toLowerCase)
+			.map(String::trim)
 			.collect(toList());
 		List<String> userAnswerMorpheme = morphemes.getUserAnswerMorpheme()
 			.stream()
 			.map(NlpToken::getMorph)
+			.map(String::toLowerCase)
+			.map(String::trim)
 			.collect(toList());
 		int totalSize = cardAnswerMorpheme.size();
 		int correctSize = 0;
