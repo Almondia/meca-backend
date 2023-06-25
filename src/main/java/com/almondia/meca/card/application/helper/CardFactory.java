@@ -2,11 +2,13 @@ package com.almondia.meca.card.application.helper;
 
 import com.almondia.meca.card.controller.dto.SaveCardRequestDto;
 import com.almondia.meca.card.domain.entity.Card;
+import com.almondia.meca.card.domain.entity.EssayCard;
 import com.almondia.meca.card.domain.entity.KeywordCard;
 import com.almondia.meca.card.domain.entity.MultiChoiceCard;
 import com.almondia.meca.card.domain.entity.OxCard;
 import com.almondia.meca.card.domain.vo.CardType;
 import com.almondia.meca.card.domain.vo.Description;
+import com.almondia.meca.card.domain.vo.EssayAnswer;
 import com.almondia.meca.card.domain.vo.KeywordAnswer;
 import com.almondia.meca.card.domain.vo.MultiChoiceAnswer;
 import com.almondia.meca.card.domain.vo.OxAnswer;
@@ -24,6 +26,9 @@ public class CardFactory {
 		}
 		if (cardType.equals(CardType.MULTI_CHOICE)) {
 			return genMultiChoiceCard(saveCardRequestDto, memberId);
+		}
+		if (cardType.equals(CardType.ESSAY)) {
+			return genEssayCard(saveCardRequestDto, memberId);
 		}
 		throw new IllegalArgumentException("잘못된 cardType 입니다");
 	}
@@ -70,6 +75,21 @@ public class CardFactory {
 			.cardType(saveCardRequestDto.getCardType())
 			.description(description)
 			.multiChoiceAnswer(new MultiChoiceAnswer(Integer.parseInt(answer)))
+			.build();
+	}
+
+	private static Card genEssayCard(SaveCardRequestDto saveCardRequestDto, Id memberId) {
+		String answer = saveCardRequestDto.getAnswer();
+		Description description = saveCardRequestDto.getDescription();
+		return EssayCard.builder()
+			.cardId(Id.generateNextId())
+			.memberId(memberId)
+			.question(saveCardRequestDto.getQuestion())
+			.title(saveCardRequestDto.getTitle())
+			.categoryId(saveCardRequestDto.getCategoryId())
+			.cardType(saveCardRequestDto.getCardType())
+			.essayAnswer(EssayAnswer.valueOf(answer))
+			.description(description)
 			.build();
 	}
 }

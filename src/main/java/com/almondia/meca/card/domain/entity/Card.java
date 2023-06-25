@@ -39,23 +39,23 @@ public abstract class Card extends DateEntity {
 
 	@EmbeddedId
 	@AttributeOverride(name = "uuid", column = @Column(name = "card_id", nullable = false, columnDefinition = "BINARY(16)"))
-	Id cardId;
+	private Id cardId;
 
 	@Embedded
 	@AttributeOverride(name = "question", column = @Column(name = "question", nullable = false, length = 500))
-	Question question;
+	private Question question;
 
 	@Embedded
 	@AttributeOverride(name = "title", column = @Column(name = "title", nullable = false, length = 120))
-	Title title;
+	private Title title;
 
 	@Embedded
 	@AttributeOverride(name = "uuid", column = @Column(name = "category_id", nullable = false, columnDefinition = "BINARY(16)"))
-	Id categoryId;
+	private Id categoryId;
 
 	@Embedded
 	@AttributeOverride(name = "uuid", column = @Column(name = "member_id", nullable = false, columnDefinition = "BINARY(16)"))
-	Id memberId;
+	private Id memberId;
 
 	@Column(name = "images", length = 1020)
 	@Convert(converter = ListImageConverter.class)

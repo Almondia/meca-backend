@@ -13,57 +13,55 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 
 import com.almondia.meca.card.domain.vo.Description;
-import com.almondia.meca.card.domain.vo.KeywordAnswer;
+import com.almondia.meca.card.domain.vo.EssayAnswer;
 import com.almondia.meca.card.domain.vo.Question;
 import com.almondia.meca.card.domain.vo.Title;
 import com.almondia.meca.common.configuration.jpa.JpaAuditingConfiguration;
 import com.almondia.meca.common.configuration.jpa.QueryDslConfiguration;
 import com.almondia.meca.common.domain.vo.Id;
 
-/**
- * 데이터 속성 생성 테스트
- */
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Import({JpaAuditingConfiguration.class, QueryDslConfiguration.class})
-class KeywordCardTest {
+class EssayCardTest {
+
 	@PersistenceContext
 	private EntityManager entityManager;
 
 	@Test
 	@DisplayName("데이터 속성 생성 테스트")
 	void oxCardAttributeCreationTest() {
-		EntityType<?> entityType = entityManager.getMetamodel().entity(KeywordCard.class);
+		EntityType<?> entityType = entityManager.getMetamodel().entity(EssayCard.class);
 		assertThat(entityType).isNotNull();
-		assertThat(entityType.getName()).isEqualTo("KeywordCard");
+		assertThat(entityType.getName()).isEqualTo("EssayCard");
 		assertThat(entityType.getAttributes()).extracting("name")
 			.containsExactlyInAnyOrder("description", "memberId", "question", "isDeleted", "cardId", "categoryId",
 				"title",
 				"images",
 				"createdAt",
-				"modifiedAt", "keywordAnswer");
+				"modifiedAt", "essayAnswer");
 	}
 
 	@Test
 	@DisplayName("영속성 가능 여부 테스트")
 	void shouldPersistEntityTest() {
-		KeywordCard keywordCard = KeywordCard.builder()
+		EssayCard essayCard = EssayCard.builder()
 			.cardId(Id.generateNextId())
 			.memberId(Id.generateNextId())
 			.categoryId(Id.generateNextId())
 			.title(Title.of("title"))
 			.description(Description.of("description"))
 			.question(Question.of("question"))
-			.keywordAnswer(KeywordAnswer.valueOf("keyword,Answer"))
+			.essayAnswer(EssayAnswer.valueOf("keyword,Answer"))
 			.build();
-		entityManager.persist(keywordCard);
+		entityManager.persist(essayCard);
 		entityManager.flush();
 		entityManager.clear();
-		KeywordCard findKeywordCard = entityManager.find(KeywordCard.class, keywordCard.getCardId());
+		EssayCard findKeywordCard = entityManager.find(EssayCard.class, essayCard.getCardId());
 		assertThat(findKeywordCard).isNotNull();
 		assertThat(findKeywordCard.getTitle().toString()).isEqualTo("title");
 		assertThat(findKeywordCard.getDescription().toString()).isEqualTo("description");
 		assertThat(findKeywordCard.getQuestion().toString()).isEqualTo("question");
-		assertThat(findKeywordCard.getKeywordAnswer()).isEqualTo(KeywordAnswer.valueOf("keyword,Answer"));
+		assertThat(findKeywordCard.getEssayAnswer()).isEqualTo(EssayAnswer.valueOf("keyword,Answer"));
 	}
 }

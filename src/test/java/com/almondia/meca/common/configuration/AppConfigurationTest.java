@@ -17,6 +17,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import com.almondia.meca.auth.oauth.exception.BadWebClientRequestException;
 import com.almondia.meca.auth.oauth.exception.BadWebClientResponseException;
+import com.almondia.meca.common.configuration.jackson.JacksonConfiguration;
 
 import okhttp3.mockwebserver.Dispatcher;
 import okhttp3.mockwebserver.MockResponse;
@@ -32,7 +33,7 @@ import reactor.test.StepVerifier;
  * 4. 5xx 응답인 경우 BadWebClientResponseException로 예외 핸들링
  */
 @ExtendWith(SpringExtension.class)
-@Import(AppConfiguration.class)
+@Import({JacksonConfiguration.class, AppConfiguration.class})
 class AppConfigurationTest {
 
 	@Autowired

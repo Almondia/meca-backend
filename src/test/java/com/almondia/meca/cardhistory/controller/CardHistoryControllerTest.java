@@ -36,7 +36,6 @@ import com.almondia.meca.card.domain.entity.Card;
 import com.almondia.meca.cardhistory.application.CardHistoryService;
 import com.almondia.meca.cardhistory.controller.dto.CardHistoryRequestDto;
 import com.almondia.meca.cardhistory.controller.dto.CardHistoryWithCardAndMemberResponseDto;
-import com.almondia.meca.cardhistory.controller.dto.SaveRequestCardHistoryDto;
 import com.almondia.meca.cardhistory.domain.entity.CardHistory;
 import com.almondia.meca.cardhistory.domain.vo.Answer;
 import com.almondia.meca.cardhistory.domain.vo.CardSnapShot;
@@ -93,19 +92,17 @@ class CardHistoryControllerTest {
 		@WithMockMember
 		void shouldReturn200WhenSuccessTest() throws Exception {
 			// given
-			CardHistoryRequestDto historyDto = CardHistoryRequestDto.builder()
-				.cardId(Id.generateNextId())
-				.userAnswer(new Answer("answer"))
-				.score(new Score(100))
-				.build();
 			Id categoryId = Id.generateNextId();
-			SaveRequestCardHistoryDto saveRequestCardHistoryDto = new SaveRequestCardHistoryDto(List.of(historyDto));
+			CardHistoryRequestDto cardHistoryRequestDto = new CardHistoryRequestDto(Id.generateNextId(),
+				new Answer("O"));
+			Mockito.doReturn(new Score(100)).when(cardHistoryService)
+				.saveCardHistory(any(), any());
 
 			// when
 			ResultActions resultActions = mockMvc.perform(
 				post("/api/v1/histories/simulation").contentType(MediaType.APPLICATION_JSON)
 					.characterEncoding(StandardCharsets.UTF_8)
-					.content(objectMapper.writeValueAsString(saveRequestCardHistoryDto))
+					.content(objectMapper.writeValueAsString(cardHistoryRequestDto))
 					.header("Authorization", "Bearer " + jwtToken));
 
 			// then
@@ -117,11 +114,12 @@ class CardHistoryControllerTest {
 						headerWithName("Authorization").description("JWT 토큰")
 					),
 					requestFields(
-						fieldWithPath("cardHistories[].cardId").description("카드 ID"),
-						fieldWithPath("cardHistories[].userAnswer").description("사용자 답안")
-							.attributes(key("constraints").value("100글자 이내")),
-						fieldWithPath("cardHistories[].score").description("점수")
-							.attributes(key("constraints").value("0 ~ 100 정수"))
+						fieldWithPath("cardId").description("카드 ID"),
+						fieldWithPath("userAnswer").description("사용자 답안")
+							.attributes(key("constraints").value("100글자 이내"))
+					),
+					responseFields(
+						fieldWithPath("score").description("점수")
 					)
 				));
 		}

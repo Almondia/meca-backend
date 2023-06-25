@@ -21,4 +21,5 @@ class KeywordAnswerTest {
 	void toStringTest() {
 		assertThat(KeywordAnswer.valueOf("test").toString()).isEqualTo("test");
 	}
+
 }

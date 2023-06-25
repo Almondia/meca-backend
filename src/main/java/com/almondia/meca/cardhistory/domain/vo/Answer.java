@@ -22,6 +22,10 @@ public class Answer implements Wrapper {
 		this.answer = answer;
 	}
 
+	public String getText() {
+		return answer;
+	}
+
 	@Override
 	public String toString() {
 		return answer;
