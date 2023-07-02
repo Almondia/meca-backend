@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Answer implements Wrapper {
 
-	private static final int MAX_LENGTH = 255;
+	private static final int MAX_LENGTH = 500;
 
 	private String answer;
 
