@@ -35,22 +35,22 @@ public class Member extends DateEntity {
 	private String oauthId;
 
 	@Embedded
-	@AttributeOverride(name = "name", column = @Column(name = "name", nullable = false, columnDefinition = "VARCHAR(40)"))
+	@AttributeOverride(name = "name", column = @Column(name = "name", nullable = false, length = 60))
 	private Name name;
 
 	@Embedded
-	@AttributeOverride(name = "email", column = @Column(name = "email", columnDefinition = "VARCHAR(255)"))
+	@AttributeOverride(name = "email", column = @Column(name = "email"))
 	private Email email;
 
 	@Embedded
-	@AttributeOverride(name = "image", column = @Column(name = "profile", columnDefinition = "VARCHAR(255)"))
+	@AttributeOverride(name = "image", column = @Column(name = "profile"))
 	private Image profile;
 
-	@Column(name = "o_auth_type", nullable = false, columnDefinition = "VARCHAR(10)")
+	@Column(name = "o_auth_type", nullable = false, length = 10)
 	private OAuthType oAuthType;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "role", nullable = false, columnDefinition = "VARCHAR(10)")
+	@Column(name = "role", nullable = false, length = 10)
 	private Role role;
 
 	private boolean isDeleted;
