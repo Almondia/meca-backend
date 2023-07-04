@@ -1,6 +1,7 @@
 package com.almondia.meca.card.domain.vo;
 
 import javax.persistence.Embeddable;
+import javax.persistence.Lob;
 
 import com.almondia.meca.common.configuration.jackson.module.wrapper.Wrapper;
 
@@ -15,6 +16,7 @@ public class Description implements Wrapper {
 
 	private static final int MAX_LENGTH = 2_1000;
 
+	@Lob
 	private String description;
 
 	public Description(String description) {

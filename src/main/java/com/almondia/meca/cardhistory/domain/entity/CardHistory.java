@@ -34,19 +34,19 @@ import lombok.NoArgsConstructor;
 public class CardHistory {
 
 	@EmbeddedId
-	@AttributeOverride(name = "uuid", column = @Column(name = "card_history_id", nullable = false, columnDefinition = "BINARY(16)"))
+	@AttributeOverride(name = "uuid", column = @Column(name = "card_history_id", nullable = false, length = 16))
 	private Id cardHistoryId;
 
 	@Embedded
-	@AttributeOverride(name = "uuid", column = @Column(name = "solved_user_id", nullable = false, columnDefinition = "BINARY(16)"))
+	@AttributeOverride(name = "uuid", column = @Column(name = "solved_user_id", nullable = false, length = 16))
 	private Id solvedMemberId;
 
 	@Embedded
-	@AttributeOverride(name = "uuid", column = @Column(name = "card_id", nullable = false, columnDefinition = "BINARY(16)"))
+	@AttributeOverride(name = "uuid", column = @Column(name = "card_id", nullable = false, length = 16))
 	private Id cardId;
 
 	@Embedded
-	@AttributeOverride(name = "answer", column = @Column(name = "user_answer", nullable = false))
+	@AttributeOverride(name = "answer", column = @Column(name = "user_answer", nullable = false, length = 2000))
 	private Answer userAnswer;
 
 	@Embedded

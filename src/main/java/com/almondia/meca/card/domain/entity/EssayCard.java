@@ -1,5 +1,7 @@
 package com.almondia.meca.card.domain.entity;
 
+import javax.persistence.AttributeOverride;
+import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -22,6 +24,7 @@ import lombok.experimental.SuperBuilder;
 public class EssayCard extends Card {
 
 	@Embedded
+	@AttributeOverride(name = "essayAnswer", column = @Column(name = "essay_answer", length = 2000))
 	private EssayAnswer essayAnswer;
 
 	@Override

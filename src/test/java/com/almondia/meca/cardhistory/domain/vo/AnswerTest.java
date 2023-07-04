@@ -12,9 +12,9 @@ import org.junit.jupiter.api.Test;
 class AnswerTest {
 
 	@Test
-	@DisplayName("길이가 255 초과시 예외 발생")
-	void shouldThrowWhenLengthMoreThan20Test() {
-		assertThatThrownBy(() -> new Answer("a".repeat(256))).isInstanceOf(IllegalArgumentException.class);
+	@DisplayName("길이가 500 초과시 예외 발생")
+	void shouldThrowWhenLengthMoreThan500Test() {
+		assertThatThrownBy(() -> new Answer("a".repeat(501))).isInstanceOf(IllegalArgumentException.class);
 	}
 
 }
