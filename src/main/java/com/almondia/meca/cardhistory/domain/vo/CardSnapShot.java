@@ -29,21 +29,21 @@ import lombok.ToString;
 @ToString
 public final class CardSnapShot {
 
-	@AttributeOverride(name = "uuid", column = @Column(name = "card_member_id", nullable = false, length = 120))
+	@AttributeOverride(name = "uuid", column = @Column(name = "card_member_id", nullable = false, length = 16))
 	private Id memberId;
 	@AttributeOverride(name = "title", column = @Column(name = "card_title", nullable = false, length = 120))
 	private Title title;
 
-	@AttributeOverride(name = "question", column = @Column(name = "card_question", nullable = false, length = 500))
+	@AttributeOverride(name = "question", column = @Column(name = "card_question", nullable = false, length = 2000))
 	private Question question;
 
-	@AttributeOverride(name = "answer", column = @Column(name = "card_answer", nullable = false))
+	@AttributeOverride(name = "answer", column = @Column(name = "card_answer", nullable = false, length = 2000))
 	private String answer;
 
 	@Enumerated(EnumType.STRING)
 	private CardType cardType;
 
-	@AttributeOverride(name = "description", column = @Column(name = "card_description", length = 2_1000, columnDefinition = "TEXT"))
+	@AttributeOverride(name = "description", column = @Column(name = "card_description", length = 2_1000))
 	private Description description;
 
 	@Column(name = "card_created_at", nullable = false, updatable = false)
