@@ -39,6 +39,10 @@ public class CursorPage<T> {
 		return new CursorPage<>(newContents, lastId, pageSize, sortOrder);
 	}
 
+	public static <T> CursorPage<T> empty() {
+		return new CursorPage<>(Collections.emptyList(), null, 0, SortOrder.ASC);
+	}
+
 	private static <T> boolean hasLastPage(List<T> contents, int pageSize) {
 		return contents.size() == pageSize + 1;
 	}
