@@ -49,4 +49,89 @@ class CursorPageTest {
 		}).isInstanceOf(UnsupportedOperationException.class);
 	}
 
+	@Test
+	@DisplayName("cursorPage of로 lastId가 존재하는 contents인 경우 lastId가 자동으로 생성된다")
+	void genLastIdWhenExistLastId() {
+		// given
+		final Id cardId1 = Id.generateNextId();
+		final Id cardId2 = Id.generateNextId();
+		final Id cardId3 = Id.generateNextId();
+
+		List<CardDto> contents = List.of(
+			CardDto.builder()
+				.cardId(cardId3)
+				.title(new Title("title"))
+				.cardType(CardType.OX_QUIZ)
+				.categoryId(Id.generateNextId())
+				.answer("answer")
+				.build(),
+			CardDto.builder()
+				.cardId(cardId2)
+				.title(new Title("title"))
+				.cardType(CardType.OX_QUIZ)
+				.categoryId(Id.generateNextId())
+				.answer("answer")
+				.build(),
+			CardDto.builder()
+				.cardId(cardId1)
+				.title(new Title("title"))
+				.cardType(CardType.OX_QUIZ)
+				.categoryId(Id.generateNextId())
+				.answer("answer")
+				.build()
+		);
+		int pageSize = 2;
+		SortOrder sortOrder = SortOrder.DESC;
+
+		// when
+		CursorPage<CardDto> cursorPage = CursorPage.of(contents, pageSize, sortOrder);
+
+		// then
+		assertThat(cursorPage.getContents()).hasSize(pageSize);
+		assertThat(cursorPage.getHasNext()).isEqualTo(cardId1);
+	}
+
+	@Test
+	@DisplayName("cursorPage of로 lastId가 존재하지 않는 contents인 경우 lastId가 null이다")
+	void lastIdIsNullWhenNotExistLastId() {
+		// given
+		final Id cardId1 = Id.generateNextId();
+		final Id cardId2 = Id.generateNextId();
+		final Id cardId3 = Id.generateNextId();
+		final int pageSize = 3;
+
+		List<CardDto> contents = List.of(
+			CardDto.builder()
+				.cardId(cardId3)
+				.title(new Title("title"))
+				.cardType(CardType.OX_QUIZ)
+				.categoryId(Id.generateNextId())
+				.answer("answer")
+				.build(),
+			CardDto.builder()
+				.cardId(cardId2)
+				.title(new Title("title"))
+				.cardType(CardType.OX_QUIZ)
+				.categoryId(Id.generateNextId())
+				.answer("answer")
+				.build(),
+			CardDto.builder()
+				.cardId(cardId1)
+				.title(new Title("title"))
+				.cardType(CardType.OX_QUIZ)
+				.categoryId(Id.generateNextId())
+				.answer("answer")
+				.build()
+		);
+
+		SortOrder sortOrder = SortOrder.DESC;
+
+		// when
+		CursorPage<CardDto> cursorPage = CursorPage.of(contents, pageSize, sortOrder);
+
+		// then
+		assertThat(cursorPage.getContents()).hasSize(pageSize);
+		assertThat(cursorPage.getHasNext()).isNull();
+	}
+
 }
