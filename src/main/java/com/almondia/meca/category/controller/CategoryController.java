@@ -97,7 +97,7 @@ public class CategoryController {
 		CategorySearchOption categorySearchOption = CategorySearchOption.builder()
 			.containTitle(containTitle)
 			.build();
-		CursorPage<SharedCategoryResponseDto> responseDto = categoryService.findCursorPagingCategoryResponseDto(
+		CursorPage<SharedCategoryResponseDto> responseDto = categoryService.findCursorPagingSharedCategoryResponseDto(
 			pageSize, hasNext, categorySearchOption);
 		return ResponseEntity.ok(responseDto);
 	}

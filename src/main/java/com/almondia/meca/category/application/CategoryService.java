@@ -81,7 +81,7 @@ public class CategoryService {
 	}
 
 	@Transactional(readOnly = true)
-	public CursorPage<SharedCategoryResponseDto> findCursorPagingCategoryResponseDto(
+	public CursorPage<SharedCategoryResponseDto> findCursorPagingSharedCategoryResponseDto(
 		int pageSize,
 		Id lastCategoryId,
 		CategorySearchOption categorySearchOption
