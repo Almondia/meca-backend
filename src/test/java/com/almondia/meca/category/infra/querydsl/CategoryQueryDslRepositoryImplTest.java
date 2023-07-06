@@ -2,6 +2,8 @@ package com.almondia.meca.category.infra.querydsl;
 
 import static org.assertj.core.api.Assertions.*;
 
+import java.util.List;
+
 import javax.persistence.EntityManager;
 
 import org.junit.jupiter.api.DisplayName;
@@ -15,6 +17,7 @@ import org.springframework.context.annotation.Import;
 import com.almondia.meca.card.domain.entity.Card;
 import com.almondia.meca.category.controller.dto.CategoryWithHistoryResponseDto;
 import com.almondia.meca.category.controller.dto.SharedCategoryResponseDto;
+import com.almondia.meca.category.domain.entity.Category;
 import com.almondia.meca.category.domain.repository.CategoryRepository;
 import com.almondia.meca.common.configuration.jpa.QueryDslConfiguration;
 import com.almondia.meca.common.controller.dto.CursorPage;
@@ -640,6 +643,108 @@ class CategoryQueryDslRepositoryImplTest {
 
 			assertThat(result.getContents().get(0).getLikeCount()).isEqualTo(0L);
 			assertThat(result.getContents().get(1).getLikeCount()).isEqualTo(3L);
+		}
+	}
+
+	/**
+	 * lastCategoryId를 입력받지 않은 경우, 카테고리는 최신순으로 조회되어야 한다
+	 * 넉넉히 존재하는 경우 pageSize보다 하나 더 많이 조회해야 한다
+	 * lastCategoryId를 입력받은 경우, lastCategoryId 포함 이전의 카테고리만 조회되어야 한다
+	 */
+	@Nested
+	@DisplayName("findSharedCategories 테스트")
+	class FindSharedCategoriesTest {
+
+		@Test
+		@DisplayName("lastCategoryId를 입력받지 않은 경우, 카테고리는 최신순으로 조회되어야 한다")
+		void shouldReturnCategoryWhenLastCategoryIdIsNullTest() {
+			// given
+			final Id categoryId1 = Id.generateNextId();
+			final Id categoryId2 = Id.generateNextId();
+			final Id memberId = Id.generateNextId();
+			final int pageSize = 3;
+			em.persist(MemberTestHelper.generateMember(memberId));
+			em.persist(CategoryTestHelper.generateSharedCategory("title1", memberId, categoryId1));
+			em.persist(CategoryTestHelper.generateSharedCategory("title2", memberId, categoryId2));
+			em.persist(CardTestHelper.genOxCard(memberId, categoryId1, Id.generateNextId()));
+			em.persist(CardTestHelper.genOxCard(memberId, Id.generateNextId(), Id.generateNextId()));
+
+			// when
+			List<Category> result = categoryRepository.findSharedCategories(
+				pageSize,
+				null
+				, CategorySearchOption.builder().build());
+
+			// then
+			assertThat(result).isNotEmpty();
+			assertThat(result).hasSize(2);
+			assertThat(result.get(0).getCategoryId()).isEqualTo(categoryId2);
+			assertThat(result.get(0).isShared()).isTrue();
+			assertThat(result.get(0).isDeleted()).isFalse();
+			assertThat(result.get(1).getCategoryId()).isEqualTo(categoryId1);
+			assertThat(result.get(1).isShared()).isTrue();
+			assertThat(result.get(1).isDeleted()).isFalse();
+
+		}
+
+		@Test
+		@DisplayName("넉넉히 존재하는 경우 pageSize보다 하나 더 많이 조회해야 한다")
+		void shouldReturnOneMoreCategoryWhenPageSizeTest() {
+			// given
+			final Id categoryId1 = Id.generateNextId();
+			final Id categoryId2 = Id.generateNextId();
+			final Id memberId = Id.generateNextId();
+			final int pageSize = 1;
+			em.persist(MemberTestHelper.generateMember(memberId));
+			em.persist(CategoryTestHelper.generateSharedCategory("title1", memberId, categoryId1));
+			em.persist(CategoryTestHelper.generateSharedCategory("title2", memberId, categoryId2));
+			em.persist(CardTestHelper.genOxCard(memberId, categoryId1, Id.generateNextId()));
+			em.persist(CardTestHelper.genOxCard(memberId, Id.generateNextId(), Id.generateNextId()));
+
+			// when
+			List<Category> result = categoryRepository.findSharedCategories(
+				pageSize,
+				null
+				, CategorySearchOption.builder().build());
+
+			// then
+			assertThat(result).isNotEmpty();
+			assertThat(result).hasSize(pageSize + 1);
+
+		}
+
+		@Test
+		@DisplayName("lastCategoryId를 입력받은 경우, lastCategoryId 포함 이전의 카테고리만 조회되어야 한다")
+		void shouldReturnCategoryWhenLastCategoryIdIsNotNullTest() {
+			// given
+			final Id categoryId1 = Id.generateNextId();
+			final Id categoryId2 = Id.generateNextId();
+			final Id categoryId3 = Id.generateNextId();
+			final Id memberId = Id.generateNextId();
+			final int pageSize = 3;
+			em.persist(MemberTestHelper.generateMember(memberId));
+			em.persist(CategoryTestHelper.generateSharedCategory("title1", memberId, categoryId1));
+			em.persist(CategoryTestHelper.generateSharedCategory("title2", memberId, categoryId2));
+			em.persist(CategoryTestHelper.generateSharedCategory("title3", memberId, categoryId3));
+			em.persist(CardTestHelper.genOxCard(memberId, categoryId1, Id.generateNextId()));
+			em.persist(CardTestHelper.genOxCard(memberId, categoryId2, Id.generateNextId()));
+			em.persist(CardTestHelper.genOxCard(memberId, categoryId3, Id.generateNextId()));
+
+			// when
+			List<Category> result = categoryRepository.findSharedCategories(
+				pageSize,
+				categoryId2
+				, CategorySearchOption.builder().build());
+
+			// then
+			assertThat(result).isNotEmpty();
+			assertThat(result).hasSize(2);
+			assertThat(result.get(0).getCategoryId()).isEqualTo(categoryId2);
+			assertThat(result.get(0).isShared()).isEqualTo(true);
+			assertThat(result.get(0).isDeleted()).isFalse();
+			assertThat(result.get(1).getCategoryId()).isEqualTo(categoryId1);
+			assertThat(result.get(1).isShared()).isEqualTo(true);
+			assertThat(result.get(1).isDeleted()).isFalse();
 		}
 	}
 

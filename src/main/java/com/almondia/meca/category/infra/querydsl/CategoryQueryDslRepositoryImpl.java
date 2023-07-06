@@ -8,6 +8,7 @@ import com.almondia.meca.card.domain.entity.QCard;
 import com.almondia.meca.cardhistory.domain.entity.QCardHistory;
 import com.almondia.meca.category.controller.dto.CategoryWithHistoryResponseDto;
 import com.almondia.meca.category.controller.dto.SharedCategoryResponseDto;
+import com.almondia.meca.category.domain.entity.Category;
 import com.almondia.meca.category.domain.entity.QCategory;
 import com.almondia.meca.common.controller.dto.CursorPage;
 import com.almondia.meca.common.domain.vo.Id;
@@ -195,6 +196,21 @@ public class CategoryQueryDslRepositoryImpl implements CategoryQueryDslRepositor
 			.limit(pageSize + 1)
 			.fetch();
 		return makeCursorPage(pageSize, response);
+	}
+
+	@Override
+	public List<Category> findSharedCategories(int pageSize, Id lastCategoryId,
+		CategorySearchOption categorySearchOption) {
+		return jpaQueryFactory.selectFrom(category)
+			.where(
+				category.isShared.eq(true),
+				category.isDeleted.eq(false),
+				dynamicCursorExpression(lastCategoryId),
+				containTitle(categorySearchOption.getContainTitle())
+			)
+			.orderBy(category.categoryId.uuid.desc())
+			.limit(pageSize + 1)
+			.fetch();
 	}
 
 	private BooleanExpression containTitle(String containTitle) {
