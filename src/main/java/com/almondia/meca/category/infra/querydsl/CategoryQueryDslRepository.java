@@ -20,9 +20,6 @@ public interface CategoryQueryDslRepository {
 
 	CursorPage<SharedCategoryResponseDto> findCategoryShared(int pageSize, Id lastCategoryId);
 
-	CursorPage<SharedCategoryResponseDto> findCategoryShared(int pageSize, Id lastCategoryId,
-		CategorySearchOption categorySearchOption);
-
 	List<Category> findSharedCategories(int pageSize, @Nullable Id lastCategoryId,
 		CategorySearchOption categorySearchOption);
 }
