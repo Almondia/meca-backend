@@ -1,8 +1,10 @@
 package com.almondia.meca.category.application;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +25,10 @@ import com.almondia.meca.category.domain.service.CategoryChecker;
 import com.almondia.meca.category.infra.querydsl.CategorySearchOption;
 import com.almondia.meca.common.controller.dto.CursorPage;
 import com.almondia.meca.common.domain.vo.Id;
+import com.almondia.meca.common.infra.querydsl.SortOrder;
+import com.almondia.meca.member.domain.entity.Member;
+import com.almondia.meca.member.repository.MemberRepository;
+import com.almondia.meca.recommand.domain.repository.CategoryRecommendRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -34,6 +40,8 @@ public class CategoryService {
 	private final CardRepository cardRepository;
 	private final CardHistoryRepository cardHistoryRepository;
 	private final CategoryChecker categoryChecker;
+	private final MemberRepository memberRepository;
+	private final CategoryRecommendRepository categoryRecommendRepository;
 
 	@Transactional
 	public CategoryDto saveCategory(SaveCategoryRequestDto saveCategoryRequestDto, Id memberId) {
@@ -74,18 +82,56 @@ public class CategoryService {
 		int pageSize,
 		Id memberId,
 		Id lastCategoryId,
-		CategorySearchOption categorySearchOption
+		CategorySearchOption searchOption
 	) {
-		return categoryRepository.findCategoryWithStatisticsByMemberId(pageSize, memberId, lastCategoryId,
-			categorySearchOption);
+		// search
+		List<Category> contents = categoryRepository.findCategoriesByMemberId(pageSize, lastCategoryId, searchOption,
+			null, memberId);
+		if (contents.isEmpty()) {
+			return CursorPage.empty();
+		}
+		List<Id> categoryIds = contents.stream().map(Category::getCategoryId).collect(Collectors.toList());
+		Map<Id, Long> counts = cardRepository.countCardsByCategoryIdIsDeletedFalse(categoryIds);
+		Map<Id, Long> recommendCounts = categoryRecommendRepository.findRecommendCountByCategoryIds(categoryIds);
+		Map<Id, Pair<Double, Long>> statistics = cardHistoryRepository.findCardHistoryScoresAvgAndCountsByCategoryIds(
+			categoryIds);
+
+		// combine
+		List<CategoryWithHistoryResponseDto> categoryWithHistoryResponseDtos = contents.stream()
+			.map(category -> new CategoryWithHistoryResponseDto(
+				category,
+				statistics.get(category.getCategoryId()).getFirst(),
+				statistics.get(category.getCategoryId()).getSecond(),
+				counts.getOrDefault(category.getCategoryId(), 0L),
+				recommendCounts.getOrDefault(category.getCategoryId(), 0L)
+			)).collect(Collectors.toList());
+		return CursorPage.of(categoryWithHistoryResponseDtos, pageSize, SortOrder.DESC);
 	}
 
 	@Transactional(readOnly = true)
-	public CursorPage<SharedCategoryResponseDto> findCursorPagingCategoryResponseDto(
+	public CursorPage<SharedCategoryResponseDto> findCursorPagingSharedCategoryResponseDto(
 		int pageSize,
 		Id lastCategoryId,
-		CategorySearchOption categorySearchOption
+		CategorySearchOption searchOption
 	) {
-		return categoryRepository.findCategoryShared(pageSize, lastCategoryId, categorySearchOption);
+		// search
+		List<Category> contents = categoryRepository.findCategories(pageSize, lastCategoryId, searchOption,
+			true);
+		if (contents.isEmpty()) {
+			return CursorPage.empty();
+		}
+		Member member = memberRepository.findById(contents.get(0).getMemberId())
+			.orElseThrow(() -> new IllegalStateException("카테고리가 비정상적입니다. 멤버가 존재하지 않습니다"));
+		List<Id> categoryIds = contents.stream().map(Category::getCategoryId).collect(Collectors.toList());
+		Map<Id, Long> recommendCounts = categoryRecommendRepository.findRecommendCountByCategoryIds(categoryIds);
+		Map<Id, Long> counts = cardRepository.countCardsByCategoryIdIsDeletedFalse(categoryIds);
+
+		// combine
+		List<SharedCategoryResponseDto> sharedCategoryResponseDtos = contents.stream()
+			.filter(category -> counts.get(category.getCategoryId()) != 0L)
+			.map(category -> new SharedCategoryResponseDto(category, member,
+				recommendCounts.get(category.getCategoryId())))
+			.collect(Collectors.toList());
+		return CursorPage.of(sharedCategoryResponseDtos, pageSize, SortOrder.DESC);
 	}
 }

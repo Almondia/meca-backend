@@ -319,7 +319,7 @@ class CategoryControllerTest {
 				.build();
 			Mockito.doReturn(cursorPage)
 				.when(categoryservice)
-				.findCursorPagingCategoryResponseDto(anyInt(), any(), any());
+				.findCursorPagingSharedCategoryResponseDto(anyInt(), any(), any());
 
 			// when
 			ResultActions resultActions = mockMvc.perform(get("/api/v1/categories/share")

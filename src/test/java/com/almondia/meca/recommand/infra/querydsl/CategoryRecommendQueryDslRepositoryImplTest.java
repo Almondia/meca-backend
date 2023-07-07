@@ -3,6 +3,7 @@ package com.almondia.meca.recommand.infra.querydsl;
 import static org.assertj.core.api.Assertions.*;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.EntityManager;
 
@@ -89,6 +90,74 @@ class CategoryRecommendQueryDslRepositoryImplTest {
 			// then
 			assertThat(result).isNotEmpty();
 			assertThat(result).containsExactlyInAnyOrder(categoryId1, categoryId2);
+		}
+	}
+
+	@Nested
+	@DisplayName("findRecommendCountByCategoryIds 테스트")
+	class FindRecommendCountByCategoryIdsTest {
+		@Test
+		@DisplayName("해당 카테고리에 추천이 없는 경우 0을 반환한다")
+		void shouldReturnZeroWhenCategoryHasNoRecommend() {
+			// given
+			final Id categoryId = Id.generateNextId();
+
+			// when
+			Map<Id, Long> idLongMap = categoryRecommendRepository.findRecommendCountByCategoryIds(
+				List.of(categoryId));
+
+			// then
+			assertThat(idLongMap).isNotEmpty();
+			assertThat(idLongMap.get(categoryId)).isEqualTo(0L);
+		}
+
+		@Test
+		@DisplayName("해당 카테고리에 추천이 있는 경우 추천 수 만큼 반환한다")
+		void shouldReturnCountWhenCategoryHasRecommend() {
+			// given
+			final Id categoryId = Id.generateNextId();
+			final Id memberId1 = Id.generateNextId();
+			final Id memberId2 = Id.generateNextId();
+			CategoryRecommend categoryRecommend1 = CategoryRecommendTestHelper.generateCategoryRecommend(categoryId,
+				memberId1);
+			CategoryRecommend categoryRecommend2 = CategoryRecommendTestHelper.generateCategoryRecommend(categoryId,
+				memberId2);
+			persistAll(categoryRecommend1, categoryRecommend2);
+
+			// when
+			Map<Id, Long> idLongMap = categoryRecommendRepository.findRecommendCountByCategoryIds(
+				List.of(categoryId));
+
+			// then
+			assertThat(idLongMap).isNotEmpty();
+			assertThat(idLongMap.get(categoryId)).isEqualTo(2L);
+		}
+
+		@Test
+		@DisplayName("입력된 카테고리ID 만큼 갯수가 존재해야 한다")
+		void shouldReturnCountWhenCategoryHasRecommend2() {
+			// given
+			final Id categoryId1 = Id.generateNextId();
+			final Id categoryId2 = Id.generateNextId();
+			final Id categoryId3 = Id.generateNextId();
+			final Id memberId1 = Id.generateNextId();
+			final Id memberId2 = Id.generateNextId();
+			CategoryRecommend categoryRecommend1 = CategoryRecommendTestHelper.generateCategoryRecommend(categoryId1,
+				memberId1);
+			CategoryRecommend categoryRecommend2 = CategoryRecommendTestHelper.generateCategoryRecommend(categoryId2,
+				memberId2);
+			persistAll(categoryRecommend1, categoryRecommend2);
+
+			// when
+			Map<Id, Long> idLongMap = categoryRecommendRepository.findRecommendCountByCategoryIds(
+				List.of(categoryId1, categoryId2, categoryId3));
+
+			// then
+			assertThat(idLongMap).isNotEmpty();
+			assertThat(idLongMap.get(categoryId1)).isEqualTo(1L);
+			assertThat(idLongMap.get(categoryId2)).isEqualTo(1L);
+			assertThat(idLongMap.get(categoryId3)).isEqualTo(0L);
+			assertThat(idLongMap).hasSize(3);
 		}
 	}
 

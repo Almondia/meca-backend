@@ -2,6 +2,7 @@ package com.almondia.meca.asciidocs.fields.reflection;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -49,6 +50,9 @@ public class FieldVisitorImpl implements FieldVisitor {
 	private List<String> searchCommonField(String path, Field[] fields) {
 		List<String> result = new ArrayList<>();
 		for (Field field : fields) {
+			if (isInvalidModifiers(field)) {
+				continue;
+			}
 			if (commonTypeCheckerManager.isCommonField(field)) {
 				Annotation annotation = field.getAnnotation(Nullable.class);
 				if (annotation != null) {
@@ -64,6 +68,9 @@ public class FieldVisitorImpl implements FieldVisitor {
 	private List<String> searchListField(String path, Field[] fields, Type parameterType) {
 		List<String> result = new ArrayList<>();
 		for (Field field : fields) {
+			if (isInvalidModifiers(field)) {
+				continue;
+			}
 			Type type = field.getGenericType();
 			if (type instanceof ParameterizedType && ((ParameterizedType)type).getRawType().equals(List.class)) {
 				ParameterizedType parameterizedType = (ParameterizedType)type;
@@ -102,6 +109,9 @@ public class FieldVisitorImpl implements FieldVisitor {
 	private List<String> searchObjectField(String path, Field[] fields, @Nullable Type parameterType) {
 		List<String> result = new ArrayList<>();
 		for (Field field : fields) {
+			if (isInvalidModifiers(field)) {
+				continue;
+			}
 			if (commonTypeCheckerManager.isCommonField(field)) {
 				continue;
 			}
@@ -117,6 +127,11 @@ public class FieldVisitorImpl implements FieldVisitor {
 
 	private String makePath(String path, Field field) {
 		return path.isEmpty() ? field.getName() : path + "." + field.getName();
+	}
+
+	private boolean isInvalidModifiers(Field field) {
+		int modifiers = field.getModifiers();
+		return Modifier.isNative(modifiers) || Modifier.isTransient(modifiers) || Modifier.isStatic(modifiers);
 	}
 
 }
