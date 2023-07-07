@@ -370,8 +370,8 @@ class CategoryQueryDslRepositoryImplTest {
 	 * lastCategoryId를 입력받은 경우, lastCategoryId 포함 이전의 카테고리만 조회되어야 한다
 	 */
 	@Nested
-	@DisplayName("findSharedCategories 테스트")
-	class FindSharedCategoriesTest {
+	@DisplayName("findCategories 테스트")
+	class FindCategoriesTest {
 
 		@Test
 		@DisplayName("lastCategoryId를 입력받지 않은 경우, 카테고리는 최신순으로 조회되어야 한다")
@@ -560,6 +560,32 @@ class CategoryQueryDslRepositoryImplTest {
 		// then
 		assertThat(result).isNotEmpty();
 		assertThat(result).hasSize(3);
+	}
+
+	@Nested
+	@DisplayName("findCategoriesByMemberId 메서드 테스트")
+	class FindCategoriesByMemberIdTest {
+
+		@Test
+		@DisplayName("특정 회원 유저의 카테고리를 조회한다")
+		void shouldReturnCategoryByMemberIdTest() {
+			// given
+			final Id memberId1 = Id.generateNextId();
+			final Id memberId2 = Id.generateNextId();
+			final Id categoryId1 = Id.generateNextId();
+			final Id categoryId2 = Id.generateNextId();
+			final Id categoryId3 = Id.generateNextId();
+			em.persist(CategoryTestHelper.generateUnSharedCategory("title1", memberId1, categoryId1));
+			em.persist(CategoryTestHelper.generateSharedCategory("title2", memberId1, categoryId2));
+			em.persist(CategoryTestHelper.generateSharedCategory("titlz3", memberId2, categoryId3));
+
+			// when
+			List<Category> result = categoryRepository.findCategoriesByMemberId(10, null,
+				CategorySearchOption.builder().build(), null, memberId1);
+
+			// then
+			assertThat(result).hasSize(2);
+		}
 	}
 
 }

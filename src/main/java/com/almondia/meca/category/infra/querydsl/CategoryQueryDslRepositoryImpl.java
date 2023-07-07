@@ -2,6 +2,7 @@ package com.almondia.meca.category.infra.querydsl;
 
 import java.util.List;
 
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Repository;
 
 import com.almondia.meca.card.domain.entity.QCard;
@@ -132,6 +133,22 @@ public class CategoryQueryDslRepositoryImpl implements CategoryQueryDslRepositor
 		return jpaQueryFactory.selectFrom(category)
 			.where(
 				isShared(shared),
+				category.isDeleted.eq(false),
+				dynamicCursorExpression(lastCategoryId),
+				containTitle(categorySearchOption.getContainTitle())
+			)
+			.orderBy(category.categoryId.uuid.desc())
+			.limit(pageSize + 1)
+			.fetch();
+	}
+
+	@Override
+	public List<Category> findCategoriesByMemberId(int pageSize, @Nullable Id lastCategoryId,
+		CategorySearchOption categorySearchOption, @Nullable Boolean shared, Id memberId) {
+		return jpaQueryFactory.selectFrom(category)
+			.where(
+				isShared(shared),
+				category.memberId.eq(memberId),
 				category.isDeleted.eq(false),
 				dynamicCursorExpression(lastCategoryId),
 				containTitle(categorySearchOption.getContainTitle())
