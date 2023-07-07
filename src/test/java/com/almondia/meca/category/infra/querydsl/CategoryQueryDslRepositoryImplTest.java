@@ -464,6 +464,34 @@ class CategoryQueryDslRepositoryImplTest {
 			assertThat(result.get(1).isShared()).isEqualTo(true);
 			assertThat(result.get(1).isDeleted()).isFalse();
 		}
+
+		@Test
+		@DisplayName("containTitle 카테고리 옵션을 이용하는 경우 like를 이용해 카테고리를 필터링 검색한다")
+		void shouldReturnFilteringCategoryWhenUsingContainTitleOptionTest() {
+			// given
+			final Id categoryId1 = Id.generateNextId();
+			final Id categoryId2 = Id.generateNextId();
+			final Id categoryId3 = Id.generateNextId();
+			final Id memberId = Id.generateNextId();
+			final int pageSize = 3;
+			em.persist(MemberTestHelper.generateMember(memberId));
+			em.persist(CategoryTestHelper.generateSharedCategory("title1", memberId, categoryId1));
+			em.persist(CategoryTestHelper.generateSharedCategory("title2", memberId, categoryId2));
+			em.persist(CategoryTestHelper.generateSharedCategory("titlz3", memberId, categoryId3));
+			em.persist(CardTestHelper.genOxCard(memberId, categoryId1, Id.generateNextId()));
+			em.persist(CardTestHelper.genOxCard(memberId, categoryId2, Id.generateNextId()));
+			em.persist(CardTestHelper.genOxCard(memberId, categoryId3, Id.generateNextId()));
+
+			// when
+			List<Category> result = categoryRepository.findSharedCategories(
+				pageSize,
+				null
+				, CategorySearchOption.builder().containTitle("title").build());
+
+			// then
+			assertThat(result).isNotEmpty();
+			assertThat(result).hasSize(2);
+		}
 	}
 
 }
