@@ -16,8 +16,6 @@ import com.almondia.meca.common.domain.vo.Id;
 import com.almondia.meca.common.infra.querydsl.SortOrder;
 import com.almondia.meca.member.domain.entity.QMember;
 import com.almondia.meca.recommand.domain.entity.QCategoryRecommend;
-import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.SubQueryExpression;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
@@ -34,98 +32,6 @@ public class CategoryQueryDslRepositoryImpl implements CategoryQueryDslRepositor
 	private static final QCategoryRecommend categoryRecommend = QCategoryRecommend.categoryRecommend;
 
 	private final JPAQueryFactory jpaQueryFactory;
-
-	@Override
-	public CursorPage<CategoryWithHistoryResponseDto> findCategoryWithStatisticsByMemberId(int pageSize, Id memberId,
-		Id lastCategoryId) {
-		SubQueryExpression<Long> subQuery = jpaQueryFactory.select(categoryRecommend.count())
-			.from(categoryRecommend)
-			.where(categoryRecommend.categoryId.eq(category.categoryId),
-				categoryRecommend.isDeleted.eq(false));
-
-		List<CategoryWithHistoryResponseDto> response = jpaQueryFactory.select(Projections.constructor(
-				CategoryWithHistoryResponseDto.class,
-				category.categoryId,
-				category.memberId,
-				category.thumbnail,
-				category.title,
-				category.isDeleted,
-				category.isShared,
-				category.createdAt,
-				category.modifiedAt,
-				cardHistory.score.score.avg(),
-				cardHistory.cardId.countDistinct(),
-				card.cardId.countDistinct(),
-				subQuery
-			))
-			.from(category)
-			.leftJoin(card)
-			.on(
-				category.categoryId.eq(card.categoryId),
-				card.isDeleted.eq(false))
-			.leftJoin(cardHistory)
-			.on(
-				card.cardId.eq(cardHistory.cardId),
-				cardHistory.isDeleted.eq(false)
-			)
-			.where(
-				category.isDeleted.eq(false),
-				eqMemberId(memberId),
-				dynamicCursorExpression(lastCategoryId))
-			.groupBy(category.categoryId)
-			.orderBy(category.categoryId.uuid.desc())
-			.limit(pageSize + 1)
-			.fetch();
-
-		return makeCursorPageWithHistory(pageSize, response);
-	}
-
-	@Override
-	public CursorPage<CategoryWithHistoryResponseDto> findCategoryWithStatisticsByMemberId(int pageSize, Id memberId,
-		Id lastCategoryId, CategorySearchOption categorySearchOption
-	) {
-		SubQueryExpression<Long> subQuery = jpaQueryFactory.select(categoryRecommend.count())
-			.from(categoryRecommend)
-			.where(categoryRecommend.categoryId.eq(category.categoryId),
-				categoryRecommend.isDeleted.eq(false));
-
-		List<CategoryWithHistoryResponseDto> response = jpaQueryFactory.select(Projections.constructor(
-				CategoryWithHistoryResponseDto.class,
-				category.categoryId,
-				category.memberId,
-				category.thumbnail,
-				category.title,
-				category.isDeleted,
-				category.isShared,
-				category.createdAt,
-				category.modifiedAt,
-				cardHistory.score.score.avg(),
-				cardHistory.cardId.countDistinct(),
-				card.cardId.countDistinct(),
-				subQuery
-			))
-			.from(category)
-			.leftJoin(card)
-			.on(
-				category.categoryId.eq(card.categoryId),
-				card.isDeleted.eq(false))
-			.leftJoin(cardHistory)
-			.on(
-				card.cardId.eq(cardHistory.cardId),
-				cardHistory.isDeleted.eq(false)
-			)
-			.where(
-				category.isDeleted.eq(false),
-				eqMemberId(memberId),
-				dynamicCursorExpression(lastCategoryId),
-				containTitle(categorySearchOption.getContainTitle()))
-			.groupBy(category.categoryId)
-			.orderBy(category.categoryId.uuid.desc())
-			.limit(pageSize + 1)
-			.fetch();
-
-		return makeCursorPageWithHistory(pageSize, response);
-	}
 
 	@Override
 	public List<Category> findCategories(int pageSize, Id lastCategoryId,
