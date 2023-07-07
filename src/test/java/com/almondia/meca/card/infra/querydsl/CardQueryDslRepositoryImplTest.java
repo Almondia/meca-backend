@@ -499,6 +499,62 @@ class CardQueryDslRepositoryImplTest {
 		}
 	}
 
+	@Nested
+	@DisplayName("countCardsByCategoryIdIsDeletedFalse 테스트")
+	class CountCardsByCategoryIdIsDeletedFalseTest {
+
+		@Test
+		@DisplayName("카테고리 내의 카드가 존재하지 않으면 0을 리턴해야 한다")
+		void shouldReturnZeroWhenNotCardExistTest() {
+			// given
+			Id categoryId = Id.generateNextId();
+
+			// when
+			Map<Id, Long> counts = cardRepository.countCardsByCategoryIdIsDeletedFalse(List.of(categoryId));
+
+			// then
+			assertThat(counts.get(categoryId)).isEqualTo(0);
+		}
+
+		@Test
+		@DisplayName("카테고리 내의 카드가 존재하는 카드 수만큼 리턴해야 한다")
+		void shouldCountByCardCountTest() {
+			// given
+			Id categoryId1 = Id.generateNextId();
+			Id categoryId2 = Id.generateNextId();
+			Card card1 = CardTestHelper.genOxCard(Id.generateNextId(), categoryId1, Id.generateNextId());
+			Card card2 = CardTestHelper.genOxCard(Id.generateNextId(), categoryId1, Id.generateNextId());
+			Card card3 = CardTestHelper.genOxCard(Id.generateNextId(), categoryId2, Id.generateNextId());
+			entityManager.persist(card1);
+			entityManager.persist(card2);
+			entityManager.persist(card3);
+
+			// when
+			Map<Id, Long> counts = cardRepository.countCardsByCategoryIdIsDeletedFalse(
+				List.of(categoryId1, categoryId2));
+
+			// then
+			assertThat(counts.get(categoryId1)).isEqualTo(2);
+			assertThat(counts.get(categoryId2)).isEqualTo(1);
+		}
+
+		@Test
+		@DisplayName("카드가 있어도 삭제된 경우 카운트하지 않는다")
+		void shouldNotCountWhenCardIsDeletedTest() {
+			// given
+			Id categoryId = Id.generateNextId();
+			Card card = CardTestHelper.genOxCard(Id.generateNextId(), categoryId, Id.generateNextId());
+			card.delete();
+			entityManager.persist(card);
+
+			// when
+			Map<Id, Long> counts = cardRepository.countCardsByCategoryIdIsDeletedFalse(List.of(categoryId));
+
+			// then
+			assertThat(counts.get(categoryId)).isEqualTo(0);
+		}
+	}
+
 	/**
 	 * 1. 카테고리 내의 카드가 존재하지 않으면 빈 리스트를 리턴해야 한다
 	 * 2. 카드가 존재하나 히스토리가 존재하지 않는 경우에도 빈 리스트를 리턴해서는 안된다

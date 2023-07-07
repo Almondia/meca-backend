@@ -1,5 +1,6 @@
 package com.almondia.meca.card.infra.querydsl;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -19,7 +20,9 @@ import com.almondia.meca.category.domain.entity.QCategory;
 import com.almondia.meca.common.domain.vo.Id;
 import com.almondia.meca.common.infra.querydsl.SortOrder;
 import com.almondia.meca.member.domain.entity.QMember;
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.SubQueryExpression;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
@@ -141,13 +144,55 @@ public class CardQueryDslRepositoryImpl implements CardQueryDslRepository {
 	}
 
 	@Override
+	public Map<Id, Long> countCardsByCategoryIdIsDeletedFalse(List<Id> categoryIds) {
+		Map<Id, Long> collect = queryFactory.select(card.categoryId, card.count())
+			.from(card)
+			.where(card.categoryId.in(categoryIds)
+				, card.isDeleted.eq(false))
+			.groupBy(card.categoryId)
+			.fetch()
+			.stream()
+			.collect(Collectors.toMap(
+				tuple -> tuple.get(card.categoryId),
+				tuple -> {
+					Long aLong = tuple.get(1, Long.class);
+					if (aLong == null) {
+						return 0L;
+					}
+					return aLong;
+				}
+			));
+		for (Id categoryId : categoryIds) {
+			collect.putIfAbsent(categoryId, 0L);
+		}
+		return collect;
+	}
+
+	@Override
 	public List<Card> findCardByCategoryIdScoreAsc(Id categoryId, int limit) {
-		return queryFactory.selectFrom(card)
-			.leftJoin(cardHistory).on(card.cardId.eq(cardHistory.cardId))
-			.groupBy(card)
-			.orderBy(cardHistory.score.score.avg().asc())
-			.limit(limit)
+		SubQueryExpression<Double> scoreAvgByCardId = queryFactory
+			.select(cardHistory.score.score.avg())
+			.from(cardHistory)
+			.where(cardHistory.cardId.eq(card.cardId));
+
+		List<Tuple> query = queryFactory.select(card, scoreAvgByCardId)
+			.from(card)
+			.where(card.categoryId.eq(categoryId)
+				.and(card.isDeleted.eq(false)))
+			.limit(1000)
 			.fetch();
+
+		return query.stream()
+			.sorted(Comparator.comparing(tuple -> {
+				Double aDouble = tuple.get(1, Double.class);
+				if (aDouble == null) {
+					return 0.0;
+				}
+				return aDouble;
+			}))
+			.map(tuple -> tuple.get(card))
+			.limit(limit)
+			.collect(Collectors.toList());
 	}
 
 	@Override

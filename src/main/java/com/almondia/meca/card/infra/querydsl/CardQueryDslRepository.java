@@ -24,6 +24,8 @@ public interface CardQueryDslRepository {
 
 	long countCardsByCategoryId(Id categoryId);
 
+	Map<Id, Long> countCardsByCategoryIdIsDeletedFalse(List<Id> categoryIds);
+
 	List<Card> findCardByCategoryIdScoreAsc(Id categoryId, int limit);
 
 	Map<Id, List<Id>> findMapByListOfCardIdAndMemberId(List<Id> cardIds, Id memberId);
