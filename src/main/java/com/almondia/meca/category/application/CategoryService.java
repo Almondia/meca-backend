@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -81,10 +82,30 @@ public class CategoryService {
 		int pageSize,
 		Id memberId,
 		Id lastCategoryId,
-		CategorySearchOption categorySearchOption
+		CategorySearchOption searchOption
 	) {
-		return categoryRepository.findCategoryWithStatisticsByMemberId(pageSize, memberId, lastCategoryId,
-			categorySearchOption);
+		// search
+		List<Category> contents = categoryRepository.findCategoriesByMemberId(pageSize, lastCategoryId, searchOption,
+			null, memberId);
+		if (contents.isEmpty()) {
+			return CursorPage.empty();
+		}
+		List<Id> categoryIds = contents.stream().map(Category::getCategoryId).collect(Collectors.toList());
+		Map<Id, Long> counts = cardRepository.countCardsByCategoryIdIsDeletedFalse(categoryIds);
+		Map<Id, Long> recommendCounts = categoryRecommendRepository.findRecommendCountByCategoryIds(categoryIds);
+		Map<Id, Pair<Double, Long>> statistics = cardHistoryRepository.findCardHistoryScoresAvgAndCountsByCategoryIds(
+			categoryIds);
+
+		// combine
+		List<CategoryWithHistoryResponseDto> categoryWithHistoryResponseDtos = contents.stream()
+			.map(category -> new CategoryWithHistoryResponseDto(
+				category,
+				statistics.get(category.getCategoryId()).getFirst(),
+				statistics.get(category.getCategoryId()).getSecond(),
+				counts.getOrDefault(category.getCategoryId(), 0L),
+				recommendCounts.getOrDefault(category.getCategoryId(), 0L)
+			)).collect(Collectors.toList());
+		return CursorPage.of(categoryWithHistoryResponseDtos, pageSize, SortOrder.DESC);
 	}
 
 	@Transactional(readOnly = true)

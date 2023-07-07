@@ -21,6 +21,7 @@ import com.almondia.meca.card.domain.entity.Card;
 import com.almondia.meca.card.domain.repository.CardRepository;
 import com.almondia.meca.cardhistory.domain.repository.CardHistoryRepository;
 import com.almondia.meca.category.controller.dto.CategoryDto;
+import com.almondia.meca.category.controller.dto.CategoryWithHistoryResponseDto;
 import com.almondia.meca.category.controller.dto.SaveCategoryRequestDto;
 import com.almondia.meca.category.controller.dto.SharedCategoryResponseDto;
 import com.almondia.meca.category.controller.dto.UpdateCategoryRequestDto;
@@ -33,6 +34,7 @@ import com.almondia.meca.common.configuration.jpa.QueryDslConfiguration;
 import com.almondia.meca.common.controller.dto.CursorPage;
 import com.almondia.meca.common.domain.vo.Id;
 import com.almondia.meca.common.domain.vo.Image;
+import com.almondia.meca.helper.CardHistoryTestHelper;
 import com.almondia.meca.helper.CardTestHelper;
 import com.almondia.meca.helper.CategoryTestHelper;
 import com.almondia.meca.helper.MemberTestHelper;
@@ -360,6 +362,190 @@ class CategoryServiceTest {
 
 	/**
 	 * 카테고리가 없는 경우 contents가 비어있어야 함
+	 * 카테고리가 있는 경우, pageSize가 0인 경우 contents가 비어 있어야 함
+	 * share와 상관 없이 조회할 수 있어야 한다
+	 * 다른 멤버의 카테고리를 조회할 수 없다
+	 * 풀이한 카드의 경우 모든 카드의 푼 횟수를 조회한다
+	 * 전체 카드는 풀이한 카드 또는 풀이한 카드와 상관 없이 고유한 카드의 갯수를 조회할 수 있어야 한다
+	 * searchOption의 containTitle을 입력받은 경우 해당 문자열을 포함하는 카테고리만 조회할 수 있어야 한다
+	 */
+	@Nested
+	@DisplayName("개인 카테고리 페이징 조회")
+	@DataJpaTest
+	@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+	@Import({CategoryService.class, QueryDslConfiguration.class})
+	class FindCursorPagingCategoryWithHistoryResponseTest {
+
+		@Autowired
+		EntityManager em;
+
+		@Autowired
+		private CategoryService categoryService;
+
+		@MockBean
+		private CategoryChecker categoryChecker;
+
+		@Test
+		@DisplayName("카테고리가 없는 경우 contents가 비어있어야 함")
+		void findCursorPagingCategoryWithHistoryResponseWithEmptyCategoryTest() {
+			// given
+			Id memberId = Id.generateNextId();
+			Member member = MemberTestHelper.generateMember(memberId);
+
+			// when
+			CursorPage<CategoryWithHistoryResponseDto> result = categoryService.findCursorPagingCategoryWithHistoryResponse(
+				10, memberId, null, CategorySearchOption.builder().build());
+
+			// then
+			assertThat(result.getContents()).isEmpty();
+		}
+
+		@Test
+		@DisplayName("카테고리가 있는 경우, pageSize가 0인 경우 contents가 비어 있어야 함")
+		void findCursorPagingCategoryWithHistoryResponseWithEmptyPageSizeTest() {
+			// given
+			Id memberId = Id.generateNextId();
+			Member member = MemberTestHelper.generateMember(memberId);
+			Category category = CategoryTestHelper.generateUnSharedCategory("title", memberId, memberId);
+			em.persist(member);
+			em.persist(category);
+
+			// when
+			CursorPage<CategoryWithHistoryResponseDto> result = categoryService.findCursorPagingCategoryWithHistoryResponse(
+				0, memberId, null, CategorySearchOption.builder().build());
+
+			// then
+			assertThat(result.getContents()).isEmpty();
+		}
+
+		@Test
+		@DisplayName("share와 상관 없이 조회할 수 있어야 한다")
+		void findCursorPagingCategoryWithHistoryResponseWithShareTest() {
+			// given
+			Id memberId = Id.generateNextId();
+			Id categoryId = Id.generateNextId();
+			Id categoryId1 = Id.generateNextId();
+			Member member = MemberTestHelper.generateMember(memberId);
+			Category category = CategoryTestHelper.generateUnSharedCategory("title", memberId, categoryId);
+			Category category1 = CategoryTestHelper.generateSharedCategory("title", memberId, categoryId1);
+			em.persist(member);
+			em.persist(category);
+			em.persist(category1);
+
+			// when
+			CursorPage<CategoryWithHistoryResponseDto> result = categoryService.findCursorPagingCategoryWithHistoryResponse(
+				10, memberId, null, CategorySearchOption.builder().build());
+
+			// then
+			assertThat(result.getContents()).hasSize(2);
+		}
+
+		@Test
+		@DisplayName("다른 멤버의 카테고리를 조회할 수 없다")
+		void findCursorPagingCategoryWithHistoryResponseWithOtherMemberTest() {
+			// given
+			Id memberId = Id.generateNextId();
+			Id otherMemberId = Id.generateNextId();
+			Id categoryId = Id.generateNextId();
+			Id categoryId1 = Id.generateNextId();
+			Member member = MemberTestHelper.generateMember(memberId);
+			Member otherMember = MemberTestHelper.generateMember(otherMemberId);
+			Category category = CategoryTestHelper.generateUnSharedCategory("title", otherMemberId, categoryId);
+			Category otherCategory = CategoryTestHelper.generateUnSharedCategory("title", otherMemberId, categoryId1);
+			em.persist(member);
+			em.persist(otherMember);
+			em.persist(category);
+			em.persist(otherCategory);
+
+			// when
+			CursorPage<CategoryWithHistoryResponseDto> result = categoryService.findCursorPagingCategoryWithHistoryResponse(
+				10, memberId, null, CategorySearchOption.builder().build());
+
+			// then
+			assertThat(result.getContents()).isEmpty();
+		}
+
+		@Test
+		@DisplayName("풀이한 카드의 경우 모든 카드의 푼 횟수를 조회한다")
+		void findCursorPagingCategoryWithHistoryResponseWithSolvedCardTest() {
+			// given
+			Id memberId = Id.generateNextId();
+			Id categoryId = Id.generateNextId();
+			Id cardId = Id.generateNextId();
+			Id cardId1 = Id.generateNextId();
+			em.persist(MemberTestHelper.generateMember(memberId));
+			em.persist(CategoryTestHelper.generateUnSharedCategory("title", memberId, categoryId));
+			em.persist(CardTestHelper.genOxCard(memberId, categoryId, cardId));
+			em.persist(CardTestHelper.genOxCard(memberId, categoryId, cardId1));
+			em.persist(CardHistoryTestHelper.generateCardHistory(cardId1, memberId));
+			em.persist(CardHistoryTestHelper.generateCardHistory(cardId1, memberId));
+			em.persist(CardHistoryTestHelper.generateCardHistory(cardId1, memberId));
+			em.persist(CardHistoryTestHelper.generateCardHistory(cardId, memberId));
+
+			// when
+			CursorPage<CategoryWithHistoryResponseDto> result = categoryService.findCursorPagingCategoryWithHistoryResponse(
+				10, memberId, null, CategorySearchOption.builder().build());
+
+			// then
+			assertThat(result.getContents().get(0).getSolveCount()).isEqualTo(4L);
+		}
+
+		@Test
+		@DisplayName("전체 카드는 풀이한 카드 또는 풀이한 카드와 상관 없이 고유한 카드의 갯수를 조회할 수 있어야 한다")
+		void findCursorPagingCategoryWithHistoryResponseWithAllCardTest() {
+			// given
+			Id memberId = Id.generateNextId();
+			Id categoryId = Id.generateNextId();
+			Id cardId = Id.generateNextId();
+			Id cardId1 = Id.generateNextId();
+			Id cardId2 = Id.generateNextId();
+			Id cardId3 = Id.generateNextId();
+			em.persist(MemberTestHelper.generateMember(memberId));
+			em.persist(CategoryTestHelper.generateUnSharedCategory("title", memberId, categoryId));
+			em.persist(CardTestHelper.genOxCard(memberId, categoryId, cardId));
+			em.persist(CardTestHelper.genOxCard(memberId, categoryId, cardId1));
+			em.persist(CardTestHelper.genOxCard(memberId, categoryId, cardId2));
+			em.persist(CardTestHelper.genOxCard(memberId, categoryId, cardId3));
+			em.persist(CardHistoryTestHelper.generateCardHistory(cardId1, memberId));
+			em.persist(CardHistoryTestHelper.generateCardHistory(cardId1, memberId));
+			em.persist(CardHistoryTestHelper.generateCardHistory(cardId1, memberId));
+			em.persist(CardHistoryTestHelper.generateCardHistory(cardId, memberId));
+
+			// when
+			CursorPage<CategoryWithHistoryResponseDto> result = categoryService.findCursorPagingCategoryWithHistoryResponse(
+				10, memberId, null, CategorySearchOption.builder().build());
+
+			// then
+			assertThat(result.getContents().get(0).getTotalCount()).isEqualTo(4L);
+		}
+
+		@Test
+		@DisplayName("searchOption의 containTitle을 입력받은 경우 해당 문자열을 포함하는 카테고리만 조회할 수 있어야 한다")
+		void findCursorPagingCategoryWithHistoryResponseWithContainTitleTest() {
+			// given
+			Id memberId = Id.generateNextId();
+			Id categoryId = Id.generateNextId();
+			Id categoryId1 = Id.generateNextId();
+			Id categoryId2 = Id.generateNextId();
+			Id categoryId3 = Id.generateNextId();
+			em.persist(MemberTestHelper.generateMember(memberId));
+			em.persist(CategoryTestHelper.generateUnSharedCategory("title", memberId, categoryId));
+			em.persist(CategoryTestHelper.generateUnSharedCategory("title1", memberId, categoryId1));
+			em.persist(CategoryTestHelper.generateUnSharedCategory("title2", memberId, categoryId2));
+			em.persist(CategoryTestHelper.generateUnSharedCategory("titlz3", memberId, categoryId3));
+
+			// when
+			CursorPage<CategoryWithHistoryResponseDto> result = categoryService.findCursorPagingCategoryWithHistoryResponse(
+				10, memberId, null, CategorySearchOption.builder().containTitle("title").build());
+
+			// then
+			assertThat(result.getContents()).hasSize(3);
+		}
+
+	}
+
+	/**
+	 * 카테고리가 없는 경우 contents가 비어있어야 함
 	 * 카테고리가 있고 내부에 삭제되지 않은 카드가 없다면 카테고리를 조회하면 안됨
 	 * 카테고리가 있고 내부에 삭제된 카드가 1개 이상 있어도 contents는 비어 있어야 함
 	 * 카테고리가 있는 경우, pageSize가 0인 경우 contents가 비어 있어야 함
@@ -465,7 +651,6 @@ class CategoryServiceTest {
 			// then
 			assertThat(result.getContents()).isEmpty();
 		}
-
 	}
 
 }
