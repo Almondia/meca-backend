@@ -17,19 +17,27 @@ import org.springframework.context.annotation.Import;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.access.AccessDeniedException;
 
+import com.almondia.meca.card.domain.entity.Card;
 import com.almondia.meca.card.domain.repository.CardRepository;
 import com.almondia.meca.cardhistory.domain.repository.CardHistoryRepository;
 import com.almondia.meca.category.controller.dto.CategoryDto;
 import com.almondia.meca.category.controller.dto.SaveCategoryRequestDto;
+import com.almondia.meca.category.controller.dto.SharedCategoryResponseDto;
 import com.almondia.meca.category.controller.dto.UpdateCategoryRequestDto;
 import com.almondia.meca.category.domain.entity.Category;
 import com.almondia.meca.category.domain.repository.CategoryRepository;
 import com.almondia.meca.category.domain.service.CategoryChecker;
 import com.almondia.meca.category.domain.vo.Title;
+import com.almondia.meca.category.infra.querydsl.CategorySearchOption;
 import com.almondia.meca.common.configuration.jpa.QueryDslConfiguration;
+import com.almondia.meca.common.controller.dto.CursorPage;
 import com.almondia.meca.common.domain.vo.Id;
 import com.almondia.meca.common.domain.vo.Image;
+import com.almondia.meca.helper.CardTestHelper;
 import com.almondia.meca.helper.CategoryTestHelper;
+import com.almondia.meca.helper.MemberTestHelper;
+import com.almondia.meca.member.domain.entity.Member;
+import com.almondia.meca.member.repository.MemberRepository;
 
 class CategoryServiceTest {
 
@@ -348,6 +356,116 @@ class CategoryServiceTest {
 			assertThatThrownBy(() -> categoryService.deleteCategory(Id.generateNextId(), Id.generateNextId()))
 				.isInstanceOf(AccessDeniedException.class);
 		}
+	}
+
+	/**
+	 * 카테고리가 없는 경우 contents가 비어있어야 함
+	 * 카테고리가 있고 내부에 삭제되지 않은 카드가 없다면 카테고리를 조회하면 안됨
+	 * 카테고리가 있고 내부에 삭제된 카드가 1개 이상 있어도 contents는 비어 있어야 함
+	 * 카테고리가 있는 경우, pageSize가 0인 경우 contents가 비어 있어야 함
+	 */
+	@Nested
+	@DisplayName("공유 카테고리 페이징 조회 테스트")
+	@DataJpaTest
+	@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+	@Import({CategoryService.class, QueryDslConfiguration.class})
+	class FindCursorPagingSharedCategoryResponseDtoTest {
+
+		@Autowired
+		EntityManager em;
+
+		@Autowired
+		private CategoryRepository categoryRepository;
+
+		@Autowired
+		private CategoryService categoryService;
+
+		@Autowired
+		private MemberRepository memberRepository;
+
+		@MockBean
+		private CategoryChecker categoryChecker;
+
+		@MockBean
+		private CardHistoryRepository cardHistoryRepository;
+
+		@Test
+		@DisplayName("카테고리가 없는 경우 contents가 비어있어야 함")
+		void ShouldReturnZeroWhenNotExistContentsTest() {
+			// given
+			final int pageSize = 1;
+
+			// when
+			CursorPage<SharedCategoryResponseDto> result = categoryService.findCursorPagingSharedCategoryResponseDto(
+				pageSize, null, CategorySearchOption.builder().build());
+
+			// then
+			assertThat(result.getContents()).isEmpty();
+		}
+
+		@Test
+		@DisplayName("카테고리가 있고 내부에 삭제되지 않은 카드가 없다면 카테고리를 조회하면 안됨")
+		void shouldHaveContentsWhenExistCategoryAndExistCardTest() {
+			// given
+			final int pageSize = 1;
+			final Id memberId = Id.generateNextId();
+			Member member = MemberTestHelper.generateMember(memberId);
+			memberRepository.save(member);
+			Category category = CategoryTestHelper.generateSharedCategory("title", memberId,
+				Id.generateNextId());
+			categoryRepository.save(category);
+
+			// when
+			CursorPage<SharedCategoryResponseDto> result = categoryService.findCursorPagingSharedCategoryResponseDto(
+				pageSize, null, CategorySearchOption.builder().build());
+
+			// then
+			assertThat(result.getContents()).isEmpty();
+		}
+
+		@Test
+		@DisplayName("카테고리가 있고 내부에 삭제된 카드가 1개 이상 있어도 contents는 비어 있어야 함")
+		void shouldHaveEmptyContentsWhenExistCategoryAndExistDeletedCardTest() {
+			// given
+			final int pageSize = 1;
+			final Id memberId = Id.generateNextId();
+			Member member = MemberTestHelper.generateMember(memberId);
+			memberRepository.save(member);
+			Category category = CategoryTestHelper.generateSharedCategory("title", member.getMemberId(),
+				Id.generateNextId());
+			categoryRepository.save(category);
+			Card card = CardTestHelper.genOxCard(memberId, category.getCategoryId(), member.getMemberId());
+			card.delete();
+			em.persist(card);
+
+			// when
+			CursorPage<SharedCategoryResponseDto> result = categoryService.findCursorPagingSharedCategoryResponseDto(
+				pageSize, null, CategorySearchOption.builder().build());
+
+			// then
+			assertThat(result.getContents()).isEmpty();
+		}
+
+		@Test
+		@DisplayName("카테고리가 있는 경우, pageSize가 0인 경우 contents가 비어 있어야 함")
+		void shouldContentsIsEmptyWhenPageSizeEqZeroTest() {
+			// given
+			final int pageSize = 0;
+			final Id memberId = Id.generateNextId();
+			Member member = MemberTestHelper.generateMember(memberId);
+			memberRepository.save(member);
+			Category category = CategoryTestHelper.generateSharedCategory("title", member.getMemberId(),
+				Id.generateNextId());
+			categoryRepository.save(category);
+
+			// when
+			CursorPage<SharedCategoryResponseDto> result = categoryService.findCursorPagingSharedCategoryResponseDto(
+				pageSize, null, CategorySearchOption.builder().build());
+
+			// then
+			assertThat(result.getContents()).isEmpty();
+		}
+
 	}
 
 }
