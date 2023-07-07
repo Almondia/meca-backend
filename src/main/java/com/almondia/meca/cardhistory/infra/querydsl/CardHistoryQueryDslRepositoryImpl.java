@@ -1,7 +1,10 @@
 package com.almondia.meca.cardhistory.infra.querydsl;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
+import org.springframework.data.util.Pair;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.Assert;
@@ -104,6 +107,33 @@ public class CardHistoryQueryDslRepositoryImpl implements CardHistoryQueryDslRep
 			contents.remove(pageSize);
 		}
 		return new CursorPage<>(contents, hasNext, pageSize, SortOrder.DESC);
+	}
+
+	@Override
+	public Map<Id, Pair<Double, Long>> findCardHistoryScoresAvgAndCountsByCategoryIds(List<Id> categoryIds) {
+		Map<Id, Pair<Double, Long>> collect = jpaQueryFactory.select(card.categoryId, cardHistory.score.score.avg(),
+				cardHistory.count())
+			.from(cardHistory)
+			.innerJoin(card)
+			.on(cardHistory.cardId.eq(card.cardId),
+				card.isDeleted.eq(false))
+			.where(card.categoryId.in(categoryIds),
+				cardHistory.isDeleted.eq(false))
+			.groupBy(card.categoryId)
+			.fetch()
+			.stream()
+			.collect(Collectors.toMap(tuple -> tuple.get(card.categoryId),
+				tuple -> {
+					Double avg = tuple.get(cardHistory.score.score.avg());
+					avg = avg == null ? 0.0 : avg;
+					Long count = tuple.get(cardHistory.count());
+					count = count == null ? 0L : count;
+					return Pair.of(avg, count);
+				}));
+		for (Id categoryId : categoryIds) {
+			collect.putIfAbsent(categoryId, Pair.of(0.0, 0L));
+		}
+		return collect;
 	}
 
 	private BooleanExpression lessOrEqCardHistoryId(Id lastCardHistoryId) {

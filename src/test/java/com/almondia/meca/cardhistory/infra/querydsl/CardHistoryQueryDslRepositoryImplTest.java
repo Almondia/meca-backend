@@ -2,6 +2,9 @@ package com.almondia.meca.cardhistory.infra.querydsl;
 
 import static org.assertj.core.api.Assertions.*;
 
+import java.util.List;
+import java.util.Map;
+
 import javax.persistence.EntityManager;
 
 import org.junit.jupiter.api.DisplayName;
@@ -12,6 +15,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
+import org.springframework.data.util.Pair;
 
 import com.almondia.meca.card.domain.entity.Card;
 import com.almondia.meca.cardhistory.controller.dto.CardHistoryWithCardAndMemberResponseDto;
@@ -204,6 +208,90 @@ class CardHistoryQueryDslRepositoryImplTest {
 			// then
 			assertThat(result.getContents()).hasSize(2);
 			assertThat(result.getHasNext()).isNull();
+		}
+	}
+
+	@Nested
+	@DisplayName("findCardHistoryScoresAvgAndCountsByCategoryIds 테스트")
+	class FindCardHistoryScoresAvgAndCountsByCategoryIdsTest {
+
+		@Test
+		@DisplayName("카테고리 아이디 리스트에 해당하는 카드 히스토리의 평균 점수와 카드 히스토리 개수를 조회한다")
+		void shouldReturnAvgScoresAndCardHistoriesTest() {
+			// given
+			Id memberId = Id.generateNextId();
+			Id categoryId1 = Id.generateNextId();
+			Id categoryId2 = Id.generateNextId();
+			Id cardId1 = Id.generateNextId();
+			Id cardId2 = Id.generateNextId();
+			Id cardHistoryId1 = Id.generateNextId();
+			Id cardHistoryId2 = Id.generateNextId();
+			Id cardHistoryId3 = Id.generateNextId();
+			Id cardHistoryId4 = Id.generateNextId();
+			Category category1 = CategoryTestHelper.generateUnSharedCategory("hello", Id.generateNextId(), categoryId1);
+			Category category2 = CategoryTestHelper.generateSharedCategory("hello", Id.generateNextId(), categoryId2);
+			Card card1 = CardTestHelper.genOxCard(memberId, categoryId1, cardId1);
+			Card card2 = CardTestHelper.genOxCard(memberId, categoryId2, cardId2);
+			CardHistory cardHistory1 = CardHistoryTestHelper.generateCardHistory(cardHistoryId1, cardId1, 10);
+			CardHistory cardHistory2 = CardHistoryTestHelper.generateCardHistory(cardHistoryId2, cardId1, 20);
+			CardHistory cardHistory3 = CardHistoryTestHelper.generateCardHistory(cardHistoryId3, cardId2, 30);
+			CardHistory cardHistory4 = CardHistoryTestHelper.generateCardHistory(cardHistoryId4, cardId2, 40);
+			persistAll(category1, category2, card1, card2, cardHistory1, cardHistory2, cardHistory3, cardHistory4);
+
+			// when
+			Map<Id, Pair<Double, Long>> statistics = cardHistoryRepository.findCardHistoryScoresAvgAndCountsByCategoryIds(
+				List.of(categoryId1, categoryId2));
+
+			// then
+			assertThat(statistics).hasSize(2);
+			assertThat(statistics.get(categoryId1).getFirst()).isEqualTo(15);
+			assertThat(statistics.get(categoryId1).getSecond()).isEqualTo(2);
+			assertThat(statistics.get(categoryId2).getFirst()).isEqualTo(35);
+			assertThat(statistics.get(categoryId2).getSecond()).isEqualTo(2);
+		}
+
+		@Test
+		@DisplayName("카테고리 아이디 리스트가 비어있으면 빈 리스트를 반환한다")
+		void shouldReturnEmptyListWhenCategoryIdsIsEmptyTest() {
+			// given
+			List<Id> categoryIds = List.of();
+
+			// when
+			Map<Id, Pair<Double, Long>> statistics = cardHistoryRepository.findCardHistoryScoresAvgAndCountsByCategoryIds(
+				categoryIds);
+
+			// then
+			assertThat(statistics).isEmpty();
+		}
+
+		@Test
+		@DisplayName("카테고리의 카드 히스토리 정보가 존재하지 않는 경우 해당 카테고리의 평균 점수는 0이다")
+		void shouldReturnZeroAvgScoreWhenCardHistoriesIsEmptyTest() {
+			// given
+			Id categoryId = Id.generateNextId();
+			List<Id> categoryIds = List.of(categoryId);
+
+			// when
+			Map<Id, Pair<Double, Long>> statistics = cardHistoryRepository.findCardHistoryScoresAvgAndCountsByCategoryIds(
+				categoryIds);
+
+			// then
+			assertThat(statistics.get(categoryId)).isEqualTo(Pair.of(0.0, 0L));
+		}
+
+		@Test
+		@DisplayName("카테고리의 카드 히스토리 정보가 존재하지 않는 경우 해당 카테고리의 카드 히스토리 개수는 0이다")
+		void shouldReturnZeroCardHistoryCountWhenCardHistoriesIsEmptyTest() {
+			// given
+			Id categoryId = Id.generateNextId();
+			List<Id> categoryIds = List.of(categoryId);
+
+			// when
+			Map<Id, Pair<Double, Long>> statistics = cardHistoryRepository.findCardHistoryScoresAvgAndCountsByCategoryIds(
+				categoryIds);
+
+			// then
+			assertThat(statistics.get(categoryId)).isEqualTo(Pair.of(0.0, 0L));
 		}
 	}
 
