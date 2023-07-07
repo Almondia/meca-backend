@@ -2,6 +2,7 @@ package com.almondia.meca.category.controller.dto;
 
 import java.time.LocalDateTime;
 
+import com.almondia.meca.category.domain.entity.Category;
 import com.almondia.meca.category.domain.vo.Title;
 import com.almondia.meca.common.domain.vo.Id;
 import com.almondia.meca.common.domain.vo.Image;
@@ -44,6 +45,22 @@ public class CategoryWithHistoryResponseDto {
 		this.scoreAvg = scoreAvg;
 		this.solveCount = solveCount;
 		this.totalCount = totalCount;
+	}
+
+	public CategoryWithHistoryResponseDto(Category category, double scoreAvg, long solveCount, long totalCount,
+		long likeCount) {
+		this.categoryId = category.getCategoryId();
+		this.memberId = category.getMemberId();
+		this.thumbnail = category.getThumbnail();
+		this.title = category.getTitle();
+		this.isDeleted = category.isDeleted();
+		this.isShared = category.isShared();
+		this.createdAt = category.getCreatedAt();
+		this.modifiedAt = category.getModifiedAt();
+		this.scoreAvg = scoreAvg;
+		this.solveCount = solveCount;
+		this.totalCount = totalCount;
+		this.likeCount = likeCount;
 	}
 
 	public void setLikeCount(long likeCount) {
