@@ -127,40 +127,6 @@ public class CategoryQueryDslRepositoryImpl implements CategoryQueryDslRepositor
 	}
 
 	@Override
-	public CursorPage<SharedCategoryResponseDto> findCategoryShared(int pageSize, Id lastCategoryId) {
-		SubQueryExpression<Long> subQuery = jpaQueryFactory.select(categoryRecommend.count())
-			.from(categoryRecommend)
-			.where(categoryRecommend.categoryId.eq(category.categoryId),
-				categoryRecommend.isDeleted.eq(false));
-
-		List<SharedCategoryResponseDto> response = jpaQueryFactory.select(
-				Projections.constructor(SharedCategoryResponseDto.class,
-					category,
-					member,
-					subQuery)
-			)
-			.from(category)
-			.where(
-				category.isShared.eq(true),
-				dynamicCursorExpression(lastCategoryId)
-			)
-			.innerJoin(member)
-			.on(category.memberId.eq(member.memberId),
-				member.isDeleted.eq(false)
-			)
-			.leftJoin(card)
-			.on(category.categoryId.eq(card.categoryId),
-				card.isDeleted.eq(false)
-			)
-			.groupBy(category.categoryId)
-			.having(card.cardId.countDistinct().gt(0))
-			.orderBy(category.categoryId.uuid.desc())
-			.limit(pageSize + 1)
-			.fetch();
-		return makeCursorPage(pageSize, response);
-	}
-
-	@Override
 	public List<Category> findSharedCategories(int pageSize, Id lastCategoryId,
 		CategorySearchOption categorySearchOption) {
 		return jpaQueryFactory.selectFrom(category)
