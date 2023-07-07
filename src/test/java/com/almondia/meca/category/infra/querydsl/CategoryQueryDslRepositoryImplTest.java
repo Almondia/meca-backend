@@ -381,6 +381,8 @@ class CategoryQueryDslRepositoryImplTest {
 			final Id categoryId2 = Id.generateNextId();
 			final Id memberId = Id.generateNextId();
 			final int pageSize = 3;
+			final boolean shared = true;
+
 			em.persist(MemberTestHelper.generateMember(memberId));
 			em.persist(CategoryTestHelper.generateSharedCategory("title1", memberId, categoryId1));
 			em.persist(CategoryTestHelper.generateSharedCategory("title2", memberId, categoryId2));
@@ -391,7 +393,8 @@ class CategoryQueryDslRepositoryImplTest {
 			List<Category> result = categoryRepository.findSharedCategories(
 				pageSize,
 				null
-				, CategorySearchOption.builder().build());
+				, CategorySearchOption.builder().build(),
+				shared);
 
 			// then
 			assertThat(result).isNotEmpty();
@@ -413,6 +416,7 @@ class CategoryQueryDslRepositoryImplTest {
 			final Id categoryId2 = Id.generateNextId();
 			final Id memberId = Id.generateNextId();
 			final int pageSize = 1;
+			final boolean shared = true;
 			em.persist(MemberTestHelper.generateMember(memberId));
 			em.persist(CategoryTestHelper.generateSharedCategory("title1", memberId, categoryId1));
 			em.persist(CategoryTestHelper.generateSharedCategory("title2", memberId, categoryId2));
@@ -423,7 +427,8 @@ class CategoryQueryDslRepositoryImplTest {
 			List<Category> result = categoryRepository.findSharedCategories(
 				pageSize,
 				null
-				, CategorySearchOption.builder().build());
+				, CategorySearchOption.builder().build(),
+				shared);
 
 			// then
 			assertThat(result).isNotEmpty();
@@ -440,6 +445,7 @@ class CategoryQueryDslRepositoryImplTest {
 			final Id categoryId3 = Id.generateNextId();
 			final Id memberId = Id.generateNextId();
 			final int pageSize = 3;
+			final boolean shared = true;
 			em.persist(MemberTestHelper.generateMember(memberId));
 			em.persist(CategoryTestHelper.generateSharedCategory("title1", memberId, categoryId1));
 			em.persist(CategoryTestHelper.generateSharedCategory("title2", memberId, categoryId2));
@@ -451,8 +457,9 @@ class CategoryQueryDslRepositoryImplTest {
 			// when
 			List<Category> result = categoryRepository.findSharedCategories(
 				pageSize,
-				categoryId2
-				, CategorySearchOption.builder().build());
+				categoryId2,
+				CategorySearchOption.builder().build(),
+				shared);
 
 			// then
 			assertThat(result).isNotEmpty();
@@ -474,6 +481,7 @@ class CategoryQueryDslRepositoryImplTest {
 			final Id categoryId3 = Id.generateNextId();
 			final Id memberId = Id.generateNextId();
 			final int pageSize = 3;
+			final boolean shared = true;
 			em.persist(MemberTestHelper.generateMember(memberId));
 			em.persist(CategoryTestHelper.generateSharedCategory("title1", memberId, categoryId1));
 			em.persist(CategoryTestHelper.generateSharedCategory("title2", memberId, categoryId2));
@@ -485,13 +493,73 @@ class CategoryQueryDslRepositoryImplTest {
 			// when
 			List<Category> result = categoryRepository.findSharedCategories(
 				pageSize,
-				null
-				, CategorySearchOption.builder().containTitle("title").build());
+				null,
+				CategorySearchOption.builder().containTitle("title").build(),
+				shared);
 
 			// then
 			assertThat(result).isNotEmpty();
 			assertThat(result).hasSize(2);
 		}
+
+		@Test
+		@DisplayName("shared가 false인 경우 공유되지 않은 카테고리만 조회한다")
+		void shouldSearchUnSharedCategoryWhenSharedFalseTest() {
+			// given
+			final Id categoryId1 = Id.generateNextId();
+			final Id categoryId2 = Id.generateNextId();
+			final Id categoryId3 = Id.generateNextId();
+			final Id memberId = Id.generateNextId();
+			final int pageSize = 3;
+			final boolean shared = false;
+			em.persist(MemberTestHelper.generateMember(memberId));
+			em.persist(CategoryTestHelper.generateUnSharedCategory("title1", memberId, categoryId1));
+			em.persist(CategoryTestHelper.generateSharedCategory("title2", memberId, categoryId2));
+			em.persist(CategoryTestHelper.generateSharedCategory("titlz3", memberId, categoryId3));
+			em.persist(CardTestHelper.genOxCard(memberId, categoryId1, Id.generateNextId()));
+			em.persist(CardTestHelper.genOxCard(memberId, categoryId2, Id.generateNextId()));
+			em.persist(CardTestHelper.genOxCard(memberId, categoryId3, Id.generateNextId()));
+
+			// when
+			List<Category> result = categoryRepository.findSharedCategories(
+				pageSize,
+				null,
+				CategorySearchOption.builder().build(),
+				shared);
+
+			// then
+			assertThat(result).isNotEmpty();
+			assertThat(result).hasSize(1);
+		}
+	}
+
+	@Test
+	@DisplayName("shared가 null인 경우 공유 여부 상관 없이 조회한다")
+	void shouldReturnAllKindsOfSharedCategoryWhenSharedNullTest() {
+		// given
+		final Id categoryId1 = Id.generateNextId();
+		final Id categoryId2 = Id.generateNextId();
+		final Id categoryId3 = Id.generateNextId();
+		final Id memberId = Id.generateNextId();
+		final int pageSize = 3;
+		em.persist(MemberTestHelper.generateMember(memberId));
+		em.persist(CategoryTestHelper.generateUnSharedCategory("title1", memberId, categoryId1));
+		em.persist(CategoryTestHelper.generateSharedCategory("title2", memberId, categoryId2));
+		em.persist(CategoryTestHelper.generateSharedCategory("titlz3", memberId, categoryId3));
+		em.persist(CardTestHelper.genOxCard(memberId, categoryId1, Id.generateNextId()));
+		em.persist(CardTestHelper.genOxCard(memberId, categoryId2, Id.generateNextId()));
+		em.persist(CardTestHelper.genOxCard(memberId, categoryId3, Id.generateNextId()));
+
+		// when
+		List<Category> result = categoryRepository.findSharedCategories(
+			pageSize,
+			null,
+			CategorySearchOption.builder().build(),
+			null);
+
+		// then
+		assertThat(result).isNotEmpty();
+		assertThat(result).hasSize(3);
 	}
 
 }

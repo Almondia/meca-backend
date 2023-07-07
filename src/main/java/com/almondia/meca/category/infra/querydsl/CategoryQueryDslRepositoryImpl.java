@@ -128,10 +128,10 @@ public class CategoryQueryDslRepositoryImpl implements CategoryQueryDslRepositor
 
 	@Override
 	public List<Category> findSharedCategories(int pageSize, Id lastCategoryId,
-		CategorySearchOption categorySearchOption) {
+		CategorySearchOption categorySearchOption, Boolean shared) {
 		return jpaQueryFactory.selectFrom(category)
 			.where(
-				category.isShared.eq(true),
+				isShared(shared),
 				category.isDeleted.eq(false),
 				dynamicCursorExpression(lastCategoryId),
 				containTitle(categorySearchOption.getContainTitle())
@@ -143,6 +143,16 @@ public class CategoryQueryDslRepositoryImpl implements CategoryQueryDslRepositor
 
 	private BooleanExpression containTitle(String containTitle) {
 		return containTitle == null ? null : category.title.title.containsIgnoreCase(containTitle);
+	}
+
+	private BooleanExpression isShared(Boolean shared) {
+		if (shared == null) {
+			return null;
+		}
+		if (shared) {
+			return category.isShared.eq(true);
+		}
+		return category.isShared.eq(false);
 	}
 
 	private BooleanExpression eqMemberId(Id memberId) {
