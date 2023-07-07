@@ -103,6 +103,7 @@ public class CategoryService {
 		List<Id> categoryIds = contents.stream().map(Category::getCategoryId).collect(Collectors.toList());
 		Map<Id, Long> recommendCounts = categoryRecommendRepository.findRecommendCountByCategoryIds(categoryIds);
 		Map<Id, Long> counts = cardRepository.countCardsByCategoryIdIsDeletedFalse(categoryIds);
+
 		// combine
 		List<SharedCategoryResponseDto> sharedCategoryResponseDtos = contents.stream()
 			.filter(category -> counts.get(category.getCategoryId()) != 0L)
