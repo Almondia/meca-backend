@@ -390,7 +390,7 @@ class CategoryQueryDslRepositoryImplTest {
 			em.persist(CardTestHelper.genOxCard(memberId, Id.generateNextId(), Id.generateNextId()));
 
 			// when
-			List<Category> result = categoryRepository.findSharedCategories(
+			List<Category> result = categoryRepository.findCategories(
 				pageSize,
 				null
 				, CategorySearchOption.builder().build(),
@@ -424,7 +424,7 @@ class CategoryQueryDslRepositoryImplTest {
 			em.persist(CardTestHelper.genOxCard(memberId, Id.generateNextId(), Id.generateNextId()));
 
 			// when
-			List<Category> result = categoryRepository.findSharedCategories(
+			List<Category> result = categoryRepository.findCategories(
 				pageSize,
 				null
 				, CategorySearchOption.builder().build(),
@@ -455,7 +455,7 @@ class CategoryQueryDslRepositoryImplTest {
 			em.persist(CardTestHelper.genOxCard(memberId, categoryId3, Id.generateNextId()));
 
 			// when
-			List<Category> result = categoryRepository.findSharedCategories(
+			List<Category> result = categoryRepository.findCategories(
 				pageSize,
 				categoryId2,
 				CategorySearchOption.builder().build(),
@@ -491,7 +491,7 @@ class CategoryQueryDslRepositoryImplTest {
 			em.persist(CardTestHelper.genOxCard(memberId, categoryId3, Id.generateNextId()));
 
 			// when
-			List<Category> result = categoryRepository.findSharedCategories(
+			List<Category> result = categoryRepository.findCategories(
 				pageSize,
 				null,
 				CategorySearchOption.builder().containTitle("title").build(),
@@ -521,7 +521,7 @@ class CategoryQueryDslRepositoryImplTest {
 			em.persist(CardTestHelper.genOxCard(memberId, categoryId3, Id.generateNextId()));
 
 			// when
-			List<Category> result = categoryRepository.findSharedCategories(
+			List<Category> result = categoryRepository.findCategories(
 				pageSize,
 				null,
 				CategorySearchOption.builder().build(),
@@ -551,7 +551,7 @@ class CategoryQueryDslRepositoryImplTest {
 		em.persist(CardTestHelper.genOxCard(memberId, categoryId3, Id.generateNextId()));
 
 		// when
-		List<Category> result = categoryRepository.findSharedCategories(
+		List<Category> result = categoryRepository.findCategories(
 			pageSize,
 			null,
 			CategorySearchOption.builder().build(),

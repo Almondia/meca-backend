@@ -94,7 +94,7 @@ public class CategoryService {
 		CategorySearchOption searchOption
 	) {
 		// search
-		List<Category> contents = categoryRepository.findSharedCategories(pageSize, lastCategoryId, searchOption,
+		List<Category> contents = categoryRepository.findCategories(pageSize, lastCategoryId, searchOption,
 			true);
 		if (contents.isEmpty()) {
 			return CursorPage.empty();

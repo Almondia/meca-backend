@@ -127,7 +127,7 @@ public class CategoryQueryDslRepositoryImpl implements CategoryQueryDslRepositor
 	}
 
 	@Override
-	public List<Category> findSharedCategories(int pageSize, Id lastCategoryId,
+	public List<Category> findCategories(int pageSize, Id lastCategoryId,
 		CategorySearchOption categorySearchOption, Boolean shared) {
 		return jpaQueryFactory.selectFrom(category)
 			.where(
