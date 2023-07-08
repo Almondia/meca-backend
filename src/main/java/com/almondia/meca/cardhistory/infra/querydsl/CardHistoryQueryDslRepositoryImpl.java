@@ -36,28 +36,17 @@ public class CardHistoryQueryDslRepositoryImpl implements CardHistoryQueryDslRep
 
 	@Override
 	public CursorPage<CardHistoryWithCardAndMemberResponseDto> findCardHistoriesByCardId(@NonNull Id cardId,
-		int pageSize,
-		Id lastCardHistoryId) {
+		int pageSize, Id lastCardHistoryId) {
 		Assert.isTrue(pageSize >= 0, "pageSize must be greater than or equal to 0");
 		Assert.isTrue(pageSize <= 1000, "pageSize must be less than or equal to 1000");
 
 		List<CardHistoryWithCardAndMemberResponseDto> contents = jpaQueryFactory.select(
-				Projections.constructor(CardHistoryWithCardAndMemberResponseDto.class,
-					cardHistory,
-					cardHistory.cardId,
-					member.memberId,
-					member.name,
-					cardHistory.cardSnapShot
-				))
+				Projections.constructor(CardHistoryWithCardAndMemberResponseDto.class, cardHistory, cardHistory.cardId,
+					member.memberId, member.name, cardHistory.cardSnapShot))
 			.from(cardHistory)
 			.innerJoin(member)
-			.on(
-				cardHistory.solvedMemberId.eq(member.memberId),
-				member.isDeleted.eq(false)
-			)
-			.where(
-				cardHistory.isDeleted.eq(false),
-				cardHistory.cardId.eq(cardId),
+			.on(cardHistory.solvedMemberId.eq(member.memberId), member.isDeleted.eq(false))
+			.where(cardHistory.isDeleted.eq(false), cardHistory.cardId.eq(cardId),
 				lessOrEqCardHistoryId(lastCardHistoryId))
 			.orderBy(cardHistory.cardHistoryId.uuid.desc())
 			.limit(pageSize + 1)
@@ -74,28 +63,17 @@ public class CardHistoryQueryDslRepositoryImpl implements CardHistoryQueryDslRep
 
 	@Override
 	public CursorPage<CardHistoryWithCardAndMemberResponseDto> findCardHistoriesBySolvedMemberId(
-		@NonNull Id solvedMemberId,
-		int pageSize, Id lastCardHistoryId) {
+		@NonNull Id solvedMemberId, int pageSize, Id lastCardHistoryId) {
 		Assert.isTrue(pageSize >= 0, "pageSize must be greater than or equal to 0");
 		Assert.isTrue(pageSize <= 1000, "pageSize must be less than or equal to 1000");
 
 		List<CardHistoryWithCardAndMemberResponseDto> contents = jpaQueryFactory.select(
-				Projections.constructor(CardHistoryWithCardAndMemberResponseDto.class,
-					cardHistory,
-					cardHistory.cardId,
-					member.memberId,
-					member.name,
-					cardHistory.cardSnapShot
-				))
+				Projections.constructor(CardHistoryWithCardAndMemberResponseDto.class, cardHistory, cardHistory.cardId,
+					member.memberId, member.name, cardHistory.cardSnapShot))
 			.from(cardHistory)
 			.innerJoin(member)
-			.on(
-				cardHistory.solvedMemberId.eq(member.memberId),
-				member.isDeleted.eq(false)
-			)
-			.where(
-				cardHistory.solvedMemberId.eq(solvedMemberId),
-				cardHistory.isDeleted.eq(false),
+			.on(cardHistory.solvedMemberId.eq(member.memberId), member.isDeleted.eq(false))
+			.where(cardHistory.solvedMemberId.eq(solvedMemberId), cardHistory.isDeleted.eq(false),
 				lessOrEqCardHistoryId(lastCardHistoryId))
 			.orderBy(cardHistory.cardHistoryId.uuid.desc())
 			.limit(pageSize + 1)
@@ -112,24 +90,23 @@ public class CardHistoryQueryDslRepositoryImpl implements CardHistoryQueryDslRep
 	@Override
 	public Map<Id, Pair<Double, Long>> findCardHistoryScoresAvgAndCountsByCategoryIds(List<Id> categoryIds) {
 		Map<Id, Pair<Double, Long>> collect = jpaQueryFactory.select(card.categoryId, cardHistory.score.score.avg(),
-				cardHistory.count())
+				cardHistory.cardId.countDistinct())
 			.from(cardHistory)
 			.innerJoin(card)
 			.on(cardHistory.cardId.eq(card.cardId),
-				card.isDeleted.eq(false))
-			.where(card.categoryId.in(categoryIds),
-				cardHistory.isDeleted.eq(false))
+				card.isDeleted.eq(false)
+			)
+			.where(card.categoryId.in(categoryIds), cardHistory.isDeleted.eq(false))
 			.groupBy(card.categoryId)
 			.fetch()
 			.stream()
-			.collect(Collectors.toMap(tuple -> tuple.get(card.categoryId),
-				tuple -> {
-					Double avg = tuple.get(cardHistory.score.score.avg());
-					avg = avg == null ? 0.0 : avg;
-					Long count = tuple.get(cardHistory.count());
-					count = count == null ? 0L : count;
-					return Pair.of(avg, count);
-				}));
+			.collect(Collectors.toMap(tuple -> tuple.get(card.categoryId), tuple -> {
+				Double avg = tuple.get(cardHistory.score.score.avg());
+				avg = avg == null ? 0.0 : avg;
+				Long count = tuple.get(cardHistory.cardId.countDistinct());
+				count = count == null ? 0L : count;
+				return Pair.of(avg, count);
+			}));
 		for (Id categoryId : categoryIds) {
 			collect.putIfAbsent(categoryId, Pair.of(0.0, 0L));
 		}
