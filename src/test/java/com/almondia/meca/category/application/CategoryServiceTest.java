@@ -365,7 +365,7 @@ class CategoryServiceTest {
 	 * 카테고리가 있는 경우, pageSize가 0인 경우 contents가 비어 있어야 함
 	 * share와 상관 없이 조회할 수 있어야 한다
 	 * 다른 멤버의 카테고리를 조회할 수 없다
-	 * 풀이한 카드의 경우 모든 카드의 푼 횟수를 조회한다
+	 * 풀이한 카드의 경우  푼 카드의 갯수를 조회한다
 	 * 전체 카드는 풀이한 카드 또는 풀이한 카드와 상관 없이 고유한 카드의 갯수를 조회할 수 있어야 한다
 	 * searchOption의 containTitle을 입력받은 경우 해당 문자열을 포함하는 카테고리만 조회할 수 있어야 한다
 	 */
@@ -466,7 +466,7 @@ class CategoryServiceTest {
 		}
 
 		@Test
-		@DisplayName("풀이한 카드의 경우 모든 카드의 푼 횟수를 조회한다")
+		@DisplayName("풀이한 카드의 경우  푼 카드의 갯수를 조회한다")
 		void findCursorPagingCategoryWithHistoryResponseWithSolvedCardTest() {
 			// given
 			Id memberId = Id.generateNextId();
@@ -487,7 +487,7 @@ class CategoryServiceTest {
 				10, memberId, null, CategorySearchOption.builder().build());
 
 			// then
-			assertThat(result.getContents().get(0).getSolveCount()).isEqualTo(4L);
+			assertThat(result.getContents().get(0).getSolveCount()).isEqualTo(2L);
 		}
 
 		@Test
