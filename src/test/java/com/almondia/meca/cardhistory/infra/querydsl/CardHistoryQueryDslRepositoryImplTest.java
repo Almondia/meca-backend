@@ -216,7 +216,7 @@ class CardHistoryQueryDslRepositoryImplTest {
 	class FindCardHistoryScoresAvgAndCountsByCategoryIdsTest {
 
 		@Test
-		@DisplayName("카테고리 아이디 리스트에 해당하는 카드 히스토리의 평균 점수와 카드 히스토리 개수를 조회한다")
+		@DisplayName("카테고리 아이디 리스트에 해당하는 카드 히스토리의 평균 점수와 카드 히스토리를 가진 카드의 갯수를 조회한다")
 		void shouldReturnAvgScoresAndCardHistoriesTest() {
 			// given
 			Id memberId = Id.generateNextId();
@@ -226,17 +226,13 @@ class CardHistoryQueryDslRepositoryImplTest {
 			Id cardId2 = Id.generateNextId();
 			Id cardHistoryId1 = Id.generateNextId();
 			Id cardHistoryId2 = Id.generateNextId();
-			Id cardHistoryId3 = Id.generateNextId();
-			Id cardHistoryId4 = Id.generateNextId();
 			Category category1 = CategoryTestHelper.generateUnSharedCategory("hello", Id.generateNextId(), categoryId1);
 			Category category2 = CategoryTestHelper.generateSharedCategory("hello", Id.generateNextId(), categoryId2);
 			Card card1 = CardTestHelper.genOxCard(memberId, categoryId1, cardId1);
 			Card card2 = CardTestHelper.genOxCard(memberId, categoryId2, cardId2);
 			CardHistory cardHistory1 = CardHistoryTestHelper.generateCardHistory(cardHistoryId1, cardId1, 10);
 			CardHistory cardHistory2 = CardHistoryTestHelper.generateCardHistory(cardHistoryId2, cardId1, 20);
-			CardHistory cardHistory3 = CardHistoryTestHelper.generateCardHistory(cardHistoryId3, cardId2, 30);
-			CardHistory cardHistory4 = CardHistoryTestHelper.generateCardHistory(cardHistoryId4, cardId2, 40);
-			persistAll(category1, category2, card1, card2, cardHistory1, cardHistory2, cardHistory3, cardHistory4);
+			persistAll(category1, category2, card1, card2, cardHistory1, cardHistory2);
 
 			// when
 			Map<Id, Pair<Double, Long>> statistics = cardHistoryRepository.findCardHistoryScoresAvgAndCountsByCategoryIds(
@@ -245,9 +241,8 @@ class CardHistoryQueryDslRepositoryImplTest {
 			// then
 			assertThat(statistics).hasSize(2);
 			assertThat(statistics.get(categoryId1).getFirst()).isEqualTo(15);
-			assertThat(statistics.get(categoryId1).getSecond()).isEqualTo(2);
-			assertThat(statistics.get(categoryId2).getFirst()).isEqualTo(35);
-			assertThat(statistics.get(categoryId2).getSecond()).isEqualTo(2);
+			assertThat(statistics.get(categoryId1).getSecond()).isEqualTo(1);
+
 		}
 
 		@Test

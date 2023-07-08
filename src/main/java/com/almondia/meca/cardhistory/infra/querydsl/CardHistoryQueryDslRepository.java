@@ -19,5 +19,11 @@ public interface CardHistoryQueryDslRepository {
 		int pageSize,
 		Id lastCardHistoryId);
 
+	/**
+	 * 카드 히스토리 통계와 카드 히스토리와 연결된 고유한 카드(문제를 푼 카드) 갯수를 쿼리해서 가져옴.
+	 *
+	 * @param categoryIds 카테고리 아이디 리스트
+	 * @return 카테고리 아이디를 키로 하는 카드 히스토리 통계와 카드 히스토리와 연결된 고유한 카드(문제를 푼 카드) 갯수
+	 */
 	Map<Id, Pair<Double, Long>> findCardHistoryScoresAvgAndCountsByCategoryIds(List<Id> categoryIds);
 }
