@@ -27,7 +27,7 @@ import com.almondia.meca.common.controller.dto.CursorPage;
 import com.almondia.meca.common.domain.vo.Id;
 import com.almondia.meca.common.infra.querydsl.SortOrder;
 import com.almondia.meca.member.domain.entity.Member;
-import com.almondia.meca.member.repository.MemberRepository;
+import com.almondia.meca.member.domain.repository.MemberRepository;
 import com.almondia.meca.recommand.domain.repository.CategoryRecommendRepository;
 
 import lombok.RequiredArgsConstructor;

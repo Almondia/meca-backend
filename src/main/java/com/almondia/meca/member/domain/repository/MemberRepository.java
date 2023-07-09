@@ -1,4 +1,4 @@
-package com.almondia.meca.member.repository;
+package com.almondia.meca.member.domain.repository;
 
 import java.util.Optional;
 
