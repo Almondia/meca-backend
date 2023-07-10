@@ -20,11 +20,11 @@ import com.almondia.meca.helper.MemberTestHelper;
 import com.almondia.meca.member.controller.dto.MemberDto;
 import com.almondia.meca.member.controller.dto.UpdateMemberRequestDto;
 import com.almondia.meca.member.domain.entity.Member;
+import com.almondia.meca.member.domain.repository.MemberRepository;
 import com.almondia.meca.member.domain.vo.Email;
 import com.almondia.meca.member.domain.vo.Name;
 import com.almondia.meca.member.domain.vo.OAuthType;
 import com.almondia.meca.member.domain.vo.Role;
-import com.almondia.meca.member.repository.MemberRepository;
 
 /**
  * saveOAuthAttribute 요청시 성공적으로 회원을 db에 저장해야한다.

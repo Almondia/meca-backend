@@ -39,7 +39,7 @@ import com.almondia.meca.helper.CardTestHelper;
 import com.almondia.meca.helper.CategoryTestHelper;
 import com.almondia.meca.helper.MemberTestHelper;
 import com.almondia.meca.member.domain.entity.Member;
-import com.almondia.meca.member.repository.MemberRepository;
+import com.almondia.meca.member.domain.repository.MemberRepository;
 
 class CategoryServiceTest {
 

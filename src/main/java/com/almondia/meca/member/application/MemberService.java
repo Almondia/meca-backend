@@ -9,10 +9,10 @@ import com.almondia.meca.member.application.helper.MemberMapper;
 import com.almondia.meca.member.controller.dto.MemberDto;
 import com.almondia.meca.member.controller.dto.UpdateMemberRequestDto;
 import com.almondia.meca.member.domain.entity.Member;
+import com.almondia.meca.member.domain.repository.MemberRepository;
 import com.almondia.meca.member.domain.vo.Email;
 import com.almondia.meca.member.domain.vo.Name;
 import com.almondia.meca.member.domain.vo.Role;
-import com.almondia.meca.member.repository.MemberRepository;
 
 import lombok.RequiredArgsConstructor;
 
