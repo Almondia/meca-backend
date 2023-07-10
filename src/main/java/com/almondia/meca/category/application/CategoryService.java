@@ -120,8 +120,9 @@ public class CategoryService {
 		if (contents.isEmpty()) {
 			return CursorPage.empty();
 		}
-		Member member = memberRepository.findById(contents.get(0).getMemberId())
-			.orElseThrow(() -> new IllegalStateException("카테고리가 비정상적입니다. 멤버가 존재하지 않습니다"));
+		Map<Id, Member> memberMap = memberRepository.findMemberMapByIds(contents.stream()
+			.map(Category::getMemberId)
+			.collect(Collectors.toList()));
 		List<Id> categoryIds = contents.stream().map(Category::getCategoryId).collect(Collectors.toList());
 		Map<Id, Long> recommendCounts = categoryRecommendRepository.findRecommendCountByCategoryIds(categoryIds);
 		Map<Id, Long> counts = cardRepository.countCardsByCategoryIdIsDeletedFalse(categoryIds);
@@ -129,7 +130,7 @@ public class CategoryService {
 		// combine
 		List<SharedCategoryResponseDto> sharedCategoryResponseDtos = contents.stream()
 			.filter(category -> counts.get(category.getCategoryId()) != 0L)
-			.map(category -> new SharedCategoryResponseDto(category, member,
+			.map(category -> new SharedCategoryResponseDto(category, memberMap.get(category.getMemberId()),
 				recommendCounts.get(category.getCategoryId())))
 			.collect(Collectors.toList());
 		return CursorPage.of(sharedCategoryResponseDtos, pageSize, SortOrder.DESC);
