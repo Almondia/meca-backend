@@ -55,15 +55,27 @@ jobs:
       - name: Deploy to ec2
         uses: appleboy/ssh-action@master
         with:
-          key: ${{ secrets.PROD_EC2_KEY }}
-          host: ${{ secrets.PROD_EC2_HOST }}
-          username: ${{ secrets.PROD_EC2_USERNAME }}
+          host: ${{secrets.DEV_HOST}}
+          username: ${{secrets.DEV_USERNAME}}
+          password: ${{secrets.DEV_PASSWORD}}
           port: 22
           script: |
             docker-compose down
             sudo docker image prune -f
             sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/meca:latest
             docker-compose up -d
+      #      - name: Deploy to ec2
+      #        uses: appleboy/ssh-action@master
+      #        with:
+      #          key: ${{ secrets.PROD_EC2_KEY }}
+      #          host: ${{ secrets.PROD_EC2_HOST }}
+      #          username: ${{ secrets.PROD_EC2_USERNAME }}
+      #          port: 22
+      #          script: |
+      #            docker-compose down
+      #            sudo docker image prune -f
+      #            sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/meca:latest
+      #            docker-compose up -d
 
       - name: Close Docker Container after build and test
         run: docker-compose -f docker-compose-test.yml down
