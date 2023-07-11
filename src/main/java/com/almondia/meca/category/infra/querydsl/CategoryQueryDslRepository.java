@@ -20,4 +20,7 @@ public interface CategoryQueryDslRepository {
 	 */
 	List<Category> findCategoriesByMemberId(int pageSize, @Nullable Id lastCategoryId,
 		CategorySearchOption categorySearchOption, @Nullable Boolean shared, Id memberId);
+
+	List<Category> findSharedCategoriesByRecommend(int pageSize, @Nullable Id lastCategoryId,
+		CategorySearchOption categorySearchOption, Id IdWhoRecommend);
 }

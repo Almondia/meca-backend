@@ -21,6 +21,8 @@ import com.almondia.meca.common.domain.vo.Id;
 import com.almondia.meca.helper.CardTestHelper;
 import com.almondia.meca.helper.CategoryTestHelper;
 import com.almondia.meca.helper.MemberTestHelper;
+import com.almondia.meca.helper.recommend.CategoryRecommendTestHelper;
+import com.almondia.meca.recommand.domain.entity.CategoryRecommend;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -254,6 +256,137 @@ class CategoryQueryDslRepositoryImplTest {
 
 			// then
 			assertThat(result).hasSize(2);
+		}
+	}
+
+	/**
+	 * 공유된 카테고리만을 조회해야 한다
+	 * 추천한 사람의 카테고리를 조회해야 한다
+	 * 삭제된 추천의 카테고리를 조회하면 안된다
+	 * 삭제된 카테고리를 조회하면 안된다
+	 * lastCateogy를 입력하면 그 정보를 포함 및 이전에 생성된 카테고리를 조회한다
+	 */
+	@Nested
+	@DisplayName("findSharedCategoriesByRecommend")
+	class FindSharedCategoriesByRecommendTest {
+
+		@Test
+		@DisplayName("공유된 카테고리만을 조회해야 한다")
+		void shouldReturnSharedCategoryTest() {
+			// given
+			final Id memberId1 = Id.generateNextId();
+			final Id categoryId1 = Id.generateNextId();
+			final Id categoryId2 = Id.generateNextId();
+			em.persist(CategoryTestHelper.generateUnSharedCategory("title1", memberId1, categoryId1));
+			em.persist(CategoryTestHelper.generateSharedCategory("title2", memberId1, categoryId2));
+			em.persist(CategoryRecommendTestHelper.generateCategoryRecommend(categoryId1, memberId1));
+			em.persist(CategoryRecommendTestHelper.generateCategoryRecommend(categoryId2, memberId1));
+			em.persist(CategoryRecommendTestHelper.generateCategoryRecommend(categoryId2, memberId1));
+			em.persist(CategoryRecommendTestHelper.generateCategoryRecommend(categoryId2, memberId1));
+
+			// when
+			List<Category> result = categoryRepository.findSharedCategoriesByRecommend(10, null,
+				CategorySearchOption.builder().build(), memberId1);
+
+			// then
+			assertThat(result).hasSize(1);
+			assertThat(result.get(0).getCategoryId()).isEqualTo(categoryId2);
+		}
+
+		@Test
+		@DisplayName("추천한 사람의 카테고리를 조회해야 한다")
+		void shouldReturnCategoryByRecommendMemberTest() {
+			// given
+			final Id memberId1 = Id.generateNextId();
+			final Id memberId2 = Id.generateNextId();
+			final Id categoryId1 = Id.generateNextId();
+			final Id categoryId2 = Id.generateNextId();
+			em.persist(CategoryTestHelper.generateSharedCategory("title1", memberId1, categoryId1));
+			em.persist(CategoryTestHelper.generateSharedCategory("title2", memberId1, categoryId2));
+			em.persist(CategoryRecommendTestHelper.generateCategoryRecommend(categoryId1, memberId1));
+			em.persist(CategoryRecommendTestHelper.generateCategoryRecommend(categoryId2, memberId1));
+			em.persist(CategoryRecommendTestHelper.generateCategoryRecommend(categoryId2, memberId2));
+			em.persist(CategoryRecommendTestHelper.generateCategoryRecommend(categoryId2, memberId2));
+
+			// when
+			List<Category> result = categoryRepository.findSharedCategoriesByRecommend(10, null,
+				CategorySearchOption.builder().build(), memberId2);
+
+			// then
+			assertThat(result).hasSize(1);
+			assertThat(result.get(0).getCategoryId()).isEqualTo(categoryId2);
+		}
+
+		@Test
+		@DisplayName("삭제된 추천의 카테고리를 조회하면 안된다")
+		void shouldNotReturnCategoryByDeletedRecommendTest() {
+			// given
+			final Id memberId1 = Id.generateNextId();
+			final Id memberId2 = Id.generateNextId();
+			final Id categoryId1 = Id.generateNextId();
+			final Id categoryId2 = Id.generateNextId();
+			em.persist(CategoryTestHelper.generateSharedCategory("title1", memberId1, categoryId1));
+			em.persist(CategoryTestHelper.generateSharedCategory("title2", memberId1, categoryId2));
+			em.persist(CategoryRecommendTestHelper.generateCategoryRecommend(categoryId1, memberId1));
+			CategoryRecommend categoryRecommend = CategoryRecommendTestHelper.generateCategoryRecommend(categoryId2,
+				memberId2);
+			categoryRecommend.delete();
+			em.persist(categoryRecommend);
+
+			// when
+			List<Category> result = categoryRepository.findSharedCategoriesByRecommend(10, null,
+				CategorySearchOption.builder().build(), memberId2);
+
+			// then
+			assertThat(result).hasSize(0);
+		}
+
+		@Test
+		@DisplayName("삭제된 카테고리를 조회하면 안된다")
+		void shouldNotReturnCategoryIsDeletedTrueTest() {
+			// given
+			final Id memberId1 = Id.generateNextId();
+			final Id memberId2 = Id.generateNextId();
+			final Id categoryId1 = Id.generateNextId();
+			final Id categoryId2 = Id.generateNextId();
+			em.persist(CategoryTestHelper.generateSharedCategory("title1", memberId1, categoryId1));
+			Category category = CategoryTestHelper.generateSharedCategory("title2", memberId1, categoryId2);
+			category.delete();
+			em.persist(category);
+			em.persist(CategoryRecommendTestHelper.generateCategoryRecommend(categoryId1, memberId1));
+			em.persist(CategoryRecommendTestHelper.generateCategoryRecommend(categoryId2, memberId2));
+
+			// when
+			List<Category> result = categoryRepository.findSharedCategoriesByRecommend(10, null,
+				CategorySearchOption.builder().build(), memberId2);
+
+			// then
+			assertThat(result).hasSize(0);
+		}
+
+		@Test
+		@DisplayName("lastCateogy를 입력하면 그 정보를 포함 및 이전에 생성된 카테고리를 조회한다")
+		void shouldReturnCategoryBeforeCreatedWhenInputLastCategoryIdTest() {
+			// given
+			final Id memberId1 = Id.generateNextId();
+			final Id categoryId1 = Id.generateNextId();
+			final Id categoryId2 = Id.generateNextId();
+			final Id categoryId3 = Id.generateNextId();
+			em.persist(CategoryTestHelper.generateSharedCategory("title1", memberId1, categoryId1));
+			em.persist(CategoryTestHelper.generateSharedCategory("title2", memberId1, categoryId2));
+			em.persist(CategoryTestHelper.generateSharedCategory("title3", memberId1, categoryId3));
+			em.persist(CategoryRecommendTestHelper.generateCategoryRecommend(categoryId1, memberId1));
+			em.persist(CategoryRecommendTestHelper.generateCategoryRecommend(categoryId2, memberId1));
+			em.persist(CategoryRecommendTestHelper.generateCategoryRecommend(categoryId3, memberId1));
+
+			// when
+			List<Category> result = categoryRepository.findSharedCategoriesByRecommend(10, categoryId2,
+				CategorySearchOption.builder().build(), memberId1);
+
+			// then
+			assertThat(result).hasSize(2);
+			assertThat(result.get(0).getCategoryId()).isEqualTo(categoryId2);
+			assertThat(result.get(1).getCategoryId()).isEqualTo(categoryId1);
 		}
 	}
 

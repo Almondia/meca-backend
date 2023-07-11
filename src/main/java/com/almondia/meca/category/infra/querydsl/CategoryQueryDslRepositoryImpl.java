@@ -64,6 +64,26 @@ public class CategoryQueryDslRepositoryImpl implements CategoryQueryDslRepositor
 			.fetch();
 	}
 
+	@Override
+	public List<Category> findSharedCategoriesByRecommend(int pageSize, @Nullable Id lastCategoryId,
+		CategorySearchOption categorySearchOption, Id IdWhoRecommend) {
+		return jpaQueryFactory.selectDistinct(category)
+			.from(category)
+			.innerJoin(categoryRecommend)
+			.on(category.categoryId.eq(categoryRecommend.categoryId),
+				categoryRecommend.isDeleted.eq(false),
+				categoryRecommend.recommendMemberId.eq(IdWhoRecommend))
+			.where(
+				category.isShared.eq(true),
+				category.isDeleted.eq(false),
+				dynamicCursorExpression(lastCategoryId),
+				containTitle(categorySearchOption.getContainTitle())
+			)
+			.orderBy(category.categoryId.uuid.desc())
+			.limit(pageSize + 1)
+			.fetch();
+	}
+
 	private BooleanExpression containTitle(String containTitle) {
 		return containTitle == null ? null : category.title.title.containsIgnoreCase(containTitle);
 	}
