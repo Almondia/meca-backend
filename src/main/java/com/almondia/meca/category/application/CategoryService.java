@@ -1,8 +1,9 @@
 package com.almondia.meca.category.application;
 
+import static java.util.stream.Collectors.*;
+
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
@@ -15,9 +16,11 @@ import com.almondia.meca.cardhistory.domain.repository.CardHistoryRepository;
 import com.almondia.meca.category.application.helper.CategoryFactory;
 import com.almondia.meca.category.application.helper.CategoryMapper;
 import com.almondia.meca.category.controller.dto.CategoryDto;
-import com.almondia.meca.category.controller.dto.CategoryWithHistoryResponseDto;
+import com.almondia.meca.category.controller.dto.CategoryWithStatisticsResponseDto;
 import com.almondia.meca.category.controller.dto.SaveCategoryRequestDto;
 import com.almondia.meca.category.controller.dto.SharedCategoryResponseDto;
+import com.almondia.meca.category.controller.dto.SharedCategoryWithStatisticsAndRecommendDto;
+import com.almondia.meca.category.controller.dto.StatisticsDto;
 import com.almondia.meca.category.controller.dto.UpdateCategoryRequestDto;
 import com.almondia.meca.category.domain.entity.Category;
 import com.almondia.meca.category.domain.repository.CategoryRepository;
@@ -70,7 +73,7 @@ public class CategoryService {
 	public void deleteCategory(Id categoryId, Id memberId) {
 		Category category = categoryChecker.checkAuthority(categoryId, memberId);
 		List<Card> cards = cardRepository.findByCategoryIdAndIsDeleted(categoryId, false);
-		List<Id> cardIds = cards.stream().map(Card::getCardId).collect(Collectors.toList());
+		List<Id> cardIds = cards.stream().map(Card::getCardId).collect(toList());
 		List<CardHistory> cardHistories = cardHistoryRepository.findByCardIdInAndIsDeleted(cardIds, false);
 		cardHistories.forEach(CardHistory::delete);
 		cards.forEach(Card::delete);
@@ -78,7 +81,7 @@ public class CategoryService {
 	}
 
 	@Transactional(readOnly = true)
-	public CursorPage<CategoryWithHistoryResponseDto> findCursorPagingCategoryWithHistoryResponse(
+	public CursorPage<CategoryWithStatisticsResponseDto> findCursorPagingCategoryWithHistoryResponse(
 		int pageSize,
 		Id memberId,
 		Id lastCategoryId,
@@ -90,22 +93,22 @@ public class CategoryService {
 		if (contents.isEmpty()) {
 			return CursorPage.empty();
 		}
-		List<Id> categoryIds = contents.stream().map(Category::getCategoryId).collect(Collectors.toList());
+		List<Id> categoryIds = contents.stream().map(Category::getCategoryId).collect(toList());
 		Map<Id, Long> counts = cardRepository.countCardsByCategoryIdIsDeletedFalse(categoryIds);
 		Map<Id, Long> recommendCounts = categoryRecommendRepository.findRecommendCountByCategoryIds(categoryIds);
 		Map<Id, Pair<Double, Long>> statistics = cardHistoryRepository.findCardHistoryScoresAvgAndCountsByCategoryIds(
 			categoryIds);
 
 		// combine
-		List<CategoryWithHistoryResponseDto> categoryWithHistoryResponseDtos = contents.stream()
-			.map(category -> new CategoryWithHistoryResponseDto(
+		List<CategoryWithStatisticsResponseDto> categoryWithStatisticsResponseDtos = contents.stream()
+			.map(category -> new CategoryWithStatisticsResponseDto(
 				category,
 				statistics.get(category.getCategoryId()).getFirst(),
 				statistics.get(category.getCategoryId()).getSecond(),
 				counts.getOrDefault(category.getCategoryId(), 0L),
 				recommendCounts.getOrDefault(category.getCategoryId(), 0L)
-			)).collect(Collectors.toList());
-		return CursorPage.of(categoryWithHistoryResponseDtos, pageSize, SortOrder.DESC);
+			)).collect(toList());
+		return CursorPage.of(categoryWithStatisticsResponseDtos, pageSize, SortOrder.DESC);
 	}
 
 	@Transactional(readOnly = true)
@@ -122,8 +125,8 @@ public class CategoryService {
 		}
 		Map<Id, Member> memberMap = memberRepository.findMemberMapByIds(contents.stream()
 			.map(Category::getMemberId)
-			.collect(Collectors.toList()));
-		List<Id> categoryIds = contents.stream().map(Category::getCategoryId).collect(Collectors.toList());
+			.collect(toList()));
+		List<Id> categoryIds = contents.stream().map(Category::getCategoryId).collect(toList());
 		Map<Id, Long> recommendCounts = categoryRecommendRepository.findRecommendCountByCategoryIds(categoryIds);
 		Map<Id, Long> counts = cardRepository.countCardsByCategoryIdIsDeletedFalse(categoryIds);
 
@@ -132,7 +135,42 @@ public class CategoryService {
 			.filter(category -> counts.get(category.getCategoryId()) != 0L)
 			.map(category -> new SharedCategoryResponseDto(category, memberMap.get(category.getMemberId()),
 				recommendCounts.get(category.getCategoryId())))
-			.collect(Collectors.toList());
+			.collect(toList());
+		return CursorPage.of(sharedCategoryResponseDtos, pageSize, SortOrder.DESC);
+	}
+
+	@Transactional
+	public CursorPage<SharedCategoryWithStatisticsAndRecommendDto> findSharedCategoryWithStatistics(
+		int pageSize,
+		Id lastCategoryId,
+		CategorySearchOption categorySearchOption,
+		Id IdWhoRecommend
+	) {
+		// search
+		List<Category> contents = categoryRepository.findSharedCategoriesByRecommend(pageSize, lastCategoryId,
+			categorySearchOption, IdWhoRecommend);
+		List<Id> categoryIds = contents.stream().map(Category::getCategoryId).collect(toList());
+		Map<Id, Member> memberMap = memberRepository.findMemberMapByIds(contents.stream()
+			.map(Category::getMemberId)
+			.collect(toList()));
+		Map<Id, Long> counts = cardRepository.countCardsByCategoryIdIsDeletedFalse(categoryIds);
+		Map<Id, Long> recommendCounts = categoryRecommendRepository.findRecommendCountByCategoryIds(categoryIds);
+		Map<Id, Pair<Double, Long>> statistics = cardHistoryRepository.findCardHistoryScoresAvgAndCountsByCategoryIds(
+			categoryIds);
+
+		// combine
+		List<SharedCategoryWithStatisticsAndRecommendDto> sharedCategoryResponseDtos = contents.stream()
+			.filter(category -> counts.get(category.getCategoryId()) != 0L)
+			.map(category -> {
+				double scoreAvg = statistics.get(category.getCategoryId()).getFirst();
+				long solveCount = statistics.get(category.getCategoryId()).getSecond();
+				long totalCount = counts.get(category.getCategoryId());
+				StatisticsDto statisticsDto = new StatisticsDto(scoreAvg, solveCount, totalCount);
+				long recommendCount = recommendCounts.get(category.getCategoryId());
+				return new SharedCategoryWithStatisticsAndRecommendDto(category, memberMap.get(category.getMemberId()),
+					statisticsDto, recommendCount);
+			})
+			.collect(toList());
 		return CursorPage.of(sharedCategoryResponseDtos, pageSize, SortOrder.DESC);
 	}
 }
