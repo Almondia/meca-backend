@@ -13,10 +13,10 @@ import lombok.ToString;
 @ToString
 public class SharedCategoryWithStatisticsAndRecommendDto {
 
-	private final CategoryWithHistoryResponseDto categoryDto;
+	private final CategoryWithStatisticsResponseDto categoryDto;
 	private final MemberDto memberDto;
 
-	public SharedCategoryWithStatisticsAndRecommendDto(CategoryWithHistoryResponseDto categoryDto, Member member) {
+	public SharedCategoryWithStatisticsAndRecommendDto(CategoryWithStatisticsResponseDto categoryDto, Member member) {
 		this.categoryDto = categoryDto;
 		this.memberDto = MemberMapper.fromEntityToDto(member);
 	}

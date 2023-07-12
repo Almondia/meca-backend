@@ -40,7 +40,7 @@ import com.almondia.meca.category.application.CategoryRecommendService;
 import com.almondia.meca.category.application.CategoryService;
 import com.almondia.meca.category.controller.dto.CategoryDto;
 import com.almondia.meca.category.controller.dto.CategoryRecommendCheckDto;
-import com.almondia.meca.category.controller.dto.CategoryWithHistoryResponseDto;
+import com.almondia.meca.category.controller.dto.CategoryWithStatisticsResponseDto;
 import com.almondia.meca.category.controller.dto.SaveCategoryRequestDto;
 import com.almondia.meca.category.controller.dto.SharedCategoryResponseDto;
 import com.almondia.meca.category.controller.dto.UpdateCategoryRequestDto;
@@ -216,7 +216,7 @@ class CategoryControllerTest {
 		@WithMockMember
 		void shouldReturnPageTypeWhenCallPagingSearchTest() throws Exception {
 			// given
-			CategoryWithHistoryResponseDto content = CategoryWithHistoryResponseDto.builder()
+			CategoryWithStatisticsResponseDto content = CategoryWithStatisticsResponseDto.builder()
 				.categoryId(Id.generateNextId())
 				.memberId(Id.generateNextId())
 				.title(new Title("title"))
@@ -227,7 +227,7 @@ class CategoryControllerTest {
 				.solveCount(10L)
 				.totalCount(20L)
 				.build();
-			CursorPage<CategoryWithHistoryResponseDto> response = CursorPage.<CategoryWithHistoryResponseDto>builder()
+			CursorPage<CategoryWithStatisticsResponseDto> response = CursorPage.<CategoryWithStatisticsResponseDto>builder()
 				.contents(List.of(content))
 				.pageSize(1)
 				.hasNext(Id.generateNextId())
@@ -262,7 +262,7 @@ class CategoryControllerTest {
 						parameterWithName("containTitle").description("카테고리 제목 포함 여부(null인 경우 전체 검색)").optional()
 					),
 					docsFieldGeneratorUtils.generateResponseFieldSnippet(
-						new ParameterizedTypeReference<CursorPage<CategoryWithHistoryResponseDto>>() {
+						new ParameterizedTypeReference<CursorPage<CategoryWithStatisticsResponseDto>>() {
 						}, "category",
 						Locale.KOREAN
 					)

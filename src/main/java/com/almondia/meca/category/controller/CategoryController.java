@@ -20,7 +20,7 @@ import com.almondia.meca.category.application.CategoryRecommendService;
 import com.almondia.meca.category.application.CategoryService;
 import com.almondia.meca.category.controller.dto.CategoryDto;
 import com.almondia.meca.category.controller.dto.CategoryRecommendCheckDto;
-import com.almondia.meca.category.controller.dto.CategoryWithHistoryResponseDto;
+import com.almondia.meca.category.controller.dto.CategoryWithStatisticsResponseDto;
 import com.almondia.meca.category.controller.dto.SaveCategoryRequestDto;
 import com.almondia.meca.category.controller.dto.SharedCategoryResponseDto;
 import com.almondia.meca.category.controller.dto.UpdateCategoryRequestDto;
@@ -64,7 +64,7 @@ public class CategoryController {
 
 	@GetMapping("/me")
 	@Secured("ROLE_USER")
-	public ResponseEntity<CursorPage<CategoryWithHistoryResponseDto>> getCursorPagingCategoryMe(
+	public ResponseEntity<CursorPage<CategoryWithStatisticsResponseDto>> getCursorPagingCategoryMe(
 		@AuthenticationPrincipal Member member,
 		@RequestParam(value = "hasNext", required = false) Id hasNext,
 		@RequestParam(value = "pageSize") int pageSize,
@@ -73,7 +73,7 @@ public class CategoryController {
 		CategorySearchOption categorySearchOption = CategorySearchOption.builder()
 			.containTitle(containTitle)
 			.build();
-		CursorPage<CategoryWithHistoryResponseDto> responseDto = categoryService.findCursorPagingCategoryWithHistoryResponse(
+		CursorPage<CategoryWithStatisticsResponseDto> responseDto = categoryService.findCursorPagingCategoryWithHistoryResponse(
 			pageSize, member.getMemberId(), hasNext, categorySearchOption);
 		return ResponseEntity.ok(responseDto);
 	}

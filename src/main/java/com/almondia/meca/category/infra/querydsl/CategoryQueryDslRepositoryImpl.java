@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import com.almondia.meca.card.domain.entity.QCard;
 import com.almondia.meca.cardhistory.domain.entity.QCardHistory;
-import com.almondia.meca.category.controller.dto.CategoryWithHistoryResponseDto;
+import com.almondia.meca.category.controller.dto.CategoryWithStatisticsResponseDto;
 import com.almondia.meca.category.controller.dto.SharedCategoryResponseDto;
 import com.almondia.meca.category.domain.entity.Category;
 import com.almondia.meca.category.domain.entity.QCategory;
@@ -106,14 +106,14 @@ public class CategoryQueryDslRepositoryImpl implements CategoryQueryDslRepositor
 		return lastCategoryId == null ? null : category.categoryId.uuid.loe(lastCategoryId.getUuid());
 	}
 
-	private CursorPage<CategoryWithHistoryResponseDto> makeCursorPageWithHistory(int pageSize,
-		List<CategoryWithHistoryResponseDto> response) {
+	private CursorPage<CategoryWithStatisticsResponseDto> makeCursorPageWithHistory(int pageSize,
+		List<CategoryWithStatisticsResponseDto> response) {
 		Id hasNext = null;
 		if (response.size() == pageSize + 1) {
 			hasNext = response.get(pageSize).getCategoryId();
 			response.remove(response.size() - 1);
 		}
-		return CursorPage.<CategoryWithHistoryResponseDto>builder()
+		return CursorPage.<CategoryWithStatisticsResponseDto>builder()
 			.contents(response)
 			.pageSize(response.size())
 			.hasNext(hasNext)

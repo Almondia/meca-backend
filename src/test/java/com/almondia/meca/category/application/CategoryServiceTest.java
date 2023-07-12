@@ -21,7 +21,7 @@ import com.almondia.meca.card.domain.entity.Card;
 import com.almondia.meca.card.domain.repository.CardRepository;
 import com.almondia.meca.cardhistory.domain.repository.CardHistoryRepository;
 import com.almondia.meca.category.controller.dto.CategoryDto;
-import com.almondia.meca.category.controller.dto.CategoryWithHistoryResponseDto;
+import com.almondia.meca.category.controller.dto.CategoryWithStatisticsResponseDto;
 import com.almondia.meca.category.controller.dto.SaveCategoryRequestDto;
 import com.almondia.meca.category.controller.dto.SharedCategoryResponseDto;
 import com.almondia.meca.category.controller.dto.UpdateCategoryRequestDto;
@@ -393,7 +393,7 @@ class CategoryServiceTest {
 			Member member = MemberTestHelper.generateMember(memberId);
 
 			// when
-			CursorPage<CategoryWithHistoryResponseDto> result = categoryService.findCursorPagingCategoryWithHistoryResponse(
+			CursorPage<CategoryWithStatisticsResponseDto> result = categoryService.findCursorPagingCategoryWithHistoryResponse(
 				10, memberId, null, CategorySearchOption.builder().build());
 
 			// then
@@ -411,7 +411,7 @@ class CategoryServiceTest {
 			em.persist(category);
 
 			// when
-			CursorPage<CategoryWithHistoryResponseDto> result = categoryService.findCursorPagingCategoryWithHistoryResponse(
+			CursorPage<CategoryWithStatisticsResponseDto> result = categoryService.findCursorPagingCategoryWithHistoryResponse(
 				0, memberId, null, CategorySearchOption.builder().build());
 
 			// then
@@ -433,7 +433,7 @@ class CategoryServiceTest {
 			em.persist(category1);
 
 			// when
-			CursorPage<CategoryWithHistoryResponseDto> result = categoryService.findCursorPagingCategoryWithHistoryResponse(
+			CursorPage<CategoryWithStatisticsResponseDto> result = categoryService.findCursorPagingCategoryWithHistoryResponse(
 				10, memberId, null, CategorySearchOption.builder().build());
 
 			// then
@@ -458,7 +458,7 @@ class CategoryServiceTest {
 			em.persist(otherCategory);
 
 			// when
-			CursorPage<CategoryWithHistoryResponseDto> result = categoryService.findCursorPagingCategoryWithHistoryResponse(
+			CursorPage<CategoryWithStatisticsResponseDto> result = categoryService.findCursorPagingCategoryWithHistoryResponse(
 				10, memberId, null, CategorySearchOption.builder().build());
 
 			// then
@@ -483,7 +483,7 @@ class CategoryServiceTest {
 			em.persist(CardHistoryTestHelper.generateCardHistory(cardId, memberId));
 
 			// when
-			CursorPage<CategoryWithHistoryResponseDto> result = categoryService.findCursorPagingCategoryWithHistoryResponse(
+			CursorPage<CategoryWithStatisticsResponseDto> result = categoryService.findCursorPagingCategoryWithHistoryResponse(
 				10, memberId, null, CategorySearchOption.builder().build());
 
 			// then
@@ -512,7 +512,7 @@ class CategoryServiceTest {
 			em.persist(CardHistoryTestHelper.generateCardHistory(cardId, memberId));
 
 			// when
-			CursorPage<CategoryWithHistoryResponseDto> result = categoryService.findCursorPagingCategoryWithHistoryResponse(
+			CursorPage<CategoryWithStatisticsResponseDto> result = categoryService.findCursorPagingCategoryWithHistoryResponse(
 				10, memberId, null, CategorySearchOption.builder().build());
 
 			// then
@@ -535,7 +535,7 @@ class CategoryServiceTest {
 			em.persist(CategoryTestHelper.generateUnSharedCategory("titlz3", memberId, categoryId3));
 
 			// when
-			CursorPage<CategoryWithHistoryResponseDto> result = categoryService.findCursorPagingCategoryWithHistoryResponse(
+			CursorPage<CategoryWithStatisticsResponseDto> result = categoryService.findCursorPagingCategoryWithHistoryResponse(
 				10, memberId, null, CategorySearchOption.builder().containTitle("title").build());
 
 			// then
