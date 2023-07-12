@@ -43,7 +43,10 @@ import com.almondia.meca.category.controller.dto.CategoryRecommendCheckDto;
 import com.almondia.meca.category.controller.dto.CategoryWithStatisticsResponseDto;
 import com.almondia.meca.category.controller.dto.SaveCategoryRequestDto;
 import com.almondia.meca.category.controller.dto.SharedCategoryResponseDto;
+import com.almondia.meca.category.controller.dto.SharedCategoryWithStatisticsAndRecommendDto;
+import com.almondia.meca.category.controller.dto.StatisticsDto;
 import com.almondia.meca.category.controller.dto.UpdateCategoryRequestDto;
+import com.almondia.meca.category.domain.entity.Category;
 import com.almondia.meca.category.domain.vo.Title;
 import com.almondia.meca.common.configuration.jackson.JacksonConfiguration;
 import com.almondia.meca.common.configuration.security.filter.JwtAuthenticationFilter;
@@ -55,6 +58,7 @@ import com.almondia.meca.common.infra.querydsl.SortOrder;
 import com.almondia.meca.configuration.asciidocs.DocsFieldGeneratorUtilsConfiguration;
 import com.almondia.meca.helper.CategoryTestHelper;
 import com.almondia.meca.helper.MemberTestHelper;
+import com.almondia.meca.member.domain.entity.Member;
 import com.almondia.meca.mock.security.WithMockMember;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -263,6 +267,55 @@ class CategoryControllerTest {
 					),
 					docsFieldGeneratorUtils.generateResponseFieldSnippet(
 						new ParameterizedTypeReference<CursorPage<CategoryWithStatisticsResponseDto>>() {
+						}, "category",
+						Locale.KOREAN
+					)
+				));
+		}
+
+		@Test
+		@DisplayName("option이 RECOMMEND인 경우 개인 카테고리 커서 페이징 조회 응답 200")
+		@WithMockMember
+		void shouldReturn200WhenOptionIsRECOMMENDTest() throws Exception {
+			//given
+			Id memberId = Id.generateNextId();
+			Id categoryId = Id.generateNextId();
+			Category category = CategoryTestHelper.generateSharedCategory("title", memberId, categoryId);
+			Member member = MemberTestHelper.generateMember(memberId);
+			StatisticsDto statisticsDto = new StatisticsDto(12.3, 10L, 20L);
+			SharedCategoryWithStatisticsAndRecommendDto content = new SharedCategoryWithStatisticsAndRecommendDto(
+				category, member, statisticsDto, 10L);
+			CursorPage<SharedCategoryWithStatisticsAndRecommendDto> response = CursorPage.of(List.of(content), 1,
+				SortOrder.DESC);
+			Mockito.doReturn(response)
+				.when(categoryservice)
+				.findSharedCategoryWithStatistics(anyInt(), any(), any(), any());
+
+			// when
+			ResultActions resultActions = mockMvc.perform(get("/api/v1/categories/me")
+				.header("Authorization", "Bearer " + jwtToken)
+				.queryParam("pageSize", "4")
+				.queryParam("hasNext", Id.generateNextId().toString())
+				.queryParam("containTitle", "title")
+				.queryParam("option", "RECOMMEND"));
+
+			// then
+			resultActions.andExpect(status().isOk())
+				.andDo(document(
+					"{class-name}/{method-name}",
+					getDocumentRequest(),
+					getDocumentResponse(),
+					requestHeaders(
+						headerWithName("Authorization").description("JWT Bearer 토큰")
+					),
+					requestParameters(
+						parameterWithName("pageSize").description("페이지 사이즈"),
+						parameterWithName("hasNext").description("다음 페이지 커서").optional(),
+						parameterWithName("containTitle").description("카테고리 제목 포함 여부(null인 경우 전체 검색)").optional(),
+						parameterWithName("option").description("카테고리 조회 옵션, RECOMMEND: 본인이 추천한 카테고리 조회").optional()
+					),
+					docsFieldGeneratorUtils.generateResponseFieldSnippet(
+						new ParameterizedTypeReference<CursorPage<SharedCategoryWithStatisticsAndRecommendDto>>() {
 						}, "category",
 						Locale.KOREAN
 					)
