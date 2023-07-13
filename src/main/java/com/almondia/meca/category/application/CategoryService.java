@@ -16,11 +16,11 @@ import com.almondia.meca.cardhistory.domain.repository.CardHistoryRepository;
 import com.almondia.meca.category.application.helper.CategoryFactory;
 import com.almondia.meca.category.application.helper.CategoryMapper;
 import com.almondia.meca.category.controller.dto.CategoryDto;
+import com.almondia.meca.category.controller.dto.CategoryStatisticsDto;
 import com.almondia.meca.category.controller.dto.CategoryWithStatisticsResponseDto;
 import com.almondia.meca.category.controller.dto.SaveCategoryRequestDto;
 import com.almondia.meca.category.controller.dto.SharedCategoryResponseDto;
 import com.almondia.meca.category.controller.dto.SharedCategoryWithStatisticsAndRecommendDto;
-import com.almondia.meca.category.controller.dto.StatisticsDto;
 import com.almondia.meca.category.controller.dto.UpdateCategoryRequestDto;
 import com.almondia.meca.category.domain.entity.Category;
 import com.almondia.meca.category.domain.repository.CategoryRepository;
@@ -165,7 +165,7 @@ public class CategoryService {
 				double scoreAvg = statistics.get(category.getCategoryId()).getFirst();
 				long solveCount = statistics.get(category.getCategoryId()).getSecond();
 				long totalCount = counts.get(category.getCategoryId());
-				StatisticsDto statisticsDto = new StatisticsDto(scoreAvg, solveCount, totalCount);
+				CategoryStatisticsDto statisticsDto = new CategoryStatisticsDto(scoreAvg, solveCount, totalCount);
 				long recommendCount = recommendCounts.get(category.getCategoryId());
 				return new SharedCategoryWithStatisticsAndRecommendDto(category, memberMap.get(category.getMemberId()),
 					statisticsDto, recommendCount);

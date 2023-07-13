@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public class StatisticsDto {
+public class CategoryStatisticsDto {
 	private final double scoreAvg;
 	private final long solveCount;
 	private final long totalCount;
