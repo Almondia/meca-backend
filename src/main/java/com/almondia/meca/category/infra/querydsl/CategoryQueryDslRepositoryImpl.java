@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import com.almondia.meca.card.domain.entity.QCard;
 import com.almondia.meca.cardhistory.domain.entity.QCardHistory;
-import com.almondia.meca.category.controller.dto.CategoryWithHistoryResponseDto;
+import com.almondia.meca.category.controller.dto.CategoryWithStatisticsResponseDto;
 import com.almondia.meca.category.controller.dto.SharedCategoryResponseDto;
 import com.almondia.meca.category.domain.entity.Category;
 import com.almondia.meca.category.domain.entity.QCategory;
@@ -64,6 +64,26 @@ public class CategoryQueryDslRepositoryImpl implements CategoryQueryDslRepositor
 			.fetch();
 	}
 
+	@Override
+	public List<Category> findSharedCategoriesByRecommend(int pageSize, @Nullable Id lastCategoryId,
+		CategorySearchOption categorySearchOption, Id IdWhoRecommend) {
+		return jpaQueryFactory.selectDistinct(category)
+			.from(category)
+			.innerJoin(categoryRecommend)
+			.on(category.categoryId.eq(categoryRecommend.categoryId),
+				categoryRecommend.isDeleted.eq(false),
+				categoryRecommend.recommendMemberId.eq(IdWhoRecommend))
+			.where(
+				category.isShared.eq(true),
+				category.isDeleted.eq(false),
+				dynamicCursorExpression(lastCategoryId),
+				containTitle(categorySearchOption.getContainTitle())
+			)
+			.orderBy(category.categoryId.uuid.desc())
+			.limit(pageSize + 1)
+			.fetch();
+	}
+
 	private BooleanExpression containTitle(String containTitle) {
 		return containTitle == null ? null : category.title.title.containsIgnoreCase(containTitle);
 	}
@@ -86,14 +106,14 @@ public class CategoryQueryDslRepositoryImpl implements CategoryQueryDslRepositor
 		return lastCategoryId == null ? null : category.categoryId.uuid.loe(lastCategoryId.getUuid());
 	}
 
-	private CursorPage<CategoryWithHistoryResponseDto> makeCursorPageWithHistory(int pageSize,
-		List<CategoryWithHistoryResponseDto> response) {
+	private CursorPage<CategoryWithStatisticsResponseDto> makeCursorPageWithHistory(int pageSize,
+		List<CategoryWithStatisticsResponseDto> response) {
 		Id hasNext = null;
 		if (response.size() == pageSize + 1) {
 			hasNext = response.get(pageSize).getCategoryId();
 			response.remove(response.size() - 1);
 		}
-		return CursorPage.<CategoryWithHistoryResponseDto>builder()
+		return CursorPage.<CategoryWithStatisticsResponseDto>builder()
 			.contents(response)
 			.pageSize(response.size())
 			.hasNext(hasNext)

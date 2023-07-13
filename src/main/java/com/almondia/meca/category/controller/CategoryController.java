@@ -20,9 +20,11 @@ import com.almondia.meca.category.application.CategoryRecommendService;
 import com.almondia.meca.category.application.CategoryService;
 import com.almondia.meca.category.controller.dto.CategoryDto;
 import com.almondia.meca.category.controller.dto.CategoryRecommendCheckDto;
-import com.almondia.meca.category.controller.dto.CategoryWithHistoryResponseDto;
+import com.almondia.meca.category.controller.dto.CategoryWithStatisticsDto;
+import com.almondia.meca.category.controller.dto.CategoryWithStatisticsResponseDto;
 import com.almondia.meca.category.controller.dto.SaveCategoryRequestDto;
 import com.almondia.meca.category.controller.dto.SharedCategoryResponseDto;
+import com.almondia.meca.category.controller.dto.SharedCategoryWithStatisticsAndRecommendDto;
 import com.almondia.meca.category.controller.dto.UpdateCategoryRequestDto;
 import com.almondia.meca.category.infra.querydsl.CategorySearchOption;
 import com.almondia.meca.common.controller.dto.CursorPage;
@@ -64,16 +66,23 @@ public class CategoryController {
 
 	@GetMapping("/me")
 	@Secured("ROLE_USER")
-	public ResponseEntity<CursorPage<CategoryWithHistoryResponseDto>> getCursorPagingCategoryMe(
+	public ResponseEntity<CursorPage<? extends CategoryWithStatisticsDto>> getCursorPagingCategoryMe(
 		@AuthenticationPrincipal Member member,
 		@RequestParam(value = "hasNext", required = false) Id hasNext,
 		@RequestParam(value = "pageSize") int pageSize,
-		@RequestParam(value = "containTitle", required = false) String containTitle
+		@RequestParam(value = "containTitle", required = false) String containTitle,
+		@RequestParam(value = "option", required = false, defaultValue = "NONE") String option
 	) {
 		CategorySearchOption categorySearchOption = CategorySearchOption.builder()
 			.containTitle(containTitle)
 			.build();
-		CursorPage<CategoryWithHistoryResponseDto> responseDto = categoryService.findCursorPagingCategoryWithHistoryResponse(
+		if (option.equalsIgnoreCase("RECOMMEND")) {
+			CursorPage<SharedCategoryWithStatisticsAndRecommendDto> responseDto = categoryService
+				.findSharedCategoryWithStatistics(pageSize, hasNext, categorySearchOption,
+					member.getMemberId());
+			return ResponseEntity.ok(responseDto);
+		}
+		CursorPage<CategoryWithStatisticsResponseDto> responseDto = categoryService.findCursorPagingCategoryWithHistoryResponse(
 			pageSize, member.getMemberId(), hasNext, categorySearchOption);
 		return ResponseEntity.ok(responseDto);
 	}

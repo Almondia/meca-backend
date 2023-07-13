@@ -16,7 +16,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @Getter
 @ToString
-public class CategoryWithHistoryResponseDto {
+public class CategoryWithStatisticsResponseDto implements CategoryWithStatisticsDto {
 
 	private final Id categoryId;
 	private final Id memberId;
@@ -31,7 +31,8 @@ public class CategoryWithHistoryResponseDto {
 	private final long totalCount;
 	private long likeCount;
 
-	public CategoryWithHistoryResponseDto(Id categoryId, Id memberId, Image thumbnail, Title title, boolean isDeleted,
+	public CategoryWithStatisticsResponseDto(Id categoryId, Id memberId, Image thumbnail, Title title,
+		boolean isDeleted,
 		boolean isShared, LocalDateTime createdAt, LocalDateTime modifiedAt, double scoreAvg, long solveCount,
 		long totalCount) {
 		this.categoryId = categoryId;
@@ -47,7 +48,7 @@ public class CategoryWithHistoryResponseDto {
 		this.totalCount = totalCount;
 	}
 
-	public CategoryWithHistoryResponseDto(Category category, double scoreAvg, long solveCount, long totalCount,
+	public CategoryWithStatisticsResponseDto(Category category, double scoreAvg, long solveCount, long totalCount,
 		long likeCount) {
 		this.categoryId = category.getCategoryId();
 		this.memberId = category.getMemberId();
