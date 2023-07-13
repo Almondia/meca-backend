@@ -53,7 +53,13 @@ operation::update-my-profile-test/should-return-member-response-dto-attributes-w
 [[Category-개인-카테고리-페이징-조회]]
 === Category 개인 카테고리 페이징 조회
 
+==== option이 없는 경우
+
 operation::offset-paging-category-test/should-return-page-type-when-call-paging-search-test[snippets='http-request,request-parameters,http-response,response-fields']
+
+==== option이 RECOMMEND인 경우
+
+operation::offset-paging-category-test/should-return200-when-option-is-recommend-test[snippets='http-request,request-parameters,http-response,response-fields']
 
 [[Category-공유-카테고리-페이징-조회]]
 === Category 공유 카테고리 페이징 조회
