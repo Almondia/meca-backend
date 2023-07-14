@@ -34,7 +34,7 @@ public final class CardSnapShot {
 	@AttributeOverride(name = "title", column = @Column(name = "card_title", nullable = false, length = 120))
 	private Title title;
 
-	@AttributeOverride(name = "question", column = @Column(name = "card_question", nullable = false, length = 2000))
+	@AttributeOverride(name = "question", column = @Column(name = "card_question", nullable = false, length = 5_1000))
 	private Question question;
 
 	@AttributeOverride(name = "answer", column = @Column(name = "card_answer", nullable = false, length = 2000))
@@ -43,7 +43,7 @@ public final class CardSnapShot {
 	@Enumerated(EnumType.STRING)
 	private CardType cardType;
 
-	@AttributeOverride(name = "description", column = @Column(name = "card_description", length = 2_1000))
+	@AttributeOverride(name = "description", column = @Column(name = "card_description", length = 5_1000))
 	private Description description;
 
 	@Column(name = "card_created_at", nullable = false, updatable = false)
