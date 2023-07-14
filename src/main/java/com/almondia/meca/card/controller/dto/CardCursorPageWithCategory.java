@@ -11,13 +11,18 @@ import com.almondia.meca.common.infra.querydsl.SortOrder;
 import lombok.Getter;
 
 @Getter
-public class CardCursorPageWithCategory extends CursorPage<CardDto> {
+public class CardCursorPageWithCategory extends CursorPage<CardWithStatisticsDto> {
 
 	private CategoryDto category;
 	private long categoryLikeCount;
 
-	public CardCursorPageWithCategory(List<CardDto> contents, Id hasNext, int pageSize, SortOrder sortOrder) {
+	public CardCursorPageWithCategory(List<CardWithStatisticsDto> contents, Id hasNext, int pageSize,
+		SortOrder sortOrder) {
 		super(contents, hasNext, pageSize, sortOrder);
+	}
+
+	public CardCursorPageWithCategory(CursorPage<CardWithStatisticsDto> cursorPage) {
+		super(cursorPage.getContents(), cursorPage.getHasNext(), cursorPage.getPageSize(), cursorPage.getSortOrder());
 	}
 
 	public void setCategory(Category category) {

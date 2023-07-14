@@ -36,9 +36,11 @@ import org.springframework.web.context.WebApplicationContext;
 import com.almondia.meca.asciidocs.fields.DocsFieldGeneratorUtils;
 import com.almondia.meca.card.application.CardService;
 import com.almondia.meca.card.application.CardSimulationService;
+import com.almondia.meca.card.application.helper.CardMapper;
 import com.almondia.meca.card.controller.dto.CardCursorPageWithCategory;
 import com.almondia.meca.card.controller.dto.CardCursorPageWithSharedCategoryDto;
 import com.almondia.meca.card.controller.dto.CardDto;
+import com.almondia.meca.card.controller.dto.CardWithStatisticsDto;
 import com.almondia.meca.card.controller.dto.SaveCardRequestDto;
 import com.almondia.meca.card.controller.dto.SharedCardResponseDto;
 import com.almondia.meca.card.controller.dto.UpdateCardRequestDto;
@@ -49,6 +51,7 @@ import com.almondia.meca.card.domain.vo.Description;
 import com.almondia.meca.card.domain.vo.OxAnswer;
 import com.almondia.meca.card.domain.vo.Question;
 import com.almondia.meca.card.domain.vo.Title;
+import com.almondia.meca.cardhistory.controller.dto.CardStatisticsDto;
 import com.almondia.meca.category.domain.entity.Category;
 import com.almondia.meca.common.configuration.jackson.JacksonConfiguration;
 import com.almondia.meca.common.configuration.security.filter.JwtAuthenticationFilter;
@@ -393,7 +396,7 @@ class CardControllerTest {
 		@WithMockMember
 		void shouldReturn200WhenSuccessTest() throws Exception {
 			// given
-			List<CardDto> contents = List.of(makeResponse());
+			List<CardWithStatisticsDto> contents = List.of(makeResponse());
 			CardCursorPageWithCategory cardCursorPageWithCategory = new CardCursorPageWithCategory(contents,
 				Id.generateNextId(), 5, SortOrder.DESC);
 			cardCursorPageWithCategory.setCategory(Category.builder()
@@ -423,16 +426,18 @@ class CardControllerTest {
 					requestParameters(parameterWithName("hasNext").description("다음 페이지가 있는지 여부").optional(),
 						parameterWithName("pageSize").description("페이지 사이즈"),
 						parameterWithName("containTitle").description("카드 제목 포함 여부").optional()),
-					responseFields(fieldWithPath("contents[].cardId").description("카드 아이디"),
-						fieldWithPath("contents[].title").description("카드 제목"),
-						fieldWithPath("contents[].memberId").description("카드 멤버 아이디"),
-						fieldWithPath("contents[].question").description("카드 질문"),
-						fieldWithPath("contents[].categoryId").description("카테고리 아이디"),
-						fieldWithPath("contents[].cardType").description("카드 타입"),
-						fieldWithPath("contents[].answer").description("카드 정답"),
-						fieldWithPath("contents[].description").description("카드 설명"),
-						fieldWithPath("contents[].createdAt").description("카드 생성일"),
-						fieldWithPath("contents[].modifiedAt").description("카드 수정일"),
+					responseFields(fieldWithPath("contents[].card.cardId").description("카드 아이디"),
+						fieldWithPath("contents[].card.title").description("카드 제목"),
+						fieldWithPath("contents[].card.memberId").description("카드 멤버 아이디"),
+						fieldWithPath("contents[].card.question").description("카드 질문"),
+						fieldWithPath("contents[].card.categoryId").description("카테고리 아이디"),
+						fieldWithPath("contents[].card.cardType").description("카드 타입"),
+						fieldWithPath("contents[].card.answer").description("카드 정답"),
+						fieldWithPath("contents[].card.description").description("카드 설명"),
+						fieldWithPath("contents[].card.createdAt").description("카드 생성일"),
+						fieldWithPath("contents[].card.modifiedAt").description("카드 수정일"),
+						fieldWithPath("contents[].statistics.scoreAvg").description("평균 점수"),
+						fieldWithPath("contents[].statistics.solveCount").description("정답 수"),
 						fieldWithPath("pageSize").description("페이지 사이즈"),
 						fieldWithPath("sortOrder").description("정렬 방식"),
 						fieldWithPath("hasNext").description("다음 페이지가 있는지 여부"),
@@ -447,18 +452,12 @@ class CardControllerTest {
 						fieldWithPath("category.memberId").description("카테고리 멤버 아이디"))));
 		}
 
-		private CardDto makeResponse() {
-			return CardDto.builder()
-				.cardId(Id.generateNextId())
-				.title(new Title("title"))
-				.memberId(Id.generateNextId())
-				.question(new Question("hello"))
-				.categoryId(Id.generateNextId())
-				.cardType(CardType.OX_QUIZ)
-				.answer(OxAnswer.O.name())
-				.description(new Description("hello"))
-				.createdAt(LocalDateTime.now())
-				.modifiedAt(LocalDateTime.now())
+		private CardWithStatisticsDto makeResponse() {
+			Card card = CardTestHelper.genOxCard(Id.generateNextId(), Id.generateNextId(), Id.generateNextId());
+			CardDto cardDto = CardMapper.cardToDto(card);
+			return CardWithStatisticsDto.builder()
+				.card(cardDto)
+				.statistics(new CardStatisticsDto(0.0, 0L))
 				.build();
 		}
 	}
