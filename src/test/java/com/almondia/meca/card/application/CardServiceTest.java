@@ -7,7 +7,6 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -18,6 +17,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.security.access.AccessDeniedException;
 
 import com.almondia.meca.card.controller.dto.CardDto;
+import com.almondia.meca.card.controller.dto.CardWithStatisticsDto;
 import com.almondia.meca.card.controller.dto.SaveCardRequestDto;
 import com.almondia.meca.card.controller.dto.UpdateCardRequestDto;
 import com.almondia.meca.card.domain.entity.Card;
@@ -37,16 +37,19 @@ import com.almondia.meca.card.domain.vo.OxAnswer;
 import com.almondia.meca.card.domain.vo.Question;
 import com.almondia.meca.card.domain.vo.Title;
 import com.almondia.meca.card.infra.querydsl.CardSearchOption;
+import com.almondia.meca.cardhistory.domain.entity.CardHistory;
 import com.almondia.meca.category.domain.entity.Category;
 import com.almondia.meca.category.domain.service.CategoryChecker;
 import com.almondia.meca.common.configuration.jpa.QueryDslConfiguration;
 import com.almondia.meca.common.controller.dto.CursorPage;
 import com.almondia.meca.common.domain.vo.Id;
-import com.almondia.meca.data.CardDataFactory;
+import com.almondia.meca.helper.CardHistoryTestHelper;
 import com.almondia.meca.helper.CardTestHelper;
 import com.almondia.meca.helper.CategoryTestHelper;
 import com.almondia.meca.helper.MemberTestHelper;
+import com.almondia.meca.helper.recommend.CategoryRecommendTestHelper;
 import com.almondia.meca.member.domain.entity.Member;
+import com.almondia.meca.recommand.domain.entity.CategoryRecommend;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -380,15 +383,6 @@ class CardServiceTest {
 	@Nested
 	@DisplayName("카드 커서 페이징 조회")
 	class SearchCardCursorPagingTest {
-		CardDataFactory cardDataFactory = new CardDataFactory();
-		Id memberId = cardDataFactory.getMemberId();
-		Id categoryId = cardDataFactory.getCategoryId();
-
-		@BeforeEach
-		void before() {
-			List<Card> testData = cardDataFactory.createTestData();
-			cardRepository.saveAll(testData);
-		}
 
 		@Test
 		@DisplayName("본인이 가진 카테고리가 아닐 시 권한 에러 출력")
@@ -396,7 +390,7 @@ class CardServiceTest {
 			assertThatThrownBy(() -> cardService.searchCursorPagingCard(
 				10,
 				Id.generateNextId(),
-				categoryId,
+				Id.generateNextId(),
 				Id.generateNextId(),
 				CardSearchOption.builder().build())).isInstanceOf(AccessDeniedException.class);
 		}
@@ -404,20 +398,32 @@ class CardServiceTest {
 		@Test
 		@DisplayName("카드 커서 페이징 출력 형태 및 결과 테스트")
 		void shouldSuccessWorkTest() {
-			em.persist(MemberTestHelper.generateMember(memberId));
-			em.persist(CategoryTestHelper.generateUnSharedCategory("title", memberId, categoryId));
-			CursorPage<CardDto> cursorPage = cardService.searchCursorPagingCard(
-				5,
+			//given
+			Id memberId = Id.generateNextId();
+			Id categoryId = Id.generateNextId();
+			Category category = CategoryTestHelper.generateUnSharedCategory("title", memberId, categoryId);
+			Card card = CardTestHelper.genKeywordCard(memberId, categoryId, Id.generateNextId());
+			CardHistory cardHistory1 = CardHistoryTestHelper.generateCardHistory(Id.generateNextId(), card.getCardId(),
+				10);
+			CardHistory cardHistory2 = CardHistoryTestHelper.generateCardHistory(Id.generateNextId(), card.getCardId(),
+				20);
+			CategoryRecommend categoryRecommend = CategoryRecommendTestHelper.generateCategoryRecommend(categoryId,
+				Id.generateNextId());
+			persistAll(category, card, cardHistory1, cardHistory2, categoryRecommend);
+
+			// when
+			CursorPage<CardWithStatisticsDto> cardCursorPageWithCategory = cardService.searchCursorPagingCard(
+				10,
 				null,
 				categoryId,
 				memberId,
-				CardSearchOption.builder().build()
-			);
-			assertThat(cursorPage)
-				.hasFieldOrProperty("contents")
-				.hasFieldOrProperty("pageSize")
-				.hasFieldOrProperty("hasNext")
-				.hasFieldOrProperty("sortOrder");
+				CardSearchOption.builder().build());
+
+			// then
+			assertThat(cardCursorPageWithCategory.getContents().get(0).getCard().getCardId()).isEqualTo(
+				card.getCardId());
+			assertThat(cardCursorPageWithCategory.getContents().get(0).getStatistics().getScoreAvg()).isEqualTo(15);
+
 		}
 	}
 

@@ -1,7 +1,10 @@
 package com.almondia.meca.card.application;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
+import org.springframework.data.util.Pair;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,6 +14,7 @@ import com.almondia.meca.card.application.helper.CardMapper;
 import com.almondia.meca.card.controller.dto.CardCursorPageWithCategory;
 import com.almondia.meca.card.controller.dto.CardCursorPageWithSharedCategoryDto;
 import com.almondia.meca.card.controller.dto.CardDto;
+import com.almondia.meca.card.controller.dto.CardWithStatisticsDto;
 import com.almondia.meca.card.controller.dto.SaveCardRequestDto;
 import com.almondia.meca.card.controller.dto.SharedCardResponseDto;
 import com.almondia.meca.card.controller.dto.UpdateCardRequestDto;
@@ -18,6 +22,7 @@ import com.almondia.meca.card.domain.entity.Card;
 import com.almondia.meca.card.domain.repository.CardRepository;
 import com.almondia.meca.card.domain.service.CardChecker;
 import com.almondia.meca.card.infra.querydsl.CardSearchOption;
+import com.almondia.meca.cardhistory.controller.dto.CardStatisticsDto;
 import com.almondia.meca.cardhistory.domain.entity.CardHistory;
 import com.almondia.meca.cardhistory.domain.repository.CardHistoryRepository;
 import com.almondia.meca.category.domain.entity.Category;
@@ -25,6 +30,7 @@ import com.almondia.meca.category.domain.repository.CategoryRepository;
 import com.almondia.meca.category.domain.service.CategoryChecker;
 import com.almondia.meca.common.controller.dto.CursorPage;
 import com.almondia.meca.common.domain.vo.Id;
+import com.almondia.meca.common.infra.querydsl.SortOrder;
 import com.almondia.meca.recommand.domain.repository.CategoryRecommendRepository;
 
 import lombok.AllArgsConstructor;
@@ -55,20 +61,33 @@ public class CardService {
 	}
 
 	@Transactional(readOnly = true)
-	public CursorPage<CardDto> searchCursorPagingCard(
+	public CursorPage<CardWithStatisticsDto> searchCursorPagingCard(
 		int pageSize,
 		Id lastCardId,
 		Id categoryId,
 		Id memberId,
 		CardSearchOption cardSearchOption
 	) {
+		// search
 		Category category = categoryChecker.checkAuthority(categoryId, memberId);
 		long likeCount = categoryRecommendRepository.countByCategoryIdAndIsDeletedFalse(categoryId);
-		CardCursorPageWithCategory cursor = cardRepository.findCardByCategoryIdUsingCursorPaging(pageSize,
+		List<CardDto> collect = cardRepository.findCardByCategoryId(pageSize,
 			lastCardId, categoryId, cardSearchOption);
-		cursor.setCategory(category);
-		cursor.setCategoryLikeCount(likeCount);
-		return cursor;
+		Map<Id, Pair<Double, Long>> avgAndCountsByCardIds = cardHistoryRepository.findCardHistoryScoresAvgAndCountsByCardIds(
+			collect.stream().map(CardDto::getCardId).collect(Collectors.toList()));
+
+		// combine
+		List<CardWithStatisticsDto> contents = collect.stream()
+			.map(cardDto -> new CardWithStatisticsDto(cardDto, new CardStatisticsDto(
+				avgAndCountsByCardIds.getOrDefault(cardDto.getCardId(), Pair.of(0.0, 0L)).getFirst(),
+				avgAndCountsByCardIds.getOrDefault(cardDto.getCardId(), Pair.of(0.0, 0L)).getSecond()
+			)))
+			.collect(Collectors.toList());
+		CursorPage<CardWithStatisticsDto> cursor = CursorPage.of(contents, pageSize, SortOrder.DESC);
+		CardCursorPageWithCategory result = new CardCursorPageWithCategory(cursor);
+		result.setCategory(category);
+		result.setCategoryLikeCount(likeCount);
+		return result;
 	}
 
 	@Transactional
