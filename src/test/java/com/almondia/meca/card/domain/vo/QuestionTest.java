@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 
 /**
  * 문제를 공배으로 비워 둘 수 없습니다
- * 500자 이상 입력할 수 없습니다
+ * 5만 천자 이상 입력할 수 없습니다
  * of 인스턴스 테스트
  */
 class QuestionTest {
@@ -20,9 +20,9 @@ class QuestionTest {
 	}
 
 	@Test
-	@DisplayName("500자 이상 입력할 수 없습니다")
+	@DisplayName("4만 천자 이상 입력할 수 없습니다")
 	void shouldThrowMoreThan500() {
-		String input = "a".repeat(501);
+		String input = "a".repeat(51_001);
 		assertThatThrownBy(() -> new Question(input)).isInstanceOf(IllegalArgumentException.class);
 	}
 

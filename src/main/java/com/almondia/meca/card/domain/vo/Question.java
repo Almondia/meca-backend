@@ -1,6 +1,7 @@
 package com.almondia.meca.card.domain.vo;
 
 import javax.persistence.Embeddable;
+import javax.persistence.Lob;
 
 import com.almondia.meca.common.configuration.jackson.module.wrapper.Wrapper;
 
@@ -13,7 +14,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Question implements Wrapper {
 
-	private static final int MAX_LENGTH = 500;
+	private static final int MAX_LENGTH = 51_000;
+
+	@Lob
 	private String question;
 
 	public Question(String question) {
