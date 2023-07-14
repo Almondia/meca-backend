@@ -42,7 +42,7 @@ public abstract class Card extends DateEntity {
 	private Id cardId;
 
 	@Embedded
-	@AttributeOverride(name = "question", column = @Column(name = "question", nullable = false, length = 2000))
+	@AttributeOverride(name = "question", column = @Column(name = "question", nullable = false, length = 5_1000))
 	private Question question;
 
 	@Embedded
@@ -62,7 +62,7 @@ public abstract class Card extends DateEntity {
 	private List<Image> images;
 
 	@Embedded
-	@AttributeOverride(name = "description", column = @Column(name = "description", length = 2_1000))
+	@AttributeOverride(name = "description", column = @Column(name = "description", length = 5_1000))
 	private Description description;
 
 	@Transient
