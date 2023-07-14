@@ -117,6 +117,32 @@ public class CardHistoryQueryDslRepositoryImpl implements CardHistoryQueryDslRep
 	}
 
 	@Override
+	public Map<Id, Pair<Double, Long>> findCardHistoryScoresAvgAndCountsByCardIds(List<Id> cardIds) {
+		Map<Id, Pair<Double, Long>> collect = jpaQueryFactory.select(cardHistory.cardId, cardHistory.score.score.avg(),
+				cardHistory.cardId.count())
+			.from(cardHistory)
+			.innerJoin(card)
+			.on(cardHistory.cardId.eq(card.cardId),
+				card.isDeleted.eq(false))
+			.where(cardHistory.cardId.in(cardIds),
+				cardHistory.isDeleted.eq(false))
+			.groupBy(cardHistory.cardId)
+			.fetch()
+			.stream()
+			.collect(Collectors.toMap(tuple -> tuple.get(cardHistory.cardId), tuple -> {
+				Double avg = tuple.get(cardHistory.score.score.avg());
+				avg = avg == null ? 0.0 : avg;
+				Long count = tuple.get(cardHistory.cardId.count());
+				count = count == null ? 0L : count;
+				return Pair.of(avg, count);
+			}));
+		for (Id cardId : cardIds) {
+			collect.putIfAbsent(cardId, Pair.of(0.0, 0L));
+		}
+		return collect;
+	}
+
+	@Override
 	public Optional<CardStatisticsDto> findCardHistoryScoresAvgAndCountsByCardId(Id cardId) {
 		Tuple tuple = jpaQueryFactory.select(cardHistory.cardId, cardHistory.score.score.avg(),
 				cardHistory.cardId.count())
