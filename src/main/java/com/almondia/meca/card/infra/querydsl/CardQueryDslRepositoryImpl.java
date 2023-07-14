@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Repository;
 
 import com.almondia.meca.card.application.helper.CardMapper;
-import com.almondia.meca.card.controller.dto.CardCursorPageWithCategory;
 import com.almondia.meca.card.controller.dto.CardCursorPageWithSharedCategoryDto;
 import com.almondia.meca.card.controller.dto.CardDto;
 import com.almondia.meca.card.controller.dto.SharedCardResponseDto;
@@ -41,13 +40,13 @@ public class CardQueryDslRepositoryImpl implements CardQueryDslRepository {
 	private final JPAQueryFactory queryFactory;
 
 	@Override
-	public CardCursorPageWithCategory findCardByCategoryIdUsingCursorPaging(
+	public List<CardDto> findCardByCategoryId(
 		int pageSize,
 		Id lastCardId,
-		@NonNull Id categoryId,
+		Id categoryId,
 		CardSearchOption cardSearchOption
 	) {
-		List<CardDto> contents = queryFactory.selectFrom(card)
+		return queryFactory.selectFrom(card)
 			.where(
 				card.categoryId.eq(categoryId),
 				containTitle(cardSearchOption.getContainTitle()),
@@ -60,18 +59,6 @@ public class CardQueryDslRepositoryImpl implements CardQueryDslRepository {
 			.stream()
 			.map(CardMapper::cardToDto)
 			.collect(Collectors.toList());
-
-		Id hasNext = null;
-		if (contents.size() > pageSize) {
-			hasNext = contents.get(pageSize).getCardId();
-			contents.remove(pageSize);
-		}
-		return new CardCursorPageWithCategory(
-			contents,
-			hasNext,
-			pageSize,
-			SortOrder.DESC
-		);
 	}
 
 	@Override
