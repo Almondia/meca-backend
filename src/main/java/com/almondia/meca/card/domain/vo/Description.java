@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Description implements Wrapper {
 
-	private static final int MAX_LENGTH = 2_1000;
+	private static final int MAX_LENGTH = 51_000;
 
 	@Lob
 	private String description;
