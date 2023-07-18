@@ -391,7 +391,7 @@ class CardServiceTest {
 				10,
 				Id.generateNextId(),
 				Id.generateNextId(),
-				Id.generateNextId(),
+				MemberTestHelper.generateMember(Id.generateNextId()),
 				CardSearchOption.builder().build())).isInstanceOf(AccessDeniedException.class);
 		}
 
@@ -416,7 +416,7 @@ class CardServiceTest {
 				10,
 				null,
 				categoryId,
-				memberId,
+				MemberTestHelper.generateMember(memberId),
 				CardSearchOption.builder().build());
 
 			// then

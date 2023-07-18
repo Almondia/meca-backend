@@ -31,6 +31,8 @@ import com.almondia.meca.category.domain.service.CategoryChecker;
 import com.almondia.meca.common.controller.dto.CursorPage;
 import com.almondia.meca.common.domain.vo.Id;
 import com.almondia.meca.common.infra.querydsl.SortOrder;
+import com.almondia.meca.member.domain.entity.Member;
+import com.almondia.meca.member.domain.repository.MemberRepository;
 import com.almondia.meca.recommand.domain.repository.CategoryRecommendRepository;
 
 import lombok.AllArgsConstructor;
@@ -39,6 +41,7 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class CardService {
 
+	private final MemberRepository memberRepository;
 	private final CardHistoryRepository cardHistoryRepository;
 	private final CardRepository cardRepository;
 	private final CategoryRepository categoryRepository;
@@ -65,11 +68,11 @@ public class CardService {
 		int pageSize,
 		Id lastCardId,
 		Id categoryId,
-		Id memberId,
+		Member member,
 		CardSearchOption cardSearchOption
 	) {
 		// search
-		Category category = categoryChecker.checkAuthority(categoryId, memberId);
+		Category category = categoryChecker.checkAuthority(categoryId, member.getMemberId());
 		long likeCount = categoryRecommendRepository.countByCategoryIdAndIsDeletedFalse(categoryId);
 		List<CardDto> collect = cardRepository.findCardByCategoryId(pageSize,
 			lastCardId, categoryId, cardSearchOption);
@@ -87,6 +90,7 @@ public class CardService {
 		CardCursorPageWithCategory result = new CardCursorPageWithCategory(cursor);
 		result.setCategory(category);
 		result.setCategoryLikeCount(likeCount);
+		result.setMember(member);
 		return result;
 	}
 

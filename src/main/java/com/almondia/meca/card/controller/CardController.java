@@ -101,7 +101,7 @@ public class CardController {
 			.build();
 
 		CursorPage<CardWithStatisticsDto> responseDto = cardService.searchCursorPagingCard(
-			pageSize, lastCardId, categoryId, member.getMemberId(), cardSearchOption);
+			pageSize, lastCardId, categoryId, member, cardSearchOption);
 		return ResponseEntity.ok(responseDto);
 	}
 

@@ -403,6 +403,15 @@ class CardControllerTest {
 				.categoryId(Id.generateNextId())
 				.title(new com.almondia.meca.category.domain.vo.Title("title"))
 				.build());
+			cardCursorPageWithCategory.setMember(Member.builder()
+				.memberId(new Id("2825b9a9-d89a-4301-99b5-a7668a5b5fff"))
+				.email(new Email("helloworld@naver.com"))
+				.name(Name.of("hello"))
+				.oAuthType(OAuthType.GOOGLE)
+				.role(Role.USER)
+				.createdAt(LocalDateTime.now())
+				.modifiedAt(LocalDateTime.now())
+				.build());
 			Mockito.doReturn(cardCursorPageWithCategory)
 				.when(cardService)
 				.searchCursorPagingCard(anyInt(), any(), any(), any(), any());
@@ -450,7 +459,16 @@ class CardControllerTest {
 						fieldWithPath("category.createdAt").description("카테고리 생성일"),
 						fieldWithPath("category.modifiedAt").description("카테고리 수정일"),
 						fieldWithPath("category.deleted").description("카테고리 삭제 여부"),
-						fieldWithPath("category.memberId").description("카테고리 멤버 아이디"))));
+						fieldWithPath("category.memberId").description("카테고리 멤버 아이디"),
+						fieldWithPath("member.memberId").description("멤버 아이디"),
+						fieldWithPath("member.email").description("멤버 이메일"),
+						fieldWithPath("member.name").description("멤버 이름"),
+						fieldWithPath("member.profile").description("멤버 프로필"),
+						fieldWithPath("member.oauthType").description("멤버 OAuth 타입"),
+						fieldWithPath("member.role").description("멤버 권한"),
+						fieldWithPath("member.deleted").description("멤버 삭제 여부"),
+						fieldWithPath("member.createdAt").description("멤버 생성일"),
+						fieldWithPath("member.modifiedAt").description("멤버 수정일"))));
 		}
 
 		private CardWithStatisticsDto makeResponse() {
