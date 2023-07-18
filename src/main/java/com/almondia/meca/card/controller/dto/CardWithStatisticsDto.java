@@ -10,7 +10,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Builder
 public class CardWithStatisticsDto {
-	private final CardDto cardInfo;
+	private final CardDto card;
 	private final CardStatisticsDto statistics;
 
 }

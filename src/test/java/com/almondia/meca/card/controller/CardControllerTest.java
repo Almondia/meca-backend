@@ -436,16 +436,16 @@ class CardControllerTest {
 						parameterWithName("pageSize").description("페이지 사이즈"),
 						parameterWithName("containTitle").description("카드 제목 포함 여부").optional()),
 					responseFields(
-						fieldWithPath("contents[].cardInfo.cardId").description("카드 아이디"),
-						fieldWithPath("contents[].cardInfo.title").description("카드 제목"),
-						fieldWithPath("contents[].cardInfo.memberId").description("카드 멤버 아이디"),
-						fieldWithPath("contents[].cardInfo.question").description("카드 질문"),
-						fieldWithPath("contents[].cardInfo.categoryId").description("카테고리 아이디"),
-						fieldWithPath("contents[].cardInfo.cardType").description("카드 타입"),
-						fieldWithPath("contents[].cardInfo.answer").description("카드 정답"),
-						fieldWithPath("contents[].cardInfo.description").description("카드 설명"),
-						fieldWithPath("contents[].cardInfo.createdAt").description("카드 생성일"),
-						fieldWithPath("contents[].cardInfo.modifiedAt").description("카드 수정일"),
+						fieldWithPath("contents[].card.cardId").description("카드 아이디"),
+						fieldWithPath("contents[].card.title").description("카드 제목"),
+						fieldWithPath("contents[].card.memberId").description("카드 멤버 아이디"),
+						fieldWithPath("contents[].card.question").description("카드 질문"),
+						fieldWithPath("contents[].card.categoryId").description("카테고리 아이디"),
+						fieldWithPath("contents[].card.cardType").description("카드 타입"),
+						fieldWithPath("contents[].card.answer").description("카드 정답"),
+						fieldWithPath("contents[].card.description").description("카드 설명"),
+						fieldWithPath("contents[].card.createdAt").description("카드 생성일"),
+						fieldWithPath("contents[].card.modifiedAt").description("카드 수정일"),
 						fieldWithPath("contents[].statistics.scoreAvg").description("평균 점수"),
 						fieldWithPath("contents[].statistics.solveCount").description("정답 수"),
 						fieldWithPath("pageSize").description("페이지 사이즈"),
@@ -475,7 +475,7 @@ class CardControllerTest {
 			Card card = CardTestHelper.genOxCard(Id.generateNextId(), Id.generateNextId(), Id.generateNextId());
 			CardDto cardDto = CardMapper.cardToDto(card);
 			return CardWithStatisticsDto.builder()
-				.cardInfo(cardDto)
+				.card(cardDto)
 				.statistics(new CardStatisticsDto(0.0, 0L))
 				.build();
 		}

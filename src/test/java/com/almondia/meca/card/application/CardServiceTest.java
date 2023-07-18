@@ -420,7 +420,7 @@ class CardServiceTest {
 				CardSearchOption.builder().build());
 
 			// then
-			assertThat(cardCursorPageWithCategory.getContents().get(0).getCardInfo().getCardId()).isEqualTo(
+			assertThat(cardCursorPageWithCategory.getContents().get(0).getCard().getCardId()).isEqualTo(
 				card.getCardId());
 			assertThat(cardCursorPageWithCategory.getContents().get(0).getStatistics().getScoreAvg()).isEqualTo(15);
 
