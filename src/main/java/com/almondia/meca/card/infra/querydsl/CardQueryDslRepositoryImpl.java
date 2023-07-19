@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Repository;
 
 import com.almondia.meca.card.application.helper.CardMapper;
-import com.almondia.meca.card.controller.dto.CardCursorPageWithSharedCategoryDto;
 import com.almondia.meca.card.controller.dto.CardDto;
 import com.almondia.meca.card.controller.dto.SharedCardResponseDto;
 import com.almondia.meca.card.domain.entity.Card;
@@ -17,7 +16,6 @@ import com.almondia.meca.card.domain.entity.QCard;
 import com.almondia.meca.cardhistory.domain.entity.QCardHistory;
 import com.almondia.meca.category.domain.entity.QCategory;
 import com.almondia.meca.common.domain.vo.Id;
-import com.almondia.meca.common.infra.querydsl.SortOrder;
 import com.almondia.meca.member.domain.entity.QMember;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
@@ -25,7 +23,6 @@ import com.querydsl.core.types.SubQueryExpression;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 @Repository
@@ -59,46 +56,6 @@ public class CardQueryDslRepositoryImpl implements CardQueryDslRepository {
 			.stream()
 			.map(CardMapper::cardToDto)
 			.collect(Collectors.toList());
-	}
-
-	@Override
-	public CardCursorPageWithSharedCategoryDto findCardBySharedCategoryCursorPaging(
-		int pageSize,
-		Id lastCardId,
-		@NonNull Id categoryId,
-		CardSearchOption cardSearchOption
-	) {
-		List<SharedCardResponseDto> contents = queryFactory
-			.select(Projections.constructor(
-				SharedCardResponseDto.class,
-				card,
-				member))
-			.from(card)
-			.where(card.categoryId.eq(categoryId),
-				containTitle(cardSearchOption.getContainTitle()),
-				category.isShared.eq(true),
-				card.isDeleted.eq(false),
-				lessOrEqCardId(lastCardId))
-			.innerJoin(category)
-			.on(card.categoryId.eq(category.categoryId))
-			.innerJoin(member)
-			.on(card.memberId.eq(member.memberId))
-			.orderBy(card.cardId.uuid.desc())
-			.limit(pageSize + 1)
-			.fetch();
-
-		Id hasNext = null;
-		if (contents.size() > pageSize) {
-			hasNext = contents.get(pageSize).getCardInfo().getCardId();
-			contents.remove(pageSize);
-		}
-
-		return new CardCursorPageWithSharedCategoryDto(
-			contents,
-			hasNext,
-			pageSize,
-			SortOrder.DESC
-		);
 	}
 
 	@Override
