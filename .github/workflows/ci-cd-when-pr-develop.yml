@@ -52,18 +52,18 @@ jobs:
           docker tag $REPO:latest ${{ secrets.DOCKERHUB_USERNAME }}/$REPO:latest
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/$REPO:latest
 
-      - name: Deploy to ec2
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{secrets.DEV_HOST}}
-          username: ${{secrets.DEV_USERNAME}}
-          password: ${{secrets.DEV_PASSWORD}}
-          port: 22
-          script: |
-            docker-compose down
-            sudo docker image prune -f
-            sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/meca:latest
-            docker-compose up -d
+      #      - name: Deploy to ec2
+      #        uses: appleboy/ssh-action@master
+      #        with:
+      #          host: ${{secrets.DEV_HOST}}
+      #          username: ${{secrets.DEV_USERNAME}}
+      #          password: ${{secrets.DEV_PASSWORD}}
+      #          port: 22
+      #          script: |
+      #            docker-compose down
+      #            sudo docker image prune -f
+      #            sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/meca:latest
+      #            docker-compose up -d
       #      - name: Deploy to ec2
       #        uses: appleboy/ssh-action@master
       #        with:

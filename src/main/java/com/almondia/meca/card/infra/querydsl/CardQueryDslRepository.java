@@ -4,21 +4,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import com.almondia.meca.card.controller.dto.CardCursorPageWithCategory;
-import com.almondia.meca.card.controller.dto.CardCursorPageWithSharedCategoryDto;
+import org.springframework.lang.Nullable;
+
+import com.almondia.meca.card.controller.dto.CardDto;
 import com.almondia.meca.card.controller.dto.SharedCardResponseDto;
 import com.almondia.meca.card.domain.entity.Card;
 import com.almondia.meca.common.domain.vo.Id;
 
-import lombok.NonNull;
-
 public interface CardQueryDslRepository {
 
-	CardCursorPageWithCategory findCardByCategoryIdUsingCursorPaging(
-		int pageSize, Id lastCardId, @NonNull Id categoryId, CardSearchOption cardSearchOption);
-
-	CardCursorPageWithSharedCategoryDto findCardBySharedCategoryCursorPaging(
-		int pageSize, Id lastCardId, @NonNull Id categoryId, CardSearchOption cardSearchOption);
+	List<CardDto> findCardByCategoryId(
+		int pageSize, @Nullable Id lastCardId, Id categoryId, CardSearchOption cardSearchOption);
 
 	Optional<SharedCardResponseDto> findCardInSharedCategory(Id cardId);
 

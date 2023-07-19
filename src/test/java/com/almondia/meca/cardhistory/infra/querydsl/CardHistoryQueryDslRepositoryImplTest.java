@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.persistence.EntityManager;
 
@@ -19,6 +20,7 @@ import org.springframework.data.util.Pair;
 
 import com.almondia.meca.card.domain.entity.Card;
 import com.almondia.meca.cardhistory.controller.dto.CardHistoryWithCardAndMemberResponseDto;
+import com.almondia.meca.cardhistory.controller.dto.CardStatisticsDto;
 import com.almondia.meca.cardhistory.domain.entity.CardHistory;
 import com.almondia.meca.cardhistory.domain.repository.CardHistoryRepository;
 import com.almondia.meca.category.domain.entity.Category;
@@ -287,6 +289,189 @@ class CardHistoryQueryDslRepositoryImplTest {
 
 			// then
 			assertThat(statistics.get(categoryId)).isEqualTo(Pair.of(0.0, 0L));
+		}
+	}
+
+	@Nested
+	@DisplayName("findCardHistoryScoresAvgAndCountsByCardIds 테스트")
+	class FindCardHistoryScoresAvgAndCountsByCardIdsTest {
+
+		@Test
+		@DisplayName("카드 아이디 리스트에 해당하는 카드 히스토리의 평균 점수와 카드 히스토리 갯수를 조회한다")
+		void shouldReturnAvgScoresAndCardHistoriesTest() {
+			// given
+			Id memberId = Id.generateNextId();
+			Id categoryId = Id.generateNextId();
+			Id cardId1 = Id.generateNextId();
+			Id cardId2 = Id.generateNextId();
+			Id cardHistoryId1 = Id.generateNextId();
+			Id cardHistoryId2 = Id.generateNextId();
+			Card card1 = CardTestHelper.genOxCard(memberId, categoryId, cardId1);
+			Card card2 = CardTestHelper.genOxCard(memberId, categoryId, cardId2);
+			CardHistory cardHistory1 = CardHistoryTestHelper.generateCardHistory(cardHistoryId1, cardId1, 10);
+			CardHistory cardHistory2 = CardHistoryTestHelper.generateCardHistory(cardHistoryId2, cardId1, 20);
+			persistAll(card1, card2, cardHistory1, cardHistory2);
+
+			// when
+			Map<Id, Pair<Double, Long>> statistics = cardHistoryRepository.findCardHistoryScoresAvgAndCountsByCardIds(
+				List.of(cardId1, cardId2));
+
+			// then
+			assertThat(statistics).hasSize(2);
+			assertThat(statistics.get(cardId1).getFirst()).isEqualTo(15);
+			assertThat(statistics.get(cardId1).getSecond()).isEqualTo(2L);
+		}
+
+		@Test
+		@DisplayName("카드 아이디 리스트가 비어있으면 빈 리스트를 반환한다")
+		void shouldReturnEmptyListWhenCardIdsIsEmptyTest() {
+			// given
+			List<Id> cardIds = List.of();
+
+			// when
+			Map<Id, Pair<Double, Long>> statistics = cardHistoryRepository.findCardHistoryScoresAvgAndCountsByCardIds(
+				cardIds);
+
+			// then
+			assertThat(statistics).isEmpty();
+		}
+
+		@Test
+		@DisplayName("카드 히스토리 정보가 존재하지 않는 경우 해당 카드의 평균 점수는 0이다")
+		void shouldReturnZeroAvgScoreWhenCardHistoriesIsEmptyTest() {
+			// given
+			Id cardId = Id.generateNextId();
+			List<Id> cardIds = List.of(cardId);
+
+			// when
+			Map<Id, Pair<Double, Long>> statistics = cardHistoryRepository.findCardHistoryScoresAvgAndCountsByCardIds(
+				cardIds);
+
+			// then
+			assertThat(statistics.get(cardId)).isEqualTo(Pair.of(0.0, 0L));
+		}
+
+		@Test
+		@DisplayName("카드 히스토리 정보가 존재하지 않는 경우 해당 카드의 카드 히스토리 개수는 0이다")
+		void shouldReturnZeroCardHistoryCountWhenCardHistoriesIsEmptyTest() {
+			// given
+			Id cardId = Id.generateNextId();
+			List<Id> cardIds = List.of(cardId);
+
+			// when
+			Map<Id, Pair<Double, Long>> statistics = cardHistoryRepository.findCardHistoryScoresAvgAndCountsByCardIds(
+				cardIds);
+
+			// then
+			assertThat(statistics.get(cardId)).isEqualTo(Pair.of(0.0, 0L));
+		}
+	}
+
+	@Nested
+	@DisplayName("findCardHistoryScoresAvgAndCountsByCardId 테스트")
+	class FindCardHistoryScoresAvgAndCountsByCardIdTest {
+
+		@Test
+		@DisplayName("카드 히스토리가 존재하지 않는다면 통계값이 모두 0")
+		void shouldReturnZeroWhenNotExistCardHistoryTest() {
+			// given
+			Id memberId = Id.generateNextId();
+			Id categoryId = Id.generateNextId();
+			Id cardId = Id.generateNextId();
+			Card card = CardTestHelper.genOxCard(memberId, categoryId, cardId);
+			em.persist(card);
+
+			// when
+			Optional<CardStatisticsDto> statistics = cardHistoryRepository.findCardHistoryScoresAvgAndCountsByCardId(
+				cardId);
+
+			// then
+			assertThat(statistics).isEmpty();
+
+		}
+
+		@Test
+		@DisplayName("카드 히스토리가 모두 삭제된 상태라면 Optional.empty()")
+		void shouldReturnEmptyWhenCardHistoryDeletedTest() {
+			//given
+			Id memberId = Id.generateNextId();
+			Id categoryId = Id.generateNextId();
+			Id cardId = Id.generateNextId();
+			Card card = CardTestHelper.genOxCard(memberId, categoryId, cardId);
+			CardHistory cardHistory = CardHistoryTestHelper.generateCardHistory(Id.generateNextId(), cardId, 10);
+			cardHistory.delete();
+			em.persist(card);
+
+			// when
+			Optional<CardStatisticsDto> statistics = cardHistoryRepository.findCardHistoryScoresAvgAndCountsByCardId(
+				cardId);
+
+			// then
+			assertThat(statistics).isEmpty();
+		}
+
+		@Test
+		@DisplayName("다른 카드 ID의 히스토리 갯수는 영향을 주지 않는다")
+		void shouldNotEffectAnotherCardIdHistoryTest() {
+			// given
+			Id memberId = Id.generateNextId();
+			Id categoryId = Id.generateNextId();
+			Id cardId1 = Id.generateNextId();
+			Id cardId2 = Id.generateNextId();
+			Card card1 = CardTestHelper.genOxCard(memberId, categoryId, cardId1);
+			Card card2 = CardTestHelper.genOxCard(memberId, categoryId, cardId2);
+			CardHistory cardHistory1 = CardHistoryTestHelper.generateCardHistory(Id.generateNextId(), cardId1, 10);
+			CardHistory cardHistory2 = CardHistoryTestHelper.generateCardHistory(Id.generateNextId(), cardId2, 20);
+			persistAll(card1, card2, cardHistory1, cardHistory2);
+
+			// when
+			CardStatisticsDto statistics = cardHistoryRepository.findCardHistoryScoresAvgAndCountsByCardId(cardId1)
+				.orElseThrow();
+
+			// then
+			assertThat(statistics.getScoreAvg()).isEqualTo(10.0);
+			assertThat(statistics.getTryCount()).isEqualTo(1L);
+		}
+
+		@Test
+		@DisplayName("카드 히스토리의 갯수만큼 출력되며 평균 점수는 카드 히스토리 갯수에 기반한다")
+		void shouldReturnAvgAndHistoryCountTest() {
+			// given
+			Id memberId = Id.generateNextId();
+			Id categoryId = Id.generateNextId();
+			Id cardId = Id.generateNextId();
+			Card card = CardTestHelper.genOxCard(memberId, categoryId, cardId);
+			CardHistory cardHistory1 = CardHistoryTestHelper.generateCardHistory(Id.generateNextId(), cardId, 10);
+			CardHistory cardHistory2 = CardHistoryTestHelper.generateCardHistory(Id.generateNextId(), cardId, 20);
+			persistAll(card, cardHistory1, cardHistory2);
+
+			// when
+			CardStatisticsDto statistics = cardHistoryRepository.findCardHistoryScoresAvgAndCountsByCardId(cardId)
+				.orElseThrow();
+
+			// then
+			assertThat(statistics.getScoreAvg()).isEqualTo(15.0);
+			assertThat(statistics.getTryCount()).isEqualTo(2L);
+		}
+
+		@Test
+		@DisplayName("삭제된 카드 Id에 대해서는 조회하지 않는다")
+		void shouldNotReturnCardWhenDeletedCardTest() {
+			// given
+			Id memberId = Id.generateNextId();
+			Id categoryId = Id.generateNextId();
+			Id cardId = Id.generateNextId();
+			Card card = CardTestHelper.genOxCard(memberId, categoryId, cardId);
+			card.delete();
+			CardHistory cardHistory1 = CardHistoryTestHelper.generateCardHistory(Id.generateNextId(), cardId, 10);
+			persistAll(card, cardHistory1);
+
+			// when
+			Optional<CardStatisticsDto> statistics = cardHistoryRepository.findCardHistoryScoresAvgAndCountsByCardId(
+				cardId);
+
+			// then
+			assertThat(statistics).isEmpty();
 		}
 	}
 

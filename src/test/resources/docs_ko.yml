@@ -74,6 +74,16 @@ card:
     role: 권한
     oauthType: OAuth 타입
     isDeleted: 삭제 여부
+    scoreAvg: 점수 평균
+    solveCount: 문제 풀이 수
+    hasNext: 다음 커서 페이징 ID
+    pageSize: page 사이즈
+    likeCount: 추천수
+    sortOrder: 정렬 기준
+    categoryLikeCount: 카테고리 추천수
+    thumbnail: 썸네일
+    shared: 공유 여부
+    isShared: 공유 여부
 
   constraints:
     cardId: UUID

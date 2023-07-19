@@ -109,8 +109,8 @@ operation::search-card-one-test/should-return200ok-and-response-format-test[snip
 
 operation::find-shared-card-test/should-return200-ok-and-response-format-test[snippets='http-request,path-parameters,http-response,response-fields']
 
-[[Card-카드-페이징-조회]]
-=== Card 카드 페이징 조회
+[[Card-개인-카드-페이징-조회]]
+=== Card 개인 카드 페이징 조회
 
 operation::card-cursor-paging-search-test/should-return200-when-success-test[snippets='http-request,path-parameters,request-parameters,http-response,response-fields']
 

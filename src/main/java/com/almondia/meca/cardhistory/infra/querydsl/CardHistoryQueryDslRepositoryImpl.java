@@ -2,6 +2,7 @@ package com.almondia.meca.cardhistory.infra.querydsl;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.data.util.Pair;
@@ -11,12 +12,14 @@ import org.springframework.util.Assert;
 
 import com.almondia.meca.card.domain.entity.QCard;
 import com.almondia.meca.cardhistory.controller.dto.CardHistoryWithCardAndMemberResponseDto;
+import com.almondia.meca.cardhistory.controller.dto.CardStatisticsDto;
 import com.almondia.meca.cardhistory.domain.entity.QCardHistory;
 import com.almondia.meca.category.domain.entity.QCategory;
 import com.almondia.meca.common.controller.dto.CursorPage;
 import com.almondia.meca.common.domain.vo.Id;
 import com.almondia.meca.common.infra.querydsl.SortOrder;
 import com.almondia.meca.member.domain.entity.QMember;
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -111,6 +114,57 @@ public class CardHistoryQueryDslRepositoryImpl implements CardHistoryQueryDslRep
 			collect.putIfAbsent(categoryId, Pair.of(0.0, 0L));
 		}
 		return collect;
+	}
+
+	@Override
+	public Map<Id, Pair<Double, Long>> findCardHistoryScoresAvgAndCountsByCardIds(List<Id> cardIds) {
+		Map<Id, Pair<Double, Long>> collect = jpaQueryFactory.select(cardHistory.cardId, cardHistory.score.score.avg(),
+				cardHistory.cardId.count())
+			.from(cardHistory)
+			.innerJoin(card)
+			.on(cardHistory.cardId.eq(card.cardId),
+				card.isDeleted.eq(false))
+			.where(cardHistory.cardId.in(cardIds),
+				cardHistory.isDeleted.eq(false))
+			.groupBy(cardHistory.cardId)
+			.fetch()
+			.stream()
+			.collect(Collectors.toMap(tuple -> tuple.get(cardHistory.cardId), tuple -> {
+				Double avg = tuple.get(cardHistory.score.score.avg());
+				avg = avg == null ? 0.0 : avg;
+				Long count = tuple.get(cardHistory.cardId.count());
+				count = count == null ? 0L : count;
+				return Pair.of(avg, count);
+			}));
+		for (Id cardId : cardIds) {
+			collect.putIfAbsent(cardId, Pair.of(0.0, 0L));
+		}
+		return collect;
+	}
+
+	@Override
+	public Optional<CardStatisticsDto> findCardHistoryScoresAvgAndCountsByCardId(Id cardId) {
+		Tuple tuple = jpaQueryFactory.select(cardHistory.cardId, cardHistory.score.score.avg(),
+				cardHistory.cardId.count())
+			.from(cardHistory)
+			.innerJoin(card)
+			.on(cardHistory.cardId.eq(card.cardId),
+				card.isDeleted.eq(false))
+			.where(cardHistory.cardId.eq(cardId),
+				cardHistory.isDeleted.eq(false))
+			.groupBy(cardHistory.cardId)
+			.fetchOne();
+
+		if (tuple == null) {
+			return Optional.empty();
+		}
+		double scoreAvg = Optional.ofNullable(tuple.get(cardHistory.score.score.avg())).orElse(0.0);
+		long solveCount = Optional.ofNullable(tuple.get(cardHistory.cardId.count())).orElse(0L);
+		CardStatisticsDto statisticsDto = CardStatisticsDto.builder()
+			.tryCount(solveCount)
+			.scoreAvg(scoreAvg)
+			.build();
+		return Optional.of(statisticsDto);
 	}
 
 	private BooleanExpression lessOrEqCardHistoryId(Id lastCardHistoryId) {

@@ -20,6 +20,7 @@ import com.almondia.meca.card.application.CardService;
 import com.almondia.meca.card.application.CardSimulationService;
 import com.almondia.meca.card.controller.dto.CardCountResponseDto;
 import com.almondia.meca.card.controller.dto.CardDto;
+import com.almondia.meca.card.controller.dto.CardWithStatisticsDto;
 import com.almondia.meca.card.controller.dto.SaveCardRequestDto;
 import com.almondia.meca.card.controller.dto.SharedCardResponseDto;
 import com.almondia.meca.card.controller.dto.UpdateCardRequestDto;
@@ -88,7 +89,7 @@ public class CardController {
 
 	@Secured("ROLE_USER")
 	@GetMapping("/categories/{categoryId}/me")
-	public ResponseEntity<CursorPage<CardDto>> searchPagingCards(
+	public ResponseEntity<CursorPage<CardWithStatisticsDto>> searchPagingCards(
 		@AuthenticationPrincipal Member member,
 		@PathVariable(value = "categoryId") Id categoryId,
 		@RequestParam(value = "hasNext", required = false) Id lastCardId,
@@ -99,13 +100,13 @@ public class CardController {
 			.containTitle(containTitle)
 			.build();
 
-		CursorPage<CardDto> responseDto = cardService.searchCursorPagingCard(
-			pageSize, lastCardId, categoryId, member.getMemberId(), cardSearchOption);
+		CursorPage<CardWithStatisticsDto> responseDto = cardService.searchCursorPagingCard(
+			pageSize, lastCardId, categoryId, member, cardSearchOption);
 		return ResponseEntity.ok(responseDto);
 	}
 
 	@GetMapping("/categories/{categoryId}/share")
-	public ResponseEntity<CursorPage<SharedCardResponseDto>> searchSharedCardPaging(
+	public ResponseEntity<CursorPage<CardWithStatisticsDto>> searchSharedCardPaging(
 		@PathVariable("categoryId") Id categoryId,
 		@RequestParam(value = "hasNext", required = false) Id lastCardId,
 		@RequestParam(value = "pageSize", defaultValue = "1000") int pageSize,
@@ -115,7 +116,7 @@ public class CardController {
 			.containTitle(containTitle)
 			.build();
 
-		CursorPage<SharedCardResponseDto> responseDto = cardService.searchCursorPagingSharedCard(
+		CursorPage<CardWithStatisticsDto> responseDto = cardService.searchCursorPagingSharedCard(
 			pageSize, lastCardId, categoryId, cardSearchOption);
 		return ResponseEntity.ok(responseDto);
 	}

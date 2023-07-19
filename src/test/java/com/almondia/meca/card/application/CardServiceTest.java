@@ -7,7 +7,6 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -17,7 +16,9 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.access.AccessDeniedException;
 
+import com.almondia.meca.card.controller.dto.CardCursorPageWithCategory;
 import com.almondia.meca.card.controller.dto.CardDto;
+import com.almondia.meca.card.controller.dto.CardWithStatisticsDto;
 import com.almondia.meca.card.controller.dto.SaveCardRequestDto;
 import com.almondia.meca.card.controller.dto.UpdateCardRequestDto;
 import com.almondia.meca.card.domain.entity.Card;
@@ -37,16 +38,19 @@ import com.almondia.meca.card.domain.vo.OxAnswer;
 import com.almondia.meca.card.domain.vo.Question;
 import com.almondia.meca.card.domain.vo.Title;
 import com.almondia.meca.card.infra.querydsl.CardSearchOption;
+import com.almondia.meca.cardhistory.domain.entity.CardHistory;
 import com.almondia.meca.category.domain.entity.Category;
 import com.almondia.meca.category.domain.service.CategoryChecker;
 import com.almondia.meca.common.configuration.jpa.QueryDslConfiguration;
 import com.almondia.meca.common.controller.dto.CursorPage;
 import com.almondia.meca.common.domain.vo.Id;
-import com.almondia.meca.data.CardDataFactory;
+import com.almondia.meca.helper.CardHistoryTestHelper;
 import com.almondia.meca.helper.CardTestHelper;
 import com.almondia.meca.helper.CategoryTestHelper;
 import com.almondia.meca.helper.MemberTestHelper;
+import com.almondia.meca.helper.recommend.CategoryRecommendTestHelper;
 import com.almondia.meca.member.domain.entity.Member;
+import com.almondia.meca.recommand.domain.entity.CategoryRecommend;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -380,15 +384,6 @@ class CardServiceTest {
 	@Nested
 	@DisplayName("카드 커서 페이징 조회")
 	class SearchCardCursorPagingTest {
-		CardDataFactory cardDataFactory = new CardDataFactory();
-		Id memberId = cardDataFactory.getMemberId();
-		Id categoryId = cardDataFactory.getCategoryId();
-
-		@BeforeEach
-		void before() {
-			List<Card> testData = cardDataFactory.createTestData();
-			cardRepository.saveAll(testData);
-		}
 
 		@Test
 		@DisplayName("본인이 가진 카테고리가 아닐 시 권한 에러 출력")
@@ -396,28 +391,40 @@ class CardServiceTest {
 			assertThatThrownBy(() -> cardService.searchCursorPagingCard(
 				10,
 				Id.generateNextId(),
-				categoryId,
 				Id.generateNextId(),
+				MemberTestHelper.generateMember(Id.generateNextId()),
 				CardSearchOption.builder().build())).isInstanceOf(AccessDeniedException.class);
 		}
 
 		@Test
 		@DisplayName("카드 커서 페이징 출력 형태 및 결과 테스트")
 		void shouldSuccessWorkTest() {
-			em.persist(MemberTestHelper.generateMember(memberId));
-			em.persist(CategoryTestHelper.generateUnSharedCategory("title", memberId, categoryId));
-			CursorPage<CardDto> cursorPage = cardService.searchCursorPagingCard(
-				5,
+			//given
+			Id memberId = Id.generateNextId();
+			Id categoryId = Id.generateNextId();
+			Category category = CategoryTestHelper.generateUnSharedCategory("title", memberId, categoryId);
+			Card card = CardTestHelper.genKeywordCard(memberId, categoryId, Id.generateNextId());
+			CardHistory cardHistory1 = CardHistoryTestHelper.generateCardHistory(Id.generateNextId(), card.getCardId(),
+				10);
+			CardHistory cardHistory2 = CardHistoryTestHelper.generateCardHistory(Id.generateNextId(), card.getCardId(),
+				20);
+			CategoryRecommend categoryRecommend = CategoryRecommendTestHelper.generateCategoryRecommend(categoryId,
+				Id.generateNextId());
+			persistAll(category, card, cardHistory1, cardHistory2, categoryRecommend);
+
+			// when
+			CursorPage<CardWithStatisticsDto> cardCursorPageWithCategory = cardService.searchCursorPagingCard(
+				10,
 				null,
 				categoryId,
-				memberId,
-				CardSearchOption.builder().build()
-			);
-			assertThat(cursorPage)
-				.hasFieldOrProperty("contents")
-				.hasFieldOrProperty("pageSize")
-				.hasFieldOrProperty("hasNext")
-				.hasFieldOrProperty("sortOrder");
+				MemberTestHelper.generateMember(memberId),
+				CardSearchOption.builder().build());
+
+			// then
+			assertThat(cardCursorPageWithCategory.getContents().get(0).getCard().getCardId()).isEqualTo(
+				card.getCardId());
+			assertThat(cardCursorPageWithCategory.getContents().get(0).getStatistics().getScoreAvg()).isEqualTo(15);
+
 		}
 	}
 
@@ -546,6 +553,91 @@ class CardServiceTest {
 
 			// then
 			assertThat(count).isEqualTo(2L);
+		}
+	}
+
+	/**
+	 * 공유 카테고리가 존재하지 않으면 예외를 발생한다
+	 * 카테고리가 삭제되어 있다면 예외를 발생한다
+	 * 삭제된 회원인 경우 예외를 발생한다
+	 * 통계 기록은 있으면 안되고 모두 null이여야 함
+	 */
+	@Nested
+	@DisplayName("searchCursorPagingSharedCard 테스트")
+	class SearchCursorPagingSharedCardTest {
+
+		@Test
+		@DisplayName("공유 카테고리가 존재하지 않으면 예외를 발생한다")
+		void shouldThrowExceptionWhenSharedCategoryNotExistTest() {
+			// given
+			CardSearchOption cardSearchOption = CardSearchOption.builder().build();
+			Id memberId = Id.generateNextId();
+			Id categoryId = Id.generateNextId();
+			Category category = CategoryTestHelper.generateUnSharedCategory("title", memberId, categoryId);
+			persistAll(category);
+
+			// when
+			assertThatThrownBy(
+				() -> cardService.searchCursorPagingSharedCard(10, null, categoryId, cardSearchOption))
+				.isInstanceOf(IllegalArgumentException.class).hasMessage("공유되지 않은 카테고리에 접근할 수 없습니다");
+		}
+
+		@Test
+		@DisplayName("카테고리가 삭제되어 있다면 예외를 발생한다")
+		void shouldThrowExceptionWhenSharedCategoryIsDeletedTest() {
+			// given
+			CardSearchOption cardSearchOption = CardSearchOption.builder().build();
+			Id memberId = Id.generateNextId();
+			Id categoryId = Id.generateNextId();
+			Category category = CategoryTestHelper.generateSharedCategory("title", memberId, categoryId);
+			category.delete();
+			persistAll(category);
+
+			// when
+			assertThatThrownBy(
+				() -> cardService.searchCursorPagingSharedCard(10, null, categoryId, cardSearchOption))
+				.isInstanceOf(IllegalArgumentException.class).hasMessage("공유되지 않은 카테고리에 접근할 수 없습니다");
+		}
+
+		@Test
+		@DisplayName("삭제된 회원인 경우 예외를 발생한다")
+		void shouldThrowExceptionWhenMemberIsDeletedTest() {
+			// given
+			CardSearchOption cardSearchOption = CardSearchOption.builder().build();
+			Id memberId = Id.generateNextId();
+			Id categoryId = Id.generateNextId();
+			Category category = CategoryTestHelper.generateSharedCategory("title", memberId, categoryId);
+			Member member = MemberTestHelper.generateMember(memberId);
+			member.delete();
+			persistAll(category, member);
+
+			// when
+			assertThatThrownBy(
+				() -> cardService.searchCursorPagingSharedCard(10, null, categoryId, cardSearchOption))
+				.isInstanceOf(IllegalArgumentException.class).hasMessage("삭제된 멤버에 접근할 수 없습니다");
+		}
+
+		@Test
+		@DisplayName("통계 기록은 있으면 안되고 모두 null이여야 함")
+		void shouldReturnNullWhenStatisticsExistTest() {
+			// given
+			CardSearchOption cardSearchOption = CardSearchOption.builder().build();
+			Id memberId = Id.generateNextId();
+			Id categoryId = Id.generateNextId();
+			Category category = CategoryTestHelper.generateSharedCategory("title", memberId, categoryId);
+			Member member = MemberTestHelper.generateMember(memberId);
+			Card card1 = CardTestHelper.genOxCard(Id.generateNextId(), categoryId, memberId);
+			CategoryRecommend categoryRecommend = CategoryRecommendTestHelper.generateCategoryRecommend(categoryId,
+				Id.generateNextId());
+			persistAll(member, category, card1, categoryRecommend);
+
+			// when
+			CardCursorPageWithCategory cardCursorPageWithCategory = cardService.searchCursorPagingSharedCard(10, null,
+				categoryId, cardSearchOption);
+
+			// then
+			assertThat(cardCursorPageWithCategory.getContents().get(0).getStatistics().getScoreAvg()).isNull();
+			assertThat(cardCursorPageWithCategory.getContents().get(0).getStatistics().getTryCount()).isNull();
 		}
 	}
 }

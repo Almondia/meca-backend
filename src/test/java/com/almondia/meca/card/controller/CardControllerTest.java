@@ -36,9 +36,10 @@ import org.springframework.web.context.WebApplicationContext;
 import com.almondia.meca.asciidocs.fields.DocsFieldGeneratorUtils;
 import com.almondia.meca.card.application.CardService;
 import com.almondia.meca.card.application.CardSimulationService;
+import com.almondia.meca.card.application.helper.CardMapper;
 import com.almondia.meca.card.controller.dto.CardCursorPageWithCategory;
-import com.almondia.meca.card.controller.dto.CardCursorPageWithSharedCategoryDto;
 import com.almondia.meca.card.controller.dto.CardDto;
+import com.almondia.meca.card.controller.dto.CardWithStatisticsDto;
 import com.almondia.meca.card.controller.dto.SaveCardRequestDto;
 import com.almondia.meca.card.controller.dto.SharedCardResponseDto;
 import com.almondia.meca.card.controller.dto.UpdateCardRequestDto;
@@ -49,14 +50,15 @@ import com.almondia.meca.card.domain.vo.Description;
 import com.almondia.meca.card.domain.vo.OxAnswer;
 import com.almondia.meca.card.domain.vo.Question;
 import com.almondia.meca.card.domain.vo.Title;
+import com.almondia.meca.cardhistory.controller.dto.CardStatisticsDto;
 import com.almondia.meca.category.domain.entity.Category;
 import com.almondia.meca.common.configuration.jackson.JacksonConfiguration;
 import com.almondia.meca.common.configuration.security.filter.JwtAuthenticationFilter;
 import com.almondia.meca.common.domain.vo.Id;
+import com.almondia.meca.common.domain.vo.Image;
 import com.almondia.meca.common.infra.querydsl.SortOrder;
 import com.almondia.meca.configuration.asciidocs.DocsFieldGeneratorUtilsConfiguration;
 import com.almondia.meca.helper.CardTestHelper;
-import com.almondia.meca.helper.MemberTestHelper;
 import com.almondia.meca.member.domain.entity.Member;
 import com.almondia.meca.member.domain.vo.Email;
 import com.almondia.meca.member.domain.vo.Name;
@@ -393,12 +395,26 @@ class CardControllerTest {
 		@WithMockMember
 		void shouldReturn200WhenSuccessTest() throws Exception {
 			// given
-			List<CardDto> contents = List.of(makeResponse());
+			List<CardWithStatisticsDto> contents = List.of(makeResponse());
 			CardCursorPageWithCategory cardCursorPageWithCategory = new CardCursorPageWithCategory(contents,
 				Id.generateNextId(), 5, SortOrder.DESC);
 			cardCursorPageWithCategory.setCategory(Category.builder()
 				.categoryId(Id.generateNextId())
+				.memberId(new Id("2825b9a9-d89a-4301-99b5-a7668a5b5fff"))
+				.thumbnail(Image.of("thumbnail"))
+				.createdAt(LocalDateTime.now())
+				.modifiedAt(LocalDateTime.now())
+				.isShared(true)
 				.title(new com.almondia.meca.category.domain.vo.Title("title"))
+				.build());
+			cardCursorPageWithCategory.setMember(Member.builder()
+				.memberId(new Id("2825b9a9-d89a-4301-99b5-a7668a5b5fff"))
+				.email(new Email("helloworld@naver.com"))
+				.name(Name.of("hello"))
+				.oAuthType(OAuthType.GOOGLE)
+				.role(Role.USER)
+				.createdAt(LocalDateTime.now())
+				.modifiedAt(LocalDateTime.now())
 				.build());
 			Mockito.doReturn(cardCursorPageWithCategory)
 				.when(cardService)
@@ -423,16 +439,19 @@ class CardControllerTest {
 					requestParameters(parameterWithName("hasNext").description("다음 페이지가 있는지 여부").optional(),
 						parameterWithName("pageSize").description("페이지 사이즈"),
 						parameterWithName("containTitle").description("카드 제목 포함 여부").optional()),
-					responseFields(fieldWithPath("contents[].cardId").description("카드 아이디"),
-						fieldWithPath("contents[].title").description("카드 제목"),
-						fieldWithPath("contents[].memberId").description("카드 멤버 아이디"),
-						fieldWithPath("contents[].question").description("카드 질문"),
-						fieldWithPath("contents[].categoryId").description("카테고리 아이디"),
-						fieldWithPath("contents[].cardType").description("카드 타입"),
-						fieldWithPath("contents[].answer").description("카드 정답"),
-						fieldWithPath("contents[].description").description("카드 설명"),
-						fieldWithPath("contents[].createdAt").description("카드 생성일"),
-						fieldWithPath("contents[].modifiedAt").description("카드 수정일"),
+					responseFields(
+						fieldWithPath("contents[].card.cardId").description("카드 아이디"),
+						fieldWithPath("contents[].card.title").description("카드 제목"),
+						fieldWithPath("contents[].card.memberId").description("카드 멤버 아이디"),
+						fieldWithPath("contents[].card.question").description("카드 질문"),
+						fieldWithPath("contents[].card.categoryId").description("카테고리 아이디"),
+						fieldWithPath("contents[].card.cardType").description("카드 타입"),
+						fieldWithPath("contents[].card.answer").description("카드 정답"),
+						fieldWithPath("contents[].card.description").description("카드 설명"),
+						fieldWithPath("contents[].card.createdAt").description("카드 생성일"),
+						fieldWithPath("contents[].card.modifiedAt").description("카드 수정일"),
+						fieldWithPath("contents[].statistics.scoreAvg").description("평균 점수"),
+						fieldWithPath("contents[].statistics.tryCount").description("정답 수"),
 						fieldWithPath("pageSize").description("페이지 사이즈"),
 						fieldWithPath("sortOrder").description("정렬 방식"),
 						fieldWithPath("hasNext").description("다음 페이지가 있는지 여부"),
@@ -444,21 +463,24 @@ class CardControllerTest {
 						fieldWithPath("category.createdAt").description("카테고리 생성일"),
 						fieldWithPath("category.modifiedAt").description("카테고리 수정일"),
 						fieldWithPath("category.deleted").description("카테고리 삭제 여부"),
-						fieldWithPath("category.memberId").description("카테고리 멤버 아이디"))));
+						fieldWithPath("category.memberId").description("카테고리 멤버 아이디"),
+						fieldWithPath("member.memberId").description("멤버 아이디"),
+						fieldWithPath("member.email").description("멤버 이메일"),
+						fieldWithPath("member.name").description("멤버 이름"),
+						fieldWithPath("member.profile").description("멤버 프로필"),
+						fieldWithPath("member.oauthType").description("멤버 OAuth 타입"),
+						fieldWithPath("member.role").description("멤버 권한"),
+						fieldWithPath("member.deleted").description("멤버 삭제 여부"),
+						fieldWithPath("member.createdAt").description("멤버 생성일"),
+						fieldWithPath("member.modifiedAt").description("멤버 수정일"))));
 		}
 
-		private CardDto makeResponse() {
-			return CardDto.builder()
-				.cardId(Id.generateNextId())
-				.title(new Title("title"))
-				.memberId(Id.generateNextId())
-				.question(new Question("hello"))
-				.categoryId(Id.generateNextId())
-				.cardType(CardType.OX_QUIZ)
-				.answer(OxAnswer.O.name())
-				.description(new Description("hello"))
-				.createdAt(LocalDateTime.now())
-				.modifiedAt(LocalDateTime.now())
+		private CardWithStatisticsDto makeResponse() {
+			Card card = CardTestHelper.genOxCard(Id.generateNextId(), Id.generateNextId(), Id.generateNextId());
+			CardDto cardDto = CardMapper.cardToDto(card);
+			return CardWithStatisticsDto.builder()
+				.card(cardDto)
+				.statistics(new CardStatisticsDto(0.0, 0L))
 				.build();
 		}
 	}
@@ -471,12 +493,26 @@ class CardControllerTest {
 		@DisplayName("정상 동작시 200 응답 및 응답 포맷 테스트")
 		void shouldReturn200OkAndResponseFormatTest() throws Exception {
 			// given
-			List<SharedCardResponseDto> contents = List.of(makeResponse());
-			CardCursorPageWithSharedCategoryDto cardCursorPageWithCategory = new CardCursorPageWithSharedCategoryDto(
-				contents, Id.generateNextId(), 5, SortOrder.DESC);
+			List<CardWithStatisticsDto> contents = List.of(makeResponse());
+			CardCursorPageWithCategory cardCursorPageWithCategory = new CardCursorPageWithCategory(contents,
+				Id.generateNextId(), 5, SortOrder.DESC);
 			cardCursorPageWithCategory.setCategory(Category.builder()
 				.categoryId(Id.generateNextId())
+				.memberId(new Id("2825b9a9-d89a-4301-99b5-a7668a5b5fff"))
+				.thumbnail(Image.of("thumbnail"))
+				.createdAt(LocalDateTime.now())
+				.modifiedAt(LocalDateTime.now())
+				.isShared(true)
 				.title(new com.almondia.meca.category.domain.vo.Title("title"))
+				.build());
+			cardCursorPageWithCategory.setMember(Member.builder()
+				.memberId(new Id("2825b9a9-d89a-4301-99b5-a7668a5b5fff"))
+				.email(new Email("helloworld@naver.com"))
+				.name(Name.of("hello"))
+				.oAuthType(OAuthType.GOOGLE)
+				.role(Role.USER)
+				.createdAt(LocalDateTime.now())
+				.modifiedAt(LocalDateTime.now())
 				.build());
 			Mockito.doReturn(cardCursorPageWithCategory)
 				.when(cardService)
@@ -498,25 +534,18 @@ class CardControllerTest {
 					requestParameters(parameterWithName("hasNext").description("다음 페이지가 있는지 여부").optional(),
 						parameterWithName("pageSize").description("페이지 사이즈"),
 						parameterWithName("containTitle").description("카드 제목 포함 여부").optional()),
-					responseFields(fieldWithPath("contents[].cardInfo.cardId").description("카드 아이디"),
-						fieldWithPath("contents[].cardInfo.title").description("카드 제목"),
-						fieldWithPath("contents[].cardInfo.memberId").description("카드 멤버 아이디"),
-						fieldWithPath("contents[].cardInfo.question").description("카드 질문"),
-						fieldWithPath("contents[].cardInfo.categoryId").description("카테고리 아이디"),
-						fieldWithPath("contents[].cardInfo.cardType").description("카드 타입"),
-						fieldWithPath("contents[].cardInfo.answer").description("카드 정답"),
-						fieldWithPath("contents[].cardInfo.description").description("카드 설명"),
-						fieldWithPath("contents[].cardInfo.createdAt").description("카드 생성일"),
-						fieldWithPath("contents[].cardInfo.modifiedAt").description("카드 수정일"),
-						fieldWithPath("contents[].memberInfo.memberId").description("멤버 아이디"),
-						fieldWithPath("contents[].memberInfo.email").description("멤버 이메일"),
-						fieldWithPath("contents[].memberInfo.name").description("멤버 이름"),
-						fieldWithPath("contents[].memberInfo.profile").description("멤버 프로필 이미지"),
-						fieldWithPath("contents[].memberInfo.role").description("멤버 권한"),
-						fieldWithPath("contents[].memberInfo.createdAt").description("멤버 생성일"),
-						fieldWithPath("contents[].memberInfo.modifiedAt").description("멤버 수정일"),
-						fieldWithPath("contents[].memberInfo.deleted").description("멤버 삭제 여부"),
-						fieldWithPath("contents[].memberInfo.oauthType").description("KAKAO, GOOGLE, NAVER"),
+					responseFields(fieldWithPath("contents[].card.cardId").description("카드 아이디"),
+						fieldWithPath("contents[].card.title").description("카드 제목"),
+						fieldWithPath("contents[].card.memberId").description("카드 멤버 아이디"),
+						fieldWithPath("contents[].card.question").description("카드 질문"),
+						fieldWithPath("contents[].card.categoryId").description("카테고리 아이디"),
+						fieldWithPath("contents[].card.cardType").description("카드 타입"),
+						fieldWithPath("contents[].card.answer").description("카드 정답"),
+						fieldWithPath("contents[].card.description").description("카드 설명"),
+						fieldWithPath("contents[].card.createdAt").description("카드 생성일"),
+						fieldWithPath("contents[].card.modifiedAt").description("카드 수정일"),
+						fieldWithPath("contents[].statistics.scoreAvg").description("평균 점수"),
+						fieldWithPath("contents[].statistics.tryCount").description("정답 수"),
 						fieldWithPath("pageSize").description("페이지 사이즈"),
 						fieldWithPath("sortOrder").description("정렬 방식"),
 						fieldWithPath("hasNext").description("다음 페이지가 있는지 여부"),
@@ -528,13 +557,25 @@ class CardControllerTest {
 						fieldWithPath("category.createdAt").description("카테고리 생성일"),
 						fieldWithPath("category.modifiedAt").description("카테고리 수정일"),
 						fieldWithPath("category.deleted").description("카테고리 삭제 여부"),
-						fieldWithPath("category.memberId").description("카테고리 멤버 아이디"))));
+						fieldWithPath("category.memberId").description("카테고리 멤버 아이디"),
+						fieldWithPath("member.memberId").description("멤버 아이디"),
+						fieldWithPath("member.email").description("멤버 이메일"),
+						fieldWithPath("member.name").description("멤버 이름"),
+						fieldWithPath("member.profile").description("멤버 프로필"),
+						fieldWithPath("member.oauthType").description("멤버 OAuth 타입"),
+						fieldWithPath("member.role").description("멤버 권한"),
+						fieldWithPath("member.deleted").description("멤버 삭제 여부"),
+						fieldWithPath("member.createdAt").description("멤버 생성일"),
+						fieldWithPath("member.modifiedAt").description("멤버 수정일"))));
 		}
 
-		private SharedCardResponseDto makeResponse() {
+		private CardWithStatisticsDto makeResponse() {
 			Card card = CardTestHelper.genOxCard(Id.generateNextId(), Id.generateNextId(), Id.generateNextId());
-			Member member = MemberTestHelper.generateMember(Id.generateNextId());
-			return new SharedCardResponseDto(card, member);
+			CardDto cardDto = CardMapper.cardToDto(card);
+			return CardWithStatisticsDto.builder()
+				.card(cardDto)
+				.statistics(new CardStatisticsDto(null, null))
+				.build();
 		}
 	}
 

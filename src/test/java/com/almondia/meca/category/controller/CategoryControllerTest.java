@@ -40,11 +40,11 @@ import com.almondia.meca.category.application.CategoryRecommendService;
 import com.almondia.meca.category.application.CategoryService;
 import com.almondia.meca.category.controller.dto.CategoryDto;
 import com.almondia.meca.category.controller.dto.CategoryRecommendCheckDto;
+import com.almondia.meca.category.controller.dto.CategoryStatisticsDto;
 import com.almondia.meca.category.controller.dto.CategoryWithStatisticsResponseDto;
 import com.almondia.meca.category.controller.dto.SaveCategoryRequestDto;
 import com.almondia.meca.category.controller.dto.SharedCategoryResponseDto;
 import com.almondia.meca.category.controller.dto.SharedCategoryWithStatisticsAndRecommendDto;
-import com.almondia.meca.category.controller.dto.StatisticsDto;
 import com.almondia.meca.category.controller.dto.UpdateCategoryRequestDto;
 import com.almondia.meca.category.domain.entity.Category;
 import com.almondia.meca.category.domain.vo.Title;
@@ -282,9 +282,9 @@ class CategoryControllerTest {
 			Id categoryId = Id.generateNextId();
 			Category category = CategoryTestHelper.generateSharedCategory("title", memberId, categoryId);
 			Member member = MemberTestHelper.generateMember(memberId);
-			StatisticsDto statisticsDto = new StatisticsDto(12.3, 10L, 20L);
+			CategoryStatisticsDto categoryStatisticsDto = new CategoryStatisticsDto(12.3, 10L, 20L);
 			SharedCategoryWithStatisticsAndRecommendDto content = new SharedCategoryWithStatisticsAndRecommendDto(
-				category, member, statisticsDto, 10L);
+				category, member, categoryStatisticsDto, 10L);
 			CursorPage<SharedCategoryWithStatisticsAndRecommendDto> response = CursorPage.of(List.of(content), 1,
 				SortOrder.DESC);
 			Mockito.doReturn(response)

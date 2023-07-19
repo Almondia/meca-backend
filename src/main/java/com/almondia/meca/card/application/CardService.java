@@ -1,7 +1,10 @@
 package com.almondia.meca.card.application;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
+import org.springframework.data.util.Pair;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -9,8 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.almondia.meca.card.application.helper.CardFactory;
 import com.almondia.meca.card.application.helper.CardMapper;
 import com.almondia.meca.card.controller.dto.CardCursorPageWithCategory;
-import com.almondia.meca.card.controller.dto.CardCursorPageWithSharedCategoryDto;
 import com.almondia.meca.card.controller.dto.CardDto;
+import com.almondia.meca.card.controller.dto.CardWithStatisticsDto;
 import com.almondia.meca.card.controller.dto.SaveCardRequestDto;
 import com.almondia.meca.card.controller.dto.SharedCardResponseDto;
 import com.almondia.meca.card.controller.dto.UpdateCardRequestDto;
@@ -18,6 +21,7 @@ import com.almondia.meca.card.domain.entity.Card;
 import com.almondia.meca.card.domain.repository.CardRepository;
 import com.almondia.meca.card.domain.service.CardChecker;
 import com.almondia.meca.card.infra.querydsl.CardSearchOption;
+import com.almondia.meca.cardhistory.controller.dto.CardStatisticsDto;
 import com.almondia.meca.cardhistory.domain.entity.CardHistory;
 import com.almondia.meca.cardhistory.domain.repository.CardHistoryRepository;
 import com.almondia.meca.category.domain.entity.Category;
@@ -25,6 +29,9 @@ import com.almondia.meca.category.domain.repository.CategoryRepository;
 import com.almondia.meca.category.domain.service.CategoryChecker;
 import com.almondia.meca.common.controller.dto.CursorPage;
 import com.almondia.meca.common.domain.vo.Id;
+import com.almondia.meca.common.infra.querydsl.SortOrder;
+import com.almondia.meca.member.domain.entity.Member;
+import com.almondia.meca.member.domain.repository.MemberRepository;
 import com.almondia.meca.recommand.domain.repository.CategoryRecommendRepository;
 
 import lombok.AllArgsConstructor;
@@ -33,6 +40,7 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class CardService {
 
+	private final MemberRepository memberRepository;
 	private final CardHistoryRepository cardHistoryRepository;
 	private final CardRepository cardRepository;
 	private final CategoryRepository categoryRepository;
@@ -55,20 +63,34 @@ public class CardService {
 	}
 
 	@Transactional(readOnly = true)
-	public CursorPage<CardDto> searchCursorPagingCard(
+	public CursorPage<CardWithStatisticsDto> searchCursorPagingCard(
 		int pageSize,
 		Id lastCardId,
 		Id categoryId,
-		Id memberId,
+		Member member,
 		CardSearchOption cardSearchOption
 	) {
-		Category category = categoryChecker.checkAuthority(categoryId, memberId);
+		// search
+		Category category = categoryChecker.checkAuthority(categoryId, member.getMemberId());
 		long likeCount = categoryRecommendRepository.countByCategoryIdAndIsDeletedFalse(categoryId);
-		CardCursorPageWithCategory cursor = cardRepository.findCardByCategoryIdUsingCursorPaging(pageSize,
+		List<CardDto> collect = cardRepository.findCardByCategoryId(pageSize,
 			lastCardId, categoryId, cardSearchOption);
-		cursor.setCategory(category);
-		cursor.setCategoryLikeCount(likeCount);
-		return cursor;
+		Map<Id, Pair<Double, Long>> avgAndCountsByCardIds = cardHistoryRepository.findCardHistoryScoresAvgAndCountsByCardIds(
+			collect.stream().map(CardDto::getCardId).collect(Collectors.toList()));
+
+		// combine
+		List<CardWithStatisticsDto> contents = collect.stream()
+			.map(cardDto -> new CardWithStatisticsDto(cardDto, new CardStatisticsDto(
+				avgAndCountsByCardIds.getOrDefault(cardDto.getCardId(), Pair.of(0.0, 0L)).getFirst(),
+				avgAndCountsByCardIds.getOrDefault(cardDto.getCardId(), Pair.of(0.0, 0L)).getSecond()
+			)))
+			.collect(Collectors.toList());
+		CursorPage<CardWithStatisticsDto> cursor = CursorPage.of(contents, pageSize, SortOrder.DESC);
+		CardCursorPageWithCategory result = new CardCursorPageWithCategory(cursor);
+		result.setCategory(category);
+		result.setCategoryLikeCount(likeCount);
+		result.setMember(member);
+		return result;
 	}
 
 	@Transactional
@@ -105,23 +127,37 @@ public class CardService {
 	}
 
 	@Transactional(readOnly = true)
-	public CardCursorPageWithSharedCategoryDto searchCursorPagingSharedCard(
+	public CardCursorPageWithCategory searchCursorPagingSharedCard(
 		int pageSize,
 		Id lastCardId,
 		Id categoryId,
 		CardSearchOption cardSearchOption
 	) {
+		// search
 		Category category = categoryRepository.findById(categoryId)
 			.orElseThrow(() -> new IllegalArgumentException("카테고리가 존재하지 않습니다"));
-		if (!category.isShared()) {
-			throw new AccessDeniedException("공유되지 않은 카테고리에 접근할 수 없습니다");
+		if (category.isDeleted() || !category.isShared()) {
+			throw new IllegalArgumentException("공유되지 않은 카테고리에 접근할 수 없습니다");
+		}
+		Member member = memberRepository.findById(category.getMemberId())
+			.orElseThrow(() -> new IllegalArgumentException("멤버가 존재하지 않습니다"));
+		if (member.isDeleted()) {
+			throw new IllegalArgumentException("삭제된 멤버에 접근할 수 없습니다");
 		}
 		long likeCount = categoryRecommendRepository.countByCategoryIdAndIsDeletedFalse(categoryId);
-		CardCursorPageWithSharedCategoryDto cursor = cardRepository.findCardBySharedCategoryCursorPaging(pageSize,
-			lastCardId, categoryId, cardSearchOption);
-		cursor.setCategory(category);
-		cursor.setCategoryLikeCount(likeCount);
-		return cursor;
+		List<CardWithStatisticsDto> contents = cardRepository.findCardByCategoryId(pageSize, lastCardId, categoryId,
+				cardSearchOption).stream()
+			.map(cardDto -> new CardWithStatisticsDto(cardDto, new CardStatisticsDto(null, null)))
+			.collect(Collectors.toList());
+
+		// combine
+		CursorPage<CardWithStatisticsDto> cursor = CursorPage.of(contents, pageSize, SortOrder.DESC);
+		CardCursorPageWithCategory result = new CardCursorPageWithCategory(cursor);
+
+		result.setCategory(category);
+		result.setCategoryLikeCount(likeCount);
+		result.setMember(member);
+		return result;
 	}
 
 	private void updateCard(UpdateCardRequestDto updateCardRequestDto, Id memberId, Card card) {

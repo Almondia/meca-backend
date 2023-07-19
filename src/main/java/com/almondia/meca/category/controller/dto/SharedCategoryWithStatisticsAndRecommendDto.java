@@ -16,15 +16,16 @@ import lombok.ToString;
 public class SharedCategoryWithStatisticsAndRecommendDto implements CategoryWithStatisticsDto {
 
 	private final CategoryDto category;
-	private final StatisticsDto statistics;
+	private final CategoryStatisticsDto statistics;
 	private final MemberDto member;
 	private final long likeCount;
 
-	public SharedCategoryWithStatisticsAndRecommendDto(Category category, Member member, StatisticsDto statisticsDto,
+	public SharedCategoryWithStatisticsAndRecommendDto(Category category, Member member,
+		CategoryStatisticsDto categoryStatisticsDto,
 		long likeCount) {
 		this.category = CategoryMapper.entityToCategoryDto(category);
 		this.member = MemberMapper.fromEntityToDto(member);
-		this.statistics = statisticsDto;
+		this.statistics = categoryStatisticsDto;
 		this.likeCount = likeCount;
 	}
 }
