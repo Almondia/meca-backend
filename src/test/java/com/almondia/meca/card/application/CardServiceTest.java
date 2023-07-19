@@ -16,6 +16,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.access.AccessDeniedException;
 
+import com.almondia.meca.card.controller.dto.CardCursorPageWithCategory;
 import com.almondia.meca.card.controller.dto.CardDto;
 import com.almondia.meca.card.controller.dto.CardWithStatisticsDto;
 import com.almondia.meca.card.controller.dto.SaveCardRequestDto;
@@ -552,6 +553,91 @@ class CardServiceTest {
 
 			// then
 			assertThat(count).isEqualTo(2L);
+		}
+	}
+
+	/**
+	 * 공유 카테고리가 존재하지 않으면 예외를 발생한다
+	 * 카테고리가 삭제되어 있다면 예외를 발생한다
+	 * 삭제된 회원인 경우 예외를 발생한다
+	 * 통계 기록은 있으면 안되고 모두 null이여야 함
+	 */
+	@Nested
+	@DisplayName("searchCursorPagingSharedCard 테스트")
+	class SearchCursorPagingSharedCardTest {
+
+		@Test
+		@DisplayName("공유 카테고리가 존재하지 않으면 예외를 발생한다")
+		void shouldThrowExceptionWhenSharedCategoryNotExistTest() {
+			// given
+			CardSearchOption cardSearchOption = CardSearchOption.builder().build();
+			Id memberId = Id.generateNextId();
+			Id categoryId = Id.generateNextId();
+			Category category = CategoryTestHelper.generateUnSharedCategory("title", memberId, categoryId);
+			persistAll(category);
+
+			// when
+			assertThatThrownBy(
+				() -> cardService.searchCursorPagingSharedCard(10, null, categoryId, cardSearchOption))
+				.isInstanceOf(IllegalArgumentException.class).hasMessage("공유되지 않은 카테고리에 접근할 수 없습니다");
+		}
+
+		@Test
+		@DisplayName("카테고리가 삭제되어 있다면 예외를 발생한다")
+		void shouldThrowExceptionWhenSharedCategoryIsDeletedTest() {
+			// given
+			CardSearchOption cardSearchOption = CardSearchOption.builder().build();
+			Id memberId = Id.generateNextId();
+			Id categoryId = Id.generateNextId();
+			Category category = CategoryTestHelper.generateSharedCategory("title", memberId, categoryId);
+			category.delete();
+			persistAll(category);
+
+			// when
+			assertThatThrownBy(
+				() -> cardService.searchCursorPagingSharedCard(10, null, categoryId, cardSearchOption))
+				.isInstanceOf(IllegalArgumentException.class).hasMessage("공유되지 않은 카테고리에 접근할 수 없습니다");
+		}
+
+		@Test
+		@DisplayName("삭제된 회원인 경우 예외를 발생한다")
+		void shouldThrowExceptionWhenMemberIsDeletedTest() {
+			// given
+			CardSearchOption cardSearchOption = CardSearchOption.builder().build();
+			Id memberId = Id.generateNextId();
+			Id categoryId = Id.generateNextId();
+			Category category = CategoryTestHelper.generateSharedCategory("title", memberId, categoryId);
+			Member member = MemberTestHelper.generateMember(memberId);
+			member.delete();
+			persistAll(category, member);
+
+			// when
+			assertThatThrownBy(
+				() -> cardService.searchCursorPagingSharedCard(10, null, categoryId, cardSearchOption))
+				.isInstanceOf(IllegalArgumentException.class).hasMessage("삭제된 멤버에 접근할 수 없습니다");
+		}
+
+		@Test
+		@DisplayName("통계 기록은 있으면 안되고 모두 null이여야 함")
+		void shouldReturnNullWhenStatisticsExistTest() {
+			// given
+			CardSearchOption cardSearchOption = CardSearchOption.builder().build();
+			Id memberId = Id.generateNextId();
+			Id categoryId = Id.generateNextId();
+			Category category = CategoryTestHelper.generateSharedCategory("title", memberId, categoryId);
+			Member member = MemberTestHelper.generateMember(memberId);
+			Card card1 = CardTestHelper.genOxCard(Id.generateNextId(), categoryId, memberId);
+			CategoryRecommend categoryRecommend = CategoryRecommendTestHelper.generateCategoryRecommend(categoryId,
+				Id.generateNextId());
+			persistAll(member, category, card1, categoryRecommend);
+
+			// when
+			CardCursorPageWithCategory cardCursorPageWithCategory = cardService.searchCursorPagingSharedCard(10, null,
+				categoryId, cardSearchOption);
+
+			// then
+			assertThat(cardCursorPageWithCategory.getContents().get(0).getStatistics().getScoreAvg()).isNull();
+			assertThat(cardCursorPageWithCategory.getContents().get(0).getStatistics().getSolveCount()).isNull();
 		}
 	}
 }

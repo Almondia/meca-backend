@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.almondia.meca.card.application.helper.CardFactory;
 import com.almondia.meca.card.application.helper.CardMapper;
 import com.almondia.meca.card.controller.dto.CardCursorPageWithCategory;
-import com.almondia.meca.card.controller.dto.CardCursorPageWithSharedCategoryDto;
 import com.almondia.meca.card.controller.dto.CardDto;
 import com.almondia.meca.card.controller.dto.CardWithStatisticsDto;
 import com.almondia.meca.card.controller.dto.SaveCardRequestDto;
@@ -128,23 +127,37 @@ public class CardService {
 	}
 
 	@Transactional(readOnly = true)
-	public CardCursorPageWithSharedCategoryDto searchCursorPagingSharedCard(
+	public CardCursorPageWithCategory searchCursorPagingSharedCard(
 		int pageSize,
 		Id lastCardId,
 		Id categoryId,
 		CardSearchOption cardSearchOption
 	) {
+		// search
 		Category category = categoryRepository.findById(categoryId)
 			.orElseThrow(() -> new IllegalArgumentException("카테고리가 존재하지 않습니다"));
-		if (!category.isShared()) {
-			throw new AccessDeniedException("공유되지 않은 카테고리에 접근할 수 없습니다");
+		if (category.isDeleted() || !category.isShared()) {
+			throw new IllegalArgumentException("공유되지 않은 카테고리에 접근할 수 없습니다");
+		}
+		Member member = memberRepository.findById(category.getMemberId())
+			.orElseThrow(() -> new IllegalArgumentException("멤버가 존재하지 않습니다"));
+		if (member.isDeleted()) {
+			throw new IllegalArgumentException("삭제된 멤버에 접근할 수 없습니다");
 		}
 		long likeCount = categoryRecommendRepository.countByCategoryIdAndIsDeletedFalse(categoryId);
-		CardCursorPageWithSharedCategoryDto cursor = cardRepository.findCardBySharedCategoryCursorPaging(pageSize,
-			lastCardId, categoryId, cardSearchOption);
-		cursor.setCategory(category);
-		cursor.setCategoryLikeCount(likeCount);
-		return cursor;
+		List<CardWithStatisticsDto> contents = cardRepository.findCardByCategoryId(pageSize, lastCardId, categoryId,
+				cardSearchOption).stream()
+			.map(cardDto -> new CardWithStatisticsDto(cardDto, new CardStatisticsDto(null, null)))
+			.collect(Collectors.toList());
+
+		// combine
+		CursorPage<CardWithStatisticsDto> cursor = CursorPage.of(contents, pageSize, SortOrder.DESC);
+		CardCursorPageWithCategory result = new CardCursorPageWithCategory(cursor);
+
+		result.setCategory(category);
+		result.setCategoryLikeCount(likeCount);
+		result.setMember(member);
+		return result;
 	}
 
 	private void updateCard(UpdateCardRequestDto updateCardRequestDto, Id memberId, Card card) {

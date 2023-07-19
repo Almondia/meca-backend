@@ -106,7 +106,7 @@ public class CardController {
 	}
 
 	@GetMapping("/categories/{categoryId}/share")
-	public ResponseEntity<CursorPage<SharedCardResponseDto>> searchSharedCardPaging(
+	public ResponseEntity<CursorPage<CardWithStatisticsDto>> searchSharedCardPaging(
 		@PathVariable("categoryId") Id categoryId,
 		@RequestParam(value = "hasNext", required = false) Id lastCardId,
 		@RequestParam(value = "pageSize", defaultValue = "1000") int pageSize,
@@ -116,7 +116,7 @@ public class CardController {
 			.containTitle(containTitle)
 			.build();
 
-		CursorPage<SharedCardResponseDto> responseDto = cardService.searchCursorPagingSharedCard(
+		CursorPage<CardWithStatisticsDto> responseDto = cardService.searchCursorPagingSharedCard(
 			pageSize, lastCardId, categoryId, cardSearchOption);
 		return ResponseEntity.ok(responseDto);
 	}

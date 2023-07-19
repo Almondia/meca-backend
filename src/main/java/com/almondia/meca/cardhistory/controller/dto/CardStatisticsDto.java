@@ -9,6 +9,6 @@ import lombok.RequiredArgsConstructor;
 @Builder
 public class CardStatisticsDto {
 
-	private final double scoreAvg;
-	private final long solveCount;
+	private final Double scoreAvg;
+	private final Long solveCount;
 }
