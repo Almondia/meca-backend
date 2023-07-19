@@ -55,6 +55,7 @@ import com.almondia.meca.category.domain.entity.Category;
 import com.almondia.meca.common.configuration.jackson.JacksonConfiguration;
 import com.almondia.meca.common.configuration.security.filter.JwtAuthenticationFilter;
 import com.almondia.meca.common.domain.vo.Id;
+import com.almondia.meca.common.domain.vo.Image;
 import com.almondia.meca.common.infra.querydsl.SortOrder;
 import com.almondia.meca.configuration.asciidocs.DocsFieldGeneratorUtilsConfiguration;
 import com.almondia.meca.helper.CardTestHelper;
@@ -399,6 +400,11 @@ class CardControllerTest {
 				Id.generateNextId(), 5, SortOrder.DESC);
 			cardCursorPageWithCategory.setCategory(Category.builder()
 				.categoryId(Id.generateNextId())
+				.memberId(new Id("2825b9a9-d89a-4301-99b5-a7668a5b5fff"))
+				.thumbnail(Image.of("thumbnail"))
+				.createdAt(LocalDateTime.now())
+				.modifiedAt(LocalDateTime.now())
+				.isShared(true)
 				.title(new com.almondia.meca.category.domain.vo.Title("title"))
 				.build());
 			cardCursorPageWithCategory.setMember(Member.builder()
@@ -492,6 +498,11 @@ class CardControllerTest {
 				Id.generateNextId(), 5, SortOrder.DESC);
 			cardCursorPageWithCategory.setCategory(Category.builder()
 				.categoryId(Id.generateNextId())
+				.memberId(new Id("2825b9a9-d89a-4301-99b5-a7668a5b5fff"))
+				.thumbnail(Image.of("thumbnail"))
+				.createdAt(LocalDateTime.now())
+				.modifiedAt(LocalDateTime.now())
+				.isShared(true)
 				.title(new com.almondia.meca.category.domain.vo.Title("title"))
 				.build());
 			cardCursorPageWithCategory.setMember(Member.builder()
