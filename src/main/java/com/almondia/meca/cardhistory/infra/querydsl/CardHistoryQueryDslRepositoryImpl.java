@@ -161,7 +161,7 @@ public class CardHistoryQueryDslRepositoryImpl implements CardHistoryQueryDslRep
 		double scoreAvg = Optional.ofNullable(tuple.get(cardHistory.score.score.avg())).orElse(0.0);
 		long solveCount = Optional.ofNullable(tuple.get(cardHistory.cardId.count())).orElse(0L);
 		CardStatisticsDto statisticsDto = CardStatisticsDto.builder()
-			.solveCount(solveCount)
+			.tryCount(solveCount)
 			.scoreAvg(scoreAvg)
 			.build();
 		return Optional.of(statisticsDto);

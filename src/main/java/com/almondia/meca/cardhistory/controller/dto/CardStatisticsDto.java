@@ -10,5 +10,5 @@ import lombok.RequiredArgsConstructor;
 public class CardStatisticsDto {
 
 	private final Double scoreAvg;
-	private final Long solveCount;
+	private final Long tryCount;
 }

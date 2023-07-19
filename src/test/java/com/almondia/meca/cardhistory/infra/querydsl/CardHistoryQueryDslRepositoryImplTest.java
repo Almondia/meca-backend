@@ -430,7 +430,7 @@ class CardHistoryQueryDslRepositoryImplTest {
 
 			// then
 			assertThat(statistics.getScoreAvg()).isEqualTo(10.0);
-			assertThat(statistics.getSolveCount()).isEqualTo(1L);
+			assertThat(statistics.getTryCount()).isEqualTo(1L);
 		}
 
 		@Test
@@ -451,7 +451,7 @@ class CardHistoryQueryDslRepositoryImplTest {
 
 			// then
 			assertThat(statistics.getScoreAvg()).isEqualTo(15.0);
-			assertThat(statistics.getSolveCount()).isEqualTo(2L);
+			assertThat(statistics.getTryCount()).isEqualTo(2L);
 		}
 
 		@Test

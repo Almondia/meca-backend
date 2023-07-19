@@ -637,7 +637,7 @@ class CardServiceTest {
 
 			// then
 			assertThat(cardCursorPageWithCategory.getContents().get(0).getStatistics().getScoreAvg()).isNull();
-			assertThat(cardCursorPageWithCategory.getContents().get(0).getStatistics().getSolveCount()).isNull();
+			assertThat(cardCursorPageWithCategory.getContents().get(0).getStatistics().getTryCount()).isNull();
 		}
 	}
 }
