@@ -37,7 +37,7 @@ public final class CardSnapShot {
 	@AttributeOverride(name = "question", column = @Column(name = "card_question", nullable = false, length = 5_1000))
 	private Question question;
 
-	@AttributeOverride(name = "answer", column = @Column(name = "card_answer", nullable = false, length = 2000))
+	@Column(name = "card_answer", nullable = false, length = 2000)
 	private String answer;
 
 	@Enumerated(EnumType.STRING)
