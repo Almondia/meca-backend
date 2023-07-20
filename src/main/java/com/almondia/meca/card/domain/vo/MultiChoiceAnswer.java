@@ -27,6 +27,10 @@ public class MultiChoiceAnswer implements Wrapper {
 		return new MultiChoiceAnswer(Integer.parseInt(number));
 	}
 
+	public String getText() {
+		return number.toString();
+	}
+
 	@Override
 	public String toString() {
 		return number.toString();
