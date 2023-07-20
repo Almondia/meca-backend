@@ -54,7 +54,7 @@ public class DefaultScoringMachine implements ScoringMachine {
 
 	private Score scoringKeywordCard(KeywordCard card, Answer userAnswer) {
 		KeywordAnswer keywordAnswer = card.getKeywordAnswer();
-		if (keywordAnswer.contains(userAnswer.getText())) {
+		if (keywordAnswer.containsIgnoreCase(userAnswer.getText())) {
 			return new Score(100);
 		}
 		return new Score(0);

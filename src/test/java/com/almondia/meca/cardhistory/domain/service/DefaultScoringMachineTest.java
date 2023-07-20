@@ -27,6 +27,7 @@ import com.almondia.meca.helper.CardTestHelper;
  * 카드 타입이 OX_QUIZ인 경우 오답이면 0점을 출력한다
  * 카드 타입이 KEYWORD인 경우 정답이면 100점을 출력한다
  * 카드 타입이 KEYWORD인 경우 오답이면 0점을 출력한다
+ * 카드 타입이 KEYWORD인 경우 대소문자와 관계없이 정답이면 100점을 출력한다
  * 카드 타입이 MULTI_CHOICE인 경우 정답이면 100점을 출력한다
  * 카드 타입이 MULTI_CHOICE인 경우 오답이면 0점을 출력한다
  * 카드 타입이 ESSAY인 경우 형태소에서 가져온 데이터가 없다면 0점을 출력한다
@@ -103,6 +104,19 @@ class DefaultScoringMachineTest {
 
 		// then
 		assertThat(score).isEqualTo(new Score(0));
+	}
+
+	@Test
+	@DisplayName("카드 타입이 KEYWORD인 경우 대소문자와 관계없이 정답이면 100점을 출력한다")
+	void shouldReturnScore100IfCardTypeIsKeywordAndAnswerIsCorrectRegardlessOfCase() {
+		// given
+		Card keywordCard = CardTestHelper.genKeywordCard(Id.generateNextId(), Id.generateNextId(), Id.generateNextId());
+		keywordCard.changeAnswer("keyword,keyMap");
+		// when
+		Score score = scoringMachine.giveScore(morphemeAnalyzer, keywordCard, new Answer("KEYWORD"));
+
+		// then
+		assertThat(score).isEqualTo(new Score(100));
 	}
 
 	@Test
