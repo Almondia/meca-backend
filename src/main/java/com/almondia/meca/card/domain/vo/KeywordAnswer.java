@@ -42,6 +42,13 @@ public class KeywordAnswer implements Wrapper {
 		return keywords.contains(keyword.trim());
 	}
 
+	public boolean containsIgnoreCase(String keyword) {
+		if (keywords == null) {
+			makeKeywords();
+		}
+		return keywords.stream().anyMatch(keyword::equalsIgnoreCase);
+	}
+
 	@Override
 	public String toString() {
 		return keywordAnswer;
