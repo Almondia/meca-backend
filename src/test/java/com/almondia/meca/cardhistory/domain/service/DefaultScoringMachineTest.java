@@ -163,11 +163,11 @@ class DefaultScoringMachineTest {
 
 	@Test
 	@DisplayName("카드 타입이 ESSAY인 경우 정답이면 100점을 출력한다")
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({"rawtypes", "unchecked"})
 	void shouldReturnScoreOneHundredIfCardTypeIsEssayAndAnswerIsCorrect() {
 		// given
 		Card essayCard = CardTestHelper.genEssayCard(Id.generateNextId(), Id.generateNextId(), Id.generateNextId());
-		Morphemes tokenMorphemes = new Morphemes(List.of(new EngNlpToken("answer", "NNP")),
+		Morphemes tokenMorphemes = new Morphemes<>(List.of(new EngNlpToken("answer", "NNP")),
 			List.of(new EngNlpToken("answer", "NNP")));
 		Mockito.when(morphemeAnalyzer.analyze(any(), any()))
 			.thenReturn(tokenMorphemes);
@@ -181,11 +181,11 @@ class DefaultScoringMachineTest {
 
 	@Test
 	@DisplayName("카드 타입이 ESSAY인 경우 오답이면 0점을 출력한다")
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({"rawtypes", "unchecked"})
 	void shouldReturnScoreZeroIfCardTypeIsEssayAndAnswerIsIncorrect() {
 		// given
 		Card essayCard = CardTestHelper.genEssayCard(Id.generateNextId(), Id.generateNextId(), Id.generateNextId());
-		Morphemes tokenMorphemes = new Morphemes(List.of(new EngNlpToken("answer", "NNP")),
+		Morphemes tokenMorphemes = new Morphemes<>(List.of(new EngNlpToken("answer", "NNP")),
 			List.of(new EngNlpToken("aqw", "NNP")));
 		Mockito.when(morphemeAnalyzer.analyze(any(), any()))
 			.thenReturn(tokenMorphemes);
