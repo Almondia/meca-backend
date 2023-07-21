@@ -55,7 +55,7 @@ public class CardHistoryController {
 		List<CardHistoryResponseDto> contents = cursorPage.getContents().stream()
 			.map(this::convertHistory)
 			.collect(Collectors.toList());
-		CursorPage<CardHistoryResponseDto> result = new CursorPage<>(contents, cursorPage.getHasNext(),
+		CursorPage<CardHistoryResponseDto> result = new CursorPage<>(CardHistoryResponseDto::getCardHistoryId, contents,
 			cursorPage.getPageSize(), cursorPage.getSortOrder());
 		return ResponseEntity.ok(result);
 	}
@@ -72,8 +72,11 @@ public class CardHistoryController {
 		List<CardHistoryResponseDto> contents = cursorPage.getContents().stream()
 			.map(this::convertHistory)
 			.collect(Collectors.toList());
-		CursorPage<CardHistoryResponseDto> result = new CursorPage<>(contents, cursorPage.getHasNext(),
-			cursorPage.getPageSize(), cursorPage.getSortOrder());
+		CursorPage<CardHistoryResponseDto> result = new CursorPage<>(
+			CardHistoryResponseDto::getCardHistoryId,
+			contents,
+			cursorPage.getPageSize(),
+			cursorPage.getSortOrder());
 		return ResponseEntity.ok(result);
 	}
 

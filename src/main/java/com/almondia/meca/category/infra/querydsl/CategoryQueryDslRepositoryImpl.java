@@ -7,13 +7,9 @@ import org.springframework.stereotype.Repository;
 
 import com.almondia.meca.card.domain.entity.QCard;
 import com.almondia.meca.cardhistory.domain.entity.QCardHistory;
-import com.almondia.meca.category.controller.dto.CategoryWithStatisticsResponseDto;
-import com.almondia.meca.category.controller.dto.SharedCategoryResponseDto;
 import com.almondia.meca.category.domain.entity.Category;
 import com.almondia.meca.category.domain.entity.QCategory;
-import com.almondia.meca.common.controller.dto.CursorPage;
 import com.almondia.meca.common.domain.vo.Id;
-import com.almondia.meca.common.infra.querydsl.SortOrder;
 import com.almondia.meca.member.domain.entity.QMember;
 import com.almondia.meca.recommand.domain.entity.QCategoryRecommend;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -34,15 +30,11 @@ public class CategoryQueryDslRepositoryImpl implements CategoryQueryDslRepositor
 	private final JPAQueryFactory jpaQueryFactory;
 
 	@Override
-	public List<Category> findCategories(int pageSize, Id lastCategoryId,
-		CategorySearchOption categorySearchOption, Boolean shared) {
+	public List<Category> findCategories(int pageSize, Id lastCategoryId, CategorySearchOption categorySearchOption,
+		Boolean shared) {
 		return jpaQueryFactory.selectFrom(category)
-			.where(
-				isShared(shared),
-				category.isDeleted.eq(false),
-				dynamicCursorExpression(lastCategoryId),
-				containTitle(categorySearchOption.getContainTitle())
-			)
+			.where(isShared(shared), category.isDeleted.eq(false), dynamicCursorExpression(lastCategoryId),
+				containTitle(categorySearchOption.getContainTitle()))
 			.orderBy(category.categoryId.uuid.desc())
 			.limit(pageSize + 1)
 			.fetch();
@@ -52,13 +44,8 @@ public class CategoryQueryDslRepositoryImpl implements CategoryQueryDslRepositor
 	public List<Category> findCategoriesByMemberId(int pageSize, @Nullable Id lastCategoryId,
 		CategorySearchOption categorySearchOption, @Nullable Boolean shared, Id memberId) {
 		return jpaQueryFactory.selectFrom(category)
-			.where(
-				isShared(shared),
-				category.memberId.eq(memberId),
-				category.isDeleted.eq(false),
-				dynamicCursorExpression(lastCategoryId),
-				containTitle(categorySearchOption.getContainTitle())
-			)
+			.where(isShared(shared), category.memberId.eq(memberId), category.isDeleted.eq(false),
+				dynamicCursorExpression(lastCategoryId), containTitle(categorySearchOption.getContainTitle()))
 			.orderBy(category.categoryId.uuid.desc())
 			.limit(pageSize + 1)
 			.fetch();
@@ -70,15 +57,10 @@ public class CategoryQueryDslRepositoryImpl implements CategoryQueryDslRepositor
 		return jpaQueryFactory.selectDistinct(category)
 			.from(category)
 			.innerJoin(categoryRecommend)
-			.on(category.categoryId.eq(categoryRecommend.categoryId),
-				categoryRecommend.isDeleted.eq(false),
+			.on(category.categoryId.eq(categoryRecommend.categoryId), categoryRecommend.isDeleted.eq(false),
 				categoryRecommend.recommendMemberId.eq(IdWhoRecommend))
-			.where(
-				category.isShared.eq(true),
-				category.isDeleted.eq(false),
-				dynamicCursorExpression(lastCategoryId),
-				containTitle(categorySearchOption.getContainTitle())
-			)
+			.where(category.isShared.eq(true), category.isDeleted.eq(false), dynamicCursorExpression(lastCategoryId),
+				containTitle(categorySearchOption.getContainTitle()))
 			.orderBy(category.categoryId.uuid.desc())
 			.limit(pageSize + 1)
 			.fetch();
@@ -98,41 +80,7 @@ public class CategoryQueryDslRepositoryImpl implements CategoryQueryDslRepositor
 		return category.isShared.eq(false);
 	}
 
-	private BooleanExpression eqMemberId(Id memberId) {
-		return memberId == null ? null : category.memberId.eq(memberId);
-	}
-
 	private BooleanExpression dynamicCursorExpression(Id lastCategoryId) {
 		return lastCategoryId == null ? null : category.categoryId.uuid.loe(lastCategoryId.getUuid());
-	}
-
-	private CursorPage<CategoryWithStatisticsResponseDto> makeCursorPageWithHistory(int pageSize,
-		List<CategoryWithStatisticsResponseDto> response) {
-		Id hasNext = null;
-		if (response.size() == pageSize + 1) {
-			hasNext = response.get(pageSize).getCategoryId();
-			response.remove(response.size() - 1);
-		}
-		return CursorPage.<CategoryWithStatisticsResponseDto>builder()
-			.contents(response)
-			.pageSize(response.size())
-			.hasNext(hasNext)
-			.sortOrder(SortOrder.DESC)
-			.build();
-	}
-
-	private CursorPage<SharedCategoryResponseDto> makeCursorPage(int pageSize,
-		List<SharedCategoryResponseDto> response) {
-		Id hasNext = null;
-		if (response.size() == pageSize + 1) {
-			hasNext = response.get(pageSize).getCategoryInfo().getCategoryId();
-			response.remove(response.size() - 1);
-		}
-		return CursorPage.<SharedCategoryResponseDto>builder()
-			.contents(response)
-			.pageSize(pageSize)
-			.hasNext(hasNext)
-			.sortOrder(SortOrder.DESC)
-			.build();
 	}
 }

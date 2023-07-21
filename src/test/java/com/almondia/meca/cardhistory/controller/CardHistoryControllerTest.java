@@ -134,8 +134,10 @@ class CardHistoryControllerTest {
 		void shouldReturn200WhenSuccessTest() throws Exception {
 			// given
 			Mockito.doReturn(CursorPage.<CardHistoryWithCardAndMemberResponseDto>builder()
+				.lastIdExtractStrategy(
+					cardHistoryWithCardAndMemberResponseDto -> cardHistoryWithCardAndMemberResponseDto.getCardHistory()
+						.getCardHistoryId())
 				.contents(List.of(generateCardHistoryWithCardAndMemberResponseDto()))
-				.hasNext(null)
 				.pageSize(2)
 				.sortOrder(SortOrder.DESC)
 				.build()).when(cardHistoryService).findCardHistoriesByCardId(any(), anyInt(), any());
@@ -188,8 +190,10 @@ class CardHistoryControllerTest {
 		void shouldReturn200WhenSuccessTest() throws Exception {
 			// given
 			Mockito.doReturn(CursorPage.<CardHistoryWithCardAndMemberResponseDto>builder()
+				.lastIdExtractStrategy(
+					cardHistoryWithCardAndMemberResponseDto -> cardHistoryWithCardAndMemberResponseDto.getCardHistory()
+						.getCardHistoryId())
 				.contents(List.of(generateCardHistoryWithCardAndMemberResponseDto()))
-				.hasNext(null)
 				.pageSize(2)
 				.sortOrder(SortOrder.DESC)
 				.build()).when(cardHistoryService).findCardHistoriesBySolvedMemberId(any(), anyInt(), any());

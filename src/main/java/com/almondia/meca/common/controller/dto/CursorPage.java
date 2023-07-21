@@ -1,9 +1,10 @@
 package com.almondia.meca.common.controller.dto;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
+
+import org.springframework.lang.Nullable;
 
 import com.almondia.meca.common.domain.vo.Id;
 import com.almondia.meca.common.infra.querydsl.SortOrder;
@@ -14,7 +15,6 @@ import lombok.ToString;
 
 @Getter
 @ToString
-@Builder
 public class CursorPage<T> {
 
 	private static final String INVALID_ENTITY_TYPE = "적절한 엔티티 타입이 아닙니다";
@@ -23,46 +23,46 @@ public class CursorPage<T> {
 	private final int pageSize;
 	private final SortOrder sortOrder;
 
-	public CursorPage(List<T> contents, Id hasNext, int pageSize, SortOrder sortOrder) {
-		this.contents = Collections.unmodifiableList(contents);
-		this.hasNext = hasNext;
+	@Builder
+	public CursorPage(
+		@Nullable Function<T, Id> lastIdExtractStrategy,
+		List<T> contents,
+		int pageSize,
+		SortOrder sortOrder) {
+		this.hasNext = extractLastId(lastIdExtractStrategy, contents, pageSize);
+		if (hasNext != null) {
+			contents = contents.subList(0, contents.size() - 1);
+		} else {
+			contents = contents.subList(0, contents.size());
+		}
+		this.contents = contents;
 		this.pageSize = pageSize;
 		this.sortOrder = sortOrder;
 	}
 
-	public static <T> CursorPage<T> of(List<T> contents, int pageSize, SortOrder sortOrder) {
-		Id lastId = extractLastId(contents, pageSize);
-		List<T> newContents = new ArrayList<>(contents);
-		if (lastId != null) {
-			newContents.remove(newContents.size() - 1);
-		}
-		return new CursorPage<>(newContents, lastId, pageSize, sortOrder);
+	protected CursorPage(List<T> contents, int pageSize, Id hasNext, SortOrder sortOrder) {
+		this.contents = contents;
+		this.pageSize = pageSize;
+		this.hasNext = hasNext;
+		this.sortOrder = sortOrder;
 	}
 
-	public static <T> CursorPage<T> empty() {
-		return new CursorPage<>(Collections.emptyList(), null, 0, SortOrder.ASC);
+	public static <T> CursorPage<T> empty(SortOrder sortOrder) {
+		return new CursorPage<>(null, Collections.emptyList(), 0, sortOrder);
 	}
 
 	private static <T> boolean hasLastPage(List<T> contents, int pageSize) {
 		return contents.size() == pageSize + 1;
 	}
 
-	private static <T> Id extractLastId(List<T> contents, int pageSize) {
+	@Nullable
+	private Id extractLastId(@Nullable Function<T, Id> lastIdExtractStrategy, List<T> contents, int pageSize) {
+		if (lastIdExtractStrategy == null) {
+			return null;
+		}
 		if (!hasLastPage(contents, pageSize)) {
 			return null;
 		}
-		Object object = contents.get(pageSize);
-		Field[] declaredFields = object.getClass().getDeclaredFields();
-		for (Field field : declaredFields) {
-			if (field.getType().equals(Id.class)) {
-				field.setAccessible(true);
-				try {
-					return (Id)field.get(object);
-				} catch (IllegalArgumentException | IllegalAccessException e) {
-					throw new RuntimeException(INVALID_ENTITY_TYPE);
-				}
-			}
-		}
-		throw new RuntimeException(INVALID_ENTITY_TYPE);
+		return lastIdExtractStrategy.apply(contents.get(contents.size() - 1));
 	}
 }

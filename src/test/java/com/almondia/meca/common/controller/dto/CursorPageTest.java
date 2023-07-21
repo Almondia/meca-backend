@@ -31,9 +31,9 @@ class CursorPageTest {
 				.build()
 		);
 		CursorPage<CardDto> cursorPage = CursorPage.<CardDto>builder()
+			.lastIdExtractStrategy(CardDto::getCardId)
 			.pageSize(2)
 			.contents(contents)
-			.hasNext(contents.get(0).getCardId())
 			.sortOrder(SortOrder.DESC)
 			.build();
 
@@ -84,7 +84,12 @@ class CursorPageTest {
 		SortOrder sortOrder = SortOrder.DESC;
 
 		// when
-		CursorPage<CardDto> cursorPage = CursorPage.of(contents, pageSize, sortOrder);
+		CursorPage<CardDto> cursorPage = CursorPage.<CardDto>builder()
+			.lastIdExtractStrategy(CardDto::getCardId)
+			.pageSize(pageSize)
+			.contents(contents)
+			.sortOrder(sortOrder)
+			.build();
 
 		// then
 		assertThat(cursorPage.getContents()).hasSize(pageSize);
@@ -127,7 +132,12 @@ class CursorPageTest {
 		SortOrder sortOrder = SortOrder.DESC;
 
 		// when
-		CursorPage<CardDto> cursorPage = CursorPage.of(contents, pageSize, sortOrder);
+		CursorPage<CardDto> cursorPage = CursorPage.<CardDto>builder()
+			.lastIdExtractStrategy(CardDto::getCardId)
+			.pageSize(pageSize)
+			.contents(contents)
+			.sortOrder(sortOrder)
+			.build();
 
 		// then
 		assertThat(cursorPage.getContents()).hasSize(pageSize);

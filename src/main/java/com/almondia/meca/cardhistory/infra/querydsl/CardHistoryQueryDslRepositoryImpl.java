@@ -52,16 +52,15 @@ public class CardHistoryQueryDslRepositoryImpl implements CardHistoryQueryDslRep
 			.where(cardHistory.isDeleted.eq(false), cardHistory.cardId.eq(cardId),
 				lessOrEqCardHistoryId(lastCardHistoryId))
 			.orderBy(cardHistory.cardHistoryId.uuid.desc())
-			.limit(pageSize + 1)
+			.limit(pageSize + 1L)
 			.fetch();
 
-		Id hasNext = null;
-		if (contents.size() > pageSize) {
-			hasNext = contents.get(pageSize).getCardHistory().getCardHistoryId();
-			contents.remove(pageSize);
-		}
-
-		return new CursorPage<>(contents, hasNext, pageSize, SortOrder.DESC);
+		return CursorPage.<CardHistoryWithCardAndMemberResponseDto>builder()
+			.lastIdExtractStrategy(cardHistoryDto -> cardHistoryDto.getCardHistory().getCardHistoryId())
+			.contents(contents)
+			.pageSize(pageSize)
+			.sortOrder(SortOrder.DESC)
+			.build();
 	}
 
 	@Override
@@ -82,12 +81,12 @@ public class CardHistoryQueryDslRepositoryImpl implements CardHistoryQueryDslRep
 			.limit(pageSize + 1)
 			.fetch();
 
-		Id hasNext = null;
-		if (contents.size() > pageSize) {
-			hasNext = contents.get(pageSize).getCardHistory().getCardHistoryId();
-			contents.remove(pageSize);
-		}
-		return new CursorPage<>(contents, hasNext, pageSize, SortOrder.DESC);
+		return CursorPage.<CardHistoryWithCardAndMemberResponseDto>builder()
+			.lastIdExtractStrategy(cardHistoryDto -> cardHistoryDto.getCardHistory().getCardHistoryId())
+			.contents(contents)
+			.pageSize(pageSize)
+			.sortOrder(SortOrder.DESC)
+			.build();
 	}
 
 	@Override

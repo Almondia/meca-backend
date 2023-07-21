@@ -1,12 +1,8 @@
 package com.almondia.meca.card.controller.dto;
 
-import java.util.List;
-
 import com.almondia.meca.category.controller.dto.CategoryDto;
 import com.almondia.meca.category.domain.entity.Category;
 import com.almondia.meca.common.controller.dto.CursorPage;
-import com.almondia.meca.common.domain.vo.Id;
-import com.almondia.meca.common.infra.querydsl.SortOrder;
 import com.almondia.meca.member.controller.dto.MemberDto;
 import com.almondia.meca.member.domain.entity.Member;
 
@@ -19,13 +15,8 @@ public class CardCursorPageWithCategory extends CursorPage<CardWithStatisticsDto
 	private MemberDto member;
 	private long categoryLikeCount;
 
-	public CardCursorPageWithCategory(List<CardWithStatisticsDto> contents, Id hasNext, int pageSize,
-		SortOrder sortOrder) {
-		super(contents, hasNext, pageSize, sortOrder);
-	}
-
 	public CardCursorPageWithCategory(CursorPage<CardWithStatisticsDto> cursorPage) {
-		super(cursorPage.getContents(), cursorPage.getHasNext(), cursorPage.getPageSize(), cursorPage.getSortOrder());
+		super(cursorPage.getContents(), cursorPage.getPageSize(), cursorPage.getHasNext(), cursorPage.getSortOrder());
 	}
 
 	public void setMember(Member member) {

@@ -85,7 +85,12 @@ public class CardService {
 				avgAndCountsByCardIds.getOrDefault(cardDto.getCardId(), Pair.of(0.0, 0L)).getSecond()
 			)))
 			.collect(Collectors.toList());
-		CursorPage<CardWithStatisticsDto> cursor = CursorPage.of(contents, pageSize, SortOrder.DESC);
+		CursorPage<CardWithStatisticsDto> cursor = CursorPage.<CardWithStatisticsDto>builder()
+			.lastIdExtractStrategy(cardWithStatisticsDto -> cardWithStatisticsDto.getCard().getCardId())
+			.contents(contents)
+			.pageSize(pageSize)
+			.sortOrder(SortOrder.DESC)
+			.build();
 		CardCursorPageWithCategory result = new CardCursorPageWithCategory(cursor);
 		result.setCategory(category);
 		result.setCategoryLikeCount(likeCount);
@@ -151,7 +156,12 @@ public class CardService {
 			.collect(Collectors.toList());
 
 		// combine
-		CursorPage<CardWithStatisticsDto> cursor = CursorPage.of(contents, pageSize, SortOrder.DESC);
+		CursorPage<CardWithStatisticsDto> cursor = CursorPage.<CardWithStatisticsDto>builder()
+			.lastIdExtractStrategy(cardWithStatisticsDto -> cardWithStatisticsDto.getCard().getCardId())
+			.contents(contents)
+			.pageSize(pageSize)
+			.sortOrder(SortOrder.DESC)
+			.build();
 		CardCursorPageWithCategory result = new CardCursorPageWithCategory(cursor);
 
 		result.setCategory(category);

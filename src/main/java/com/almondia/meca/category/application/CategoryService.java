@@ -91,7 +91,7 @@ public class CategoryService {
 		List<Category> contents = categoryRepository.findCategoriesByMemberId(pageSize, lastCategoryId, searchOption,
 			null, memberId);
 		if (contents.isEmpty()) {
-			return CursorPage.empty();
+			return CursorPage.empty(SortOrder.DESC);
 		}
 		List<Id> categoryIds = contents.stream().map(Category::getCategoryId).collect(toList());
 		Map<Id, Long> counts = cardRepository.countCardsByCategoryIdIsDeletedFalse(categoryIds);
@@ -108,7 +108,12 @@ public class CategoryService {
 				counts.getOrDefault(category.getCategoryId(), 0L),
 				recommendCounts.getOrDefault(category.getCategoryId(), 0L)
 			)).collect(toList());
-		return CursorPage.of(categoryWithStatisticsResponseDtos, pageSize, SortOrder.DESC);
+		return CursorPage.<CategoryWithStatisticsResponseDto>builder()
+			.lastIdExtractStrategy(CategoryWithStatisticsResponseDto::getCategoryId)
+			.contents(categoryWithStatisticsResponseDtos)
+			.pageSize(pageSize)
+			.sortOrder(SortOrder.DESC)
+			.build();
 	}
 
 	@Transactional(readOnly = true)
@@ -121,7 +126,7 @@ public class CategoryService {
 		List<Category> contents = categoryRepository.findCategories(pageSize, lastCategoryId, searchOption,
 			true);
 		if (contents.isEmpty()) {
-			return CursorPage.empty();
+			return CursorPage.empty(SortOrder.DESC);
 		}
 		Map<Id, Member> memberMap = memberRepository.findMemberMapByIds(contents.stream()
 			.map(Category::getMemberId)
@@ -136,7 +141,12 @@ public class CategoryService {
 			.map(category -> new SharedCategoryResponseDto(category, memberMap.get(category.getMemberId()),
 				recommendCounts.get(category.getCategoryId())))
 			.collect(toList());
-		return CursorPage.of(sharedCategoryResponseDtos, pageSize, SortOrder.DESC);
+		return CursorPage.<SharedCategoryResponseDto>builder()
+			.lastIdExtractStrategy(sharedCategoryDto -> sharedCategoryDto.getCategoryInfo().getCategoryId())
+			.contents(sharedCategoryResponseDtos)
+			.pageSize(pageSize)
+			.sortOrder(SortOrder.DESC)
+			.build();
 	}
 
 	@Transactional
@@ -171,6 +181,11 @@ public class CategoryService {
 					statisticsDto, recommendCount);
 			})
 			.collect(toList());
-		return CursorPage.of(sharedCategoryResponseDtos, pageSize, SortOrder.DESC);
+		return CursorPage.<SharedCategoryWithStatisticsAndRecommendDto>builder()
+			.lastIdExtractStrategy(sharedCategoryDto -> sharedCategoryDto.getCategory().getCategoryId())
+			.contents(sharedCategoryResponseDtos)
+			.pageSize(pageSize)
+			.sortOrder(SortOrder.DESC)
+			.build();
 	}
 }

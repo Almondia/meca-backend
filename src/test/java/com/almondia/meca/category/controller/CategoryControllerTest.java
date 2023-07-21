@@ -220,10 +220,21 @@ class CategoryControllerTest {
 		@WithMockMember
 		void shouldReturnPageTypeWhenCallPagingSearchTest() throws Exception {
 			// given
-			CategoryWithStatisticsResponseDto content = CategoryWithStatisticsResponseDto.builder()
+			CategoryWithStatisticsResponseDto content0 = CategoryWithStatisticsResponseDto.builder()
 				.categoryId(Id.generateNextId())
 				.memberId(Id.generateNextId())
-				.title(new Title("title"))
+				.title(new Title("title1"))
+				.thumbnail(Image.of("https://aws.s3.com"))
+				.createdAt(LocalDateTime.now())
+				.modifiedAt(LocalDateTime.now())
+				.scoreAvg(12.3)
+				.solveCount(10L)
+				.totalCount(20L)
+				.build();
+			CategoryWithStatisticsResponseDto content1 = CategoryWithStatisticsResponseDto.builder()
+				.categoryId(Id.generateNextId())
+				.memberId(Id.generateNextId())
+				.title(new Title("title2"))
 				.thumbnail(Image.of("https://aws.s3.com"))
 				.createdAt(LocalDateTime.now())
 				.modifiedAt(LocalDateTime.now())
@@ -232,9 +243,9 @@ class CategoryControllerTest {
 				.totalCount(20L)
 				.build();
 			CursorPage<CategoryWithStatisticsResponseDto> response = CursorPage.<CategoryWithStatisticsResponseDto>builder()
-				.contents(List.of(content))
+				.lastIdExtractStrategy(CategoryWithStatisticsResponseDto::getCategoryId)
+				.contents(List.of(content0, content1))
 				.pageSize(1)
-				.hasNext(Id.generateNextId())
 				.sortOrder(SortOrder.DESC)
 				.build();
 			Mockito.doReturn(response)
@@ -285,8 +296,13 @@ class CategoryControllerTest {
 			CategoryStatisticsDto categoryStatisticsDto = new CategoryStatisticsDto(12.3, 10L, 20L);
 			SharedCategoryWithStatisticsAndRecommendDto content = new SharedCategoryWithStatisticsAndRecommendDto(
 				category, member, categoryStatisticsDto, 10L);
-			CursorPage<SharedCategoryWithStatisticsAndRecommendDto> response = CursorPage.of(List.of(content), 1,
-				SortOrder.DESC);
+			CursorPage<SharedCategoryWithStatisticsAndRecommendDto> response = CursorPage.<SharedCategoryWithStatisticsAndRecommendDto>builder()
+				.lastIdExtractStrategy(
+					sharedCategoryWithStatistics -> sharedCategoryWithStatistics.getCategory().getCategoryId())
+				.pageSize(1)
+				.contents(List.of(content))
+				.sortOrder(SortOrder.DESC)
+				.build();
 			Mockito.doReturn(response)
 				.when(categoryservice)
 				.findSharedCategoryWithStatistics(anyInt(), any(), any(), any());
@@ -362,12 +378,15 @@ class CategoryControllerTest {
 		void shouldReturnStatus200AndResponseWhenSuccessTest() throws Exception {
 			// given
 			CursorPage<SharedCategoryResponseDto> cursorPage = CursorPage.<SharedCategoryResponseDto>builder()
-				.pageSize(2)
+				.lastIdExtractStrategy(sharedCategoryDto -> sharedCategoryDto.getCategoryInfo().getCategoryId())
+				.pageSize(1)
 				.contents(List.of(new SharedCategoryResponseDto(
 					CategoryTestHelper.generateSharedCategory("title", Id.generateNextId(), Id.generateNextId()),
 					MemberTestHelper.generateMember(Id.generateNextId()),
+					1L), new SharedCategoryResponseDto(
+					CategoryTestHelper.generateSharedCategory("title2", Id.generateNextId(), Id.generateNextId()),
+					MemberTestHelper.generateMember(Id.generateNextId()),
 					1L)))
-				.hasNext(Id.generateNextId())
 				.sortOrder(SortOrder.DESC)
 				.build();
 			Mockito.doReturn(cursorPage)

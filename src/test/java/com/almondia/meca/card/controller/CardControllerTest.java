@@ -54,6 +54,7 @@ import com.almondia.meca.cardhistory.controller.dto.CardStatisticsDto;
 import com.almondia.meca.category.domain.entity.Category;
 import com.almondia.meca.common.configuration.jackson.JacksonConfiguration;
 import com.almondia.meca.common.configuration.security.filter.JwtAuthenticationFilter;
+import com.almondia.meca.common.controller.dto.CursorPage;
 import com.almondia.meca.common.domain.vo.Id;
 import com.almondia.meca.common.domain.vo.Image;
 import com.almondia.meca.common.infra.querydsl.SortOrder;
@@ -396,8 +397,13 @@ class CardControllerTest {
 		void shouldReturn200WhenSuccessTest() throws Exception {
 			// given
 			List<CardWithStatisticsDto> contents = List.of(makeResponse());
-			CardCursorPageWithCategory cardCursorPageWithCategory = new CardCursorPageWithCategory(contents,
-				Id.generateNextId(), 5, SortOrder.DESC);
+			CursorPage<CardWithStatisticsDto> cursor = CursorPage.<CardWithStatisticsDto>builder()
+				.lastIdExtractStrategy(cardWithStatisticsDto -> cardWithStatisticsDto.getCard().getCardId())
+				.contents(contents)
+				.pageSize(2)
+				.sortOrder(SortOrder.DESC)
+				.build();
+			CardCursorPageWithCategory cardCursorPageWithCategory = new CardCursorPageWithCategory(cursor);
 			cardCursorPageWithCategory.setCategory(Category.builder()
 				.categoryId(Id.generateNextId())
 				.memberId(new Id("2825b9a9-d89a-4301-99b5-a7668a5b5fff"))
@@ -494,8 +500,13 @@ class CardControllerTest {
 		void shouldReturn200OkAndResponseFormatTest() throws Exception {
 			// given
 			List<CardWithStatisticsDto> contents = List.of(makeResponse());
-			CardCursorPageWithCategory cardCursorPageWithCategory = new CardCursorPageWithCategory(contents,
-				Id.generateNextId(), 5, SortOrder.DESC);
+			CursorPage<CardWithStatisticsDto> cursor = CursorPage.<CardWithStatisticsDto>builder()
+				.lastIdExtractStrategy(cardWithStatisticsDto -> cardWithStatisticsDto.getCard().getCardId())
+				.contents(contents)
+				.pageSize(2)
+				.sortOrder(SortOrder.DESC)
+				.build();
+			CardCursorPageWithCategory cardCursorPageWithCategory = new CardCursorPageWithCategory(cursor);
 			cardCursorPageWithCategory.setCategory(Category.builder()
 				.categoryId(Id.generateNextId())
 				.memberId(new Id("2825b9a9-d89a-4301-99b5-a7668a5b5fff"))
