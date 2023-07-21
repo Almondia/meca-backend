@@ -17,4 +17,14 @@ class EssayAnswerTest {
 		// then
 		assertEquals(answer, essayAnswer.toString());
 	}
+
+	@Test
+	void shouldThrowExceptionWhenAnswerLengthIsOver500() {
+		// given
+		String answer = "anwer".repeat(101);
+
+		// when
+		IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+			() -> EssayAnswer.valueOf(answer));
+	}
 }

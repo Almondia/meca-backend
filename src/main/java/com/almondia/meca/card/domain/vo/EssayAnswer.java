@@ -33,7 +33,7 @@ public class EssayAnswer implements Wrapper {
 
 	private void validateEssayAnswer(String essayAnswer) {
 		if (essayAnswer.length() > MAX_LENGTH) {
-			throw new IllegalArgumentException("%d 초과해서 문자열 길이를 늘릴 수 없습니다");
+			throw new IllegalArgumentException(String.format("%d 초과해서 문자열 길이를 늘릴 수 없습니다", MAX_LENGTH));
 		}
 	}
 }
