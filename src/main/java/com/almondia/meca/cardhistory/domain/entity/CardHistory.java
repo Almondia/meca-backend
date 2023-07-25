@@ -46,7 +46,7 @@ public class CardHistory {
 	private Id cardId;
 
 	@Embedded
-	@AttributeOverride(name = "answer", column = @Column(name = "user_answer", nullable = false, length = 2000))
+	@AttributeOverride(name = "answer", column = @Column(name = "user_answer", length = 2000))
 	private Answer userAnswer;
 
 	@Embedded
