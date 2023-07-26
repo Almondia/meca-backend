@@ -34,7 +34,7 @@ public interface CardHistoryQueryDslRepository {
 	 * 카드 ID들의 정보를 이용해 카드 히스토리 통계와 카드 히스토리 갯수를 쿼리함
 	 *
 	 * @param cardIds 조회할 카드 리스트
-	 * @return 카드 히스토리 통계와 카드 히스토리 갯수
+	 * @return 카드 아이디를 키로 하는 카드 히스토리 통계와 카드 히스토리 갯수
 	 */
 	Map<Id, Pair<Double, Long>> findCardHistoryScoresAvgAndCountsByCardIds(List<Id> cardIds);
 
