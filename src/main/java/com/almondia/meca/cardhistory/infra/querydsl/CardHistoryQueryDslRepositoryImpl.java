@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.data.util.Pair;
 import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.Assert;
 
@@ -14,7 +15,6 @@ import com.almondia.meca.card.domain.entity.QCard;
 import com.almondia.meca.cardhistory.controller.dto.CardHistoryWithCardAndMemberResponseDto;
 import com.almondia.meca.cardhistory.controller.dto.CardStatisticsDto;
 import com.almondia.meca.cardhistory.domain.entity.QCardHistory;
-import com.almondia.meca.category.domain.entity.QCategory;
 import com.almondia.meca.common.controller.dto.CursorPage;
 import com.almondia.meca.common.domain.vo.Id;
 import com.almondia.meca.common.infra.querydsl.SortOrder;
@@ -32,7 +32,6 @@ public class CardHistoryQueryDslRepositoryImpl implements CardHistoryQueryDslRep
 
 	private static final QCardHistory cardHistory = QCardHistory.cardHistory;
 	private static final QCard card = QCard.card;
-	private static final QCategory category = QCategory.category;
 	private static final QMember member = QMember.member;
 
 	private final JPAQueryFactory jpaQueryFactory;
@@ -78,7 +77,7 @@ public class CardHistoryQueryDslRepositoryImpl implements CardHistoryQueryDslRep
 			.where(cardHistory.solvedMemberId.eq(solvedMemberId), cardHistory.isDeleted.eq(false),
 				lessOrEqCardHistoryId(lastCardHistoryId))
 			.orderBy(cardHistory.cardHistoryId.uuid.desc())
-			.limit(pageSize + 1)
+			.limit(pageSize + 1L)
 			.fetch();
 
 		return CursorPage.<CardHistoryWithCardAndMemberResponseDto>builder()
@@ -166,7 +165,8 @@ public class CardHistoryQueryDslRepositoryImpl implements CardHistoryQueryDslRep
 		return Optional.of(statisticsDto);
 	}
 
-	private BooleanExpression lessOrEqCardHistoryId(Id lastCardHistoryId) {
+	@Nullable
+	private BooleanExpression lessOrEqCardHistoryId(@Nullable Id lastCardHistoryId) {
 		return lastCardHistoryId == null ? null : cardHistory.cardHistoryId.uuid.loe(lastCardHistoryId.getUuid());
 	}
 }
