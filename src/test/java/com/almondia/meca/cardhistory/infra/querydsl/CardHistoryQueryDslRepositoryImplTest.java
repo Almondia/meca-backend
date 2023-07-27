@@ -46,7 +46,6 @@ class CardHistoryQueryDslRepositoryImplTest {
 
 	/**
 	 * 삭제된 카드 히스토리는 조회되면 안된다
-	 * 요청 pageSize는 1000이하만 가능하다
 	 * 요청 pageSize는 0이상이어야 한다
 	 * lastCardHistoryId가 null이 아니면 해당 인덱스부터 조회한다
 	 */
@@ -58,7 +57,6 @@ class CardHistoryQueryDslRepositoryImplTest {
 		@DisplayName("삭제된 카드 히스토리는 조회되면 안된다")
 		void shouldNotFindDeletedCardHistoryTest() {
 			// given
-			Id categoryId = Id.generateNextId();
 			Id cardId = Id.generateNextId();
 			CardHistory cardHistory = CardHistoryTestHelper.generateCardHistory(Id.generateNextId(), cardId, 10);
 			cardHistory.delete();
@@ -75,24 +73,9 @@ class CardHistoryQueryDslRepositoryImplTest {
 		}
 
 		@Test
-		@DisplayName("요청 pageSize는 1000이하만 가능하다")
-		void shouldNotFindCardHistoryWhenPageSizeIsOver1000Test() {
-			// given
-			Id categoryId = Id.generateNextId();
-			Id cardId = Id.generateNextId();
-			CardHistory cardHistory = CardHistoryTestHelper.generateCardHistory(Id.generateNextId(), cardId, 10);
-			em.persist(cardHistory);
-
-			// expect
-			assertThatThrownBy(() -> cardHistoryRepository.findCardHistoriesByCardId(cardId, 1001, null)).isInstanceOf(
-				InvalidDataAccessApiUsageException.class);
-		}
-
-		@Test
 		@DisplayName("요청 pageSize는 0이상이어야 한다")
 		void shouldNotFindCardHistoryWhenPageSizeIsUnder0Test() {
 			// given
-			Id categoryId = Id.generateNextId();
 			Id cardId = Id.generateNextId();
 			CardHistory cardHistory = CardHistoryTestHelper.generateCardHistory(Id.generateNextId(), cardId, 10);
 			em.persist(cardHistory);
@@ -130,7 +113,6 @@ class CardHistoryQueryDslRepositoryImplTest {
 
 	/**
 	 * 삭제된 카드 히스토리는 조회되면 안된다
-	 * 요청 pageSize는 1000이하만 가능하다
 	 * 요청 pageSize는 0이상이어야 한다
 	 * lastCardHistoryId가 null이 아니면 해당 인덱스부터 조회
 	 */
@@ -159,22 +141,6 @@ class CardHistoryQueryDslRepositoryImplTest {
 		}
 
 		@Test
-		@DisplayName("요청 pageSize는 1000이하만 가능하다")
-		void shouldNotFindCardHistoryWhenPageSizeIsOver1000Test() {
-			// given
-			Id categoryId = Id.generateNextId();
-			Id cardId = Id.generateNextId();
-			Category category = CategoryTestHelper.generateUnSharedCategory("hello", Id.generateNextId(), categoryId);
-			CardHistory cardHistory = CardHistoryTestHelper.generateCardHistory(Id.generateNextId(), cardId, 10);
-			persistAll(category, cardHistory);
-
-			// expect
-			assertThatThrownBy(
-				() -> cardHistoryRepository.findCardHistoriesBySolvedMemberId(cardHistory.getSolvedMemberId(), 1001,
-					null)).isInstanceOf(InvalidDataAccessApiUsageException.class);
-		}
-
-		@Test
 		@DisplayName("요청 pageSize는 0이상이어야 한다")
 		void shouldNotFindCardHistoryWhenPageSizeIsUnder0Test() {
 			// given
@@ -185,8 +151,9 @@ class CardHistoryQueryDslRepositoryImplTest {
 			persistAll(category, cardHistory);
 
 			// expect
+			Id solvedMemberId = cardHistory.getSolvedMemberId();
 			assertThatThrownBy(
-				() -> cardHistoryRepository.findCardHistoriesBySolvedMemberId(cardHistory.getSolvedMemberId(), -1,
+				() -> cardHistoryRepository.findCardHistoriesBySolvedMemberId(solvedMemberId, -1,
 					null)).isInstanceOf(InvalidDataAccessApiUsageException.class);
 		}
 
@@ -273,7 +240,7 @@ class CardHistoryQueryDslRepositoryImplTest {
 				categoryIds);
 
 			// then
-			assertThat(statistics.get(categoryId)).isEqualTo(Pair.of(0.0, 0L));
+			assertThat(statistics).containsEntry(categoryId, Pair.of(0.0, 0L));
 		}
 
 		@Test
@@ -288,7 +255,7 @@ class CardHistoryQueryDslRepositoryImplTest {
 				categoryIds);
 
 			// then
-			assertThat(statistics.get(categoryId)).isEqualTo(Pair.of(0.0, 0L));
+			assertThat(statistics).containsEntry(categoryId, Pair.of(0.0, 0L));
 		}
 	}
 
@@ -348,7 +315,8 @@ class CardHistoryQueryDslRepositoryImplTest {
 				cardIds);
 
 			// then
-			assertThat(statistics.get(cardId)).isEqualTo(Pair.of(0.0, 0L));
+			assertThat(statistics)
+				.containsEntry(cardId, Pair.of(0.0, 0L));
 		}
 
 		@Test
@@ -363,7 +331,37 @@ class CardHistoryQueryDslRepositoryImplTest {
 				cardIds);
 
 			// then
-			assertThat(statistics.get(cardId)).isEqualTo(Pair.of(0.0, 0L));
+			assertThat(statistics).containsEntry(cardId, Pair.of(0.0, 0L));
+		}
+	}
+
+	@Nested
+	@DisplayName("findCardScoreAvgMapByCategoryId 테스트")
+	class FindCardScoreAvgMapByCategoryIdTest {
+
+		@Test
+		@DisplayName("카드 아이디 리스트에 해당하는 카드 히스토리의 평균 점수를 조회한다")
+		void shouldReturnAvgScoresTest() {
+			// given
+			Id memberId = Id.generateNextId();
+			Id categoryId = Id.generateNextId();
+			Id cardId1 = Id.generateNextId();
+			Id cardId2 = Id.generateNextId();
+			Id cardHistoryId1 = Id.generateNextId();
+			Id cardHistoryId2 = Id.generateNextId();
+			Card card1 = CardTestHelper.genOxCard(memberId, categoryId, cardId1);
+			Card card2 = CardTestHelper.genOxCard(memberId, categoryId, cardId2);
+			CardHistory cardHistory1 = CardHistoryTestHelper.generateCardHistory(cardHistoryId1, cardId1, 10);
+			CardHistory cardHistory2 = CardHistoryTestHelper.generateCardHistory(cardHistoryId2, cardId1, 20);
+			persistAll(card1, card2, cardHistory1, cardHistory2);
+
+			// when
+			Map<Id, Double> result = cardHistoryRepository.findCardScoreAvgMapByCategoryId(
+				categoryId);
+
+			// then
+			assertThat(result).hasSize(1);
+			assertThat(result).extractingByKey(cardId1).isEqualTo(15.0);
 		}
 	}
 

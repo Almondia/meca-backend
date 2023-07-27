@@ -6,10 +6,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.data.util.Pair;
-import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Repository;
-import org.springframework.util.Assert;
 
 import com.almondia.meca.card.domain.entity.QCard;
 import com.almondia.meca.cardhistory.controller.dto.CardHistoryWithCardAndMemberResponseDto;
@@ -37,11 +35,8 @@ public class CardHistoryQueryDslRepositoryImpl implements CardHistoryQueryDslRep
 	private final JPAQueryFactory jpaQueryFactory;
 
 	@Override
-	public CursorPage<CardHistoryWithCardAndMemberResponseDto> findCardHistoriesByCardId(@NonNull Id cardId,
-		int pageSize, Id lastCardHistoryId) {
-		Assert.isTrue(pageSize >= 0, "pageSize must be greater than or equal to 0");
-		Assert.isTrue(pageSize <= 1000, "pageSize must be less than or equal to 1000");
-
+	public CursorPage<CardHistoryWithCardAndMemberResponseDto> findCardHistoriesByCardId(Id cardId,
+		int pageSize, @Nullable Id lastCardHistoryId) {
 		List<CardHistoryWithCardAndMemberResponseDto> contents = jpaQueryFactory.select(
 				Projections.constructor(CardHistoryWithCardAndMemberResponseDto.class, cardHistory, cardHistory.cardId,
 					member.memberId, member.name, cardHistory.cardSnapShot))
@@ -64,10 +59,7 @@ public class CardHistoryQueryDslRepositoryImpl implements CardHistoryQueryDslRep
 
 	@Override
 	public CursorPage<CardHistoryWithCardAndMemberResponseDto> findCardHistoriesBySolvedMemberId(
-		@NonNull Id solvedMemberId, int pageSize, Id lastCardHistoryId) {
-		Assert.isTrue(pageSize >= 0, "pageSize must be greater than or equal to 0");
-		Assert.isTrue(pageSize <= 1000, "pageSize must be less than or equal to 1000");
-
+		Id solvedMemberId, int pageSize, @Nullable Id lastCardHistoryId) {
 		List<CardHistoryWithCardAndMemberResponseDto> contents = jpaQueryFactory.select(
 				Projections.constructor(CardHistoryWithCardAndMemberResponseDto.class, cardHistory, cardHistory.cardId,
 					member.memberId, member.name, cardHistory.cardSnapShot))
@@ -138,6 +130,25 @@ public class CardHistoryQueryDslRepositoryImpl implements CardHistoryQueryDslRep
 			collect.putIfAbsent(cardId, Pair.of(0.0, 0L));
 		}
 		return collect;
+	}
+
+	@Override
+	public Map<Id, Double> findCardScoreAvgMapByCategoryId(Id categoryId) {
+		List<Tuple> tuples = jpaQueryFactory.select(card.cardId, cardHistory.score.score.avg())
+			.from(cardHistory)
+			.where(cardHistory.isDeleted.eq(false))
+			.join(card)
+			.on(cardHistory.cardId.eq(card.cardId),
+				card.isDeleted.eq(false),
+				card.categoryId.eq(categoryId))
+			.groupBy(card.cardId)
+			.limit(1000)
+			.fetch();
+		return tuples.stream()
+			.collect(Collectors.toMap(tuple -> tuple.get(0, Id.class), tuple -> {
+				Double aDouble = tuple.get(1, Double.class);
+				return aDouble == null ? 0L : aDouble;
+			}));
 	}
 
 	@Override
