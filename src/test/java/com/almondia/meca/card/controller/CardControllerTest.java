@@ -37,6 +37,7 @@ import com.almondia.meca.asciidocs.fields.DocsFieldGeneratorUtils;
 import com.almondia.meca.card.application.CardService;
 import com.almondia.meca.card.application.CardSimulationService;
 import com.almondia.meca.card.application.helper.CardMapper;
+import com.almondia.meca.card.controller.dto.CardCountGroupByScoreDto;
 import com.almondia.meca.card.controller.dto.CardCursorPageWithCategory;
 import com.almondia.meca.card.controller.dto.CardDto;
 import com.almondia.meca.card.controller.dto.CardWithStatisticsDto;
@@ -149,10 +150,8 @@ class CardControllerTest {
 					docsFieldGeneratorUtils.generateRequestFieldSnippet(
 						new ParameterizedTypeReference<SaveCardRequestDto>() {
 						}, "card", Locale.KOREAN),
-					docsFieldGeneratorUtils.generateResponseFieldSnippet(
-						new ParameterizedTypeReference<CardDto>() {
-						}, "card", Locale.KOREAN))
-				);
+					docsFieldGeneratorUtils.generateResponseFieldSnippet(new ParameterizedTypeReference<CardDto>() {
+					}, "card", Locale.KOREAN)));
 		}
 
 		private CardDto makeResponse() {
@@ -216,11 +215,9 @@ class CardControllerTest {
 					pathParameters(parameterWithName("cardId").description("카드 아이디")),
 					docsFieldGeneratorUtils.generateRequestFieldSnippet(
 						new ParameterizedTypeReference<UpdateCardRequestDto>() {
-						}, "card", Locale.KOREA)
-					,
-					docsFieldGeneratorUtils.generateResponseFieldSnippet(
-						new ParameterizedTypeReference<CardDto>() {
-						}, "card", Locale.KOREAN)));
+						}, "card", Locale.KOREA),
+					docsFieldGeneratorUtils.generateResponseFieldSnippet(new ParameterizedTypeReference<CardDto>() {
+					}, "card", Locale.KOREAN)));
 		}
 
 		private CardDto makeResponse() {
@@ -307,9 +304,8 @@ class CardControllerTest {
 				.andDo(document("{class-name}/{method-name}", getDocumentRequest(), getDocumentResponse(),
 					requestHeaders(headerWithName("Authorization").description("jwt token")),
 					pathParameters(parameterWithName("cardId").description("카드 아이디")),
-					docsFieldGeneratorUtils.generateResponseFieldSnippet(
-						new ParameterizedTypeReference<CardDto>() {
-						}, "card", Locale.KOREAN)));
+					docsFieldGeneratorUtils.generateResponseFieldSnippet(new ParameterizedTypeReference<CardDto>() {
+					}, "card", Locale.KOREAN)));
 
 		}
 	}
@@ -445,8 +441,7 @@ class CardControllerTest {
 					requestParameters(parameterWithName("hasNext").description("다음 페이지가 있는지 여부").optional(),
 						parameterWithName("pageSize").description("페이지 사이즈"),
 						parameterWithName("containTitle").description("카드 제목 포함 여부").optional()),
-					responseFields(
-						fieldWithPath("contents[].card.cardId").description("카드 아이디"),
+					responseFields(fieldWithPath("contents[].card.cardId").description("카드 아이디"),
 						fieldWithPath("contents[].card.title").description("카드 제목"),
 						fieldWithPath("contents[].card.memberId").description("카드 멤버 아이디"),
 						fieldWithPath("contents[].card.question").description("카드 질문"),
@@ -484,10 +479,7 @@ class CardControllerTest {
 		private CardWithStatisticsDto makeResponse() {
 			Card card = CardTestHelper.genOxCard(Id.generateNextId(), Id.generateNextId(), Id.generateNextId());
 			CardDto cardDto = CardMapper.cardToDto(card);
-			return CardWithStatisticsDto.builder()
-				.card(cardDto)
-				.statistics(new CardStatisticsDto(0.0, 0L))
-				.build();
+			return CardWithStatisticsDto.builder().card(cardDto).statistics(new CardStatisticsDto(0.0, 0L)).build();
 		}
 	}
 
@@ -583,10 +575,7 @@ class CardControllerTest {
 		private CardWithStatisticsDto makeResponse() {
 			Card card = CardTestHelper.genOxCard(Id.generateNextId(), Id.generateNextId(), Id.generateNextId());
 			CardDto cardDto = CardMapper.cardToDto(card);
-			return CardWithStatisticsDto.builder()
-				.card(cardDto)
-				.statistics(new CardStatisticsDto(null, null))
-				.build();
+			return CardWithStatisticsDto.builder().card(cardDto).statistics(new CardStatisticsDto(null, null)).build();
 		}
 	}
 
@@ -630,9 +619,7 @@ class CardControllerTest {
 				.andExpect(jsonPath("$[0].answer").exists())
 				.andExpect(jsonPath("$[0].description").exists())
 				.andExpect(jsonPath("$[0].title").exists())
-				.andDo(document("{class-name}/{method-name}",
-					getDocumentRequest(),
-					getDocumentResponse(),
+				.andDo(document("{class-name}/{method-name}", getDocumentRequest(), getDocumentResponse(),
 					requestHeaders(headerWithName("Authorization").description("JWT 인증 토큰")),
 					pathParameters(parameterWithName("categoryId").description("카테고리 아이디")),
 					requestParameters(parameterWithName("limit").description("카드 갯수"),
@@ -651,6 +638,32 @@ class CardControllerTest {
 	}
 
 	@Nested
+	@DisplayName("시뮬레이션 이전에 조회할 카드 갯수 API")
+	class FindCardCountByCategoryIdTest {
+
+		@Test
+		@DisplayName("정상 동작시 200 응답 및 응답 포맷 테스트")
+		void shouldReturn200OKAndResponseFormatTest() throws Exception {
+			// given
+			List<CardCountGroupByScoreDto> data = List.of(new CardCountGroupByScoreDto(25.0, 1),
+				new CardCountGroupByScoreDto(100.0, 4));
+			Id categoryId = Id.generateNextId();
+			Mockito.doReturn(data).when(cardSimulationService).findCardCountByScore(any());
+
+			// when
+			ResultActions resultActions = mockMvc.perform(
+				get("/api/v1/cards/categories/{categoryId}/simulation/before/count", categoryId));
+
+			// then
+			resultActions.andExpect(status().isOk())
+				.andDo(document("{class-name}/{method-name}", getDocumentRequest(), getDocumentResponse(),
+					pathParameters(parameterWithName("categoryId").description("카테고리 아이디")),
+					responseFields(fieldWithPath("[].count").description("카드 갯수"),
+						fieldWithPath("[].score").description("카드 점수"))));
+		}
+	}
+
+	@Nested
 	@DisplayName("카테고리 별 카드 갯수 조회 API")
 	class FindCardCountByCategoryTest {
 
@@ -663,15 +676,13 @@ class CardControllerTest {
 
 			// when
 			ResultActions resultActions = mockMvc.perform(
-				get("/api/v1/cards//categories/{categoryId}/me/count", Id.generateNextId())
-					.header("Authorization", jwtToken));
+				get("/api/v1/cards/categories/{categoryId}/me/count", Id.generateNextId()).header("Authorization",
+					jwtToken));
 
 			// then
 			resultActions.andExpect(status().isOk())
 				.andExpect(jsonPath("count").exists())
-				.andDo(document("{class-name}/{method-name}",
-					getDocumentRequest(),
-					getDocumentResponse(),
+				.andDo(document("{class-name}/{method-name}", getDocumentRequest(), getDocumentResponse(),
 					requestHeaders(headerWithName("Authorization").description("JWT 인증 토큰")),
 					pathParameters(parameterWithName("categoryId").description("카테고리 아이디")),
 					responseFields(fieldWithPath("count").description("카드 갯수"))));
