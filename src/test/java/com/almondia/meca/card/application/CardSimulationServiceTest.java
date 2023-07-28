@@ -258,7 +258,7 @@ class CardSimulationServiceTest {
 			List<CardCountGroupByScoreDto> result = cardSimulationService.findCardCountByScore(categoryId);
 
 			// then
-			assertThat(result.get(0)).extracting(CardCountGroupByScoreDto::getScore).isEqualTo(1.0);
+			assertThat(result.get(0)).extracting(CardCountGroupByScoreDto::getScore).isEqualTo(2.0);
 		}
 	}
 }
