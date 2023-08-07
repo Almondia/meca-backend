@@ -618,8 +618,8 @@ class CardServiceTest {
 		}
 
 		@Test
-		@DisplayName("통계 기록은 있으면 안되고 모두 null이여야 함")
-		void shouldReturnNullWhenStatisticsExistTest() {
+		@DisplayName("통계 기록은 있으면 안되고 모두 0 이여야 함")
+		void shouldReturnZeroWhenStatisticsExistTest() {
 			// given
 			CardSearchOption cardSearchOption = CardSearchOption.builder().build();
 			Id memberId = Id.generateNextId();
@@ -636,8 +636,8 @@ class CardServiceTest {
 				categoryId, cardSearchOption);
 
 			// then
-			assertThat(cardCursorPageWithCategory.getContents().get(0).getStatistics().getScoreAvg()).isNull();
-			assertThat(cardCursorPageWithCategory.getContents().get(0).getStatistics().getTryCount()).isNull();
+			assertThat(cardCursorPageWithCategory.getContents().get(0).getStatistics().getScoreAvg()).isEqualTo(0.0);
+			assertThat(cardCursorPageWithCategory.getContents().get(0).getStatistics().getTryCount()).isEqualTo(0L);
 		}
 	}
 }
