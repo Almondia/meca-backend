@@ -206,14 +206,14 @@ class CardServiceTest {
 			KeywordCard card = CardTestHelper.genKeywordCard(memberId, categoryId, cardId);
 			Category category = CategoryTestHelper.generateUnSharedCategory("title", memberId, categoryId);
 			Member member = MemberTestHelper.generateMember(memberId);
+			UpdateCardRequestDto updateCardRequestDto = makeUpdateCardRequest(categoryId);
+			Id randomCardId = Id.generateNextId();
 			em.persist(card);
 			em.persist(category);
 			em.persist(member);
 
-			assertThatThrownBy(() -> {
-				UpdateCardRequestDto updateCardRequestDto = makeUpdateCardRequest(categoryId);
-				cardService.updateCard(updateCardRequestDto, Id.generateNextId(), memberId);
-			}).isInstanceOf(AccessDeniedException.class);
+			assertThatThrownBy(() -> cardService.updateCard(updateCardRequestDto, randomCardId, memberId))
+				.isInstanceOf(AccessDeniedException.class);
 		}
 
 		@Test
@@ -226,11 +226,10 @@ class CardServiceTest {
 			em.persist(card);
 			em.persist(category);
 			em.persist(member);
+			UpdateCardRequestDto updateCardRequestDto = makeUpdateCardRequest(Id.generateNextId());
 
-			assertThatThrownBy(() -> {
-				UpdateCardRequestDto updateCardRequestDto = makeUpdateCardRequest(Id.generateNextId());
-				cardService.updateCard(updateCardRequestDto, cardId, memberId);
-			}).isInstanceOf(AccessDeniedException.class);
+			assertThatThrownBy(() -> cardService.updateCard(updateCardRequestDto, cardId, memberId))
+				.isInstanceOf(AccessDeniedException.class);
 		}
 
 		@Test
@@ -388,12 +387,16 @@ class CardServiceTest {
 		@Test
 		@DisplayName("본인이 가진 카테고리가 아닐 시 권한 에러 출력")
 		void shouldThrowAccessDeniedExceptionWhenNotMyCategoryIdHandleTest() {
+			Id randomCategoryId = Id.generateNextId();
+			Id randomMemberId = Id.generateNextId();
+			Member member = MemberTestHelper.generateMember(randomMemberId);
+			CardSearchOption cardSearchOption = CardSearchOption.builder().build();
 			assertThatThrownBy(() -> cardService.searchCursorPagingCard(
 				10,
-				Id.generateNextId(),
-				Id.generateNextId(),
-				MemberTestHelper.generateMember(Id.generateNextId()),
-				CardSearchOption.builder().build())).isInstanceOf(AccessDeniedException.class);
+				null,
+				randomCategoryId,
+				member,
+				cardSearchOption)).isInstanceOf(AccessDeniedException.class);
 		}
 
 		@Test
@@ -438,8 +441,11 @@ class CardServiceTest {
 		@Test
 		@DisplayName("권한 체크를 수행하는지 테스트")
 		void checkAuthorityTest() {
-			assertThatThrownBy(() -> cardService.deleteCard(Id.generateNextId(), Id.generateNextId())).isInstanceOf(
-				AccessDeniedException.class);
+			Id randomCardId = Id.generateNextId();
+			Id randomMemberId = Id.generateNextId();
+
+			assertThatThrownBy(() -> cardService.deleteCard(randomCardId, randomMemberId))
+				.isInstanceOf(AccessDeniedException.class);
 		}
 	}
 
@@ -459,7 +465,10 @@ class CardServiceTest {
 		@Test
 		@DisplayName("권한 체크 수행 여부 테스트")
 		void checkAuthorityTest() {
-			assertThatThrownBy(() -> cardService.findCardById(Id.generateNextId(), Id.generateNextId()))
+			Id randomCardId = Id.generateNextId();
+			Id randomMemberId = Id.generateNextId();
+
+			assertThatThrownBy(() -> cardService.findCardById(randomCardId, randomMemberId))
 				.isInstanceOf(AccessDeniedException.class);
 		}
 
@@ -618,8 +627,8 @@ class CardServiceTest {
 		}
 
 		@Test
-		@DisplayName("통계 기록은 있으면 안되고 모두 null이여야 함")
-		void shouldReturnNullWhenStatisticsExistTest() {
+		@DisplayName("통계 기록은 있으면 안되고 모두 0 이여야 함")
+		void shouldReturnZeroWhenStatisticsExistTest() {
 			// given
 			CardSearchOption cardSearchOption = CardSearchOption.builder().build();
 			Id memberId = Id.generateNextId();
@@ -636,8 +645,8 @@ class CardServiceTest {
 				categoryId, cardSearchOption);
 
 			// then
-			assertThat(cardCursorPageWithCategory.getContents().get(0).getStatistics().getScoreAvg()).isNull();
-			assertThat(cardCursorPageWithCategory.getContents().get(0).getStatistics().getTryCount()).isNull();
+			assertThat(cardCursorPageWithCategory.getContents().get(0).getStatistics().getScoreAvg()).isEqualTo(0.0);
+			assertThat(cardCursorPageWithCategory.getContents().get(0).getStatistics().getTryCount()).isZero();
 		}
 	}
 }

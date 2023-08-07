@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Repository;
 
 import com.almondia.meca.card.application.helper.CardMapper;
@@ -39,7 +40,7 @@ public class CardQueryDslRepositoryImpl implements CardQueryDslRepository {
 	@Override
 	public List<CardDto> findCardByCategoryId(
 		int pageSize,
-		Id lastCardId,
+		@Nullable Id lastCardId,
 		Id categoryId,
 		CardSearchOption cardSearchOption
 	) {
@@ -51,7 +52,7 @@ public class CardQueryDslRepositoryImpl implements CardQueryDslRepository {
 				lessOrEqCardId(lastCardId)
 			)
 			.orderBy(card.cardId.uuid.desc())
-			.limit(pageSize + 1)
+			.limit(pageSize + 1L)
 			.fetch()
 			.stream()
 			.map(CardMapper::cardToDto)
@@ -154,11 +155,13 @@ public class CardQueryDslRepositoryImpl implements CardQueryDslRepository {
 			));
 	}
 
-	private BooleanExpression lessOrEqCardId(Id lastCardId) {
+	@Nullable
+	private BooleanExpression lessOrEqCardId(@Nullable Id lastCardId) {
 		return lastCardId == null ? null : card.cardId.uuid.loe(lastCardId.getUuid());
 	}
 
-	private BooleanExpression containTitle(String containTitle) {
+	@Nullable
+	private BooleanExpression containTitle(@Nullable String containTitle) {
 		return containTitle == null ? null : card.title.title.contains(containTitle);
 	}
 }

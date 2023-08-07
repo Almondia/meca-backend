@@ -150,9 +150,14 @@ public class CardService {
 			throw new IllegalArgumentException("삭제된 멤버에 접근할 수 없습니다");
 		}
 		long likeCount = categoryRecommendRepository.countByCategoryIdAndIsDeletedFalse(categoryId);
-		List<CardWithStatisticsDto> contents = cardRepository.findCardByCategoryId(pageSize, lastCardId, categoryId,
-				cardSearchOption).stream()
-			.map(cardDto -> new CardWithStatisticsDto(cardDto, new CardStatisticsDto(null, null)))
+		List<CardDto> cards = cardRepository.findCardByCategoryId(pageSize, lastCardId, categoryId, cardSearchOption);
+		Map<Id, Pair<Double, Long>> avgAndCountsByCardIds = cardHistoryRepository.findCardHistoryScoresAvgAndCountsByCardIds(
+			cards.stream().map(CardDto::getCardId).collect(Collectors.toList()));
+		List<CardWithStatisticsDto> contents = cards.stream()
+			.map(cardDto -> new CardWithStatisticsDto(cardDto, new CardStatisticsDto(
+				avgAndCountsByCardIds.getOrDefault(cardDto.getCardId(), Pair.of(0.0, 0L)).getFirst(),
+				avgAndCountsByCardIds.getOrDefault(cardDto.getCardId(), Pair.of(0.0, 0L)).getSecond()
+			)))
 			.collect(Collectors.toList());
 
 		// combine
