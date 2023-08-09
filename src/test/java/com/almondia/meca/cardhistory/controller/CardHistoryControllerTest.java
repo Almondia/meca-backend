@@ -100,7 +100,7 @@ class CardHistoryControllerTest {
 
 			// when
 			ResultActions resultActions = mockMvc.perform(
-				post("/api/v1/card-histories/simulation").contentType(MediaType.APPLICATION_JSON)
+				post("/api/v1/card-histories").contentType(MediaType.APPLICATION_JSON)
 					.characterEncoding(StandardCharsets.UTF_8)
 					.content(objectMapper.writeValueAsString(cardHistoryRequestDto))
 					.header("Authorization", "Bearer " + jwtToken));

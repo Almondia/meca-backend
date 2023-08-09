@@ -34,7 +34,7 @@ public class CardHistoryController {
 
 	private final CardHistoryService cardHistoryService;
 
-	@PostMapping("/simulation")
+	@PostMapping
 	@Secured("ROLE_USER")
 	public ResponseEntity<SaveResponseCardHistoryDto> saveHistories(
 		@AuthenticationPrincipal Member member,
