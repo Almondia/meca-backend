@@ -100,7 +100,7 @@ class CardHistoryControllerTest {
 
 			// when
 			ResultActions resultActions = mockMvc.perform(
-				post("/api/v1/histories/simulation").contentType(MediaType.APPLICATION_JSON)
+				post("/api/v1/card-histories/simulation").contentType(MediaType.APPLICATION_JSON)
 					.characterEncoding(StandardCharsets.UTF_8)
 					.content(objectMapper.writeValueAsString(cardHistoryRequestDto))
 					.header("Authorization", "Bearer " + jwtToken));
@@ -144,7 +144,7 @@ class CardHistoryControllerTest {
 
 			// when
 			ResultActions resultActions = mockMvc.perform(
-				get("/api/v1/histories/cards/{cardId}", Id.generateNextId().toString())
+				get("/api/v1/card-histories/cards/{cardId}", Id.generateNextId().toString())
 					.contentType(MediaType.APPLICATION_JSON)
 					.characterEncoding(StandardCharsets.UTF_8)
 					.queryParam("hasNext", Id.generateNextId().toString())
@@ -200,7 +200,7 @@ class CardHistoryControllerTest {
 
 			// when
 			ResultActions resultActions = mockMvc.perform(
-				get("/api/v1/histories/members/{solvedMemberId}", Id.generateNextId().toString())
+				get("/api/v1/card-histories/members/{solvedMemberId}", Id.generateNextId().toString())
 					.contentType(MediaType.APPLICATION_JSON)
 					.characterEncoding(StandardCharsets.UTF_8)
 					.queryParam("hasNext", Id.generateNextId().toString())

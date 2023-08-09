@@ -28,7 +28,7 @@ import com.almondia.meca.member.domain.entity.Member;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/v1/histories")
+@RequestMapping("/api/v1/card-histories")
 @RequiredArgsConstructor
 public class CardHistoryController {
 

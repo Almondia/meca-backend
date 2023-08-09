@@ -15,7 +15,7 @@ import com.almondia.meca.common.domain.vo.Id;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/v2/histories")
+@RequestMapping("/api/v2/card-histories")
 @RequiredArgsConstructor
 public class CardHistoryController2 {
 

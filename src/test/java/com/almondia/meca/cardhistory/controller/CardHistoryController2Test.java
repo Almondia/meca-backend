@@ -95,7 +95,7 @@ class CardHistoryController2Test {
 
 			// when
 			ResultActions resultActions = mockMvc.perform(
-				get("/api/v2/histories/cards/{cardId}",
+				get("/api/v2/card-histories/cards/{cardId}",
 					Id.generateNextId().toString())
 					.contentType(MediaType.APPLICATION_JSON)
 					.characterEncoding(StandardCharsets.UTF_8)
@@ -156,7 +156,7 @@ class CardHistoryController2Test {
 
 			// when
 			ResultActions resultActions = mockMvc.perform(
-				get("/api/v2/histories/members/{solvedMemberId}", Id.generateNextId().toString())
+				get("/api/v2/card-histories/members/{solvedMemberId}", Id.generateNextId().toString())
 					.contentType(MediaType.APPLICATION_JSON)
 					.characterEncoding(StandardCharsets.UTF_8)
 					.queryParam("hasNext", Id.generateNextId().toString())
