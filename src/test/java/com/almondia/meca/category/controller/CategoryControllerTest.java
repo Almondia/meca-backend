@@ -11,7 +11,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Locale;
 
@@ -220,30 +219,21 @@ class CategoryControllerTest {
 		@WithMockMember
 		void shouldReturnPageTypeWhenCallPagingSearchTest() throws Exception {
 			// given
+			Id memberId = Id.generateNextId();
+			Id categoryId1 = Id.generateNextId();
+			Id categoryId2 = Id.generateNextId();
 			CategoryWithStatisticsResponseDto content0 = CategoryWithStatisticsResponseDto.builder()
-				.categoryId(Id.generateNextId())
-				.memberId(Id.generateNextId())
-				.title(new Title("title1"))
-				.thumbnail(Image.of("https://aws.s3.com"))
-				.createdAt(LocalDateTime.now())
-				.modifiedAt(LocalDateTime.now())
-				.scoreAvg(12.3)
-				.solveCount(10L)
-				.totalCount(20L)
+				.category(CategoryTestHelper.generateUnSharedCategory("title", memberId, categoryId1))
+				.statistics(new CategoryStatisticsDto(12.3, 10L, 20L))
 				.build();
 			CategoryWithStatisticsResponseDto content1 = CategoryWithStatisticsResponseDto.builder()
-				.categoryId(Id.generateNextId())
-				.memberId(Id.generateNextId())
-				.title(new Title("title2"))
-				.thumbnail(Image.of("https://aws.s3.com"))
-				.createdAt(LocalDateTime.now())
-				.modifiedAt(LocalDateTime.now())
-				.scoreAvg(12.3)
-				.solveCount(10L)
-				.totalCount(20L)
+				.category(CategoryTestHelper.generateUnSharedCategory("title", memberId, categoryId2))
+				.statistics(new CategoryStatisticsDto(12.3, 10L, 20L))
 				.build();
 			CursorPage<CategoryWithStatisticsResponseDto> response = CursorPage.<CategoryWithStatisticsResponseDto>builder()
-				.lastIdExtractStrategy(CategoryWithStatisticsResponseDto::getCategoryId)
+				.lastIdExtractStrategy(
+					categoryWithStatisticsResponseDto -> categoryWithStatisticsResponseDto.getCategory()
+						.getCategoryId())
 				.contents(List.of(content0, content1))
 				.pageSize(1)
 				.sortOrder(SortOrder.DESC)

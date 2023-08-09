@@ -103,13 +103,15 @@ public class CategoryService {
 		List<CategoryWithStatisticsResponseDto> categoryWithStatisticsResponseDtos = contents.stream()
 			.map(category -> new CategoryWithStatisticsResponseDto(
 				category,
-				statistics.get(category.getCategoryId()).getFirst(),
-				statistics.get(category.getCategoryId()).getSecond(),
-				counts.getOrDefault(category.getCategoryId(), 0L),
+				new CategoryStatisticsDto(
+					statistics.getOrDefault(category.getCategoryId(), Pair.of(0.0, 0L)).getFirst(),
+					statistics.getOrDefault(category.getCategoryId(), Pair.of(0.0, 0L)).getSecond(),
+					counts.getOrDefault(category.getCategoryId(), 0L)
+				),
 				recommendCounts.getOrDefault(category.getCategoryId(), 0L)
 			)).collect(toList());
 		return CursorPage.<CategoryWithStatisticsResponseDto>builder()
-			.lastIdExtractStrategy(CategoryWithStatisticsResponseDto::getCategoryId)
+			.lastIdExtractStrategy(categoryWithStatistics -> categoryWithStatistics.getCategory().getCategoryId())
 			.contents(categoryWithStatisticsResponseDtos)
 			.pageSize(pageSize)
 			.sortOrder(SortOrder.DESC)
