@@ -3,7 +3,6 @@ package com.almondia.meca.card.controller.dto;
 import com.almondia.meca.category.controller.dto.CategoryDto;
 import com.almondia.meca.category.domain.entity.Category;
 import com.almondia.meca.common.controller.dto.CursorPage;
-import com.almondia.meca.member.controller.dto.MemberDto;
 import com.almondia.meca.member.domain.entity.Member;
 
 import lombok.Getter;
@@ -12,7 +11,7 @@ import lombok.Getter;
 public class CardCursorPageWithCategory extends CursorPage<CardWithStatisticsDto> {
 
 	private CategoryDto category;
-	private MemberDto member;
+	private CardMemberDto member;
 	private long categoryLikeCount;
 
 	public CardCursorPageWithCategory(CursorPage<CardWithStatisticsDto> cursorPage) {
@@ -20,16 +19,10 @@ public class CardCursorPageWithCategory extends CursorPage<CardWithStatisticsDto
 	}
 
 	public void setMember(Member member) {
-		this.member = MemberDto.builder()
+		this.member = CardMemberDto.builder()
 			.memberId(member.getMemberId())
 			.name(member.getName())
-			.email(member.getEmail())
 			.profile(member.getProfile())
-			.oauthType(member.getOAuthType())
-			.role(member.getRole())
-			.isDeleted(member.isDeleted())
-			.createdAt(member.getCreatedAt())
-			.modifiedAt(member.getModifiedAt())
 			.build();
 	}
 
