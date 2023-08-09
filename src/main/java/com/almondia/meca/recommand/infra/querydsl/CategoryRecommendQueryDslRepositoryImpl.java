@@ -23,15 +23,6 @@ public class CategoryRecommendQueryDslRepositoryImpl implements CategoryRecommen
 	private final JPAQueryFactory jpaQueryFactory;
 
 	@Override
-	public List<Id> findRecommendCategoryIdsByMemberId(List<Id> categoryIds, Id memberId) {
-		return jpaQueryFactory.select(categoryRecommend.categoryId)
-			.from(categoryRecommend)
-			.where(categoryRecommend.categoryId.in(categoryIds), categoryRecommend.recommendMemberId.eq(memberId),
-				categoryRecommend.isDeleted.eq(false))
-			.fetch();
-	}
-
-	@Override
 	public Map<Id, Long> findRecommendCountByCategoryIds(List<Id> categoryIds) {
 		Map<Id, Long> collect = jpaQueryFactory.select(categoryRecommend.categoryId,
 				new CaseBuilder().when(categoryRecommend.categoryId.count().isNull())
