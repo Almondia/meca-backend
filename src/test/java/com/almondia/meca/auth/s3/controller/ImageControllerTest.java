@@ -35,10 +35,10 @@ import com.almondia.meca.common.configuration.web.WebMvcConfiguration;
 import com.almondia.meca.common.infra.s3.S3PreSignedUrlRequest;
 import com.almondia.meca.mock.security.WithMockMember;
 
-@WebMvcTest(PreSignedController.class)
+@WebMvcTest(ImageController.class)
 @ExtendWith({RestDocumentationExtension.class})
 @Import({JacksonConfiguration.class, WebMvcConfiguration.class})
-class PreSignedControllerTest {
+class ImageControllerTest {
 
 	private static final String jwtToken = "jwt token";
 
@@ -70,7 +70,7 @@ class PreSignedControllerTest {
 		Mockito.doReturn(url).when(s3PreSignedUrlRequest).requestPutPreSignedUrl(any(), any());
 
 		// when
-		ResultActions resultActions = mockMvc.perform(get("/api/v1/presign/images/upload")
+		ResultActions resultActions = mockMvc.perform(get("/api/v1/images/presign")
 			.header("Authorization", "Bearer " + jwtToken)
 			.queryParam("purpose", "thumbnail")
 			.queryParam("extension", "jpg")
@@ -102,27 +102,4 @@ class PreSignedControllerTest {
 			));
 	}
 
-	@Test
-	@DisplayName("응답 성공시 Download PresignedUrl를 리턴해야함")
-	@WithMockMember
-	void successResponseOkAndGetDownloadUrlTest() throws Exception {
-		URL url = UriComponentsBuilder.fromUriString("https://www.abc.com").build().toUri().toURL();
-		Mockito.doReturn(url).when(s3PreSignedUrlRequest).requestGetPreSignedUrl(any(), any());
-		mockMvc.perform(get("/api/v1/presign/images/download?objectKey=abc"))
-			.andExpect(status().isOk())
-			.andExpect(jsonPath("url").exists())
-			.andExpect(jsonPath("expirationDate").exists());
-	}
-
-	@Test
-	@DisplayName("응답 성공시 Multi Download PresignedUrl를 리턴해야함")
-	@WithMockMember
-	void successResponseOkAndGetMultiDownloadUrlTest() throws Exception {
-		URL url = UriComponentsBuilder.fromUriString("https://www.abc.com").build().toUri().toURL();
-		Mockito.doReturn(url).when(s3PreSignedUrlRequest).requestGetPreSignedUrl(any(), any());
-		mockMvc.perform(get("/api/v1/presign/images/download/all?objectKey=abc&objectKey=def"))
-			.andExpect(status().isOk())
-			.andExpect(jsonPath("urls").exists())
-			.andExpect(jsonPath("expirationDate").exists());
-	}
 }

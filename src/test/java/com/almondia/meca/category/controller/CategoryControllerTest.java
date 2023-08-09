@@ -5,13 +5,11 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.springframework.restdocs.headers.HeaderDocumentation.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
-import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Locale;
 
@@ -39,7 +37,6 @@ import com.almondia.meca.asciidocs.fields.DocsFieldGeneratorUtils;
 import com.almondia.meca.category.application.CategoryRecommendService;
 import com.almondia.meca.category.application.CategoryService;
 import com.almondia.meca.category.controller.dto.CategoryDto;
-import com.almondia.meca.category.controller.dto.CategoryRecommendCheckDto;
 import com.almondia.meca.category.controller.dto.CategoryStatisticsDto;
 import com.almondia.meca.category.controller.dto.CategoryWithStatisticsResponseDto;
 import com.almondia.meca.category.controller.dto.SaveCategoryRequestDto;
@@ -220,30 +217,21 @@ class CategoryControllerTest {
 		@WithMockMember
 		void shouldReturnPageTypeWhenCallPagingSearchTest() throws Exception {
 			// given
+			Id memberId = Id.generateNextId();
+			Id categoryId1 = Id.generateNextId();
+			Id categoryId2 = Id.generateNextId();
 			CategoryWithStatisticsResponseDto content0 = CategoryWithStatisticsResponseDto.builder()
-				.categoryId(Id.generateNextId())
-				.memberId(Id.generateNextId())
-				.title(new Title("title1"))
-				.thumbnail(Image.of("https://aws.s3.com"))
-				.createdAt(LocalDateTime.now())
-				.modifiedAt(LocalDateTime.now())
-				.scoreAvg(12.3)
-				.solveCount(10L)
-				.totalCount(20L)
+				.category(CategoryTestHelper.generateUnSharedCategory("title", memberId, categoryId1))
+				.statistics(new CategoryStatisticsDto(12.3, 10L, 20L))
 				.build();
 			CategoryWithStatisticsResponseDto content1 = CategoryWithStatisticsResponseDto.builder()
-				.categoryId(Id.generateNextId())
-				.memberId(Id.generateNextId())
-				.title(new Title("title2"))
-				.thumbnail(Image.of("https://aws.s3.com"))
-				.createdAt(LocalDateTime.now())
-				.modifiedAt(LocalDateTime.now())
-				.scoreAvg(12.3)
-				.solveCount(10L)
-				.totalCount(20L)
+				.category(CategoryTestHelper.generateUnSharedCategory("title", memberId, categoryId2))
+				.statistics(new CategoryStatisticsDto(12.3, 10L, 20L))
 				.build();
 			CursorPage<CategoryWithStatisticsResponseDto> response = CursorPage.<CategoryWithStatisticsResponseDto>builder()
-				.lastIdExtractStrategy(CategoryWithStatisticsResponseDto::getCategoryId)
+				.lastIdExtractStrategy(
+					categoryWithStatisticsResponseDto -> categoryWithStatisticsResponseDto.getCategory()
+						.getCategoryId())
 				.contents(List.of(content0, content1))
 				.pageSize(1)
 				.sortOrder(SortOrder.DESC)
@@ -378,7 +366,7 @@ class CategoryControllerTest {
 		void shouldReturnStatus200AndResponseWhenSuccessTest() throws Exception {
 			// given
 			CursorPage<SharedCategoryResponseDto> cursorPage = CursorPage.<SharedCategoryResponseDto>builder()
-				.lastIdExtractStrategy(sharedCategoryDto -> sharedCategoryDto.getCategoryInfo().getCategoryId())
+				.lastIdExtractStrategy(sharedCategoryDto -> sharedCategoryDto.getCategory().getCategoryId())
 				.pageSize(1)
 				.contents(List.of(new SharedCategoryResponseDto(
 					CategoryTestHelper.generateSharedCategory("title", Id.generateNextId(), Id.generateNextId()),
@@ -494,17 +482,16 @@ class CategoryControllerTest {
 		@WithMockMember
 		void shouldReturnStatus200WhenSuccessTest() throws Exception {
 			// given
-			Id id1 = Id.generateNextId();
-			Id id2 = Id.generateNextId();
-			Id id3 = Id.generateNextId();
-			Mockito.doReturn(new CategoryRecommendCheckDto(List.of(id1, id2, id3), List.of(id1, id2)))
+			Id categoryId = Id.generateNextId();
+			Mockito.doReturn(true)
 				.when(categoryRecommendService)
 				.isRecommended(any(), any());
 
 			// when
 			ResultActions resultActions = mockMvc.perform(
-				get("/api/v1/categories/like?categoryIds=" + id1 + "," + id2 + "," + id3).header("Authorization",
-					"Bearer " + jwtToken));
+				get("/api/v1/categories/{categoryId}/like", categoryId)
+					.header("Authorization",
+						"Bearer " + jwtToken));
 
 			// then
 			resultActions.andExpect(status().isOk())
@@ -514,12 +501,8 @@ class CategoryControllerTest {
 					requestHeaders(
 						headerWithName("Authorization").description("JWT Bearer 토큰")
 					),
-					requestParameters(
-						parameterWithName("categoryIds").description("카테고리 아이디 목록")
-					),
-					responseFields(
-						fieldWithPath("recommendedCategories").description("좋아요한 카테고리 아이디 목록"),
-						fieldWithPath("unRecommendedCategories").description("좋아요하지 않은 카테고리 아이디 목록")
+					pathParameters(
+						parameterWithName("categoryId").description("카테고리 아이디")
 					)
 				));
 		}

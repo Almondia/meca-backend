@@ -40,9 +40,9 @@ import com.almondia.meca.card.application.helper.CardMapper;
 import com.almondia.meca.card.controller.dto.CardCountGroupByScoreDto;
 import com.almondia.meca.card.controller.dto.CardCursorPageWithCategory;
 import com.almondia.meca.card.controller.dto.CardDto;
+import com.almondia.meca.card.controller.dto.CardResponseDto;
 import com.almondia.meca.card.controller.dto.CardWithStatisticsDto;
 import com.almondia.meca.card.controller.dto.SaveCardRequestDto;
-import com.almondia.meca.card.controller.dto.SharedCardResponseDto;
 import com.almondia.meca.card.controller.dto.UpdateCardRequestDto;
 import com.almondia.meca.card.domain.entity.Card;
 import com.almondia.meca.card.domain.entity.OxCard;
@@ -294,18 +294,14 @@ class CardControllerTest {
 
 			// then
 			resultActions.andExpect(status().isOk())
-				.andExpect(jsonPath("cardId").exists())
-				.andExpect(jsonPath("question").exists())
-				.andExpect(jsonPath("memberId").exists())
-				.andExpect(jsonPath("cardType").exists())
-				.andExpect(jsonPath("answer").exists())
-				.andExpect(jsonPath("description").exists())
-				.andExpect(jsonPath("title").exists())
-				.andDo(document("{class-name}/{method-name}", getDocumentRequest(), getDocumentResponse(),
+				.andDo(document("{class-name}/{method-name}",
+					getDocumentRequest(),
+					getDocumentResponse(),
 					requestHeaders(headerWithName("Authorization").description("jwt token")),
 					pathParameters(parameterWithName("cardId").description("카드 아이디")),
-					docsFieldGeneratorUtils.generateResponseFieldSnippet(new ParameterizedTypeReference<CardDto>() {
-					}, "card", Locale.KOREAN)));
+					docsFieldGeneratorUtils.generateResponseFieldSnippet(
+						new ParameterizedTypeReference<CardResponseDto>() {
+						}, "card", Locale.KOREAN)));
 
 		}
 	}
@@ -339,45 +335,37 @@ class CardControllerTest {
 				.createdAt(LocalDateTime.now())
 				.modifiedAt(LocalDateTime.now())
 				.build();
-			Mockito.doReturn(new SharedCardResponseDto(card, member)).when(cardService).findSharedCard(any());
+			Mockito.doReturn(new CardResponseDto(card, member)).when(cardService).findSharedCard(any());
 
 			// when
 			mockMvc.perform(get("/api/v1/cards/{cardId}/share", Id.generateNextId()))
 				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.cardInfo.cardId").exists())
-				.andExpect(jsonPath("$.cardInfo.categoryId").exists())
-				.andExpect(jsonPath("$.cardInfo.title").exists())
-				.andExpect(jsonPath("$.cardInfo.question").exists())
-				.andExpect(jsonPath("$.cardInfo.cardType").exists())
-				.andExpect(jsonPath("$.cardInfo.answer").exists())
-				.andExpect(jsonPath("$.cardInfo.description").exists())
-				.andExpect(jsonPath("$.cardInfo.title").exists())
-				.andExpect(jsonPath("$.memberInfo.memberId").exists())
-				.andExpect(jsonPath("$.memberInfo.email").exists())
-				.andExpect(jsonPath("$.memberInfo.name").exists())
-				.andExpect(jsonPath("$.memberInfo.oauthType").exists())
-				.andExpect(jsonPath("$.memberInfo.role").exists())
+				.andExpect(jsonPath("$.card.cardId").exists())
+				.andExpect(jsonPath("$.card.categoryId").exists())
+				.andExpect(jsonPath("$.card.title").exists())
+				.andExpect(jsonPath("$.card.question").exists())
+				.andExpect(jsonPath("$.card.cardType").exists())
+				.andExpect(jsonPath("$.card.answer").exists())
+				.andExpect(jsonPath("$.card.description").exists())
+				.andExpect(jsonPath("$.card.title").exists())
+				.andExpect(jsonPath("$.member.memberId").exists())
+				.andExpect(jsonPath("$.member.name").exists())
 				.andDo(document("{class-name}/{method-name}", getDocumentRequest(), getDocumentResponse(),
 					pathParameters(parameterWithName("cardId").description("카드 아이디")),
-					responseFields(fieldWithPath("cardInfo.cardId").description("카드 아이디"),
-						fieldWithPath("cardInfo.title").description("카드 제목"),
-						fieldWithPath("cardInfo.memberId").description("카드 멤버 아이디"),
-						fieldWithPath("cardInfo.question").description("카드 질문"),
-						fieldWithPath("cardInfo.categoryId").description("카테고리 아이디"),
-						fieldWithPath("cardInfo.cardType").description("카드 타입"),
-						fieldWithPath("cardInfo.answer").description("카드 정답"),
-						fieldWithPath("cardInfo.description").description("카드 설명"),
-						fieldWithPath("cardInfo.createdAt").description("카드 생성일"),
-						fieldWithPath("cardInfo.modifiedAt").description("카드 수정일"),
-						fieldWithPath("memberInfo.memberId").description("멤버 아이디"),
-						fieldWithPath("memberInfo.name").description("멤버 이름"),
-						fieldWithPath("memberInfo.email").description("멤버 이메일"),
-						fieldWithPath("memberInfo.profile").description("멤버 profile 이미지"),
-						fieldWithPath("memberInfo.role").description("멤버 권한"),
-						fieldWithPath("memberInfo.createdAt").description("멤버 생성일"),
-						fieldWithPath("memberInfo.modifiedAt").description("멤버 수정일"),
-						fieldWithPath("memberInfo.oauthType").description("KAKAO, NAVER, GOOGLE"),
-						fieldWithPath("memberInfo.deleted").description("멤버 삭제 여부"))));
+					responseFields(
+						fieldWithPath("card.cardId").description("카드 아이디"),
+						fieldWithPath("card.title").description("카드 제목"),
+						fieldWithPath("card.memberId").description("카드 멤버 아이디"),
+						fieldWithPath("card.question").description("카드 질문"),
+						fieldWithPath("card.categoryId").description("카테고리 아이디"),
+						fieldWithPath("card.cardType").description("카드 타입"),
+						fieldWithPath("card.answer").description("카드 정답"),
+						fieldWithPath("card.description").description("카드 설명"),
+						fieldWithPath("card.createdAt").description("카드 생성일"),
+						fieldWithPath("card.modifiedAt").description("카드 수정일"),
+						fieldWithPath("member.memberId").description("멤버 아이디"),
+						fieldWithPath("member.name").description("멤버 이름"),
+						fieldWithPath("member.profile").description("멤버 profile 이미지"))));
 		}
 	}
 
@@ -466,14 +454,8 @@ class CardControllerTest {
 						fieldWithPath("category.deleted").description("카테고리 삭제 여부"),
 						fieldWithPath("category.memberId").description("카테고리 멤버 아이디"),
 						fieldWithPath("member.memberId").description("멤버 아이디"),
-						fieldWithPath("member.email").description("멤버 이메일"),
 						fieldWithPath("member.name").description("멤버 이름"),
-						fieldWithPath("member.profile").description("멤버 프로필"),
-						fieldWithPath("member.oauthType").description("멤버 OAuth 타입"),
-						fieldWithPath("member.role").description("멤버 권한"),
-						fieldWithPath("member.deleted").description("멤버 삭제 여부"),
-						fieldWithPath("member.createdAt").description("멤버 생성일"),
-						fieldWithPath("member.modifiedAt").description("멤버 수정일"))));
+						fieldWithPath("member.profile").description("멤버 프로필"))));
 		}
 
 		private CardWithStatisticsDto makeResponse() {
@@ -562,14 +544,8 @@ class CardControllerTest {
 						fieldWithPath("category.deleted").description("카테고리 삭제 여부"),
 						fieldWithPath("category.memberId").description("카테고리 멤버 아이디"),
 						fieldWithPath("member.memberId").description("멤버 아이디"),
-						fieldWithPath("member.email").description("멤버 이메일"),
 						fieldWithPath("member.name").description("멤버 이름"),
-						fieldWithPath("member.profile").description("멤버 프로필"),
-						fieldWithPath("member.oauthType").description("멤버 OAuth 타입"),
-						fieldWithPath("member.role").description("멤버 권한"),
-						fieldWithPath("member.deleted").description("멤버 삭제 여부"),
-						fieldWithPath("member.createdAt").description("멤버 생성일"),
-						fieldWithPath("member.modifiedAt").description("멤버 수정일"))));
+						fieldWithPath("member.profile").description("멤버 프로필"))));
 		}
 
 		private CardWithStatisticsDto makeResponse() {
@@ -668,22 +644,21 @@ class CardControllerTest {
 	class FindCardCountByCategoryTest {
 
 		@Test
-		@WithMockMember
 		@DisplayName("정상 동작시 200 응답 및 응답 포맷 테스트")
 		void shouldReturn200OKAndResponseFormatTest() throws Exception {
 			// given
-			Mockito.doReturn(1L).when(cardService).findCardsCountByCategoryId(any(), any());
+			Mockito.doReturn(1L).when(cardService).findCardsCountByCategoryId(any());
 
 			// when
 			ResultActions resultActions = mockMvc.perform(
-				get("/api/v1/cards/categories/{categoryId}/me/count", Id.generateNextId()).header("Authorization",
-					jwtToken));
+				get("/api/v1/cards/categories/{categoryId}/me/count", Id.generateNextId()));
 
 			// then
 			resultActions.andExpect(status().isOk())
 				.andExpect(jsonPath("count").exists())
-				.andDo(document("{class-name}/{method-name}", getDocumentRequest(), getDocumentResponse(),
-					requestHeaders(headerWithName("Authorization").description("JWT 인증 토큰")),
+				.andDo(document("{class-name}/{method-name}",
+					getDocumentRequest(),
+					getDocumentResponse(),
 					pathParameters(parameterWithName("categoryId").description("카테고리 아이디")),
 					responseFields(fieldWithPath("count").description("카드 갯수"))));
 		}

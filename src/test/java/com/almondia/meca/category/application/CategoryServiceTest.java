@@ -119,10 +119,11 @@ class CategoryServiceTest {
 			SaveCategoryRequestDto saveCategoryRequestDto = SaveCategoryRequestDto.builder()
 				.thumbnail(Image.of("thumbnail"))
 				.build();
+			Id memberId = Id.generateNextId();
 
 			// when
 			assertThatThrownBy(() -> categoryService.saveCategory(saveCategoryRequestDto,
-				Id.generateNextId()))
+				memberId))
 				.isInstanceOf(DataIntegrityViolationException.class);
 		}
 	}
@@ -172,10 +173,12 @@ class CategoryServiceTest {
 				.thumbnail(Image.of("thumbnail"))
 				.shared(true)
 				.build();
+			Id categoryId = Id.generateNextId();
+			Id memberId = Id.generateNextId();
 
 			// when
-			assertThatThrownBy(() -> categoryService.updateCategory(updateCategoryRequestDto, Id.generateNextId(),
-				Id.generateNextId()))
+			assertThatThrownBy(() -> categoryService.updateCategory(updateCategoryRequestDto, categoryId,
+				memberId))
 				.isInstanceOf(AccessDeniedException.class);
 		}
 
@@ -340,9 +343,11 @@ class CategoryServiceTest {
 			Mockito.doThrow(IllegalArgumentException.class)
 				.when(categoryChecker)
 				.checkAuthority(any(), any());
+			Id categoryId = Id.generateNextId();
+			Id memberId = Id.generateNextId();
 
 			// when
-			assertThatThrownBy(() -> categoryService.deleteCategory(Id.generateNextId(), Id.generateNextId()))
+			assertThatThrownBy(() -> categoryService.deleteCategory(categoryId, memberId))
 				.isInstanceOf(IllegalArgumentException.class);
 		}
 
@@ -353,9 +358,10 @@ class CategoryServiceTest {
 			Mockito.doThrow(AccessDeniedException.class)
 				.when(categoryChecker)
 				.checkAuthority(any(), any());
-
+			Id categoryId = Id.generateNextId();
+			Id memberId = Id.generateNextId();
 			// when
-			assertThatThrownBy(() -> categoryService.deleteCategory(Id.generateNextId(), Id.generateNextId()))
+			assertThatThrownBy(() -> categoryService.deleteCategory(categoryId, memberId))
 				.isInstanceOf(AccessDeniedException.class);
 		}
 	}
@@ -487,7 +493,7 @@ class CategoryServiceTest {
 				10, memberId, null, CategorySearchOption.builder().build());
 
 			// then
-			assertThat(result.getContents().get(0).getSolveCount()).isEqualTo(2L);
+			assertThat(result.getContents().get(0).getStatistics().getSolveCount()).isEqualTo(2L);
 		}
 
 		@Test
@@ -516,7 +522,7 @@ class CategoryServiceTest {
 				10, memberId, null, CategorySearchOption.builder().build());
 
 			// then
-			assertThat(result.getContents().get(0).getTotalCount()).isEqualTo(4L);
+			assertThat(result.getContents().get(0).getStatistics().getTotalCount()).isEqualTo(4L);
 		}
 
 		@Test

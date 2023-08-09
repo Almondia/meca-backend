@@ -7,7 +7,7 @@ import java.util.Optional;
 import org.springframework.lang.Nullable;
 
 import com.almondia.meca.card.controller.dto.CardDto;
-import com.almondia.meca.card.controller.dto.SharedCardResponseDto;
+import com.almondia.meca.card.controller.dto.CardResponseDto;
 import com.almondia.meca.card.domain.entity.Card;
 import com.almondia.meca.common.domain.vo.Id;
 
@@ -31,7 +31,7 @@ public interface CardQueryDslRepository {
 	 * @param cardId 조회할 카드 ID
 	 * @return 카드 정보 (카드 정보와 회원 정보를 포함함)
 	 */
-	Optional<SharedCardResponseDto> findCardInSharedCategory(Id cardId);
+	Optional<CardResponseDto> findCardInSharedCategory(Id cardId);
 
 	/**
 	 * 하나의 카테고리에 속한 삭제되지 않은 모든 카드들의 갯수를 조회

@@ -13,9 +13,9 @@ import com.almondia.meca.card.application.helper.CardFactory;
 import com.almondia.meca.card.application.helper.CardMapper;
 import com.almondia.meca.card.controller.dto.CardCursorPageWithCategory;
 import com.almondia.meca.card.controller.dto.CardDto;
+import com.almondia.meca.card.controller.dto.CardResponseDto;
 import com.almondia.meca.card.controller.dto.CardWithStatisticsDto;
 import com.almondia.meca.card.controller.dto.SaveCardRequestDto;
-import com.almondia.meca.card.controller.dto.SharedCardResponseDto;
 import com.almondia.meca.card.controller.dto.UpdateCardRequestDto;
 import com.almondia.meca.card.domain.entity.Card;
 import com.almondia.meca.card.domain.repository.CardRepository;
@@ -116,16 +116,16 @@ public class CardService {
 	}
 
 	@Transactional(readOnly = true)
-	public SharedCardResponseDto findSharedCard(Id cardId) {
+	public CardResponseDto findSharedCard(Id cardId) {
 		return cardRepository.findCardInSharedCategory(cardId)
 			.orElseThrow(() -> new IllegalArgumentException("공유된 카테고리의 카드가 존재하지 않습니다"));
 	}
 
 	@Transactional(readOnly = true)
-	public long findCardsCountByCategoryId(Id categoryId, Id memberId) {
+	public long findCardsCountByCategoryId(Id categoryId) {
 		Category category = categoryRepository.findByCategoryIdAndIsDeletedFalse(categoryId)
 			.orElseThrow(() -> new IllegalArgumentException("카테고리가 존재하지 않습니다"));
-		if (!category.isMyCategory(memberId) && !category.isShared()) {
+		if (!category.isShared()) {
 			throw new AccessDeniedException("공유되지 않은 카테고리에 접근할 수 없습니다");
 		}
 		return cardRepository.countCardsByCategoryId(categoryId);

@@ -33,67 +33,6 @@ class CategoryRecommendQueryDslRepositoryImplTest {
 	CategoryRecommendRepository categoryRecommendRepository;
 
 	@Nested
-	@DisplayName("findRecommendCategoryIdsByMemberId 테스트")
-	class FindRecommendCategoryIdsByMemberIdTest {
-
-		@Test
-		@DisplayName("해당 회원이 카테고리 추천이 없는 경우 Id가 비어있어야 한다")
-		void shouldReturnFalseWhenMemberHasNoRecommend() {
-			// given
-			final Id categoryId = Id.generateNextId();
-			final Id memberId = Id.generateNextId();
-
-			// when
-			List<Id> result = categoryRecommendRepository.findRecommendCategoryIdsByMemberId(
-				List.of(categoryId), memberId);
-
-			// then
-			assertThat(result).isEmpty();
-		}
-
-		@Test
-		@DisplayName("추천이 취소된 경우에 categoryId는 조회되면 안된다")
-		void shouldNotReturnIdWhenRecommendIsDeleted() {
-			// given
-			final Id categoryId = Id.generateNextId();
-			final Id memberId = Id.generateNextId();
-			CategoryRecommend categoryRecommend = CategoryRecommendTestHelper.generateCategoryRecommend(categoryId,
-				memberId);
-			categoryRecommend.delete();
-			persistAll(categoryRecommend);
-
-			// when
-			List<Id> result = categoryRecommendRepository.findRecommendCategoryIdsByMemberId(
-				List.of(categoryId), memberId);
-
-			// then
-			assertThat(result).isEmpty();
-		}
-
-		@Test
-		@DisplayName("해당 회원에 카테고리 추천이 있는 경우 있는 Id만 반환한다")
-		void shouldReturnIdsWhenMemberAndHasRecommend() {
-			// given
-			final Id categoryId1 = Id.generateNextId();
-			final Id categoryId2 = Id.generateNextId();
-			final Id memberId = Id.generateNextId();
-			CategoryRecommend categoryRecommend1 = CategoryRecommendTestHelper.generateCategoryRecommend(categoryId1,
-				memberId);
-			CategoryRecommend categoryRecommend2 = CategoryRecommendTestHelper.generateCategoryRecommend(categoryId2,
-				memberId);
-			persistAll(categoryRecommend1, categoryRecommend2);
-
-			// when
-			List<Id> result = categoryRecommendRepository.findRecommendCategoryIdsByMemberId(
-				List.of(categoryId1, categoryId2), memberId);
-
-			// then
-			assertThat(result).isNotEmpty();
-			assertThat(result).containsExactlyInAnyOrder(categoryId1, categoryId2);
-		}
-	}
-
-	@Nested
 	@DisplayName("findRecommendCountByCategoryIds 테스트")
 	class FindRecommendCountByCategoryIdsTest {
 		@Test
@@ -108,7 +47,7 @@ class CategoryRecommendQueryDslRepositoryImplTest {
 
 			// then
 			assertThat(idLongMap).isNotEmpty();
-			assertThat(idLongMap.get(categoryId)).isEqualTo(0L);
+			assertThat(idLongMap.get(categoryId)).isZero();
 		}
 
 		@Test
@@ -129,8 +68,9 @@ class CategoryRecommendQueryDslRepositoryImplTest {
 				List.of(categoryId));
 
 			// then
-			assertThat(idLongMap).isNotEmpty();
-			assertThat(idLongMap.get(categoryId)).isEqualTo(2L);
+			assertThat(idLongMap)
+				.isNotEmpty()
+				.containsEntry(categoryId, 2L);
 		}
 
 		@Test
@@ -153,11 +93,11 @@ class CategoryRecommendQueryDslRepositoryImplTest {
 				List.of(categoryId1, categoryId2, categoryId3));
 
 			// then
-			assertThat(idLongMap).isNotEmpty();
-			assertThat(idLongMap.get(categoryId1)).isEqualTo(1L);
-			assertThat(idLongMap.get(categoryId2)).isEqualTo(1L);
-			assertThat(idLongMap.get(categoryId3)).isEqualTo(0L);
-			assertThat(idLongMap).hasSize(3);
+			assertThat(idLongMap)
+				.containsEntry(categoryId1, 1L)
+				.containsEntry(categoryId2, 1L)
+				.containsEntry(categoryId3, 0L)
+				.hasSize(3);
 		}
 	}
 

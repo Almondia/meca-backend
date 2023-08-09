@@ -165,8 +165,8 @@ class MemberControllerTest {
 						new ParameterizedTypeReference<UpdateMemberRequestDto>() {
 						}, "member",
 						Locale.KOREA),
-					docsFieldGeneratorUtils.generateRequestFieldSnippet(
-						new ParameterizedTypeReference<UpdateMemberRequestDto>() {
+					docsFieldGeneratorUtils.generateResponseFieldSnippet(
+						new ParameterizedTypeReference<MemberDto>() {
 						}, "member",
 						Locale.KOREA)
 				));

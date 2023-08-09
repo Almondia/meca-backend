@@ -28,13 +28,13 @@ import com.almondia.meca.member.domain.entity.Member;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/v1/histories")
+@RequestMapping("/api/v1/card-histories")
 @RequiredArgsConstructor
 public class CardHistoryController {
 
 	private final CardHistoryService cardHistoryService;
 
-	@PostMapping("/simulation")
+	@PostMapping
 	@Secured("ROLE_USER")
 	public ResponseEntity<SaveResponseCardHistoryDto> saveHistories(
 		@AuthenticationPrincipal Member member,

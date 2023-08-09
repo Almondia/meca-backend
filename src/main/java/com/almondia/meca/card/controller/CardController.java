@@ -21,9 +21,9 @@ import com.almondia.meca.card.application.CardSimulationService;
 import com.almondia.meca.card.controller.dto.CardCountGroupByScoreDto;
 import com.almondia.meca.card.controller.dto.CardCountResponseDto;
 import com.almondia.meca.card.controller.dto.CardDto;
+import com.almondia.meca.card.controller.dto.CardResponseDto;
 import com.almondia.meca.card.controller.dto.CardWithStatisticsDto;
 import com.almondia.meca.card.controller.dto.SaveCardRequestDto;
-import com.almondia.meca.card.controller.dto.SharedCardResponseDto;
 import com.almondia.meca.card.controller.dto.UpdateCardRequestDto;
 import com.almondia.meca.card.infra.querydsl.CardSearchOption;
 import com.almondia.meca.common.controller.dto.CursorPage;
@@ -72,19 +72,19 @@ public class CardController {
 
 	@Secured("ROLE_USER")
 	@GetMapping("/{cardId}/me")
-	public ResponseEntity<CardDto> findCardByCardId(
+	public ResponseEntity<CardResponseDto> findCardByCardId(
 		@AuthenticationPrincipal Member member,
 		@PathVariable(value = "cardId") Id cardId
 	) {
 		CardDto responseDto = cardService.findCardById(cardId, member.getMemberId());
-		return ResponseEntity.ok(responseDto);
+		return ResponseEntity.ok(new CardResponseDto(responseDto, member));
 	}
 
 	@GetMapping("/{cardId}/share")
-	public ResponseEntity<SharedCardResponseDto> findCardByCardId(
+	public ResponseEntity<CardResponseDto> findCardByCardId(
 		@PathVariable(value = "cardId") Id cardId
 	) {
-		SharedCardResponseDto responseDto = cardService.findSharedCard(cardId);
+		CardResponseDto responseDto = cardService.findSharedCard(cardId);
 		return ResponseEntity.ok(responseDto);
 	}
 
@@ -151,13 +151,11 @@ public class CardController {
 		return ResponseEntity.ok(cardCountGroupByScoreDtos);
 	}
 
-	@Secured("ROLE_USER")
 	@GetMapping("/categories/{categoryId}/me/count")
 	public ResponseEntity<CardCountResponseDto> countCards(
-		@AuthenticationPrincipal Member member,
 		@PathVariable(value = "categoryId") Id categoryId
 	) {
-		long count = cardService.findCardsCountByCategoryId(categoryId, member.getMemberId());
+		long count = cardService.findCardsCountByCategoryId(categoryId);
 		return ResponseEntity.ok(new CardCountResponseDto(count));
 	}
 }

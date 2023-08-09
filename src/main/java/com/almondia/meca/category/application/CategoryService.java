@@ -103,13 +103,15 @@ public class CategoryService {
 		List<CategoryWithStatisticsResponseDto> categoryWithStatisticsResponseDtos = contents.stream()
 			.map(category -> new CategoryWithStatisticsResponseDto(
 				category,
-				statistics.get(category.getCategoryId()).getFirst(),
-				statistics.get(category.getCategoryId()).getSecond(),
-				counts.getOrDefault(category.getCategoryId(), 0L),
+				new CategoryStatisticsDto(
+					statistics.getOrDefault(category.getCategoryId(), Pair.of(0.0, 0L)).getFirst(),
+					statistics.getOrDefault(category.getCategoryId(), Pair.of(0.0, 0L)).getSecond(),
+					counts.getOrDefault(category.getCategoryId(), 0L)
+				),
 				recommendCounts.getOrDefault(category.getCategoryId(), 0L)
 			)).collect(toList());
 		return CursorPage.<CategoryWithStatisticsResponseDto>builder()
-			.lastIdExtractStrategy(CategoryWithStatisticsResponseDto::getCategoryId)
+			.lastIdExtractStrategy(categoryWithStatistics -> categoryWithStatistics.getCategory().getCategoryId())
 			.contents(categoryWithStatisticsResponseDtos)
 			.pageSize(pageSize)
 			.sortOrder(SortOrder.DESC)
@@ -142,7 +144,7 @@ public class CategoryService {
 				recommendCounts.get(category.getCategoryId())))
 			.collect(toList());
 		return CursorPage.<SharedCategoryResponseDto>builder()
-			.lastIdExtractStrategy(sharedCategoryDto -> sharedCategoryDto.getCategoryInfo().getCategoryId())
+			.lastIdExtractStrategy(sharedCategoryDto -> sharedCategoryDto.getCategory().getCategoryId())
 			.contents(sharedCategoryResponseDtos)
 			.pageSize(pageSize)
 			.sortOrder(SortOrder.DESC)
@@ -154,11 +156,11 @@ public class CategoryService {
 		int pageSize,
 		Id lastCategoryId,
 		CategorySearchOption categorySearchOption,
-		Id IdWhoRecommend
+		Id idWhoRecommend
 	) {
 		// search
 		List<Category> contents = categoryRepository.findSharedCategoriesByRecommend(pageSize, lastCategoryId,
-			categorySearchOption, IdWhoRecommend);
+			categorySearchOption, idWhoRecommend);
 		List<Id> categoryIds = contents.stream().map(Category::getCategoryId).collect(toList());
 		Map<Id, Member> memberMap = memberRepository.findMemberMapByIds(contents.stream()
 			.map(Category::getMemberId)

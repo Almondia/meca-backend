@@ -14,7 +14,6 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 
-import com.almondia.meca.category.controller.dto.CategoryRecommendCheckDto;
 import com.almondia.meca.category.domain.entity.Category;
 import com.almondia.meca.common.configuration.jpa.JpaAuditingConfiguration;
 import com.almondia.meca.common.configuration.jpa.QueryDslConfiguration;
@@ -209,7 +208,7 @@ class CategoryRecommendServiceTest {
 			CategoryRecommend fetch = jpaQueryFactory.selectFrom(categoryRecommend)
 				.fetchOne();
 			assertThat(fetch).isNotNull();
-			assertThat(fetch.isDeleted()).isEqualTo(true);
+			assertThat(fetch.isDeleted()).isTrue();
 		}
 	}
 
@@ -239,12 +238,11 @@ class CategoryRecommendServiceTest {
 			persistAll(member, member2, category1, category2, categoryRecommend1, categoryRecommend2);
 
 			// when
-			CategoryRecommendCheckDto result = categoryRecommendService.isRecommended(
-				List.of(categoryId1, categoryId2), memberId);
+			boolean result = categoryRecommendService.isRecommended(
+				categoryId1, memberId);
 
 			// then
-			assertThat(result.getRecommendedCategories().contains(categoryId1)).isTrue();
-			assertThat(result.getUnRecommendedCategories().contains(categoryId2)).isTrue();
+			assertThat(result).isTrue();
 		}
 
 	}

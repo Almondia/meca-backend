@@ -1,11 +1,10 @@
 package com.almondia.meca.category.application;
 
-import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.almondia.meca.category.controller.dto.CategoryRecommendCheckDto;
 import com.almondia.meca.category.domain.repository.CategoryRepository;
 import com.almondia.meca.common.domain.vo.Id;
 import com.almondia.meca.recommand.domain.entity.CategoryRecommend;
@@ -52,10 +51,10 @@ public class CategoryRecommendService {
 	}
 
 	@Transactional(readOnly = true)
-	public CategoryRecommendCheckDto isRecommended(List<Id> categoryIds, Id memberId) {
-		List<Id> recommendedCategoryIds = categoryRecommendRepository.findRecommendCategoryIdsByMemberId(
-			categoryIds, memberId);
-		return new CategoryRecommendCheckDto(categoryIds, recommendedCategoryIds);
+	public boolean isRecommended(Id categoryId, Id memberId) {
+		Optional<CategoryRecommend> optionalCategoryRecommend = categoryRecommendRepository.findByCategoryIdAndRecommendMemberIdAndIsDeletedFalse(
+			categoryId, memberId);
+		return optionalCategoryRecommend.isPresent();
 	}
 
 }

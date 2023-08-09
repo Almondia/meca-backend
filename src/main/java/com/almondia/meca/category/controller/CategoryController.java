@@ -1,7 +1,5 @@
 package com.almondia.meca.category.controller;
 
-import java.util.List;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -19,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.almondia.meca.category.application.CategoryRecommendService;
 import com.almondia.meca.category.application.CategoryService;
 import com.almondia.meca.category.controller.dto.CategoryDto;
-import com.almondia.meca.category.controller.dto.CategoryRecommendCheckDto;
 import com.almondia.meca.category.controller.dto.CategoryWithStatisticsDto;
 import com.almondia.meca.category.controller.dto.CategoryWithStatisticsResponseDto;
 import com.almondia.meca.category.controller.dto.SaveCategoryRequestDto;
@@ -131,14 +128,14 @@ public class CategoryController {
 		return ResponseEntity.ok().build();
 	}
 
-	@GetMapping("/like")
+	@GetMapping("/{categoryId}/like")
 	@Secured("ROLE_USER")
-	public ResponseEntity<CategoryRecommendCheckDto> isRecommendCategories(
+	public ResponseEntity<Boolean> isRecommendCategories(
 		@AuthenticationPrincipal Member member,
-		@RequestParam(value = "categoryIds") List<Id> categoryIds
+		@PathVariable(value = "categoryId") Id categoryId
 	) {
-		CategoryRecommendCheckDto recommended = categoryRecommendService.isRecommended(categoryIds,
+		boolean isRecommend = categoryRecommendService.isRecommended(categoryId,
 			member.getMemberId());
-		return ResponseEntity.ok(recommended);
+		return ResponseEntity.ok(isRecommend);
 	}
 }
