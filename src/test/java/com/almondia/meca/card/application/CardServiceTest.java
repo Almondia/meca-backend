@@ -520,13 +520,13 @@ class CardServiceTest {
 		@DisplayName("내 카테고리에 카드 갯수를 요청한 경우 정상적으로 카드 개수를 출력")
 		void shouldReturnCountWhenMyCategoryTest() {
 			// given
-			Category myCategory = CategoryTestHelper.generateUnSharedCategory("title", memberId, categoryId);
+			Category myCategory = CategoryTestHelper.generateSharedCategory("title", memberId, categoryId);
 			Card card1 = CardTestHelper.genOxCard(Id.generateNextId(), categoryId, Id.generateNextId());
 			Card card2 = CardTestHelper.genOxCard(Id.generateNextId(), categoryId, Id.generateNextId());
 			persistAll(myCategory, card1, card2);
 
 			// when
-			long count = cardService.findCardsCountByCategoryId(categoryId, memberId);
+			long count = cardService.findCardsCountByCategoryId(categoryId);
 
 			// then
 			assertThat(count).isEqualTo(2L);
@@ -543,7 +543,7 @@ class CardServiceTest {
 			persistAll(notMyCategory, card1, card2);
 
 			// when
-			assertThatThrownBy(() -> cardService.findCardsCountByCategoryId(categoryId, memberId))
+			assertThatThrownBy(() -> cardService.findCardsCountByCategoryId(categoryId))
 				.isInstanceOf(AccessDeniedException.class);
 		}
 
@@ -558,7 +558,7 @@ class CardServiceTest {
 			persistAll(notMyCategory, card1, card2);
 
 			// when
-			long count = cardService.findCardsCountByCategoryId(categoryId, memberId);
+			long count = cardService.findCardsCountByCategoryId(categoryId);
 
 			// then
 			assertThat(count).isEqualTo(2L);

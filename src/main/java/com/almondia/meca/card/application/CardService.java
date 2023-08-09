@@ -122,10 +122,10 @@ public class CardService {
 	}
 
 	@Transactional(readOnly = true)
-	public long findCardsCountByCategoryId(Id categoryId, Id memberId) {
+	public long findCardsCountByCategoryId(Id categoryId) {
 		Category category = categoryRepository.findByCategoryIdAndIsDeletedFalse(categoryId)
 			.orElseThrow(() -> new IllegalArgumentException("카테고리가 존재하지 않습니다"));
-		if (!category.isMyCategory(memberId) && !category.isShared()) {
+		if (!category.isShared()) {
 			throw new AccessDeniedException("공유되지 않은 카테고리에 접근할 수 없습니다");
 		}
 		return cardRepository.countCardsByCategoryId(categoryId);
