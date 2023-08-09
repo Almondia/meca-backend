@@ -378,7 +378,7 @@ class CategoryControllerTest {
 		void shouldReturnStatus200AndResponseWhenSuccessTest() throws Exception {
 			// given
 			CursorPage<SharedCategoryResponseDto> cursorPage = CursorPage.<SharedCategoryResponseDto>builder()
-				.lastIdExtractStrategy(sharedCategoryDto -> sharedCategoryDto.getCategoryInfo().getCategoryId())
+				.lastIdExtractStrategy(sharedCategoryDto -> sharedCategoryDto.getCategory().getCategoryId())
 				.pageSize(1)
 				.contents(List.of(new SharedCategoryResponseDto(
 					CategoryTestHelper.generateSharedCategory("title", Id.generateNextId(), Id.generateNextId()),

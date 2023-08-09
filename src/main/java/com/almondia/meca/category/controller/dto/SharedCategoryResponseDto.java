@@ -13,19 +13,19 @@ import lombok.ToString;
 @ToString
 public class SharedCategoryResponseDto {
 
-	private final CategoryDto categoryInfo;
-	private final MemberDto memberInfo;
+	private final CategoryDto category;
+	private final MemberDto member;
 	private long likeCount;
 
 	public SharedCategoryResponseDto(Category category, Member member, long likeCount) {
-		this.categoryInfo = CategoryMapper.entityToCategoryDto(category);
-		this.memberInfo = MemberMapper.fromEntityToDto(member);
+		this.category = CategoryMapper.entityToCategoryDto(category);
+		this.member = MemberMapper.fromEntityToDto(member);
 		this.likeCount = likeCount;
 	}
 
 	public SharedCategoryResponseDto(Category category, Member member) {
-		this.categoryInfo = CategoryMapper.entityToCategoryDto(category);
-		this.memberInfo = MemberMapper.fromEntityToDto(member);
+		this.category = CategoryMapper.entityToCategoryDto(category);
+		this.member = MemberMapper.fromEntityToDto(member);
 	}
 
 	public void setLikeCount(long likeCount) {

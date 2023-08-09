@@ -142,7 +142,7 @@ public class CategoryService {
 				recommendCounts.get(category.getCategoryId())))
 			.collect(toList());
 		return CursorPage.<SharedCategoryResponseDto>builder()
-			.lastIdExtractStrategy(sharedCategoryDto -> sharedCategoryDto.getCategoryInfo().getCategoryId())
+			.lastIdExtractStrategy(sharedCategoryDto -> sharedCategoryDto.getCategory().getCategoryId())
 			.contents(sharedCategoryResponseDtos)
 			.pageSize(pageSize)
 			.sortOrder(SortOrder.DESC)
@@ -154,11 +154,11 @@ public class CategoryService {
 		int pageSize,
 		Id lastCategoryId,
 		CategorySearchOption categorySearchOption,
-		Id IdWhoRecommend
+		Id idWhoRecommend
 	) {
 		// search
 		List<Category> contents = categoryRepository.findSharedCategoriesByRecommend(pageSize, lastCategoryId,
-			categorySearchOption, IdWhoRecommend);
+			categorySearchOption, idWhoRecommend);
 		List<Id> categoryIds = contents.stream().map(Category::getCategoryId).collect(toList());
 		Map<Id, Member> memberMap = memberRepository.findMemberMapByIds(contents.stream()
 			.map(Category::getMemberId)
