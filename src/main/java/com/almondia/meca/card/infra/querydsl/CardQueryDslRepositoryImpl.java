@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import com.almondia.meca.card.application.helper.CardMapper;
 import com.almondia.meca.card.controller.dto.CardDto;
-import com.almondia.meca.card.controller.dto.SharedCardResponseDto;
+import com.almondia.meca.card.controller.dto.CardResponseDto;
 import com.almondia.meca.card.domain.entity.Card;
 import com.almondia.meca.card.domain.entity.QCard;
 import com.almondia.meca.cardhistory.domain.entity.QCardHistory;
@@ -60,9 +60,9 @@ public class CardQueryDslRepositoryImpl implements CardQueryDslRepository {
 	}
 
 	@Override
-	public Optional<SharedCardResponseDto> findCardInSharedCategory(Id cardId) {
-		SharedCardResponseDto sharedCardResponseDto = queryFactory.select(Projections.constructor(
-				SharedCardResponseDto.class,
+	public Optional<CardResponseDto> findCardInSharedCategory(Id cardId) {
+		CardResponseDto sharedCardResponseDto = queryFactory.select(Projections.constructor(
+				CardResponseDto.class,
 				card,
 				member
 			))

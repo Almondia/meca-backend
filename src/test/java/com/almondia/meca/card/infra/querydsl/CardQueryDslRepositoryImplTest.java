@@ -17,7 +17,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 
 import com.almondia.meca.card.controller.dto.CardDto;
-import com.almondia.meca.card.controller.dto.SharedCardResponseDto;
+import com.almondia.meca.card.controller.dto.CardResponseDto;
 import com.almondia.meca.card.domain.entity.Card;
 import com.almondia.meca.card.domain.entity.OxCard;
 import com.almondia.meca.card.domain.repository.CardRepository;
@@ -159,10 +159,10 @@ class CardQueryDslRepositoryImplTest {
 			entityManager.persist(category);
 
 			// when
-			Optional<SharedCardResponseDto> optional = cardRepository.findCardInSharedCategory(categoryId);
+			Optional<CardResponseDto> optional = cardRepository.findCardInSharedCategory(categoryId);
 
 			// then
-			assertThat(optional.isEmpty()).isTrue();
+			assertThat(optional).isEmpty();
 		}
 
 		@Test
@@ -178,10 +178,10 @@ class CardQueryDslRepositoryImplTest {
 			entityManager.persist(card);
 
 			// when
-			Optional<SharedCardResponseDto> optional = cardRepository.findCardInSharedCategory(cardId);
+			Optional<CardResponseDto> optional = cardRepository.findCardInSharedCategory(cardId);
 
 			// then
-			assertThat(optional.isPresent()).isTrue();
+			assertThat(optional).isPresent();
 		}
 
 		@Test
@@ -192,10 +192,10 @@ class CardQueryDslRepositoryImplTest {
 			entityManager.persist(category);
 
 			// when
-			Optional<SharedCardResponseDto> optional = cardRepository.findCardInSharedCategory(categoryId);
+			Optional<CardResponseDto> optional = cardRepository.findCardInSharedCategory(categoryId);
 
 			// then
-			assertThat(optional.isEmpty()).isTrue();
+			assertThat(optional).isEmpty();
 		}
 	}
 
@@ -218,7 +218,7 @@ class CardQueryDslRepositoryImplTest {
 			long count = cardRepository.countCardsByCategoryId(categoryId);
 
 			// then
-			assertThat(count).isEqualTo(0);
+			assertThat(count).isZero();
 		}
 
 		@Test
@@ -254,7 +254,7 @@ class CardQueryDslRepositoryImplTest {
 			Map<Id, Long> counts = cardRepository.countCardsByCategoryIdIsDeletedFalse(List.of(categoryId));
 
 			// then
-			assertThat(counts.get(categoryId)).isEqualTo(0);
+			assertThat(counts.get(categoryId)).isZero();
 		}
 
 		@Test
@@ -275,8 +275,9 @@ class CardQueryDslRepositoryImplTest {
 				List.of(categoryId1, categoryId2));
 
 			// then
-			assertThat(counts.get(categoryId1)).isEqualTo(2);
-			assertThat(counts.get(categoryId2)).isEqualTo(1);
+			assertThat(counts)
+				.containsEntry(categoryId1, 2L)
+				.containsEntry(categoryId2, 1L);
 		}
 
 		@Test
@@ -292,7 +293,7 @@ class CardQueryDslRepositoryImplTest {
 			Map<Id, Long> counts = cardRepository.countCardsByCategoryIdIsDeletedFalse(List.of(categoryId));
 
 			// then
-			assertThat(counts.get(categoryId)).isEqualTo(0);
+			assertThat(counts.get(categoryId)).isZero();
 		}
 	}
 
@@ -366,8 +367,7 @@ class CardQueryDslRepositoryImplTest {
 			List<Card> cards = cardRepository.findCardByCategoryIdScoreAsc(categoryId, 1);
 
 			// then
-			assertThat(cards).isNotEmpty();
-			assertThat(cards.size()).isEqualTo(1);
+			assertThat(cards).hasSize(1);
 			assertThat(cards.get(0).getCardId()).isEqualTo(cardId2);
 		}
 
@@ -392,8 +392,7 @@ class CardQueryDslRepositoryImplTest {
 			List<Card> cards = cardRepository.findCardByCategoryIdScoreAsc(categoryId, 1);
 
 			// then
-			assertThat(cards).isNotEmpty();
-			assertThat(cards.size()).isEqualTo(1);
+			assertThat(cards).hasSize(1);
 			assertThat(cards.get(0).getCardId()).isEqualTo(cardId2);
 		}
 	}
