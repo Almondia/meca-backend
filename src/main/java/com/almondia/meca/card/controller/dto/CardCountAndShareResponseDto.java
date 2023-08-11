@@ -5,6 +5,6 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class CardCountResponseDto {
+public class CardCountAndShareResponseDto {
 	private final long count;
 }
