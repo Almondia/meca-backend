@@ -19,6 +19,7 @@ import com.almondia.meca.category.application.CategoryService;
 import com.almondia.meca.category.controller.dto.CategoryDto;
 import com.almondia.meca.category.controller.dto.CategoryWithStatisticsDto;
 import com.almondia.meca.category.controller.dto.CategoryWithStatisticsResponseDto;
+import com.almondia.meca.category.controller.dto.IsRecommendDto;
 import com.almondia.meca.category.controller.dto.SaveCategoryRequestDto;
 import com.almondia.meca.category.controller.dto.SharedCategoryResponseDto;
 import com.almondia.meca.category.controller.dto.SharedCategoryWithStatisticsAndRecommendDto;
@@ -130,12 +131,12 @@ public class CategoryController {
 
 	@GetMapping("/{categoryId}/like")
 	@Secured("ROLE_USER")
-	public ResponseEntity<Boolean> isRecommendCategories(
+	public ResponseEntity<IsRecommendDto> isRecommendCategories(
 		@AuthenticationPrincipal Member member,
 		@PathVariable(value = "categoryId") Id categoryId
 	) {
 		boolean isRecommend = categoryRecommendService.isRecommended(categoryId,
 			member.getMemberId());
-		return ResponseEntity.ok(isRecommend);
+		return ResponseEntity.ok(new IsRecommendDto(isRecommend));
 	}
 }
