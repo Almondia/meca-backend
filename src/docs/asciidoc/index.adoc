@@ -94,7 +94,7 @@ operation::cancel-test/should-return-status200-and-response-when-success-test[sn
 [[Category-본인이-카테고리-추천-여부-확인]]
 === Category 본인이 카테고리 추천 여부 확인
 
-operation::is-recommend-categories-test/should-return-status200-when-success-test[snippets='http-request,request-parameters,http-response,response-fields']
+operation::is-recommend-categories-test/should-return-status200-when-success-test[snippets='http-request,path-parameters,http-response,response-fields']
 
 [[Card-API]]
 == Card API
