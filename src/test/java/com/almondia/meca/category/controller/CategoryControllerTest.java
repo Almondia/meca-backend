@@ -5,6 +5,7 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.springframework.restdocs.headers.HeaderDocumentation.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -503,6 +504,9 @@ class CategoryControllerTest {
 					),
 					pathParameters(
 						parameterWithName("categoryId").description("카테고리 아이디")
+					),
+					responseFields(
+						fieldWithPath("liked").description("카테고리 추천 여부")
 					)
 				));
 		}
