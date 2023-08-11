@@ -18,8 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.almondia.meca.card.application.CardService;
 import com.almondia.meca.card.application.CardSimulationService;
+import com.almondia.meca.card.controller.dto.CardCountAndShareResponseDto;
 import com.almondia.meca.card.controller.dto.CardCountGroupByScoreDto;
-import com.almondia.meca.card.controller.dto.CardCountResponseDto;
 import com.almondia.meca.card.controller.dto.CardDto;
 import com.almondia.meca.card.controller.dto.CardResponseDto;
 import com.almondia.meca.card.controller.dto.CardWithStatisticsDto;
@@ -151,11 +151,14 @@ public class CardController {
 		return ResponseEntity.ok(cardCountGroupByScoreDtos);
 	}
 
+	@Secured("ROLE_USER")
 	@GetMapping("/categories/{categoryId}/me/count")
-	public ResponseEntity<CardCountResponseDto> countCards(
+	public ResponseEntity<CardCountAndShareResponseDto> countCards(
+		@AuthenticationPrincipal Member member,
 		@PathVariable(value = "categoryId") Id categoryId
 	) {
-		long count = cardService.findCardsCountByCategoryId(categoryId);
-		return ResponseEntity.ok(new CardCountResponseDto(count));
+		CardCountAndShareResponseDto response = cardService.findCardsCountAndSharedByCategoryId(categoryId,
+			member.getMemberId());
+		return ResponseEntity.ok(response);
 	}
 }

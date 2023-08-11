@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.almondia.meca.card.application.helper.CardFactory;
 import com.almondia.meca.card.application.helper.CardMapper;
+import com.almondia.meca.card.controller.dto.CardCountAndShareResponseDto;
 import com.almondia.meca.card.controller.dto.CardCursorPageWithCategory;
 import com.almondia.meca.card.controller.dto.CardDto;
 import com.almondia.meca.card.controller.dto.CardResponseDto;
@@ -122,13 +123,14 @@ public class CardService {
 	}
 
 	@Transactional(readOnly = true)
-	public long findCardsCountByCategoryId(Id categoryId) {
+	public CardCountAndShareResponseDto findCardsCountAndSharedByCategoryId(Id categoryId, Id memberId) {
 		Category category = categoryRepository.findByCategoryIdAndIsDeletedFalse(categoryId)
 			.orElseThrow(() -> new IllegalArgumentException("카테고리가 존재하지 않습니다"));
-		if (!category.isShared()) {
+		if (!category.isMyCategory(memberId) && !category.isShared()) {
 			throw new AccessDeniedException("공유되지 않은 카테고리에 접근할 수 없습니다");
 		}
-		return cardRepository.countCardsByCategoryId(categoryId);
+		long count = cardRepository.countCardsByCategoryId(categoryId);
+		return new CardCountAndShareResponseDto(count, category.isShared());
 	}
 
 	@Transactional(readOnly = true)
