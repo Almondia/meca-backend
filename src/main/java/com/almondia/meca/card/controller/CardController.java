@@ -152,12 +152,13 @@ public class CardController {
 	}
 
 	@Secured("ROLE_USER")
-	@GetMapping("/categories/{categoryId}/count")
+	@GetMapping("/categories/{categoryId}/me/count")
 	public ResponseEntity<CardCountAndShareResponseDto> countCards(
 		@AuthenticationPrincipal Member member,
 		@PathVariable(value = "categoryId") Id categoryId
 	) {
-		long count = cardService.findCardsCountByCategoryId(categoryId, member.getMemberId());
-		return ResponseEntity.ok(new CardCountAndShareResponseDto(count));
+		CardCountAndShareResponseDto response = cardService.findCardsCountAndSharedByCategoryId(categoryId,
+			member.getMemberId());
+		return ResponseEntity.ok(response);
 	}
 }

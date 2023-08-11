@@ -7,4 +7,5 @@ import lombok.Getter;
 @AllArgsConstructor
 public class CardCountAndShareResponseDto {
 	private final long count;
+	private final boolean shared;
 }

@@ -37,6 +37,7 @@ import com.almondia.meca.asciidocs.fields.DocsFieldGeneratorUtils;
 import com.almondia.meca.card.application.CardService;
 import com.almondia.meca.card.application.CardSimulationService;
 import com.almondia.meca.card.application.helper.CardMapper;
+import com.almondia.meca.card.controller.dto.CardCountAndShareResponseDto;
 import com.almondia.meca.card.controller.dto.CardCountGroupByScoreDto;
 import com.almondia.meca.card.controller.dto.CardCursorPageWithCategory;
 import com.almondia.meca.card.controller.dto.CardDto;
@@ -648,7 +649,9 @@ class CardControllerTest {
 		@WithMockMember
 		void shouldReturn200OKAndResponseFormatTest() throws Exception {
 			// given
-			Mockito.doReturn(1L).when(cardService).findCardsCountByCategoryId(any(), any());
+			Mockito.doReturn(new CardCountAndShareResponseDto(1L, true))
+				.when(cardService)
+				.findCardsCountAndSharedByCategoryId(any(), any());
 
 			// when
 			ResultActions resultActions = mockMvc.perform(
@@ -663,7 +666,8 @@ class CardControllerTest {
 					getDocumentResponse(),
 					requestHeaders(headerWithName("Authorization").description("JWT 인증 토큰")),
 					pathParameters(parameterWithName("categoryId").description("카테고리 아이디")),
-					responseFields(fieldWithPath("count").description("카드 갯수"))));
+					responseFields(fieldWithPath("count").description("카드 갯수"),
+						fieldWithPath("shared").description("카드 공유 여부"))));
 		}
 	}
 }

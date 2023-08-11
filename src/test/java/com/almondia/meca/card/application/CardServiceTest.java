@@ -16,6 +16,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.access.AccessDeniedException;
 
+import com.almondia.meca.card.controller.dto.CardCountAndShareResponseDto;
 import com.almondia.meca.card.controller.dto.CardCursorPageWithCategory;
 import com.almondia.meca.card.controller.dto.CardDto;
 import com.almondia.meca.card.controller.dto.CardWithStatisticsDto;
@@ -526,10 +527,10 @@ class CardServiceTest {
 			persistAll(myCategory, card1, card2);
 
 			// when
-			long count = cardService.findCardsCountByCategoryId(categoryId, memberId);
+			CardCountAndShareResponseDto result = cardService.findCardsCountAndSharedByCategoryId(categoryId, memberId);
 
 			// then
-			assertThat(count).isEqualTo(2L);
+			assertThat(result).extracting("count").isEqualTo(2L);
 		}
 
 		@Test
@@ -543,7 +544,7 @@ class CardServiceTest {
 			persistAll(notMyCategory, card1, card2);
 
 			// when
-			assertThatThrownBy(() -> cardService.findCardsCountByCategoryId(categoryId, memberId))
+			assertThatThrownBy(() -> cardService.findCardsCountAndSharedByCategoryId(categoryId, memberId))
 				.isInstanceOf(AccessDeniedException.class);
 		}
 
@@ -558,10 +559,10 @@ class CardServiceTest {
 			persistAll(notMyCategory, card1, card2);
 
 			// when
-			long count = cardService.findCardsCountByCategoryId(categoryId, memberId);
+			CardCountAndShareResponseDto result = cardService.findCardsCountAndSharedByCategoryId(categoryId, memberId);
 
 			// then
-			assertThat(count).isEqualTo(2L);
+			assertThat(result).extracting("count").isEqualTo(2L);
 		}
 	}
 
