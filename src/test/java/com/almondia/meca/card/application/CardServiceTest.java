@@ -526,7 +526,7 @@ class CardServiceTest {
 			persistAll(myCategory, card1, card2);
 
 			// when
-			long count = cardService.findCardsCountByCategoryId(categoryId);
+			long count = cardService.findCardsCountByCategoryId(categoryId, memberId);
 
 			// then
 			assertThat(count).isEqualTo(2L);
@@ -543,7 +543,7 @@ class CardServiceTest {
 			persistAll(notMyCategory, card1, card2);
 
 			// when
-			assertThatThrownBy(() -> cardService.findCardsCountByCategoryId(categoryId))
+			assertThatThrownBy(() -> cardService.findCardsCountByCategoryId(categoryId, memberId))
 				.isInstanceOf(AccessDeniedException.class);
 		}
 
@@ -558,7 +558,7 @@ class CardServiceTest {
 			persistAll(notMyCategory, card1, card2);
 
 			// when
-			long count = cardService.findCardsCountByCategoryId(categoryId);
+			long count = cardService.findCardsCountByCategoryId(categoryId, memberId);
 
 			// then
 			assertThat(count).isEqualTo(2L);

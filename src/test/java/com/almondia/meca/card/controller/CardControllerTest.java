@@ -645,13 +645,15 @@ class CardControllerTest {
 
 		@Test
 		@DisplayName("정상 동작시 200 응답 및 응답 포맷 테스트")
+		@WithMockMember
 		void shouldReturn200OKAndResponseFormatTest() throws Exception {
 			// given
-			Mockito.doReturn(1L).when(cardService).findCardsCountByCategoryId(any());
+			Mockito.doReturn(1L).when(cardService).findCardsCountByCategoryId(any(), any());
 
 			// when
 			ResultActions resultActions = mockMvc.perform(
-				get("/api/v1/cards/categories/{categoryId}/me/count", Id.generateNextId()));
+				get("/api/v1/cards/categories/{categoryId}/me/count", Id.generateNextId())
+					.header("Authorization", jwtToken));
 
 			// then
 			resultActions.andExpect(status().isOk())
@@ -659,6 +661,7 @@ class CardControllerTest {
 				.andDo(document("{class-name}/{method-name}",
 					getDocumentRequest(),
 					getDocumentResponse(),
+					requestHeaders(headerWithName("Authorization").description("JWT 인증 토큰")),
 					pathParameters(parameterWithName("categoryId").description("카테고리 아이디")),
 					responseFields(fieldWithPath("count").description("카드 갯수"))));
 		}
