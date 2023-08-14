@@ -26,6 +26,7 @@ import com.almondia.meca.card.controller.dto.CardWithStatisticsDto;
 import com.almondia.meca.card.controller.dto.SaveCardRequestDto;
 import com.almondia.meca.card.controller.dto.UpdateCardRequestDto;
 import com.almondia.meca.card.infra.querydsl.CardSearchOption;
+import com.almondia.meca.cardhistory.domain.vo.Score;
 import com.almondia.meca.common.controller.dto.CursorPage;
 import com.almondia.meca.common.domain.vo.Id;
 import com.almondia.meca.member.domain.entity.Member;
@@ -127,19 +128,12 @@ public class CardController {
 	public ResponseEntity<List<CardDto>> findCardByCardIdResponseDto(
 		@AuthenticationPrincipal Member member,
 		@PathVariable(value = "categoryId") Id categoryId,
-		@RequestParam(value = "algorithm") String algorithm,
+		@RequestParam(value = "score") Score score,
 		@RequestParam(value = "limit") int limit
 	) {
-		if (algorithm.equals("random")) {
-			List<CardDto> random = cardSimulationService.simulateRandom(categoryId,
-				member.getMemberId(), limit);
-			return ResponseEntity.ok(random);
-		}
-		if (algorithm.equals("score")) {
-			List<CardDto> scores = cardSimulationService.simulateScore(categoryId, member.getMemberId(), limit);
-			return ResponseEntity.ok(scores);
-		}
-		throw new IllegalArgumentException("algorithm: random, score 중 하나를 입력해주세요");
+		List<CardDto> scores = cardSimulationService.simulateScore(categoryId, member.getMemberId(), score, limit);
+		return ResponseEntity.ok(scores);
+
 	}
 
 	@GetMapping("/categories/{categoryId}/simulation/before/count")

@@ -23,9 +23,21 @@ public class Score implements Wrapper {
 		this.score = score;
 	}
 
+	public static Score of(int score) {
+		return new Score(score);
+	}
+
+	public static Score of(String score) {
+		return new Score(Integer.parseInt(score));
+	}
+
 	@Override
 	public String toString() {
 		return String.valueOf(score);
+	}
+
+	public int getAsInt() {
+		return score;
 	}
 
 	private void validateScore(int score) {
