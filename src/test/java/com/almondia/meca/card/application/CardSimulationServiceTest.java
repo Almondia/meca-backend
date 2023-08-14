@@ -3,9 +3,7 @@ package com.almondia.meca.card.application;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import javax.persistence.EntityManager;
@@ -24,11 +22,13 @@ import com.almondia.meca.card.controller.dto.CardCountGroupByScoreDto;
 import com.almondia.meca.card.controller.dto.CardDto;
 import com.almondia.meca.card.domain.entity.Card;
 import com.almondia.meca.card.domain.repository.CardRepository;
+import com.almondia.meca.cardhistory.domain.entity.CardHistory;
 import com.almondia.meca.cardhistory.domain.repository.CardHistoryRepository;
 import com.almondia.meca.category.domain.entity.Category;
 import com.almondia.meca.category.domain.repository.CategoryRepository;
 import com.almondia.meca.common.configuration.jpa.QueryDslConfiguration;
 import com.almondia.meca.common.domain.vo.Id;
+import com.almondia.meca.helper.CardHistoryTestHelper;
 import com.almondia.meca.helper.CardTestHelper;
 import com.almondia.meca.helper.CategoryTestHelper;
 
@@ -253,16 +253,14 @@ class CardSimulationServiceTest {
 		@DisplayName("카테고리가 삭제되거나 없는 카테고리면 예외를 발생한다")
 		void shouldThrowIllegalArgumentExceptionWhenCategoryIsDeletedTest() {
 			// given
-			Id memberId = Id.generateNextId();
 			Id categoryId = Id.generateNextId();
-			Category category = CategoryTestHelper.generateUnSharedCategory("title", memberId,
-				categoryId);
+			Id memberId = Id.generateNextId();
+			Category category = CategoryTestHelper.generateUnSharedCategory("title", memberId, categoryId);
 			category.delete();
 			em.persist(category);
 
 			// expect
-			assertThatThrownBy(
-				() -> cardSimulationService.findCardCountByScore(categoryId))
+			assertThatThrownBy(() -> cardSimulationService.findCardCountByScore(categoryId))
 				.isInstanceOf(IllegalArgumentException.class);
 		}
 
@@ -270,23 +268,23 @@ class CardSimulationServiceTest {
 		@DisplayName("카테고리 있다면 조회시 평균점수 기반으로 한 갯수를 반환한다")
 		void shouldReturnCardCountByScoreTest() {
 			// given
-			Mockito.doReturn(true)
-				.when(categoryRepository)
-				.existsByCategoryIdAndIsDeletedFalse(any());
-			Map<Id, Double> map = new HashMap<>() {{
-				put(Id.generateNextId(), 1.0);
-				put(Id.generateNextId(), 2.0);
-			}};
-			Mockito.doReturn(map)
-				.when(cardHistoryRepository)
-				.findCardScoreAvgMapByCategoryId(any());
 			Id categoryId = Id.generateNextId();
+			Id memberId = Id.generateNextId();
+			Id cardId = Id.generateNextId();
+			Category category = CategoryTestHelper.generateUnSharedCategory("title", memberId, categoryId);
+			Card card = CardTestHelper.genOxCard(memberId, categoryId, cardId);
+			CardHistory cardHistory = CardHistoryTestHelper.generateCardHistory(cardId, memberId);
+			CardHistory cardHistory1 = CardHistoryTestHelper.generateCardHistory(cardId, memberId);
+			em.persist(category);
+			em.persist(card);
+			em.persist(cardHistory);
+			em.persist(cardHistory1);
 
 			// when
 			List<CardCountGroupByScoreDto> result = cardSimulationService.findCardCountByScore(categoryId);
 
 			// then
-			assertThat(result.get(0)).extracting(CardCountGroupByScoreDto::getScore).isEqualTo(2.0);
+			assertThat(result).hasSize(1);
 		}
 
 	}
