@@ -1,17 +1,14 @@
 package com.almondia.meca.card.application;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
 
 import java.util.List;
-import java.util.Optional;
 
 import javax.persistence.EntityManager;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -133,21 +130,25 @@ class CardSimulationServiceTest {
 		@DisplayName("limit으로 제한한 카드 갯수로 출력한다")
 		void shouldReturnLimitedCardsTest() {
 			// given
-			Mockito.doReturn(Optional.of(
-					CategoryTestHelper.generateSharedCategory("title", Id.generateNextId(), Id.generateNextId())))
-				.when(categoryRepository)
-				.findByCategoryIdAndIsDeleted(any(), anyBoolean());
-			Mockito.doReturn(
-					List.of(CardTestHelper.genOxCard(Id.generateNextId(), Id.generateNextId(), Id.generateNextId()),
-						CardTestHelper.genOxCard(Id.generateNextId(), Id.generateNextId(), Id.generateNextId()),
-						CardTestHelper.genOxCard(Id.generateNextId(), Id.generateNextId(), Id.generateNextId())))
-				.when(cardRepository)
-				.findByCategoryIdAndIsDeleted(any(), anyBoolean());
+			Id memberId = Id.generateNextId();
+			Id categoryId = Id.generateNextId();
+			Id cardId1 = Id.generateNextId();
+			Id cardId2 = Id.generateNextId();
+			Id cardId3 = Id.generateNextId();
+			Category category = CategoryTestHelper.generateUnSharedCategory("title", memberId,
+				categoryId);
+			Card card1 = CardTestHelper.genOxCard(memberId, categoryId, cardId1);
+			Card card2 = CardTestHelper.genOxCard(memberId, categoryId, cardId2);
+			Card card3 = CardTestHelper.genOxCard(memberId, categoryId, cardId3);
+			em.persist(category);
+			em.persist(card1);
+			em.persist(card2);
+			em.persist(card3);
+
 			final int limit = 2;
 
 			// when
-			List<CardDto> randoms = cardSimulationService.simulateRandom(Id.generateNextId(),
-				Id.generateNextId(), limit);
+			List<CardDto> randoms = cardSimulationService.simulateRandom(categoryId, memberId, limit);
 
 			// then
 			assertThat(randoms).hasSize(limit);
@@ -285,6 +286,27 @@ class CardSimulationServiceTest {
 
 			// then
 			assertThat(result).hasSize(1);
+		}
+
+		@Test
+		@DisplayName("카테고리에 속한 카드가 없는 경우 평균 점수 0의 카드 ID를 반환한다")
+		void shouldReturnZeroScoreCardIdTest() {
+			// given
+			Id categoryId = Id.generateNextId();
+			Id memberId = Id.generateNextId();
+			Id cardId = Id.generateNextId();
+			Category category = CategoryTestHelper.generateUnSharedCategory("title", memberId, categoryId);
+			Card card = CardTestHelper.genOxCard(memberId, categoryId, cardId);
+			em.persist(category);
+			em.persist(card);
+
+			// when
+			List<CardCountGroupByScoreDto> result = cardSimulationService.findCardCountByScore(categoryId);
+
+			// then
+			assertThat(result).hasSize(1);
+			assertThat(result.get(0).getScore()).isZero();
+			assertThat(result.get(0).getCount()).isNotZero();
 		}
 
 	}
