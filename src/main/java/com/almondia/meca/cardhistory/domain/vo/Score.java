@@ -23,6 +23,10 @@ public class Score implements Wrapper {
 		this.score = score;
 	}
 
+	public static Score of(int score) {
+		return new Score(score);
+	}
+
 	@Override
 	public String toString() {
 		return String.valueOf(score);
