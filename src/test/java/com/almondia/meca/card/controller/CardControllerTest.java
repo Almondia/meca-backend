@@ -580,12 +580,14 @@ class CardControllerTest {
 				.createdAt(LocalDateTime.now())
 				.modifiedAt(LocalDateTime.now())
 				.build();
-			Mockito.doReturn(List.of(responseDto)).when(cardSimulationService).simulateRandom(any(), any(), anyInt());
+			Mockito.doReturn(List.of(responseDto))
+				.when(cardSimulationService)
+				.simulateScore(any(), any(), any(), anyInt());
 
 			// when
 			ResultActions resultActions = mockMvc.perform(
-				get("/api/v1/cards/categories/{categoryId}/simulation", Id.generateNextId()).header("Authorization",
-					jwtToken).queryParam("limit", "3").queryParam("algorithm", "random"));
+				get("/api/v1/cards/categories/{categoryId}/simulation?limit=1&score=50", Id.generateNextId())
+					.header("Authorization", jwtToken));
 
 			// then
 			resultActions.andExpect(status().isOk())
@@ -600,7 +602,7 @@ class CardControllerTest {
 					requestHeaders(headerWithName("Authorization").description("JWT 인증 토큰")),
 					pathParameters(parameterWithName("categoryId").description("카테고리 아이디")),
 					requestParameters(parameterWithName("limit").description("카드 갯수"),
-						parameterWithName("algorithm").description("카드 알고리즘(random, score")),
+						parameterWithName("score").description("필터링 할 최대 카드 점수")),
 					responseFields(fieldWithPath("[].cardId").description("카드 아이디"),
 						fieldWithPath("[].memberId").description("멤버 아이디"),
 						fieldWithPath("[].categoryId").description("카테고리 아이디"),
