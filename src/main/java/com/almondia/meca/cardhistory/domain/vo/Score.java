@@ -28,6 +28,10 @@ public class Score implements Wrapper {
 		return String.valueOf(score);
 	}
 
+	public int getAsInt() {
+		return score;
+	}
+
 	private void validateScore(int score) {
 		if (score > MAX_SCORE) {
 			throw new IllegalArgumentException(String.format("%d 점수를 초과할 수 없습니다", MAX_SCORE));
