@@ -59,9 +59,15 @@ public class CardSimulationService {
 		if (!categoryRepository.existsByCategoryIdAndIsDeletedFalse(categoryId)) {
 			throw new IllegalArgumentException("존재하지 않는 카테고리입니다");
 		}
+		List<Card> cards = cardRepository.findByCategoryIdAndIsDeleted(categoryId, false);
 		Map<Id, Double> cardScores = cardHistoryRepository.findCardScoreAvgMapByCategoryId(categoryId);
 		Map<Double, Long> counts = cardScores.entrySet().stream()
 			.collect(Collectors.groupingBy(Map.Entry::getValue, Collectors.counting()));
+		for (Card card : cards) {
+			if (!cardScores.containsKey(card.getCardId())) {
+				counts.put(0.0, counts.getOrDefault(cardScores.get(card.getCardId()), 0L) + 1);
+			}
+		}
 		return counts.entrySet().stream()
 			.map(entry -> new CardCountGroupByScoreDto(entry.getKey(), entry.getValue()))
 			.sorted((o1, o2) -> Double.compare(o2.getScore(), o1.getScore()))
