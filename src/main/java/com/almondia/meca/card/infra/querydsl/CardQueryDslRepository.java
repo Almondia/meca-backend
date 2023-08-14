@@ -9,6 +9,7 @@ import org.springframework.lang.Nullable;
 import com.almondia.meca.card.controller.dto.CardDto;
 import com.almondia.meca.card.controller.dto.CardResponseDto;
 import com.almondia.meca.card.domain.entity.Card;
+import com.almondia.meca.cardhistory.domain.vo.Score;
 import com.almondia.meca.common.domain.vo.Id;
 
 public interface CardQueryDslRepository {
@@ -53,10 +54,11 @@ public interface CardQueryDslRepository {
 	 * 평균 점수 기준으로 오름차순으로 정렬된 카드 리스트 조회
 	 *
 	 * @param categoryId 카테고리 ID
+	 * @param score      평균 점수
 	 * @param limit      최대 제한 조회 갯수
 	 * @return 평균 점수 기준으로 오름차 순으로 정렬된 카드 리스트
 	 */
-	List<Card> findCardByCategoryIdScoreAsc(Id categoryId, int limit);
+	List<Card> findCardByCategoryIdScoreAsc(Id categoryId, Score score, int limit);
 
 	Map<Id, List<Id>> findMapByListOfCardIdAndMemberId(List<Id> cardIds, Id memberId);
 }

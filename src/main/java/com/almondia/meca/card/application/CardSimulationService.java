@@ -16,6 +16,7 @@ import com.almondia.meca.card.domain.repository.CardRepository;
 import com.almondia.meca.card.domain.service.CardPicker;
 import com.almondia.meca.card.domain.service.RandomCardPicker;
 import com.almondia.meca.cardhistory.domain.repository.CardHistoryRepository;
+import com.almondia.meca.cardhistory.domain.vo.Score;
 import com.almondia.meca.category.domain.entity.Category;
 import com.almondia.meca.category.domain.repository.CategoryRepository;
 import com.almondia.meca.common.domain.vo.Id;
@@ -44,11 +45,11 @@ public class CardSimulationService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<CardDto> simulateScore(Id categoryId, Id memberId, int limit) {
+	public List<CardDto> simulateScore(Id categoryId, Id memberId, Score score, int limit) {
 		Category category = categoryRepository.findByCategoryIdAndIsDeleted(categoryId, false)
 			.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 카테고리입니다"));
 		if (category.isMyCategory(memberId) || (!category.isMyCategory(memberId) && category.isShared())) {
-			List<Card> cards = cardRepository.findCardByCategoryIdScoreAsc(categoryId, limit);
+			List<Card> cards = cardRepository.findCardByCategoryIdScoreAsc(categoryId, score, limit);
 			return cards.stream().map(CardMapper::cardToDto).collect(Collectors.toList());
 		}
 		throw new AccessDeniedException("해당 카테고리는 접근할 수 없는 카테고리입니다");

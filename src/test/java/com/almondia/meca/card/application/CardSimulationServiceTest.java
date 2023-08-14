@@ -21,6 +21,7 @@ import com.almondia.meca.card.domain.entity.Card;
 import com.almondia.meca.card.domain.repository.CardRepository;
 import com.almondia.meca.cardhistory.domain.entity.CardHistory;
 import com.almondia.meca.cardhistory.domain.repository.CardHistoryRepository;
+import com.almondia.meca.cardhistory.domain.vo.Score;
 import com.almondia.meca.category.domain.entity.Category;
 import com.almondia.meca.category.domain.repository.CategoryRepository;
 import com.almondia.meca.common.configuration.jpa.QueryDslConfiguration;
@@ -177,8 +178,9 @@ class CardSimulationServiceTest {
 			em.persist(category);
 
 			// expect
+			Score score = Score.of(100);
 			assertThatThrownBy(
-				() -> cardSimulationService.simulateScore(categoryId, memberId, 100))
+				() -> cardSimulationService.simulateScore(categoryId, memberId, score, 100))
 				.isInstanceOf(IllegalArgumentException.class);
 
 		}
@@ -195,8 +197,9 @@ class CardSimulationServiceTest {
 			em.persist(category);
 
 			// expect
+			Score score = Score.of(100);
 			assertThatThrownBy(
-				() -> cardSimulationService.simulateScore(categoryId, otherMemberId, 100))
+				() -> cardSimulationService.simulateScore(categoryId, otherMemberId, score, 100))
 				.isInstanceOf(AccessDeniedException.class);
 		}
 
@@ -211,7 +214,7 @@ class CardSimulationServiceTest {
 			em.persist(category);
 
 			// when
-			List<CardDto> result = cardSimulationService.simulateScore(categoryId, memberId, 100);
+			List<CardDto> result = cardSimulationService.simulateScore(categoryId, memberId, Score.of(100), 100);
 
 			// then
 			assertThat(result).isEmpty();
@@ -239,7 +242,7 @@ class CardSimulationServiceTest {
 
 			// when
 			List<CardDto> result = cardSimulationService.simulateScore(categoryId,
-				memberId, limit);
+				memberId, Score.of(100), limit);
 
 			// then
 			assertThat(result).hasSize(limit);

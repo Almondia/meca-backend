@@ -22,6 +22,7 @@ import com.almondia.meca.card.domain.entity.Card;
 import com.almondia.meca.card.domain.entity.OxCard;
 import com.almondia.meca.card.domain.repository.CardRepository;
 import com.almondia.meca.cardhistory.domain.entity.CardHistory;
+import com.almondia.meca.cardhistory.domain.vo.Score;
 import com.almondia.meca.category.domain.entity.Category;
 import com.almondia.meca.common.configuration.jpa.JpaAuditingConfiguration;
 import com.almondia.meca.common.configuration.jpa.QueryDslConfiguration;
@@ -298,10 +299,11 @@ class CardQueryDslRepositoryImplTest {
 	}
 
 	/**
-	 * 1. 카테고리 내의 카드가 존재하지 않으면 빈 리스트를 리턴해야 한다
-	 * 2. 카드가 존재하나 히스토리가 존재하지 않는 경우에도 빈 리스트를 리턴해서는 안된다
-	 * 3. 카테고리 내의 카드가 존재하면 score가 오름차순으로 정렬된 카드 리스트를 limit 갯수만큼 리턴해야 한다
-	 * 4. 카드 히스토리가 없는 카드가 카드히스토리가 존재하는 카드보다 앞에 존재해야 함
+	 * 카테고리 내의 카드가 존재하지 않으면 빈 리스트를 리턴해야 한다
+	 * 카드가 존재하나 히스토리가 존재하지 않는 경우에도 빈 리스트를 리턴해서는 안된다
+	 * 카테고리 내의 카드가 존재하면 score가 오름차순으로 정렬된 카드 리스트를 limit 갯수만큼 리턴해야 한다
+	 * 카드 히스토리가 없는 카드가 카드히스토리가 존재하는 카드보다 앞에 존재해야 함
+	 * 평균 점수가 입력점수보다 낮으면 조회하지 않음
 	 */
 	@Nested
 	@DisplayName("findCardByCategoryIdScoreAsc 테스트")
@@ -320,7 +322,7 @@ class CardQueryDslRepositoryImplTest {
 			entityManager.persist(category);
 
 			// when
-			List<Card> cards = cardRepository.findCardByCategoryIdScoreAsc(categoryId, 1);
+			List<Card> cards = cardRepository.findCardByCategoryIdScoreAsc(categoryId, Score.of(100), 1);
 
 			// then
 			assertThat(cards).isEmpty();
@@ -338,7 +340,7 @@ class CardQueryDslRepositoryImplTest {
 			entityManager.persist(card);
 
 			// when
-			List<Card> cards = cardRepository.findCardByCategoryIdScoreAsc(categoryId, 1);
+			List<Card> cards = cardRepository.findCardByCategoryIdScoreAsc(categoryId, Score.of(100), 1);
 
 			// then
 			assertThat(cards).isNotEmpty();
@@ -364,7 +366,7 @@ class CardQueryDslRepositoryImplTest {
 			entityManager.persist(cardHistory2);
 
 			// when
-			List<Card> cards = cardRepository.findCardByCategoryIdScoreAsc(categoryId, 1);
+			List<Card> cards = cardRepository.findCardByCategoryIdScoreAsc(categoryId, Score.of(100), 1);
 
 			// then
 			assertThat(cards).hasSize(1);
@@ -389,11 +391,38 @@ class CardQueryDslRepositoryImplTest {
 			entityManager.persist(cardHistory1);
 
 			// when
-			List<Card> cards = cardRepository.findCardByCategoryIdScoreAsc(categoryId, 1);
+			List<Card> cards = cardRepository.findCardByCategoryIdScoreAsc(categoryId, Score.of(100), 1);
 
 			// then
 			assertThat(cards).hasSize(1);
 			assertThat(cards.get(0).getCardId()).isEqualTo(cardId2);
+		}
+
+		@Test
+		@DisplayName("평균 점수가 입력점수보다 낮으면 조회하지 않음")
+		void shouldNotFindCardWhenScoreLowerTest() {
+			// given
+			Id cardId = Id.generateNextId();
+			Id cardId2 = Id.generateNextId();
+			Id cardHistoryId1 = Id.generateNextId();
+			Id cardHistoryId2 = Id.generateNextId();
+			Category category = CategoryTestHelper.generateUnSharedCategory("title", memberId, categoryId);
+			OxCard card = CardTestHelper.genOxCard(memberId, categoryId, cardId);
+			OxCard card2 = CardTestHelper.genOxCard(memberId, categoryId, cardId2);
+			CardHistory cardHistory1 = CardHistoryTestHelper.generateCardHistory(cardHistoryId1, cardId, 30);
+			CardHistory cardHistory2 = CardHistoryTestHelper.generateCardHistory(cardHistoryId2, cardId2, 15);
+			entityManager.persist(member);
+			entityManager.persist(category);
+			entityManager.persist(card);
+			entityManager.persist(card2);
+			entityManager.persist(cardHistory1);
+			entityManager.persist(cardHistory2);
+
+			// when
+			List<Card> cards = cardRepository.findCardByCategoryIdScoreAsc(categoryId, Score.of(10), 10);
+
+			// then
+			assertThat(cards).isEmpty();
 		}
 	}
 

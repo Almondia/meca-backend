@@ -15,6 +15,7 @@ import com.almondia.meca.card.controller.dto.CardResponseDto;
 import com.almondia.meca.card.domain.entity.Card;
 import com.almondia.meca.card.domain.entity.QCard;
 import com.almondia.meca.cardhistory.domain.entity.QCardHistory;
+import com.almondia.meca.cardhistory.domain.vo.Score;
 import com.almondia.meca.category.domain.entity.QCategory;
 import com.almondia.meca.common.domain.vo.Id;
 import com.almondia.meca.member.domain.entity.QMember;
@@ -114,7 +115,7 @@ public class CardQueryDslRepositoryImpl implements CardQueryDslRepository {
 	}
 
 	@Override
-	public List<Card> findCardByCategoryIdScoreAsc(Id categoryId, int limit) {
+	public List<Card> findCardByCategoryIdScoreAsc(Id categoryId, Score score, int limit) {
 		SubQueryExpression<Double> scoreAvgByCardId = queryFactory
 			.select(cardHistory.score.score.avg())
 			.from(cardHistory)
@@ -128,6 +129,13 @@ public class CardQueryDslRepositoryImpl implements CardQueryDslRepository {
 			.fetch();
 
 		return query.stream()
+			.filter(tuple -> {
+				Double aDouble = tuple.get(1, Double.class);
+				if (aDouble == null) {
+					return true;
+				}
+				return aDouble <= score.getAsInt();
+			})
 			.sorted(Comparator.comparing(tuple -> {
 				Double aDouble = tuple.get(1, Double.class);
 				if (aDouble == null) {
