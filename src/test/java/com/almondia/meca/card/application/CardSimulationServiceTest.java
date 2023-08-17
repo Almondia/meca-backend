@@ -312,5 +312,30 @@ class CardSimulationServiceTest {
 			assertThat(result.get(0).getCount()).isNotZero();
 		}
 
+		@Test
+		@DisplayName("카드 히스토리가 없거나 평균점수가 0점인 카드는 모두 카운트 가능해야한다")
+		void shouldCountWhenNotHaveCardHistoryAndZeroScoreCardTest() {
+			// given
+			Id categoryId = Id.generateNextId();
+			Id memberId = Id.generateNextId();
+			Id cardId1 = Id.generateNextId();
+			Id cardId2 = Id.generateNextId();
+			Id cardHistoryId = Id.generateNextId();
+			Category category = CategoryTestHelper.generateUnSharedCategory("title", memberId, categoryId);
+			Card card1 = CardTestHelper.genOxCard(memberId, categoryId, cardId1);
+			Card card2 = CardTestHelper.genOxCard(memberId, categoryId, cardId2);
+			CardHistory cardHistory = CardHistoryTestHelper.generateCardHistory(cardHistoryId, cardId1, 0);
+			em.persist(category);
+			em.persist(card1);
+			em.persist(card2);
+			em.persist(cardHistory);
+
+			// when
+			List<CardCountGroupByScoreDto> result = cardSimulationService.findCardCountByScore(categoryId);
+
+			// then
+			assertThat(result.get(0)).extracting("score", "count").containsExactly(0.0, 2L);
+
+		}
 	}
 }

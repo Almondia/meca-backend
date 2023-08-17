@@ -66,7 +66,7 @@ public class CardSimulationService {
 			.collect(Collectors.groupingBy(Map.Entry::getValue, Collectors.counting()));
 		for (Card card : cards) {
 			if (!cardScores.containsKey(card.getCardId())) {
-				counts.put(0.0, counts.getOrDefault(cardScores.get(card.getCardId()), 0L) + 1);
+				counts.put(0.0, counts.getOrDefault(0.0, 0L) + 1);
 			}
 		}
 		return counts.entrySet().stream()
