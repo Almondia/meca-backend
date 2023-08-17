@@ -14,7 +14,6 @@ import com.almondia.meca.card.domain.entity.OxCard;
 import com.almondia.meca.card.domain.vo.CardType;
 import com.almondia.meca.card.domain.vo.Description;
 import com.almondia.meca.card.domain.vo.OxAnswer;
-import com.almondia.meca.card.domain.vo.Question;
 import com.almondia.meca.card.domain.vo.Title;
 import com.almondia.meca.common.domain.vo.Id;
 
@@ -29,13 +28,13 @@ class CardFactoryTest {
 
 	@Test
 	@DisplayName("OxCard 속성별 인스턴스를 잘 생성했는지 검증")
-	public void newInstanceOxCardTest() {
+	void newInstanceOxCardTest() {
 		Card card = CardFactory.genCard(makeSaveCardRequest()
 			.answer(OxAnswer.O.toString())
 			.cardType(CardType.OX_QUIZ)
 			.build(), Id.generateNextId());
-		assertThat(card).isInstanceOf(OxCard.class);
-		assertThat(card).hasFieldOrProperty("title")
+		assertThat(card).isInstanceOf(OxCard.class)
+			.hasFieldOrProperty("title")
 			.hasFieldOrProperty("question")
 			.hasFieldOrProperty("memberId")
 			.hasFieldOrProperty("categoryId")
@@ -47,13 +46,13 @@ class CardFactoryTest {
 
 	@Test
 	@DisplayName("KeywordCard 속성별 인스턴스를 잘 생성했는지 검증")
-	public void newInstanceKeywordCardTest() {
+	void newInstanceKeywordCardTest() {
 		Card card = CardFactory.genCard(makeSaveCardRequest()
 			.answer("개발자")
 			.cardType(CardType.KEYWORD)
 			.build(), Id.generateNextId());
-		assertThat(card).isInstanceOf(KeywordCard.class);
-		assertThat(card).hasFieldOrProperty("title")
+		assertThat(card).isInstanceOf(KeywordCard.class)
+			.hasFieldOrProperty("title")
 			.hasFieldOrProperty("question")
 			.hasFieldOrProperty("categoryId")
 			.hasFieldOrProperty("memberId")
@@ -65,13 +64,13 @@ class CardFactoryTest {
 
 	@Test
 	@DisplayName("MultiChoiceCard 속성별 인스턴스를 잘 생성했는지 검증")
-	public void newInstanceMultiChoiceCardTest() {
+	void newInstanceMultiChoiceCardTest() {
 		Card card = CardFactory.genCard(makeSaveCardRequest()
 			.answer("1")
 			.cardType(CardType.MULTI_CHOICE)
 			.build(), Id.generateNextId());
-		assertThat(card).isInstanceOf(MultiChoiceCard.class);
-		assertThat(card).hasFieldOrProperty("title")
+		assertThat(card).isInstanceOf(MultiChoiceCard.class)
+			.hasFieldOrProperty("title")
 			.hasFieldOrProperty("question")
 			.hasFieldOrProperty("categoryId")
 			.hasFieldOrProperty("memberId")
@@ -84,7 +83,7 @@ class CardFactoryTest {
 	private SaveCardRequestDto.SaveCardRequestDtoBuilder makeSaveCardRequest() {
 		return SaveCardRequestDto.builder()
 			.title(new Title("title"))
-			.question(new Question("question"))
+			.question("question")
 			.categoryId(Id.generateNextId())
 			.description(new Description("editText"));
 	}
@@ -96,8 +95,8 @@ class CardFactoryTest {
 			.cardType(CardType.OX_QUIZ)
 			.answer(OxAnswer.O.toString())
 			.build(), Id.generateNextId());
-		assertThat(card).isInstanceOf(OxCard.class);
-		assertThat(card).hasFieldOrProperty("title")
+		assertThat(card).isInstanceOf(OxCard.class)
+			.hasFieldOrProperty("title")
 			.hasFieldOrProperty("question")
 			.hasFieldOrProperty("memberId")
 			.hasFieldOrProperty("categoryId")
@@ -113,8 +112,8 @@ class CardFactoryTest {
 			.cardType(CardType.ESSAY)
 			.answer("essayAnswer")
 			.build(), Id.generateNextId());
-		assertThat(card).isInstanceOf(EssayCard.class);
-		assertThat(card).hasFieldOrProperty("title")
+		assertThat(card).isInstanceOf(EssayCard.class)
+			.hasFieldOrProperty("title")
 			.hasFieldOrProperty("question")
 			.hasFieldOrProperty("memberId")
 			.hasFieldOrProperty("categoryId")
@@ -125,7 +124,7 @@ class CardFactoryTest {
 	private SaveCardRequestDto.SaveCardRequestDtoBuilder makeSaveCardRequestWithoutEditText() {
 		return SaveCardRequestDto.builder()
 			.title(new Title("title"))
-			.question(new Question("question"))
+			.question("question")
 			.categoryId(Id.generateNextId());
 	}
 }

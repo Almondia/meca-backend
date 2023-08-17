@@ -120,7 +120,7 @@ class CardControllerTest {
 			// given
 			SaveCardRequestDto saveCardRequestDto = SaveCardRequestDto.builder()
 				.title(new Title("title"))
-				.question(new Question("hello"))
+				.question("hello")
 				.categoryId(Id.generateNextId())
 				.cardType(CardType.OX_QUIZ)
 				.answer(OxAnswer.O.toString())
@@ -185,7 +185,7 @@ class CardControllerTest {
 			// given
 			UpdateCardRequestDto requestDto = UpdateCardRequestDto.builder()
 				.title(new Title("title"))
-				.question(new Question("question"))
+				.question("question")
 				.description(new Description("editText"))
 				.categoryId(Id.generateNextId())
 				.answer("O")

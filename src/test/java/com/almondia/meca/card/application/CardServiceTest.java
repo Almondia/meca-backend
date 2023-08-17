@@ -149,7 +149,7 @@ class CardServiceTest {
 		private SaveCardRequestDto.SaveCardRequestDtoBuilder makeSaveCardRequest() {
 			return SaveCardRequestDto.builder()
 				.title(new Title("title"))
-				.question(new Question("question"))
+				.question("question")
 				.categoryId(Id.generateNextId())
 				.description(new Description("hello"));
 		}
@@ -157,7 +157,7 @@ class CardServiceTest {
 		private SaveCardRequestDto.SaveCardRequestDtoBuilder makeSaveCardRequestWithoutEditText() {
 			return SaveCardRequestDto.builder()
 				.title(new Title("title"))
-				.question(new Question("question"))
+				.question("question")
 				.categoryId(Id.generateNextId());
 		}
 	}
@@ -270,7 +270,7 @@ class CardServiceTest {
 			em.persist(member);
 
 			UpdateCardRequestDto updateCardRequestDto = UpdateCardRequestDto.builder()
-				.question(new Question("question2"))
+				.question("question2")
 				.build();
 
 			// when
@@ -312,7 +312,7 @@ class CardServiceTest {
 			return UpdateCardRequestDto.builder()
 				.title(new Title("title"))
 				.description(new Description("edit text"))
-				.question(new Question("question"))
+				.question("question")
 				.categoryId(categoryId)
 				.build();
 		}

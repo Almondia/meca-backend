@@ -98,6 +98,10 @@ public abstract class Card extends DateEntity {
 		this.question = question;
 	}
 
+	public void changeQuestion(String question) {
+		this.question = Question.of(question);
+	}
+
 	public void changeCategoryId(Id categoryId) {
 		this.categoryId = categoryId;
 	}
