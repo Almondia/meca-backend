@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 
 import com.almondia.meca.card.domain.vo.CardType;
 import com.almondia.meca.card.domain.vo.KeywordAnswer;
+import com.almondia.meca.card.domain.vo.Question;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -24,6 +25,10 @@ import lombok.experimental.SuperBuilder;
 public class KeywordCard extends Card {
 
 	@Embedded
+	@AttributeOverride(name = "question", column = @Column(name = "question", nullable = false, length = 5_1000))
+	private Question question;
+
+	@Embedded
 	@AttributeOverride(name = "keywordAnswer", column = @Column(name = "keyword_answer"))
 	private KeywordAnswer keywordAnswer;
 
@@ -33,8 +38,18 @@ public class KeywordCard extends Card {
 	}
 
 	@Override
+	public void changeQuestion(String question) {
+		this.question = Question.of(question);
+	}
+
+	@Override
 	public void changeAnswer(String answer) {
 		this.keywordAnswer = KeywordAnswer.valueOf(answer);
+	}
+
+	@Override
+	public String getQuestion() {
+		return this.question.toString();
 	}
 
 	@Override

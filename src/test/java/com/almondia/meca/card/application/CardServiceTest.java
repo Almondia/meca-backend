@@ -100,7 +100,7 @@ class CardServiceTest {
 			assertThat(all).isNotEmpty();
 			assertThat(all.get(0))
 				.hasFieldOrPropertyWithValue("oxAnswer", OxAnswer.O)
-				.hasFieldOrPropertyWithValue("question", new Question("question"))
+				.hasFieldOrPropertyWithValue("question", "question")
 				.hasFieldOrPropertyWithValue("title", new Title("title"));
 		}
 
@@ -114,7 +114,7 @@ class CardServiceTest {
 			assertThat(all).isNotEmpty();
 			assertThat(all.get(0))
 				.hasFieldOrPropertyWithValue("keywordAnswer", new KeywordAnswer("asdf"))
-				.hasFieldOrPropertyWithValue("question", new Question("question"))
+				.hasFieldOrPropertyWithValue("question", "question")
 				.hasFieldOrPropertyWithValue("title", new Title("title"));
 		}
 
@@ -129,7 +129,7 @@ class CardServiceTest {
 			assertThat(all).isNotEmpty();
 			assertThat(all.get(0))
 				.hasFieldOrPropertyWithValue("multiChoiceAnswer", new MultiChoiceAnswer(1))
-				.hasFieldOrPropertyWithValue("question", new Question("question"))
+				.hasFieldOrPropertyWithValue("question", "question")
 				.hasFieldOrPropertyWithValue("title", new Title("title"));
 		}
 
@@ -280,7 +280,7 @@ class CardServiceTest {
 			List<Card> all = cardRepository.findAll();
 			assertThat(all).isNotEmpty();
 			assertThat(all.get(0))
-				.hasFieldOrPropertyWithValue("question", new Question("question2"));
+				.hasFieldOrPropertyWithValue("question", "question2");
 		}
 
 		@Test
