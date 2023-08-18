@@ -55,7 +55,8 @@ public class MultiChoiceQuestion implements Wrapper {
 			throw new IllegalArgumentException(
 				String.format("퀴즈 문제의 선택지는 %d개 이상 %d개 이하로 입력해야 합니다", MIN_CHOICE_COUNT, MAX_CHOICE_COUNT));
 		}
-		for (String choice : split) {
+		for (int i = 1; i < split.length; i++) {
+			String choice = split[i];
 			if (choice.length() > MAX_LENGTH_PER_VIEW_QUESTION) {
 				throw new IllegalArgumentException(
 					String.format("퀴즈 문제의 선택지는 %d자 이하로 입력해야 합니다", MAX_LENGTH_PER_VIEW_QUESTION));
