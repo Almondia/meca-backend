@@ -72,7 +72,7 @@ public class CardTestHelper {
 			.memberId(memberId)
 			.title(new Title("title"))
 			.description(new Description("description"))
-			.question(MultiChoiceQuestion.of("question"))
+			.question(MultiChoiceQuestion.of("[\"<p>question</p>\",\"2\",\"3\",\"4\"]"))
 			.multiChoiceAnswer(MultiChoiceAnswer.valueOf("1"))
 			.cardType(CardType.MULTI_CHOICE)
 			.isDeleted(false)

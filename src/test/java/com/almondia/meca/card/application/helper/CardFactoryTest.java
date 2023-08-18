@@ -83,7 +83,7 @@ class CardFactoryTest {
 	private SaveCardRequestDto.SaveCardRequestDtoBuilder makeSaveCardRequest() {
 		return SaveCardRequestDto.builder()
 			.title(new Title("title"))
-			.question("question")
+			.question("[\"<p>question</p>\",\"2\",\"3\",\"4\"]")
 			.categoryId(Id.generateNextId())
 			.description(new Description("editText"));
 	}

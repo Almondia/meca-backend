@@ -35,7 +35,6 @@ import com.almondia.meca.card.domain.vo.CardType;
 import com.almondia.meca.card.domain.vo.Description;
 import com.almondia.meca.card.domain.vo.KeywordAnswer;
 import com.almondia.meca.card.domain.vo.MultiChoiceAnswer;
-import com.almondia.meca.card.domain.vo.MultiChoiceQuestion;
 import com.almondia.meca.card.domain.vo.OxAnswer;
 import com.almondia.meca.card.domain.vo.Title;
 import com.almondia.meca.card.infra.querydsl.CardSearchOption;
@@ -100,7 +99,7 @@ class CardServiceTest {
 			assertThat(all).isNotEmpty();
 			assertThat(all.get(0))
 				.hasFieldOrPropertyWithValue("oxAnswer", OxAnswer.O)
-				.hasFieldOrPropertyWithValue("question", "question")
+				.hasFieldOrPropertyWithValue("question", "[\"<p>question</p>\",\"2\",\"3\",\"4\"]")
 				.hasFieldOrPropertyWithValue("title", new Title("title"));
 		}
 
@@ -114,7 +113,7 @@ class CardServiceTest {
 			assertThat(all).isNotEmpty();
 			assertThat(all.get(0))
 				.hasFieldOrPropertyWithValue("keywordAnswer", new KeywordAnswer("asdf"))
-				.hasFieldOrPropertyWithValue("question", "question")
+				.hasFieldOrPropertyWithValue("question", "[\"<p>question</p>\",\"2\",\"3\",\"4\"]")
 				.hasFieldOrPropertyWithValue("title", new Title("title"));
 		}
 
@@ -129,7 +128,7 @@ class CardServiceTest {
 			assertThat(all).isNotEmpty();
 			assertThat(all.get(0))
 				.hasFieldOrPropertyWithValue("multiChoiceAnswer", new MultiChoiceAnswer(1))
-				.hasFieldOrPropertyWithValue("question", "question")
+				.hasFieldOrPropertyWithValue("question", "[\"<p>question</p>\",\"2\",\"3\",\"4\"]")
 				.hasFieldOrPropertyWithValue("title", new Title("title"));
 		}
 
@@ -149,7 +148,7 @@ class CardServiceTest {
 		private SaveCardRequestDto.SaveCardRequestDtoBuilder makeSaveCardRequest() {
 			return SaveCardRequestDto.builder()
 				.title(new Title("title"))
-				.question("question")
+				.question("[\"<p>question</p>\",\"2\",\"3\",\"4\"]")
 				.categoryId(Id.generateNextId())
 				.description(new Description("hello"));
 		}
@@ -493,15 +492,7 @@ class CardServiceTest {
 
 		private void initDataSetting() {
 			cardRepository.saveAll(List.of(
-				MultiChoiceCard.builder()
-					.cardId(cardId1)
-					.title(new Title("title3"))
-					.cardType(CardType.MULTI_CHOICE)
-					.categoryId(categoryId)
-					.memberId(memberId)
-					.question(MultiChoiceQuestion.of("question"))
-					.multiChoiceAnswer(new MultiChoiceAnswer(1))
-					.build()
+				CardTestHelper.genMultiChoiceCard(memberId, categoryId, cardId1)
 			));
 		}
 	}

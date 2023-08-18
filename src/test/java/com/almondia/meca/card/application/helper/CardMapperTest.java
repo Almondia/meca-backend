@@ -119,7 +119,7 @@ class CardMapperTest {
 		return MultiChoiceCard.builder()
 			.cardId(Id.generateNextId())
 			.title(new Title("title"))
-			.question(MultiChoiceQuestion.of("question"))
+			.question(MultiChoiceQuestion.of("[\"<p>question</p>\",\"2\",\"3\",\"4\"]"))
 			.description(new Description("editText"))
 			.categoryId(Id.generateNextId())
 			.cardType(CardType.OX_QUIZ)
