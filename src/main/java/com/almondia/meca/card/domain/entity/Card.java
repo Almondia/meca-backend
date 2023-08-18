@@ -17,7 +17,6 @@ import javax.persistence.Transient;
 
 import com.almondia.meca.card.domain.vo.CardType;
 import com.almondia.meca.card.domain.vo.Description;
-import com.almondia.meca.card.domain.vo.Question;
 import com.almondia.meca.card.domain.vo.Title;
 import com.almondia.meca.common.domain.converter.ListImageConverter;
 import com.almondia.meca.common.domain.entity.DateEntity;
@@ -40,10 +39,6 @@ public abstract class Card extends DateEntity {
 	@EmbeddedId
 	@AttributeOverride(name = "uuid", column = @Column(name = "card_id", nullable = false, length = 16))
 	private Id cardId;
-
-	@Embedded
-	@AttributeOverride(name = "question", column = @Column(name = "question", nullable = false, length = 5_1000))
-	private Question question;
 
 	@Embedded
 	@AttributeOverride(name = "title", column = @Column(name = "title", nullable = false, length = 120))
@@ -94,19 +89,15 @@ public abstract class Card extends DateEntity {
 
 	public abstract CardType getCardType();
 
-	public void changeQuestion(Question question) {
-		this.question = question;
-	}
-
-	public void changeQuestion(String question) {
-		this.question = Question.of(question);
-	}
+	public abstract void changeQuestion(String question);
 
 	public void changeCategoryId(Id categoryId) {
 		this.categoryId = categoryId;
 	}
 
 	public abstract void changeAnswer(String answer);
+
+	public abstract String getQuestion();
 
 	public abstract String getAnswer();
 }
