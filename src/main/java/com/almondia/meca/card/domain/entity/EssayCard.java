@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 
 import com.almondia.meca.card.domain.vo.CardType;
 import com.almondia.meca.card.domain.vo.EssayAnswer;
+import com.almondia.meca.card.domain.vo.Question;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -24,6 +25,10 @@ import lombok.experimental.SuperBuilder;
 public class EssayCard extends Card {
 
 	@Embedded
+	@AttributeOverride(name = "question", column = @Column(name = "question", nullable = false, length = 5_1000))
+	private Question question;
+
+	@Embedded
 	@AttributeOverride(name = "essayAnswer", column = @Column(name = "essay_answer", length = 2000))
 	private EssayAnswer essayAnswer;
 
@@ -33,8 +38,18 @@ public class EssayCard extends Card {
 	}
 
 	@Override
+	public void changeQuestion(String question) {
+		this.question = Question.of(question);
+	}
+
+	@Override
 	public void changeAnswer(String answer) {
 		this.essayAnswer = EssayAnswer.valueOf(answer);
+	}
+
+	@Override
+	public String getQuestion() {
+		return question.toString();
 	}
 
 	@Override

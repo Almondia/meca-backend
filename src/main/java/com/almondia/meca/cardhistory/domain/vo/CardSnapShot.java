@@ -77,7 +77,7 @@ public final class CardSnapShot {
 		return CardSnapShot.builder()
 			.memberId(card.getMemberId())
 			.title(card.getTitle())
-			.question(card.getQuestion())
+			.question(Question.of(card.getQuestion()))
 			.answer(card.getAnswer())
 			.cardType(card.getCardType())
 			.description(card.getDescription())

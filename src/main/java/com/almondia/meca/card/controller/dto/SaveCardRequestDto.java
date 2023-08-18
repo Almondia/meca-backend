@@ -2,7 +2,6 @@ package com.almondia.meca.card.controller.dto;
 
 import com.almondia.meca.card.domain.vo.CardType;
 import com.almondia.meca.card.domain.vo.Description;
-import com.almondia.meca.card.domain.vo.Question;
 import com.almondia.meca.card.domain.vo.Title;
 import com.almondia.meca.common.domain.vo.Id;
 
@@ -21,7 +20,7 @@ import lombok.ToString;
 public class SaveCardRequestDto {
 
 	private Title title;
-	private Question question;
+	private String question;
 	private Id categoryId;
 	private CardType cardType;
 	private String answer;

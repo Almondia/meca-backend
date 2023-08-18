@@ -55,7 +55,7 @@ class CardTest {
 		assertThat(entityType).isNotNull();
 		assertThat(entityType.getName()).isEqualTo("Card");
 		assertThat(entityType.getAttributes()).extracting("name")
-			.containsExactlyInAnyOrder("description", "question", "memberId", "isDeleted", "cardId", "categoryId",
+			.containsExactlyInAnyOrder("description", "memberId", "isDeleted", "cardId", "categoryId",
 				"title",
 				"images",
 				"createdAt", "modifiedAt");
@@ -181,8 +181,8 @@ class CardTest {
 			.oxAnswer(OxAnswer.O)
 			.isDeleted(true)
 			.build();
-		oxCard.changeQuestion(new Question("question2"));
-		assertThat(oxCard).hasFieldOrPropertyWithValue("question", new Question("question2"));
+		oxCard.changeQuestion("question2");
+		assertThat(oxCard).hasFieldOrPropertyWithValue("question", "question2");
 	}
 
 	@Test

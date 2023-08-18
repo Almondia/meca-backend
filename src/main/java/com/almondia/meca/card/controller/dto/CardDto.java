@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 
 import com.almondia.meca.card.domain.vo.CardType;
 import com.almondia.meca.card.domain.vo.Description;
-import com.almondia.meca.card.domain.vo.Question;
 import com.almondia.meca.card.domain.vo.Title;
 import com.almondia.meca.common.domain.vo.Id;
 
@@ -20,7 +19,7 @@ public class CardDto {
 	private final Id cardId;
 	private final Title title;
 	private final Id memberId;
-	private final Question question;
+	private final String question;
 	private final Id categoryId;
 	private final CardType cardType;
 	private final LocalDateTime createdAt;

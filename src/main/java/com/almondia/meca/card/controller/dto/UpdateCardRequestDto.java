@@ -3,7 +3,6 @@ package com.almondia.meca.card.controller.dto;
 import org.springframework.lang.Nullable;
 
 import com.almondia.meca.card.domain.vo.Description;
-import com.almondia.meca.card.domain.vo.Question;
 import com.almondia.meca.card.domain.vo.Title;
 import com.almondia.meca.common.domain.vo.Id;
 
@@ -25,7 +24,7 @@ public class UpdateCardRequestDto {
 	private Title title;
 
 	@Nullable
-	private Question question;
+	private String question;
 
 	@Nullable
 	private Id categoryId;

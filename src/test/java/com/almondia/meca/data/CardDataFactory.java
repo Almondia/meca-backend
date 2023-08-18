@@ -10,6 +10,7 @@ import com.almondia.meca.card.domain.entity.OxCard;
 import com.almondia.meca.card.domain.vo.CardType;
 import com.almondia.meca.card.domain.vo.KeywordAnswer;
 import com.almondia.meca.card.domain.vo.MultiChoiceAnswer;
+import com.almondia.meca.card.domain.vo.MultiChoiceQuestion;
 import com.almondia.meca.card.domain.vo.OxAnswer;
 import com.almondia.meca.card.domain.vo.Question;
 import com.almondia.meca.card.domain.vo.Title;
@@ -75,7 +76,7 @@ public class CardDataFactory implements TestDataFactory<Card> {
 				.cardType(CardType.KEYWORD)
 				.title(new Title(generator.generate(10)))
 				.categoryId(categoryId)
-				.question(new Question(generator.generate(30)))
+				.question(MultiChoiceQuestion.of("[" + generator.generate(30) + ",\"1\"" + "]"))
 				.memberId(memberId)
 				.images(List.of(new Image("A"), new Image("B"), new Image("C")))
 				.isDeleted(false)

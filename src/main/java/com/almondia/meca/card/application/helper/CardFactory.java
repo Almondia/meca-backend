@@ -11,10 +11,16 @@ import com.almondia.meca.card.domain.vo.Description;
 import com.almondia.meca.card.domain.vo.EssayAnswer;
 import com.almondia.meca.card.domain.vo.KeywordAnswer;
 import com.almondia.meca.card.domain.vo.MultiChoiceAnswer;
+import com.almondia.meca.card.domain.vo.MultiChoiceQuestion;
 import com.almondia.meca.card.domain.vo.OxAnswer;
+import com.almondia.meca.card.domain.vo.Question;
 import com.almondia.meca.common.domain.vo.Id;
 
 public class CardFactory {
+
+	private CardFactory() {
+		throw new IllegalArgumentException("util class 입니다 ");
+	}
 
 	public static Card genCard(SaveCardRequestDto saveCardRequestDto, Id memberId) {
 		CardType cardType = saveCardRequestDto.getCardType();
@@ -39,7 +45,7 @@ public class CardFactory {
 		return OxCard.builder()
 			.cardId(Id.generateNextId())
 			.memberId(memberId)
-			.question(saveCardRequestDto.getQuestion())
+			.question(Question.of(saveCardRequestDto.getQuestion()))
 			.title(saveCardRequestDto.getTitle())
 			.categoryId(saveCardRequestDto.getCategoryId())
 			.cardType(saveCardRequestDto.getCardType())
@@ -54,7 +60,7 @@ public class CardFactory {
 		return KeywordCard.builder()
 			.cardId(Id.generateNextId())
 			.memberId(memberId)
-			.question(saveCardRequestDto.getQuestion())
+			.question(Question.of(saveCardRequestDto.getQuestion()))
 			.title(saveCardRequestDto.getTitle())
 			.categoryId(saveCardRequestDto.getCategoryId())
 			.cardType(saveCardRequestDto.getCardType())
@@ -69,7 +75,7 @@ public class CardFactory {
 		return MultiChoiceCard.builder()
 			.cardId(Id.generateNextId())
 			.memberId(memberId)
-			.question(saveCardRequestDto.getQuestion())
+			.question(MultiChoiceQuestion.of(saveCardRequestDto.getQuestion()))
 			.title(saveCardRequestDto.getTitle())
 			.categoryId(saveCardRequestDto.getCategoryId())
 			.cardType(saveCardRequestDto.getCardType())
@@ -84,7 +90,7 @@ public class CardFactory {
 		return EssayCard.builder()
 			.cardId(Id.generateNextId())
 			.memberId(memberId)
-			.question(saveCardRequestDto.getQuestion())
+			.question(Question.of(saveCardRequestDto.getQuestion()))
 			.title(saveCardRequestDto.getTitle())
 			.categoryId(saveCardRequestDto.getCategoryId())
 			.cardType(saveCardRequestDto.getCardType())

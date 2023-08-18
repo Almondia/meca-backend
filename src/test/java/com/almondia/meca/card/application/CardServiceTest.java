@@ -36,7 +36,6 @@ import com.almondia.meca.card.domain.vo.Description;
 import com.almondia.meca.card.domain.vo.KeywordAnswer;
 import com.almondia.meca.card.domain.vo.MultiChoiceAnswer;
 import com.almondia.meca.card.domain.vo.OxAnswer;
-import com.almondia.meca.card.domain.vo.Question;
 import com.almondia.meca.card.domain.vo.Title;
 import com.almondia.meca.card.infra.querydsl.CardSearchOption;
 import com.almondia.meca.cardhistory.domain.entity.CardHistory;
@@ -100,7 +99,7 @@ class CardServiceTest {
 			assertThat(all).isNotEmpty();
 			assertThat(all.get(0))
 				.hasFieldOrPropertyWithValue("oxAnswer", OxAnswer.O)
-				.hasFieldOrPropertyWithValue("question", new Question("question"))
+				.hasFieldOrPropertyWithValue("question", "[\"<p>question</p>\",\"2\",\"3\",\"4\"]")
 				.hasFieldOrPropertyWithValue("title", new Title("title"));
 		}
 
@@ -114,7 +113,7 @@ class CardServiceTest {
 			assertThat(all).isNotEmpty();
 			assertThat(all.get(0))
 				.hasFieldOrPropertyWithValue("keywordAnswer", new KeywordAnswer("asdf"))
-				.hasFieldOrPropertyWithValue("question", new Question("question"))
+				.hasFieldOrPropertyWithValue("question", "[\"<p>question</p>\",\"2\",\"3\",\"4\"]")
 				.hasFieldOrPropertyWithValue("title", new Title("title"));
 		}
 
@@ -129,7 +128,7 @@ class CardServiceTest {
 			assertThat(all).isNotEmpty();
 			assertThat(all.get(0))
 				.hasFieldOrPropertyWithValue("multiChoiceAnswer", new MultiChoiceAnswer(1))
-				.hasFieldOrPropertyWithValue("question", new Question("question"))
+				.hasFieldOrPropertyWithValue("question", "[\"<p>question</p>\",\"2\",\"3\",\"4\"]")
 				.hasFieldOrPropertyWithValue("title", new Title("title"));
 		}
 
@@ -149,7 +148,7 @@ class CardServiceTest {
 		private SaveCardRequestDto.SaveCardRequestDtoBuilder makeSaveCardRequest() {
 			return SaveCardRequestDto.builder()
 				.title(new Title("title"))
-				.question(new Question("question"))
+				.question("[\"<p>question</p>\",\"2\",\"3\",\"4\"]")
 				.categoryId(Id.generateNextId())
 				.description(new Description("hello"));
 		}
@@ -157,7 +156,7 @@ class CardServiceTest {
 		private SaveCardRequestDto.SaveCardRequestDtoBuilder makeSaveCardRequestWithoutEditText() {
 			return SaveCardRequestDto.builder()
 				.title(new Title("title"))
-				.question(new Question("question"))
+				.question("question")
 				.categoryId(Id.generateNextId());
 		}
 	}
@@ -270,7 +269,7 @@ class CardServiceTest {
 			em.persist(member);
 
 			UpdateCardRequestDto updateCardRequestDto = UpdateCardRequestDto.builder()
-				.question(new Question("question2"))
+				.question("question2")
 				.build();
 
 			// when
@@ -280,7 +279,7 @@ class CardServiceTest {
 			List<Card> all = cardRepository.findAll();
 			assertThat(all).isNotEmpty();
 			assertThat(all.get(0))
-				.hasFieldOrPropertyWithValue("question", new Question("question2"));
+				.hasFieldOrPropertyWithValue("question", "question2");
 		}
 
 		@Test
@@ -312,7 +311,7 @@ class CardServiceTest {
 			return UpdateCardRequestDto.builder()
 				.title(new Title("title"))
 				.description(new Description("edit text"))
-				.question(new Question("question"))
+				.question("question")
 				.categoryId(categoryId)
 				.build();
 		}
@@ -493,15 +492,7 @@ class CardServiceTest {
 
 		private void initDataSetting() {
 			cardRepository.saveAll(List.of(
-				MultiChoiceCard.builder()
-					.cardId(cardId1)
-					.title(new Title("title3"))
-					.cardType(CardType.MULTI_CHOICE)
-					.categoryId(categoryId)
-					.memberId(memberId)
-					.question(new Question("question"))
-					.multiChoiceAnswer(new MultiChoiceAnswer(1))
-					.build()
+				CardTestHelper.genMultiChoiceCard(memberId, categoryId, cardId1)
 			));
 		}
 	}
