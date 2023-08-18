@@ -11,6 +11,7 @@ import com.almondia.meca.card.domain.vo.Description;
 import com.almondia.meca.card.domain.vo.EssayAnswer;
 import com.almondia.meca.card.domain.vo.KeywordAnswer;
 import com.almondia.meca.card.domain.vo.MultiChoiceAnswer;
+import com.almondia.meca.card.domain.vo.MultiChoiceQuestion;
 import com.almondia.meca.card.domain.vo.OxAnswer;
 import com.almondia.meca.card.domain.vo.Question;
 import com.almondia.meca.common.domain.vo.Id;
@@ -74,7 +75,7 @@ public class CardFactory {
 		return MultiChoiceCard.builder()
 			.cardId(Id.generateNextId())
 			.memberId(memberId)
-			.question(Question.of(saveCardRequestDto.getQuestion()))
+			.question(MultiChoiceQuestion.of(saveCardRequestDto.getQuestion()))
 			.title(saveCardRequestDto.getTitle())
 			.categoryId(saveCardRequestDto.getCategoryId())
 			.cardType(saveCardRequestDto.getCardType())

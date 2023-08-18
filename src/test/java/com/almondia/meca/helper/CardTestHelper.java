@@ -11,6 +11,7 @@ import com.almondia.meca.card.domain.vo.Description;
 import com.almondia.meca.card.domain.vo.EssayAnswer;
 import com.almondia.meca.card.domain.vo.KeywordAnswer;
 import com.almondia.meca.card.domain.vo.MultiChoiceAnswer;
+import com.almondia.meca.card.domain.vo.MultiChoiceQuestion;
 import com.almondia.meca.card.domain.vo.OxAnswer;
 import com.almondia.meca.card.domain.vo.Question;
 import com.almondia.meca.card.domain.vo.Title;
@@ -71,7 +72,7 @@ public class CardTestHelper {
 			.memberId(memberId)
 			.title(new Title("title"))
 			.description(new Description("description"))
-			.question(new Question("question"))
+			.question(MultiChoiceQuestion.of("question"))
 			.multiChoiceAnswer(MultiChoiceAnswer.valueOf("1"))
 			.cardType(CardType.MULTI_CHOICE)
 			.isDeleted(false)

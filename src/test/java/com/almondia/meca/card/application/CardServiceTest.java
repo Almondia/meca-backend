@@ -35,8 +35,8 @@ import com.almondia.meca.card.domain.vo.CardType;
 import com.almondia.meca.card.domain.vo.Description;
 import com.almondia.meca.card.domain.vo.KeywordAnswer;
 import com.almondia.meca.card.domain.vo.MultiChoiceAnswer;
+import com.almondia.meca.card.domain.vo.MultiChoiceQuestion;
 import com.almondia.meca.card.domain.vo.OxAnswer;
-import com.almondia.meca.card.domain.vo.Question;
 import com.almondia.meca.card.domain.vo.Title;
 import com.almondia.meca.card.infra.querydsl.CardSearchOption;
 import com.almondia.meca.cardhistory.domain.entity.CardHistory;
@@ -499,7 +499,7 @@ class CardServiceTest {
 					.cardType(CardType.MULTI_CHOICE)
 					.categoryId(categoryId)
 					.memberId(memberId)
-					.question(new Question("question"))
+					.question(MultiChoiceQuestion.of("question"))
 					.multiChoiceAnswer(new MultiChoiceAnswer(1))
 					.build()
 			));

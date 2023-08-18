@@ -14,6 +14,7 @@ import com.almondia.meca.card.domain.vo.CardType;
 import com.almondia.meca.card.domain.vo.Description;
 import com.almondia.meca.card.domain.vo.KeywordAnswer;
 import com.almondia.meca.card.domain.vo.MultiChoiceAnswer;
+import com.almondia.meca.card.domain.vo.MultiChoiceQuestion;
 import com.almondia.meca.card.domain.vo.OxAnswer;
 import com.almondia.meca.card.domain.vo.Question;
 import com.almondia.meca.card.domain.vo.Title;
@@ -118,7 +119,7 @@ class CardMapperTest {
 		return MultiChoiceCard.builder()
 			.cardId(Id.generateNextId())
 			.title(new Title("title"))
-			.question(new Question("question"))
+			.question(MultiChoiceQuestion.of("question"))
 			.description(new Description("editText"))
 			.categoryId(Id.generateNextId())
 			.cardType(CardType.OX_QUIZ)
