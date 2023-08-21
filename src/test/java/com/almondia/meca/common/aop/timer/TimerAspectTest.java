@@ -13,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import com.almondia.meca.common.domain.vo.Id;
 import com.almondia.meca.helper.MemberTestHelper;
 import com.almondia.meca.member.application.MemberService;
+import com.almondia.meca.member.controller.MemberController;
 import com.almondia.meca.member.domain.repository.MemberRepository;
 
 import ch.qos.logback.classic.Logger;
@@ -44,7 +45,7 @@ class TimerAspectTest {
 		ListAppender<ILoggingEvent> appender = new ListAppender<>();
 		appender.start();
 		LoggerContext loggerContext = (LoggerContext)LoggerFactory.getILoggerFactory();
-		Logger targetLogger = loggerContext.getLogger(MemberService.class);
+		Logger targetLogger = loggerContext.getLogger(MemberController.class);
 		targetLogger.addAppender(appender);
 		List<ILoggingEvent> logEvents = appender.list;
 		for (ILoggingEvent logEvent : logEvents) {
