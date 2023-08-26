@@ -49,7 +49,7 @@ public class WrapperSerializer extends StdSerializer<Wrapper> {
 				gen.writeString(o.toString());
 			}
 			if (o instanceof Tsid) {
-				gen.writeString(o.toString());
+				gen.writeString(((Tsid)o).toLowerCase());
 			}
 			if (o instanceof Double) {
 				gen.writeNumber((double)o);

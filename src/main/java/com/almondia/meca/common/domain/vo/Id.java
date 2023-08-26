@@ -38,7 +38,7 @@ public class Id implements Serializable, Wrapper, Comparable<Id> {
 
 	@Override
 	public String toString() {
-		return tsid.toString();
+		return tsid.toLowerCase();
 	}
 
 	@Override
