@@ -1,13 +1,12 @@
 package com.almondia.meca.common.domain.vo;
 
 import java.io.Serializable;
-import java.util.UUID;
 
 import javax.persistence.Embeddable;
 
 import com.almondia.meca.common.configuration.jackson.module.wrapper.Wrapper;
-import com.github.f4b6a3.ulid.Ulid;
-import com.github.f4b6a3.ulid.UlidCreator;
+import com.github.f4b6a3.tsid.Tsid;
+import com.github.f4b6a3.tsid.TsidCreator;
 
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
@@ -22,19 +21,19 @@ public class Id implements Serializable, Wrapper, Comparable<Id> {
 
 	private static final long serialVersionUID = -2772995063676474658L;
 
-	private UUID tsid;
+	private Tsid tsid;
 
-	public Id(UUID tsid) {
+	public Id(Tsid tsid) {
 		this.tsid = tsid;
 	}
 
 	public Id(String tsid) {
-		this.tsid = UUID.fromString(tsid);
+		this.tsid = Tsid.from(tsid);
 	}
 
 	public static Id generateNextId() {
-		Ulid ulid = UlidCreator.getMonotonicUlid();
-		return new Id(ulid.toUuid());
+		Tsid tsid = TsidCreator.getTsid();
+		return new Id(tsid);
 	}
 
 	@Override
