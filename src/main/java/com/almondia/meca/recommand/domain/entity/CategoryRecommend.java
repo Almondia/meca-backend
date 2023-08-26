@@ -21,15 +21,15 @@ import lombok.experimental.SuperBuilder;
 public class CategoryRecommend extends DateEntity {
 
 	@EmbeddedId
-	@AttributeOverride(name = "uuid", column = @Column(name = "category_recommend_id", nullable = false, length = 16))
+	@AttributeOverride(name = "tsid", column = @Column(name = "category_recommend_id", nullable = false, length = 16))
 	private Id categoryRecommendId;
 
 	@Embedded
-	@AttributeOverride(name = "uuid", column = @Column(name = "category_id", nullable = false, length = 16))
+	@AttributeOverride(name = "tsid", column = @Column(name = "category_id", nullable = false, length = 16))
 	private Id categoryId;
 
 	@Embedded
-	@AttributeOverride(name = "uuid", column = @Column(name = "recommend__member_id", nullable = false, length = 16))
+	@AttributeOverride(name = "tsid", column = @Column(name = "recommend__member_id", nullable = false, length = 16))
 	private Id recommendMemberId;
 
 	private boolean isDeleted;

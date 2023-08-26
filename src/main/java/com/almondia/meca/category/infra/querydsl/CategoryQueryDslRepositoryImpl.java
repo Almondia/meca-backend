@@ -35,8 +35,8 @@ public class CategoryQueryDslRepositoryImpl implements CategoryQueryDslRepositor
 		return jpaQueryFactory.selectFrom(category)
 			.where(isShared(shared), category.isDeleted.eq(false), dynamicCursorExpression(lastCategoryId),
 				containTitle(categorySearchOption.getContainTitle()))
-			.orderBy(category.categoryId.uuid.desc())
-			.limit(pageSize + 1)
+			.orderBy(category.categoryId.tsid.desc())
+			.limit(pageSize + 1L)
 			.fetch();
 	}
 
@@ -46,8 +46,8 @@ public class CategoryQueryDslRepositoryImpl implements CategoryQueryDslRepositor
 		return jpaQueryFactory.selectFrom(category)
 			.where(isShared(shared), category.memberId.eq(memberId), category.isDeleted.eq(false),
 				dynamicCursorExpression(lastCategoryId), containTitle(categorySearchOption.getContainTitle()))
-			.orderBy(category.categoryId.uuid.desc())
-			.limit(pageSize + 1)
+			.orderBy(category.categoryId.tsid.desc())
+			.limit(pageSize + 1L)
 			.fetch();
 	}
 
@@ -61,8 +61,8 @@ public class CategoryQueryDslRepositoryImpl implements CategoryQueryDslRepositor
 				categoryRecommend.recommendMemberId.eq(IdWhoRecommend))
 			.where(category.isShared.eq(true), category.isDeleted.eq(false), dynamicCursorExpression(lastCategoryId),
 				containTitle(categorySearchOption.getContainTitle()))
-			.orderBy(category.categoryId.uuid.desc())
-			.limit(pageSize + 1)
+			.orderBy(category.categoryId.tsid.desc())
+			.limit(pageSize + 1L)
 			.fetch();
 	}
 
@@ -73,14 +73,13 @@ public class CategoryQueryDslRepositoryImpl implements CategoryQueryDslRepositor
 	private BooleanExpression isShared(Boolean shared) {
 		if (shared == null) {
 			return null;
-		}
-		if (shared) {
+		} else if (shared) {
 			return category.isShared.eq(true);
 		}
 		return category.isShared.eq(false);
 	}
 
 	private BooleanExpression dynamicCursorExpression(Id lastCategoryId) {
-		return lastCategoryId == null ? null : category.categoryId.uuid.loe(lastCategoryId.getUuid());
+		return lastCategoryId == null ? null : category.categoryId.tsid.loe(lastCategoryId.getTsid());
 	}
 }

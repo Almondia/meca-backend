@@ -52,7 +52,7 @@ public class CardQueryDslRepositoryImpl implements CardQueryDslRepository {
 				card.isDeleted.eq(false),
 				lessOrEqCardId(lastCardId)
 			)
-			.orderBy(card.cardId.uuid.desc())
+			.orderBy(card.cardId.tsid.desc())
 			.limit(pageSize + 1L)
 			.fetch()
 			.stream()
@@ -165,7 +165,7 @@ public class CardQueryDslRepositoryImpl implements CardQueryDslRepository {
 
 	@Nullable
 	private BooleanExpression lessOrEqCardId(@Nullable Id lastCardId) {
-		return lastCardId == null ? null : card.cardId.uuid.loe(lastCardId.getUuid());
+		return lastCardId == null ? null : card.cardId.tsid.loe(lastCardId.getTsid());
 	}
 
 	@Nullable

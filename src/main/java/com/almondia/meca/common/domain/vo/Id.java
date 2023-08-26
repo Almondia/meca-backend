@@ -22,14 +22,14 @@ public class Id implements Serializable, Wrapper, Comparable<Id> {
 
 	private static final long serialVersionUID = -2772995063676474658L;
 
-	private UUID uuid;
+	private UUID tsid;
 
-	public Id(UUID uuid) {
-		this.uuid = uuid;
+	public Id(UUID tsid) {
+		this.tsid = tsid;
 	}
 
-	public Id(String uuid) {
-		this.uuid = UUID.fromString(uuid);
+	public Id(String tsid) {
+		this.tsid = UUID.fromString(tsid);
 	}
 
 	public static Id generateNextId() {
@@ -39,11 +39,11 @@ public class Id implements Serializable, Wrapper, Comparable<Id> {
 
 	@Override
 	public String toString() {
-		return uuid.toString();
+		return tsid.toString();
 	}
 
 	@Override
 	public int compareTo(Id o) {
-		return this.uuid.compareTo(o.uuid);
+		return this.tsid.compareTo(o.tsid);
 	}
 }
