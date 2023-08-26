@@ -23,7 +23,7 @@ import lombok.experimental.SuperBuilder;
 public class Category extends DateEntity {
 
 	@EmbeddedId
-	@AttributeOverride(name = "uuid", column = @Column(name = "category_id", nullable = false, length = 16))
+	@AttributeOverride(name = "tsid", column = @Column(name = "category_id", nullable = false))
 	private Id categoryId;
 
 	@Embedded
@@ -31,7 +31,7 @@ public class Category extends DateEntity {
 	private Title title;
 
 	@Embedded
-	@AttributeOverride(name = "uuid", column = @Column(name = "member_id", nullable = false, length = 16))
+	@AttributeOverride(name = "tsid", column = @Column(name = "member_id", nullable = false))
 	private Id memberId;
 
 	@Embedded

@@ -45,7 +45,7 @@ public class CardHistoryQueryDslRepositoryImpl implements CardHistoryQueryDslRep
 			.on(cardHistory.solvedMemberId.eq(member.memberId), member.isDeleted.eq(false))
 			.where(cardHistory.isDeleted.eq(false), cardHistory.cardId.eq(cardId),
 				lessOrEqCardHistoryId(lastCardHistoryId))
-			.orderBy(cardHistory.cardHistoryId.uuid.desc())
+			.orderBy(cardHistory.cardHistoryId.tsid.desc())
 			.limit(pageSize + 1L)
 			.fetch();
 
@@ -68,7 +68,7 @@ public class CardHistoryQueryDslRepositoryImpl implements CardHistoryQueryDslRep
 			.on(cardHistory.solvedMemberId.eq(member.memberId), member.isDeleted.eq(false))
 			.where(cardHistory.solvedMemberId.eq(solvedMemberId), cardHistory.isDeleted.eq(false),
 				lessOrEqCardHistoryId(lastCardHistoryId))
-			.orderBy(cardHistory.cardHistoryId.uuid.desc())
+			.orderBy(cardHistory.cardHistoryId.tsid.desc())
 			.limit(pageSize + 1L)
 			.fetch();
 
@@ -178,6 +178,6 @@ public class CardHistoryQueryDslRepositoryImpl implements CardHistoryQueryDslRep
 
 	@Nullable
 	private BooleanExpression lessOrEqCardHistoryId(@Nullable Id lastCardHistoryId) {
-		return lastCardHistoryId == null ? null : cardHistory.cardHistoryId.uuid.loe(lastCardHistoryId.getUuid());
+		return lastCardHistoryId == null ? null : cardHistory.cardHistoryId.tsid.loe(lastCardHistoryId.getTsid());
 	}
 }

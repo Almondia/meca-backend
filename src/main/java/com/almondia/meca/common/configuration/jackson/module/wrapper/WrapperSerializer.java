@@ -9,6 +9,7 @@ import java.util.stream.Stream;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
+import com.github.f4b6a3.tsid.Tsid;
 
 public class WrapperSerializer extends StdSerializer<Wrapper> {
 
@@ -46,6 +47,9 @@ public class WrapperSerializer extends StdSerializer<Wrapper> {
 			}
 			if (o instanceof UUID) {
 				gen.writeString(o.toString());
+			}
+			if (o instanceof Tsid) {
+				gen.writeString(((Tsid)o).toLowerCase());
 			}
 			if (o instanceof Double) {
 				gen.writeNumber((double)o);

@@ -37,7 +37,7 @@ import lombok.experimental.SuperBuilder;
 public abstract class Card extends DateEntity {
 
 	@EmbeddedId
-	@AttributeOverride(name = "uuid", column = @Column(name = "card_id", nullable = false, length = 16))
+	@AttributeOverride(name = "tsid", column = @Column(name = "card_id", nullable = false))
 	private Id cardId;
 
 	@Embedded
@@ -45,11 +45,11 @@ public abstract class Card extends DateEntity {
 	private Title title;
 
 	@Embedded
-	@AttributeOverride(name = "uuid", column = @Column(name = "category_id", nullable = false, length = 16))
+	@AttributeOverride(name = "tsid", column = @Column(name = "category_id", nullable = false))
 	private Id categoryId;
 
 	@Embedded
-	@AttributeOverride(name = "uuid", column = @Column(name = "member_id", nullable = false, length = 16))
+	@AttributeOverride(name = "tsid", column = @Column(name = "member_id", nullable = false))
 	private Id memberId;
 
 	@Column(name = "images", length = 1020)

@@ -19,7 +19,7 @@ import com.almondia.meca.member.domain.vo.Role;
 @WithSecurityContext(factory = WithMockMemberSecurityContextFactory.class)
 public @interface WithMockMember {
 
-	String id() default "2825b9a9-d89a-4301-99b5-a7668a5b5fff";
+	String id() default "0dd59b764xr49";
 
 	String email() default "helloworld@naver.com";
 

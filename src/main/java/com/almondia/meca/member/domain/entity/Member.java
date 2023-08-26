@@ -28,7 +28,7 @@ import lombok.experimental.SuperBuilder;
 public class Member extends DateEntity {
 
 	@EmbeddedId
-	@AttributeOverride(name = "uuid", column = @Column(name = "member_id", nullable = false, length = 16))
+	@AttributeOverride(name = "tsid", column = @Column(name = "member_id", nullable = false))
 	private Id memberId;
 
 	@Column(name = "oauth_id", nullable = false, unique = true)

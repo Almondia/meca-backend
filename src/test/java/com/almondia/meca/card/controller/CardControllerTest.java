@@ -391,7 +391,7 @@ class CardControllerTest {
 			CardCursorPageWithCategory cardCursorPageWithCategory = new CardCursorPageWithCategory(cursor);
 			cardCursorPageWithCategory.setCategory(Category.builder()
 				.categoryId(Id.generateNextId())
-				.memberId(new Id("2825b9a9-d89a-4301-99b5-a7668a5b5fff"))
+				.memberId(new Id("0DD59B764XR49"))
 				.thumbnail(Image.of("thumbnail"))
 				.createdAt(LocalDateTime.now())
 				.modifiedAt(LocalDateTime.now())
@@ -399,7 +399,7 @@ class CardControllerTest {
 				.title(new com.almondia.meca.category.domain.vo.Title("title"))
 				.build());
 			cardCursorPageWithCategory.setMember(Member.builder()
-				.memberId(new Id("2825b9a9-d89a-4301-99b5-a7668a5b5fff"))
+				.memberId(new Id("0DD59B764XR49"))
 				.email(new Email("helloworld@naver.com"))
 				.name(Name.of("hello"))
 				.oAuthType(OAuthType.GOOGLE)
@@ -484,7 +484,7 @@ class CardControllerTest {
 			CardCursorPageWithCategory cardCursorPageWithCategory = new CardCursorPageWithCategory(cursor);
 			cardCursorPageWithCategory.setCategory(Category.builder()
 				.categoryId(Id.generateNextId())
-				.memberId(new Id("2825b9a9-d89a-4301-99b5-a7668a5b5fff"))
+				.memberId(new Id("0DD59B764XR49"))
 				.thumbnail(Image.of("thumbnail"))
 				.createdAt(LocalDateTime.now())
 				.modifiedAt(LocalDateTime.now())
@@ -492,7 +492,7 @@ class CardControllerTest {
 				.title(new com.almondia.meca.category.domain.vo.Title("title"))
 				.build());
 			cardCursorPageWithCategory.setMember(Member.builder()
-				.memberId(new Id("2825b9a9-d89a-4301-99b5-a7668a5b5fff"))
+				.memberId(new Id("0DD59B764XR49"))
 				.email(new Email("helloworld@naver.com"))
 				.name(Name.of("hello"))
 				.oAuthType(OAuthType.GOOGLE)

@@ -10,7 +10,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-aop'
-    
+
     // oauth client
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 
@@ -51,9 +51,11 @@ dependencies {
 
     // webflux
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    
 
-    // ulid-creator
-    implementation group: 'com.github.f4b6a3', name: 'ulid-creator', version: '5.1.0'
+    // tsid-creator
+    implementation group: 'com.github.f4b6a3', name: 'tsid-creator', version: '5.2.4'
+
 
     // javax.annotation.meta.When support (JSR305)
     implementation 'com.google.code.findbugs:jsr305:3.0.2'

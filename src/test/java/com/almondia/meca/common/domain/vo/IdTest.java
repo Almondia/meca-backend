@@ -30,7 +30,6 @@ class IdTest {
 	void serializeTest() throws JsonProcessingException {
 		Id id = Id.generateNextId();
 		String value = objectMapper.writeValueAsString(id);
-		System.out.println(value);
 		assertThat(value).isEqualTo("\"" + id + "\"");
 	}
 
