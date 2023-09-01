@@ -28,28 +28,28 @@ class MultiChoiceQuestionTest {
 	@Test
 	@DisplayName("퀴즈 문제의 선택지는 5개 이하로 입력해야 합니다")
 	void shouldNotMoreFiveSelectViewTest() {
-		String value = "[\"<p>DDOS 공격이 아닌것은?</p>\",\"Trin00\",\"TFN\",\"TFN2k\",\"Stacheldraht\",\"TFN3k\",\"TFN4k\"]";
+		String value = "[\\\"<p>DDOS 공격이 아닌것은? \"background-color:rgb(243,243,243);\"</p>\\\",\\\"Trin00\\\",\\\"TFN\\\",\\\"TFN2k\\\",\\\"Stacheldraht\\\",\\\"TFN3k\\\",\\\"TFN4k\\\"]";
 		assertThatThrownBy(() -> MultiChoiceQuestion.of(value))
 			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("퀴즈 문제의 선택지는 1개 이상 5개 이하로 입력해야 합니다");
+			.hasMessage("퀴즈 문제의 선택지는 5개를 초과할 수 없습니다");
 	}
 
 	@Test
 	@DisplayName("퀴즈 문제의 선택지는 1개 이상으로 입력해야 합니다")
 	void shouldMoreOneSelectViewTest() {
-		String value = "[\"<p>DDOS 공격이 아닌것은?</p>\"]";
+		String value = "[\\\"<p>DDOS 공격이 아닌것은? \"background-color:rgb(243,243,243);\"</p>\\\"]";
 		assertThatThrownBy(() -> MultiChoiceQuestion.of(value))
 			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("퀴즈 문제의 선택지는 1개 이상 5개 이하로 입력해야 합니다");
+			.hasMessage("퀴즈 문제의 선택지는 1개 이상이어야 합니다");
 	}
 
 	@Test
 	@DisplayName("퀴즈 문제의 선택지는 100자 이하로 입력해야 합니다")
 	void shouldNotMore100QuizStringLengthTest() {
-		String value = "[\"<p>DDOS 공격이 아닌것은?</p>\"]" + ",\"" + "a".repeat(101) + "\"" + "]";
+		String value = "[\\\"<p>DDOS 공격이 아닌것은?</p>\\\"" + ",\\\"" + "a".repeat(101) + "\\\"" + "]";
 		assertThatThrownBy(() -> MultiChoiceQuestion.of(value))
 			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("퀴즈 문제의 선택지는 100자 이하로 입력해야 합니다");
+			.hasMessage("퀴즈 문제의 선택지는 100자를 초과할 수 없습니다");
 	}
 
 	@Test
