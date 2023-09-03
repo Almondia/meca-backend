@@ -99,7 +99,7 @@ class CardServiceTest {
 			assertThat(all).isNotEmpty();
 			assertThat(all.get(0))
 				.hasFieldOrPropertyWithValue("oxAnswer", OxAnswer.O)
-				.hasFieldOrPropertyWithValue("question", "[\"<p>question</p>\",\"2\",\"3\",\"4\"]")
+				.hasFieldOrPropertyWithValue("question", "[\\\"<p>question</p>\\\",\\\"2\\\",\\\"3\\\",\\\"4\\\"]")
 				.hasFieldOrPropertyWithValue("title", new Title("title"));
 		}
 
@@ -113,7 +113,7 @@ class CardServiceTest {
 			assertThat(all).isNotEmpty();
 			assertThat(all.get(0))
 				.hasFieldOrPropertyWithValue("keywordAnswer", new KeywordAnswer("asdf"))
-				.hasFieldOrPropertyWithValue("question", "[\"<p>question</p>\",\"2\",\"3\",\"4\"]")
+				.hasFieldOrPropertyWithValue("question", "[\\\"<p>question</p>\\\",\\\"2\\\",\\\"3\\\",\\\"4\\\"]")
 				.hasFieldOrPropertyWithValue("title", new Title("title"));
 		}
 
@@ -128,7 +128,7 @@ class CardServiceTest {
 			assertThat(all).isNotEmpty();
 			assertThat(all.get(0))
 				.hasFieldOrPropertyWithValue("multiChoiceAnswer", new MultiChoiceAnswer(1))
-				.hasFieldOrPropertyWithValue("question", "[\"<p>question</p>\",\"2\",\"3\",\"4\"]")
+				.hasFieldOrPropertyWithValue("question", "[\\\"<p>question</p>\\\",\\\"2\\\",\\\"3\\\",\\\"4\\\"]")
 				.hasFieldOrPropertyWithValue("title", new Title("title"));
 		}
 
@@ -148,7 +148,7 @@ class CardServiceTest {
 		private SaveCardRequestDto.SaveCardRequestDtoBuilder makeSaveCardRequest() {
 			return SaveCardRequestDto.builder()
 				.title(new Title("title"))
-				.question("[\"<p>question</p>\",\"2\",\"3\",\"4\"]")
+				.question("[\\\"<p>question</p>\\\",\\\"2\\\",\\\"3\\\",\\\"4\\\"]")
 				.categoryId(Id.generateNextId())
 				.description(new Description("hello"));
 		}
