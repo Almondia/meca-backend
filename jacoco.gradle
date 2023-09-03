@@ -21,6 +21,10 @@ jacocoTestCoverageVerification {
                 value = 'COVEREDRATIO'
                 minimum = 0.0
             }
+
+            excludes = [
+                    '**/MecaApplication*'
+            ]
         }
     }
 }
