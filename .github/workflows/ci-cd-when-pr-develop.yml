@@ -38,6 +38,11 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew clean build
 
+      - name: Report to CodeCov
+          uses: codecov/codecov-action@v3
+          env:
+            CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
       - name: Login to DockerHub
         uses: docker/login-action@v1
         with:
