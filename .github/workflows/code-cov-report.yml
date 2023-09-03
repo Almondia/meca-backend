@@ -1,0 +1,34 @@
+name: Code Coverage Report
+
+on:
+  push:
+    branches:
+      - develop
+      - main
+    pull_request:
+      branches:
+        - develop
+        - main
+
+  jobs:
+    code-coverage:
+      runs-on: ubuntu-latest
+
+      steps:
+        - uses: actions/checkout@v2
+
+        - name: Set up JDK 11
+          uses: actions/setup-java@v2
+          with:
+            java-version: 11
+
+        - name: Grant execute permission for gradlew
+          run: chmod +x gradlew
+
+        - name: Test with Gradle
+          run: ./gradlew build jacocoTestReport
+
+        - name: Report to CodeCov
+          uses: codecov/codecov-action@v3
+          env:
+            CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
