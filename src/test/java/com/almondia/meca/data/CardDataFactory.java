@@ -76,7 +76,8 @@ public class CardDataFactory implements TestDataFactory<Card> {
 				.cardType(CardType.KEYWORD)
 				.title(new Title(generator.generate(10)))
 				.categoryId(categoryId)
-				.question(MultiChoiceQuestion.of("[" + "\\\"" + generator.generate(30) + "\\\"" + ",\\\"1\\\"" + "]"))
+				.question(
+					MultiChoiceQuestion.of("[\"<p>" + generator.generate(30) + "</p>\",\"1\",\"2\",\"3\",\"4\",\"5\"]"))
 				.memberId(memberId)
 				.images(List.of(new Image("A"), new Image("B"), new Image("C")))
 				.isDeleted(false)

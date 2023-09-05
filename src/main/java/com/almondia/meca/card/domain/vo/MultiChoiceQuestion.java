@@ -1,12 +1,10 @@
 package com.almondia.meca.card.domain.vo;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import javax.persistence.Embeddable;
 import javax.persistence.Lob;
+
+import org.json.JSONArray;
+import org.json.JSONException;
 
 import com.almondia.meca.common.configuration.jackson.module.wrapper.Wrapper;
 
@@ -18,12 +16,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class MultiChoiceQuestion implements Wrapper {
 
-	private static final Pattern MULTI_CHOICE_QUESTION_PATTERN_1 = Pattern.compile("^\\[.*]$");
-	private static final Pattern MULTI_CHOICE_QUESTION_PATTERN_2 = Pattern.compile("\\\\\"(.*?)\\\\\"");
 	private static final int MAX_CHOICE_COUNT = 5;
-	private static final int MIN_CHOICE_COUNT = 1;
+	private static final int MIN_CHOICE_COUNT = 2;
 	private static final int MAX_LENGTH_PER_VIEW_QUESTION = 100;
-
 	private static final int MAX_LENGTH = 51_000;
 
 	@Lob
@@ -44,33 +39,42 @@ public class MultiChoiceQuestion implements Wrapper {
 	}
 
 	private void validateQuestion(String value) {
-		if (value.isBlank()) {
-			throw new IllegalArgumentException("퀴즈 문제에 비우거나 공백만 입력해서는 안됩니다");
+		validateStringLength(value);
+		JSONArray jsonArray;
+		try {
+			jsonArray = new JSONArray(value);
+		} catch (JSONException e) {
+			throw new IllegalArgumentException("JSON 형식이 아닙니다");
 		}
+		validateChoiceLength(jsonArray);
+		validateViewLength(jsonArray);
+	}
+
+	private void validateStringLength(String value) {
 		if (value.length() > MAX_LENGTH) {
-			throw new IllegalArgumentException(String.format("%d를 초과해서 입력하셨습니다", MAX_LENGTH));
+			throw new IllegalArgumentException("최대 " + MAX_LENGTH + "자까지 입력 가능합니다");
 		}
-		if (!MULTI_CHOICE_QUESTION_PATTERN_1.matcher(value).matches()) {
-			throw new IllegalArgumentException("퀴즈 문제는 [로 시작해서 ]로 끝나야 합니다");
+	}
+
+	private void validateChoiceLength(JSONArray jsonArray) {
+		int choiceViewWithoutQuestionLength = jsonArray.length() - 1;
+		if (choiceViewWithoutQuestionLength < MIN_CHOICE_COUNT) {
+			throw new IllegalArgumentException("선택지는 최소 " + MIN_CHOICE_COUNT + "개 이상이어야 합니다");
 		}
-		Matcher matcher = MULTI_CHOICE_QUESTION_PATTERN_2.matcher(value);
-		List<String> choices = new ArrayList<>();
-		while (matcher.find()) {
-			choices.add(matcher.group());
+		if (choiceViewWithoutQuestionLength > MAX_CHOICE_COUNT) {
+			throw new IllegalArgumentException("선택지는 최대 " + MAX_CHOICE_COUNT + "개 이하여야 합니다");
 		}
-		for (int i = 1; i < choices.size(); i++) {
-			String choice = choices.get(i);
-			if (choice.length() > MAX_LENGTH_PER_VIEW_QUESTION) {
-				throw new IllegalArgumentException(
-					String.format("퀴즈 문제의 선택지는 %d자를 초과할 수 없습니다", MAX_LENGTH_PER_VIEW_QUESTION));
+	}
+
+	private void validateViewLength(JSONArray jsonArray) {
+		for (int i = 1; i < jsonArray.length(); ++i) {
+			String view = jsonArray.getString(i);
+			if (view.length() > MAX_LENGTH_PER_VIEW_QUESTION) {
+				throw new IllegalArgumentException("보기는 최대 " + MAX_LENGTH_PER_VIEW_QUESTION + "자까지 입력 가능합니다");
+			}
+			if (view.isBlank()) {
+				throw new IllegalArgumentException("보기는 비어 있을 수 없습니다");
 			}
 		}
-		if (choices.size() - 1 > MAX_CHOICE_COUNT) {
-			throw new IllegalArgumentException(String.format("퀴즈 문제의 선택지는 %d개를 초과할 수 없습니다", MAX_CHOICE_COUNT));
-		}
-		if (choices.size() - 1 < MIN_CHOICE_COUNT) {
-			throw new IllegalArgumentException(String.format("퀴즈 문제의 선택지는 %d개 이상이어야 합니다", MIN_CHOICE_COUNT));
-		}
-
 	}
 }
