@@ -57,11 +57,11 @@ public class MultiChoiceQuestion implements Wrapper {
 	}
 
 	private void validateChoiceLength(JSONArray jsonArray) {
-		int choice = jsonArray.length() - 1;
-		if (choice < MIN_CHOICE_COUNT) {
+		int choiceViewWithoutQuestionLength = jsonArray.length() - 1;
+		if (choiceViewWithoutQuestionLength < MIN_CHOICE_COUNT) {
 			throw new IllegalArgumentException("선택지는 최소 " + MIN_CHOICE_COUNT + "개 이상이어야 합니다");
 		}
-		if (choice > MAX_CHOICE_COUNT) {
+		if (choiceViewWithoutQuestionLength > MAX_CHOICE_COUNT) {
 			throw new IllegalArgumentException("선택지는 최대 " + MAX_CHOICE_COUNT + "개 이하여야 합니다");
 		}
 	}
