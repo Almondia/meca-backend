@@ -67,7 +67,7 @@ public class MultiChoiceQuestion implements Wrapper {
 	}
 
 	private void validateViewLength(JSONArray jsonArray) {
-		for (int i = 0; i < jsonArray.length(); ++i) {
+		for (int i = 1; i < jsonArray.length(); ++i) {
 			String view = jsonArray.getString(i);
 			if (view.length() > MAX_LENGTH_PER_VIEW_QUESTION) {
 				throw new IllegalArgumentException("보기는 최대 " + MAX_LENGTH_PER_VIEW_QUESTION + "자까지 입력 가능합니다");
