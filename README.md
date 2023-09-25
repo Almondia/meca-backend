@@ -32,5 +32,39 @@
 
 <br>
 
+### 📝 기술 스택
 
-
+<table cellspacing="0" cellpadding="0">
+<tr>
+ <td>
+  <img src="https://img.shields.io/badge/Java-007396?style=for-the-badge&logo=OpenJdk&logoColor=white"/>&nbsp;
+  <img src="https://img.shields.io/badge/Spring Boot-6DB33F?style=for-the-badge&logo=SpringBoot&logoColor=white"/>&nbsp;
+  <img src="https://img.shields.io/badge/Spring Security-6DB33F?style=for-the-badge&logo=SpringSecurity&logoColor=white"/>&nbsp;
+  <img src="https://img.shields.io/badge/Spring Data Jpa-FE9A2E?style=for-the-badge&logo=Jpa&logoColor=white"/>&nbsp;
+  <img src="https://img.shields.io/badge/QueryDsl-000000?style=for-the-badge&logo=QueryDsl&logoColor=white"/>&nbsp;
+ </td>
+</tr>
+<tr>
+ <td>
+  <img src="https://img.shields.io/badge/Oracle-F80000?style=for-the-badge&logo=Oracle&logoColor=white"/>&nbsp;
+  <img src="https://img.shields.io/badge/Mysql-4479A1?style=for-the-badge&logo=Mysql&logoColor=white"/>&nbsp;
+  <img src="https://img.shields.io/badge/h2-6E6E6E?style=for-the-badge&logo=h2&logoColor=white"/> &nbsp;
+ </td>
+</tr>
+<tr>
+ <td>
+   <img src="https://img.shields.io/badge/Junit-25A162?style=for-the-badge&logo=Junit5&logoColor=white"/> &nbsp;
+   <img src="https://img.shields.io/badge/Postman-FF6C37?style=for-the-badge&logo=Postman&logoColor=white"/> &nbsp;
+</tr>
+<tr>
+</tr>
+<tr>
+ <td>
+    <img src="https://img.shields.io/badge/GitHub Actions-2088FF?style=for-the-badge&logo=GitHub Actions&logoColor=white"/>&nbsp;
+    <img src="https://img.shields.io/badge/docker-2496ED?style=for-the-badge&logo=docker&logoColor=white"/>&nbsp;
+    <img src="https://img.shields.io/badge/nginx-009639?style=for-the-badge&logo=nginx&logoColor=white"/>&nbsp;
+    <img src="https://img.shields.io/badge/aws-232F3E?style=for-the-badge&logo=amazon aws&logoColor=white"/>&nbsp;
+    <img src="https://img.shields.io/badge/Oracle Cloud Instance-F80000?style=for-the-badge&logo=Oracle Cloud Instance&logoColor=white"/>&nbsp;
+ </td>
+</tr>
+</table>
