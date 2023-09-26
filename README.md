@@ -72,7 +72,7 @@
 </tr>
 </table>
 
-### ERD
+### 📝 ERD
 
 ![memory card (1)](https://github.com/Almondia/meca-backend/assets/39326175/7d9b8ecc-ea71-4e49-b27e-d551579f604d)
 
