@@ -72,6 +72,10 @@
 </tr>
 </table>
 
+### ERD
+
+![memory card (1)](https://github.com/Almondia/meca-backend/assets/39326175/7d9b8ecc-ea71-4e49-b27e-d551579f604d)
+
 ### 📝 주요 기능 소개
 
 **내 카테고리 관리**
