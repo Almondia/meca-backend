@@ -1,5 +1,7 @@
 ## Meca
 
+[![codecov](https://codecov.io/gh/Almondia/meca-backend/graph/badge.svg?token=DDX52WIOZN)](https://codecov.io/gh/Almondia/meca-backend)
+
 <br>
 
 ### 📝 개요
