@@ -14,6 +14,7 @@ import com.almondia.meca.auth.oauth.infra.attribute.OAuth2UserAttribute;
 import com.almondia.meca.auth.oauth.service.Oauth2Service;
 import com.almondia.meca.member.application.MemberService;
 import com.almondia.meca.member.domain.entity.Member;
+import com.almondia.meca.member.domain.repository.MemberRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +27,7 @@ public class OauthController {
 
 	private final Oauth2Service oauth2Service;
 	private final MemberService memberService;
+	private final MemberRepository memberRepository;
 	private final JwtTokenService jwtTokenService;
 
 	@PostMapping("/login/{registrationId}")
@@ -35,7 +37,8 @@ public class OauthController {
 		HttpStatus statusResponse = HttpStatus.OK;
 		OAuth2UserAttribute oauth2UserAttribute = oauth2Service.requestUserInfo(registrationId,
 			authorizationCode);
-		Member member = memberService.findMemberByOAuthId(oauth2UserAttribute.getOAuthId());
+		Member member = memberRepository.findByOauthId(oauth2UserAttribute.getOAuthId())
+			.orElse(null);
 		if (member == null) {
 			member = memberService.save(oauth2UserAttribute);
 			statusResponse = HttpStatus.CREATED;
