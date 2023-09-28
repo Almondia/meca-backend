@@ -16,4 +16,11 @@ class RoleTest {
 		Role role = Role.NONE;
 		assertThat(role.hasRole()).isFalse();
 	}
+
+	@Test
+	@DisplayName("Role이 None이 아닌 경우 hasRole()은 True를 리턴한다")
+	void shouldReturnTrueIfRoleIsNotNone() {
+		Role role = Role.ADMIN;
+		assertThat(role.hasRole()).isTrue();
+	}
 }
