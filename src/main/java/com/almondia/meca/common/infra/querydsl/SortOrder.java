@@ -2,6 +2,9 @@ package com.almondia.meca.common.infra.querydsl;
 
 import java.util.Arrays;
 
+import lombok.ToString;
+
+@ToString
 public enum SortOrder {
 	ASC("asc"),
 	DESC("desc");
@@ -17,12 +20,5 @@ public enum SortOrder {
 			.filter(sortOrder -> value.equalsIgnoreCase(sortOrder.details))
 			.findAny()
 			.orElseThrow(() -> new IllegalArgumentException("asc, desc를 입력해주세요"));
-	}
-
-	@Override
-	public String toString() {
-		return "SortOrder{" +
-			"details='" + details + '\'' +
-			'}';
 	}
 }
