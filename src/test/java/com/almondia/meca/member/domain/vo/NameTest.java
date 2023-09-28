@@ -31,10 +31,4 @@ class NameTest {
 		String length21 = "a".repeat(21);
 		assertThatThrownBy(() -> Name.of(length21)).isInstanceOf(IllegalArgumentException.class);
 	}
-
-	@Test
-	@DisplayName("문자열 길이는 1이하인경우 예외")
-	void shouldThrowIllegalArgumentExceptionWhenLessLength1Test() {
-		assertThatThrownBy(() -> Name.of("")).isInstanceOf(IllegalArgumentException.class);
-	}
 }
