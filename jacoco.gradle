@@ -9,7 +9,8 @@ jacocoTestReport {
             fileTree(dir: it,
                     exclude: [
                             '**/MecaApplication.*',
-                            '**/Q*.*'
+                            '**/Q*.*',
+                            '**/s3/**'
                     ])
         }))
     }
