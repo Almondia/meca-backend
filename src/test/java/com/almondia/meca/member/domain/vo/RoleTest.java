@@ -12,15 +12,22 @@ class RoleTest {
 
 	@Test
 	@DisplayName("Role이 None인 경우 hasRole()은 False를 리턴한다")
-	void shouldReturnFalseIfRoleIsNotNone() {
+	void shouldReturnFalseIfRoleIsNotNoneTest() {
 		Role role = Role.NONE;
 		assertThat(role.hasRole()).isFalse();
 	}
 
 	@Test
-	@DisplayName("Role이 None이 아닌 경우 hasRole()은 True를 리턴한다")
-	void shouldReturnTrueIfRoleIsNotNone() {
+	@DisplayName("Role이 ADMIN hasRole()은 True를 리턴한다")
+	void shouldReturnTrueIfRoleIsAdminTest() {
 		Role role = Role.ADMIN;
+		assertThat(role.hasRole()).isTrue();
+	}
+
+	@Test
+	@DisplayName("Role이 User인 경우 hasRole()은 True를 리턴한다")
+	void shouldReturnTrueIfRoleIsUserTest() {
+		Role role = Role.USER;
 		assertThat(role.hasRole()).isTrue();
 	}
 }
