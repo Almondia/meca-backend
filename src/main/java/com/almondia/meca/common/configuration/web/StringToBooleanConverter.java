@@ -1,8 +1,7 @@
 package com.almondia.meca.common.configuration.web;
 
 import org.springframework.core.convert.converter.Converter;
-
-import lombok.NonNull;
+import org.springframework.lang.NonNull;
 
 public class StringToBooleanConverter implements Converter<String, Boolean> {
 

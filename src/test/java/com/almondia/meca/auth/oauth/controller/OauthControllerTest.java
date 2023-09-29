@@ -9,6 +9,8 @@ import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import java.util.Optional;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -35,13 +37,14 @@ import com.almondia.meca.common.configuration.security.SecurityConfiguration;
 import com.almondia.meca.common.domain.vo.Id;
 import com.almondia.meca.member.application.MemberService;
 import com.almondia.meca.member.domain.entity.Member;
+import com.almondia.meca.member.domain.repository.MemberRepository;
 import com.almondia.meca.member.domain.vo.OAuthType;
 
 /**
- *  1. 요청 성공시 AccessTokenResponseDto 속성에 담긴 값이 모두 출력되야 하며 CamelCase여야 함 성공 응답은 200
- *  2. oauth api 요청에 문제가 생긴 경우 401 응답
- *  3. oauth api 서버에 문제가 생겨 응답에 지장이 생긴 경우 500 응답
- *  4. 사용자 입력 오류시 400 반환
+ * 1. 요청 성공시 AccessTokenResponseDto 속성에 담긴 값이 모두 출력되야 하며 CamelCase여야 함 성공 응답은 200
+ * 2. oauth api 요청에 문제가 생긴 경우 401 응답
+ * 3. oauth api 서버에 문제가 생겨 응답에 지장이 생긴 경우 500 응답
+ * 4. 사용자 입력 오류시 400 반환
  */
 @WebMvcTest({OauthController.class})
 @ExtendWith({RestDocumentationExtension.class})
@@ -55,6 +58,9 @@ class OauthControllerTest {
 
 	@MockBean
 	MemberService memberService;
+
+	@MockBean
+	MemberRepository memberRepository;
 
 	@MockBean
 	JwtTokenService jwtTokenService;
@@ -102,9 +108,9 @@ class OauthControllerTest {
 	@Test
 	@DisplayName("한번 로그인한 적이 있는 경우 AccessTokenResponseDto를 출력하며 성공 응답은 200")
 	void shouldReturnAccessTokenAndStatus200WhenDuplicateLogin() throws Exception {
-		Mockito.doReturn(Member.builder().memberId(Id.generateNextId()).build())
-			.when(memberService)
-			.findMemberByOAuthId(any());
+		Mockito.doReturn(Optional.ofNullable(Member.builder().memberId(Id.generateNextId()).build()))
+			.when(memberRepository)
+			.findByOauthId(any());
 		Mockito.doReturn(OAuth2UserAttribute.of("id", "hello", "hello@naver.com", OAuthType.GOOGLE))
 			.when(oauth2Service)
 			.requestUserInfo(eq("kakao"), anyString());

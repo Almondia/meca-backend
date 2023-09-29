@@ -2,22 +2,17 @@ package com.almondia.meca.common.aop.timer;
 
 import static org.assertj.core.api.Assertions.*;
 
-import java.util.List;
-
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.almondia.meca.common.domain.vo.Id;
-import com.almondia.meca.helper.MemberTestHelper;
-import com.almondia.meca.member.application.MemberService;
-import com.almondia.meca.member.controller.MemberController;
-import com.almondia.meca.member.domain.repository.MemberRepository;
+import com.almondia.meca.category.controller.CategoryController;
 
 import ch.qos.logback.classic.Logger;
-import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.read.ListAppender;
 
@@ -25,34 +20,33 @@ import ch.qos.logback.core.read.ListAppender;
 class TimerAspectTest {
 
 	@Autowired
-	private MemberRepository memberRepository;
+	CategoryController categoryController;
 
 	@Autowired
-	private MemberService memberService;
+	TimerAspect timerAspect;
 
-	@Test
-	@DisplayName("서비스 pointCut 테스트")
-	void shouldDoWhenExecuteServiceClassMethodTest() {
-		// given
-		Id memberId = Id.generateNextId();
-		memberRepository.save(MemberTestHelper.generateMember(memberId));
-		// 로그 메시지 캡처 및 검증
+	private Logger logger;
 
-		// when
-		memberService.findMember(memberId);
+	private ListAppender<ILoggingEvent> listAppender;
 
-		// then
-		ListAppender<ILoggingEvent> appender = new ListAppender<>();
-		appender.start();
-		LoggerContext loggerContext = (LoggerContext)LoggerFactory.getILoggerFactory();
-		Logger targetLogger = loggerContext.getLogger(MemberController.class);
-		targetLogger.addAppender(appender);
-		List<ILoggingEvent> logEvents = appender.list;
-		for (ILoggingEvent logEvent : logEvents) {
-			if (logEvent.getFormattedMessage().contains("execution time")) {
-				assertThat(logEvent.getLevel()).isEqualTo(ch.qos.logback.classic.Level.INFO);
-			}
-		}
+	@BeforeEach
+	void setUp() {
+		logger = (Logger)LoggerFactory.getLogger(TimerAspect.class);
+
+		listAppender = new ListAppender<>();
+		listAppender.start();
+		logger.addAppender(listAppender);
 	}
 
+	@AfterEach
+	void tearDown() {
+		logger.detachAppender(listAppender);
+	}
+
+	@Test
+	@DisplayName("컨트롤러 pointCut 테스트")
+	void shouldDoWhenExecuteServiceClassMethodTest() {
+		categoryController.getCursorPagingCategoryShare(null, 0, null);
+		assertThat(listAppender.list).isNotEmpty().hasSizeGreaterThan(0);
+	}
 }

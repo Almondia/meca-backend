@@ -20,14 +20,15 @@ class NameTest {
 
 	@Test
 	@DisplayName("toString과 내부 객체 정보 일치")
-	void shouldReturnIntervalValueWhenToString() {
+	void shouldReturnIntervalValueWhenToStringTest() {
 		Name name = Name.of("최 번개");
 		assertThat(name.toString()).isEqualTo("최 번개");
 	}
 
 	@Test
-	@DisplayName("문자열 길이는 1 ~ 20까지 허용한다")
-	void shouldThrowIllegalArgumentExceptionWhenInvalidInput() {
-		assertThatThrownBy(() -> Name.of("a".repeat(21))).isInstanceOf(IllegalArgumentException.class);
+	@DisplayName("문자열 길이는 20이상인경우 예외")
+	void shouldThrowIllegalArgumentExceptionWhenMoreLength20Test() {
+		String length21 = "a".repeat(21);
+		assertThatThrownBy(() -> Name.of(length21)).isInstanceOf(IllegalArgumentException.class);
 	}
 }

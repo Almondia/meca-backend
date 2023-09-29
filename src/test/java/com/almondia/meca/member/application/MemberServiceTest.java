@@ -57,9 +57,20 @@ class MemberServiceTest {
 	}
 
 	@Test
+	@DisplayName("save 요청시 email이 null인 경우 null email이 db에 저장된다")
+	void shouldSaveDbTestWhenEmailIsNullTest() {
+		OAuth2UserAttribute oAuth2UserAttribute = new OAuth2UserAttribute("id", "hello", null,
+			OAuthType.NAVER);
+		memberService.save(oAuth2UserAttribute);
+		List<Member> all = memberRepository.findAll();
+		assertThat(all.get(0)).extracting("email").isNull();
+	}
+
+	@Test
 	@DisplayName("findMember 요청시 없다면 예외 발생")
 	void shouldThrowExceptionWhenNotFoundEntityTest() {
-		assertThatThrownBy(() -> memberService.findMember(Id.generateNextId()))
+		Id memberId = Id.generateNextId();
+		assertThatThrownBy(() -> memberService.findMember(memberId))
 			.isInstanceOf(IllegalArgumentException.class);
 	}
 

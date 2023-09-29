@@ -36,7 +36,7 @@ public class Name implements Wrapper {
 		if (name.isBlank()) {
 			throw new IllegalArgumentException("빈 공백을 입력할 수 없습니다");
 		}
-		if (name.length() > MAX_LENGTH || name.length() < MIN_LENGTH) {
+		if (name.length() > MAX_LENGTH) {
 			throw new IllegalArgumentException("이름은 1 ~ 20 사이만 입력 가능합니다");
 		}
 	}

@@ -89,4 +89,12 @@ class MemberTest {
 		member.updateProfile(new Image("aws"));
 		assertThat(member.getProfile()).isEqualTo(new Image("aws"));
 	}
+
+	@Test
+	@DisplayName("restore시 isDeleted false로 변경")
+	void shouldChangeIsDeletedFalseWhenCallRestoreTest() {
+		Member member = MemberTestHelper.generateMember(Id.generateNextId());
+		member.restore();
+		assertThat(member.isDeleted()).isFalse();
+	}
 }

@@ -64,6 +64,16 @@ class JwtAuthenticationFilterTest {
 	}
 
 	@Test
+	@DisplayName("header는 존재하지만 Bearer가 없다면 필터를 통과시킨다")
+	void shouldPassWhenBearerIsNotExistsTest() throws ServletException, IOException {
+		Mockito.doReturn("asdasd").when(request).getHeader("Authorization");
+
+		jwtAuthenticationFilter.doFilter(request, response, filterChain);
+		
+		Mockito.verify(filterChain, Mockito.atLeastOnce()).doFilter(request, response);
+	}
+
+	@Test
 	@DisplayName("해당 필터는 access token이 입력되지 않았다면 그냥 통과한다")
 	void shouldPassWhenNotInputAccessTokenTest() throws ServletException, IOException {
 		jwtAuthenticationFilter.doFilter(request, response, filterChain);

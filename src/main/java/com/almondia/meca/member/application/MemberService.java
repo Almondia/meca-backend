@@ -56,11 +56,6 @@ public class MemberService {
 	}
 
 	@Transactional(readOnly = true)
-	public Member findMemberByOAuthId(String oauthId) {
-		return memberRepository.findByOauthId(oauthId).orElse(null);
-	}
-
-	@Transactional(readOnly = true)
 	public MemberDto findMyProfile(Id memberId) {
 		Member member = findMember(memberId);
 		return MemberMapper.fromEntityToDto(member);

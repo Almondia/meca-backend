@@ -14,7 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class TimerAspect {
 
-	// 모든 서비스 메서드에 적용 가능한 pointcut
 	@Pointcut("execution(* com.almondia.meca..*Controller.*(..))")
 	private void cut() {
 	}
