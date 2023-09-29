@@ -17,7 +17,8 @@ class TitleTest {
 	@Test
 	@DisplayName("title 문자 길이는 40을 초과할 수 없다")
 	void shouldThrowWhenTitleLengthMoreThan20Test() {
-		assertThatThrownBy(() -> new Title("a".repeat(41))).isInstanceOf(IllegalArgumentException.class);
+		String more41 = "a".repeat(41);
+		assertThatThrownBy(() -> Title.of(more41)).isInstanceOf(IllegalArgumentException.class);
 	}
 
 	@Test
