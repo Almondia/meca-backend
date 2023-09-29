@@ -47,4 +47,11 @@ class TitleTest {
 		Title title = Title.valueOf("title");
 		assertThat(title).isNotNull();
 	}
+
+	@Test
+	@DisplayName("toString 메서드를 통해 문자열로 변환할 수 있다")
+	void shouldConvertToStringTest() {
+		Title title = Title.valueOf("title");
+		assertThat(title).extracting(Title::toString).isEqualTo("title");
+	}
 }
