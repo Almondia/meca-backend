@@ -130,6 +130,27 @@ class WrapperSerializerTest {
 		assertThat(s).isEqualTo("1");
 	}
 
+	@Test
+	@DisplayName(" transient, static, volatile 키워드가 붙은 필드는 직렬화 되지 않는다.")
+	void multiModifierTest() throws JsonProcessingException {
+		// given
+		MultiModifier multiModifier = new MultiModifier();
+
+		// when
+		String s = objectMapper.writeValueAsString(multiModifier);
+
+		// then
+		assertThat(s).isEqualTo("\"value\"");
+	}
+
+	static class MultiModifier implements Wrapper {
+		private final String value = "value";
+		private final transient String transientValue = "transient";
+		private final static String staticValue = "static";
+		private volatile String volatileValue = "volatile";
+
+	}
+
 	static class StringWrapper implements Wrapper {
 		private final String value;
 

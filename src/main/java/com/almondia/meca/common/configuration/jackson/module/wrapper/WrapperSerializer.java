@@ -35,8 +35,7 @@ public class WrapperSerializer extends StdSerializer<Wrapper> {
 
 	private boolean isPurePropertyField(Field field) {
 		int modifiers = field.getModifiers();
-		return !Modifier.isTransient(modifiers) && !Modifier.isNative(modifiers) && !Modifier.isVolatile(modifiers)
-			&& !Modifier.isStatic(modifiers);
+		return !Modifier.isTransient(modifiers) && !Modifier.isVolatile(modifiers) && !Modifier.isStatic(modifiers);
 	}
 
 	private void makeJsonByFieldType(Wrapper value, JsonGenerator gen, Field field) throws IOException {
@@ -66,7 +65,7 @@ public class WrapperSerializer extends StdSerializer<Wrapper> {
 			if (o instanceof Long) {
 				gen.writeNumber((long)o);
 			}
-		} catch (IllegalAccessException e) {
+		} catch (IllegalArgumentException | IllegalAccessException e) {
 			throw new IllegalStateException(e);
 		}
 	}
