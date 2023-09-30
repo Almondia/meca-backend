@@ -5,7 +5,10 @@ import com.almondia.meca.category.domain.entity.Category;
 import com.almondia.meca.common.domain.vo.Id;
 import com.almondia.meca.common.domain.vo.Image;
 
-public class CategoryFactory {
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor(access = lombok.AccessLevel.PRIVATE)
+public final class CategoryFactory {
 
 	public static Category genCategory(SaveCategoryRequestDto saveCategoryRequestDto, Id memberId) {
 		Image image = saveCategoryRequestDto.getThumbnail();
