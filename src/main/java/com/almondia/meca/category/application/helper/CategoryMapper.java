@@ -3,6 +3,9 @@ package com.almondia.meca.category.application.helper;
 import com.almondia.meca.category.controller.dto.CategoryDto;
 import com.almondia.meca.category.domain.entity.Category;
 
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor(access = lombok.AccessLevel.PRIVATE)
 public class CategoryMapper {
 
 	public static CategoryDto entityToCategoryDto(Category category) {
