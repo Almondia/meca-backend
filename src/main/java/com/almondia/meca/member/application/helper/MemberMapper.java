@@ -3,7 +3,10 @@ package com.almondia.meca.member.application.helper;
 import com.almondia.meca.member.controller.dto.MemberDto;
 import com.almondia.meca.member.domain.entity.Member;
 
-public class MemberMapper {
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor(access = lombok.AccessLevel.PRIVATE)
+public final class MemberMapper {
 
 	public static MemberDto fromEntityToDto(Member member) {
 		return MemberDto.builder()
