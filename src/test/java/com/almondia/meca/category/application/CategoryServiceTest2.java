@@ -17,12 +17,14 @@ import com.almondia.meca.cardhistory.domain.repository.CardHistoryRepository;
 import com.almondia.meca.category.application.helper.CategoryFactory;
 import com.almondia.meca.category.controller.dto.CategoryDto;
 import com.almondia.meca.category.controller.dto.SaveCategoryRequestDto;
+import com.almondia.meca.category.controller.dto.UpdateCategoryRequestDto;
 import com.almondia.meca.category.domain.entity.Category;
 import com.almondia.meca.category.domain.repository.CategoryRepository;
 import com.almondia.meca.category.domain.service.CategoryChecker;
 import com.almondia.meca.category.domain.vo.Title;
 import com.almondia.meca.common.domain.vo.Id;
 import com.almondia.meca.common.domain.vo.Image;
+import com.almondia.meca.helper.CategoryTestHelper;
 import com.almondia.meca.member.domain.repository.MemberRepository;
 import com.almondia.meca.recommand.domain.repository.CategoryRecommendRepository;
 
@@ -104,6 +106,65 @@ public class CategoryServiceTest2 {
 			return SaveCategoryRequestDto.builder()
 				.title(Title.of("카테고리 제목"))
 				.build();
+		}
+	}
+
+	@Nested
+	@DisplayName("카테고리 수정 테스트")
+	class UpdateCategoryTest {
+
+		@Test
+		void updateTitleTest() {
+			// given
+			UpdateCategoryRequestDto updateRequestDto = UpdateCategoryRequestDto.builder()
+				.title(Title.of("수정된 카테고리 제목"))
+				.build();
+			Id memberId = Id.generateNextId();
+			Id categoryId = Id.generateNextId();
+			when(categoryChecker.checkAuthority(any(Id.class), any(Id.class)))
+				.thenReturn(CategoryTestHelper.generateUnSharedCategory("title", memberId, categoryId));
+
+			// when
+			CategoryDto categoryDto = categoryService.updateCategory(updateRequestDto, memberId, categoryId);
+
+			// then
+			assertThat(categoryDto.getTitle()).isEqualTo(updateRequestDto.getTitle());
+		}
+
+		@Test
+		void updateThumbnailTest() {
+			// given
+			UpdateCategoryRequestDto updateRequestDto = UpdateCategoryRequestDto.builder()
+				.thumbnail(Image.of("수정된 썸네일"))
+				.build();
+			Id memberId = Id.generateNextId();
+			Id categoryId = Id.generateNextId();
+			when(categoryChecker.checkAuthority(any(Id.class), any(Id.class)))
+				.thenReturn(CategoryTestHelper.generateUnSharedCategory("title", memberId, categoryId));
+
+			// when
+			CategoryDto categoryDto = categoryService.updateCategory(updateRequestDto, memberId, categoryId);
+
+			// then
+			assertThat(categoryDto.getThumbnail()).isEqualTo(updateRequestDto.getThumbnail());
+		}
+
+		@Test
+		void updateSharedTest() {
+			// given
+			UpdateCategoryRequestDto updateRequestDto = UpdateCategoryRequestDto.builder()
+				.shared(true)
+				.build();
+			Id memberId = Id.generateNextId();
+			Id categoryId = Id.generateNextId();
+			when(categoryChecker.checkAuthority(any(Id.class), any(Id.class)))
+				.thenReturn(CategoryTestHelper.generateUnSharedCategory("title", memberId, categoryId));
+
+			// when
+			CategoryDto categoryDto = categoryService.updateCategory(updateRequestDto, memberId, categoryId);
+
+			// then
+			assertThat(categoryDto.isShared()).isEqualTo(updateRequestDto.getShared());
 		}
 	}
 }
