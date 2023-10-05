@@ -12,20 +12,7 @@ public class CategoryWithStatisticsResponseDto implements CategoryWithStatistics
 
 	private final CategoryDto category;
 	private final CategoryStatisticsDto statistics;
-	private long likeCount;
-
-	public CategoryWithStatisticsResponseDto(Category category, CategoryStatisticsDto statistics) {
-		this.category = CategoryDto.builder()
-			.categoryId(category.getCategoryId())
-			.memberId(category.getMemberId())
-			.thumbnail(category.getThumbnail())
-			.title(category.getTitle())
-			.isDeleted(category.isDeleted())
-			.isShared(category.isShared())
-			.modifiedAt(category.getModifiedAt())
-			.build();
-		this.statistics = statistics;
-	}
+	private final long likeCount;
 
 	@Builder
 	public CategoryWithStatisticsResponseDto(Category category, CategoryStatisticsDto statistics, long likeCount) {
@@ -39,10 +26,6 @@ public class CategoryWithStatisticsResponseDto implements CategoryWithStatistics
 			.modifiedAt(category.getModifiedAt())
 			.build();
 		this.statistics = statistics;
-		this.likeCount = likeCount;
-	}
-
-	public void setLikeCount(long likeCount) {
 		this.likeCount = likeCount;
 	}
 }

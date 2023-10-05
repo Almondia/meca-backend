@@ -26,10 +26,6 @@ public class SharedCategoryResponseDto {
 		this.member = toCategoryMemberDto(member);
 	}
 
-	public void setLikeCount(long likeCount) {
-		this.likeCount = likeCount;
-	}
-
 	private CategoryMemberDto toCategoryMemberDto(Member member) {
 		return CategoryMemberDto.builder()
 			.memberId(member.getMemberId())

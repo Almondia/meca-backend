@@ -3,9 +3,7 @@ package com.almondia.meca.category.application;
 import static java.util.stream.Collectors.*;
 
 import java.util.List;
-import java.util.Map;
 
-import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,7 +14,6 @@ import com.almondia.meca.cardhistory.domain.repository.CardHistoryRepository;
 import com.almondia.meca.category.application.helper.CategoryFactory;
 import com.almondia.meca.category.application.helper.CategoryMapper;
 import com.almondia.meca.category.controller.dto.CategoryDto;
-import com.almondia.meca.category.controller.dto.CategoryStatisticsDto;
 import com.almondia.meca.category.controller.dto.CategoryWithStatisticsResponseDto;
 import com.almondia.meca.category.controller.dto.SaveCategoryRequestDto;
 import com.almondia.meca.category.controller.dto.SharedCategoryResponseDto;
@@ -25,13 +22,11 @@ import com.almondia.meca.category.controller.dto.UpdateCategoryRequestDto;
 import com.almondia.meca.category.domain.entity.Category;
 import com.almondia.meca.category.domain.repository.CategoryRepository;
 import com.almondia.meca.category.domain.service.CategoryChecker;
+import com.almondia.meca.category.domain.service.CategoryInfoCombiner;
 import com.almondia.meca.category.infra.querydsl.CategorySearchOption;
 import com.almondia.meca.common.controller.dto.CursorPage;
 import com.almondia.meca.common.domain.vo.Id;
 import com.almondia.meca.common.infra.querydsl.SortOrder;
-import com.almondia.meca.member.domain.entity.Member;
-import com.almondia.meca.member.domain.repository.MemberRepository;
-import com.almondia.meca.recommand.domain.repository.CategoryRecommendRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -39,12 +34,11 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CategoryService {
 
+	private final CategoryChecker categoryChecker;
 	private final CategoryRepository categoryRepository;
 	private final CardRepository cardRepository;
 	private final CardHistoryRepository cardHistoryRepository;
-	private final CategoryChecker categoryChecker;
-	private final MemberRepository memberRepository;
-	private final CategoryRecommendRepository categoryRecommendRepository;
+	private final CategoryInfoCombiner categoryInfoCombiner;
 
 	@Transactional
 	public CategoryDto saveCategory(SaveCategoryRequestDto saveCategoryRequestDto, Id memberId) {
@@ -87,29 +81,11 @@ public class CategoryService {
 		Id lastCategoryId,
 		CategorySearchOption searchOption
 	) {
-		// search
-		List<Category> contents = categoryRepository.findCategoriesByMemberId(pageSize, lastCategoryId, searchOption,
-			null, memberId);
-		if (contents.isEmpty()) {
+		List<CategoryWithStatisticsResponseDto> categoryWithStatisticsResponseDtos = categoryInfoCombiner.findCategoryWithStatisticsResponse(
+			pageSize, lastCategoryId, searchOption, null, memberId);
+		if (categoryWithStatisticsResponseDtos.isEmpty()) {
 			return CursorPage.empty(SortOrder.DESC);
 		}
-		List<Id> categoryIds = contents.stream().map(Category::getCategoryId).collect(toList());
-		Map<Id, Long> counts = cardRepository.countCardsByCategoryIdIsDeletedFalse(categoryIds);
-		Map<Id, Long> recommendCounts = categoryRecommendRepository.findRecommendCountByCategoryIds(categoryIds);
-		Map<Id, Pair<Double, Long>> statistics = cardHistoryRepository.findCardHistoryScoresAvgAndCountsByCategoryIds(
-			categoryIds);
-
-		// combine
-		List<CategoryWithStatisticsResponseDto> categoryWithStatisticsResponseDtos = contents.stream()
-			.map(category -> new CategoryWithStatisticsResponseDto(
-				category,
-				new CategoryStatisticsDto(
-					statistics.getOrDefault(category.getCategoryId(), Pair.of(0.0, 0L)).getFirst(),
-					statistics.getOrDefault(category.getCategoryId(), Pair.of(0.0, 0L)).getSecond(),
-					counts.getOrDefault(category.getCategoryId(), 0L)
-				),
-				recommendCounts.getOrDefault(category.getCategoryId(), 0L)
-			)).collect(toList());
 		return CursorPage.<CategoryWithStatisticsResponseDto>builder()
 			.lastIdExtractStrategy(categoryWithStatistics -> categoryWithStatistics.getCategory().getCategoryId())
 			.contents(categoryWithStatisticsResponseDtos)
@@ -124,25 +100,11 @@ public class CategoryService {
 		Id lastCategoryId,
 		CategorySearchOption searchOption
 	) {
-		// search
-		List<Category> contents = categoryRepository.findCategories(pageSize, lastCategoryId, searchOption,
-			true);
-		if (contents.isEmpty()) {
+		List<SharedCategoryResponseDto> sharedCategoryResponseDtos = categoryInfoCombiner.findSharedCategoryResponse(
+			pageSize, lastCategoryId, searchOption);
+		if (sharedCategoryResponseDtos.isEmpty()) {
 			return CursorPage.empty(SortOrder.DESC);
 		}
-		Map<Id, Member> memberMap = memberRepository.findMemberMapByIds(contents.stream()
-			.map(Category::getMemberId)
-			.collect(toList()));
-		List<Id> categoryIds = contents.stream().map(Category::getCategoryId).collect(toList());
-		Map<Id, Long> recommendCounts = categoryRecommendRepository.findRecommendCountByCategoryIds(categoryIds);
-		Map<Id, Long> counts = cardRepository.countCardsByCategoryIdIsDeletedFalse(categoryIds);
-
-		// combine
-		List<SharedCategoryResponseDto> sharedCategoryResponseDtos = contents.stream()
-			.filter(category -> counts.get(category.getCategoryId()) != 0L)
-			.map(category -> new SharedCategoryResponseDto(category, memberMap.get(category.getMemberId()),
-				recommendCounts.get(category.getCategoryId())))
-			.collect(toList());
 		return CursorPage.<SharedCategoryResponseDto>builder()
 			.lastIdExtractStrategy(sharedCategoryDto -> sharedCategoryDto.getCategory().getCategoryId())
 			.contents(sharedCategoryResponseDtos)
@@ -158,34 +120,14 @@ public class CategoryService {
 		CategorySearchOption categorySearchOption,
 		Id idWhoRecommend
 	) {
-		// search
-		List<Category> contents = categoryRepository.findSharedCategoriesByRecommend(pageSize, lastCategoryId,
-			categorySearchOption, idWhoRecommend);
-		List<Id> categoryIds = contents.stream().map(Category::getCategoryId).collect(toList());
-		Map<Id, Member> memberMap = memberRepository.findMemberMapByIds(contents.stream()
-			.map(Category::getMemberId)
-			.collect(toList()));
-		Map<Id, Long> counts = cardRepository.countCardsByCategoryIdIsDeletedFalse(categoryIds);
-		Map<Id, Long> recommendCounts = categoryRecommendRepository.findRecommendCountByCategoryIds(categoryIds);
-		Map<Id, Pair<Double, Long>> statistics = cardHistoryRepository.findCardHistoryScoresAvgAndCountsByCategoryIds(
-			categoryIds);
-
-		// combine
-		List<SharedCategoryWithStatisticsAndRecommendDto> sharedCategoryResponseDtos = contents.stream()
-			.filter(category -> counts.get(category.getCategoryId()) != 0L)
-			.map(category -> {
-				double scoreAvg = statistics.get(category.getCategoryId()).getFirst();
-				long solveCount = statistics.get(category.getCategoryId()).getSecond();
-				long totalCount = counts.get(category.getCategoryId());
-				CategoryStatisticsDto statisticsDto = new CategoryStatisticsDto(scoreAvg, solveCount, totalCount);
-				long recommendCount = recommendCounts.get(category.getCategoryId());
-				return new SharedCategoryWithStatisticsAndRecommendDto(category, memberMap.get(category.getMemberId()),
-					statisticsDto, recommendCount);
-			})
-			.collect(toList());
+		List<SharedCategoryWithStatisticsAndRecommendDto> sharedCategoryWithStatisticsResponseDtos = categoryInfoCombiner.findSharedCategoryWithStatisticsResponse(
+			pageSize, lastCategoryId, categorySearchOption, idWhoRecommend);
+		if (sharedCategoryWithStatisticsResponseDtos.isEmpty()) {
+			return CursorPage.empty(SortOrder.DESC);
+		}
 		return CursorPage.<SharedCategoryWithStatisticsAndRecommendDto>builder()
 			.lastIdExtractStrategy(sharedCategoryDto -> sharedCategoryDto.getCategory().getCategoryId())
-			.contents(sharedCategoryResponseDtos)
+			.contents(sharedCategoryWithStatisticsResponseDtos)
 			.pageSize(pageSize)
 			.sortOrder(SortOrder.DESC)
 			.build();

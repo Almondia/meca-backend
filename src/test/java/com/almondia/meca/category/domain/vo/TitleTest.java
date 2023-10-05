@@ -17,7 +17,8 @@ class TitleTest {
 	@Test
 	@DisplayName("title 문자 길이는 40을 초과할 수 없다")
 	void shouldThrowWhenTitleLengthMoreThan20Test() {
-		assertThatThrownBy(() -> new Title("a".repeat(41))).isInstanceOf(IllegalArgumentException.class);
+		String more41 = "a".repeat(41);
+		assertThatThrownBy(() -> Title.of(more41)).isInstanceOf(IllegalArgumentException.class);
 	}
 
 	@Test
@@ -46,5 +47,12 @@ class TitleTest {
 	void shouldInitializeByValueOfMethodTest() {
 		Title title = Title.valueOf("title");
 		assertThat(title).isNotNull();
+	}
+
+	@Test
+	@DisplayName("toString 메서드를 통해 문자열로 변환할 수 있다")
+	void shouldConvertToStringTest() {
+		Title title = Title.valueOf("title");
+		assertThat(title).extracting(Title::toString).isEqualTo("title");
 	}
 }
