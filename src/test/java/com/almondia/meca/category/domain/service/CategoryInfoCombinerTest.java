@@ -171,6 +171,37 @@ class CategoryInfoCombinerTest {
 			assertThat(responseDtos).isNotEmpty();
 			assertThat(responseDtos.get(0)).isInstanceOf(SharedCategoryResponseDto.class);
 		}
+
+		@Test
+		@DisplayName("해당 카테고리의 카운트가 0개인 경우 응답에 사용하지 않는다")
+		void shouldNotUseZeroCountCategoryIdTest() {
+			// given
+			int pageSize = 1;
+			CategorySearchOption categorySearchOption = CategorySearchOption.builder().build();
+			boolean shared = true;
+			Id memberId = Id.generateNextId();
+			Id categoryId = Id.generateNextId();
+			when(categoryRepository.findCategories(anyInt(), any(), any(), anyBoolean()))
+				.thenReturn(List.of(CategoryTestHelper.generateSharedCategory("title", memberId, categoryId)));
+			when(cardRepository.countCardsByCategoryIdIsDeletedFalse(anyList()))
+				.thenReturn(Map.of(categoryId, 0L));
+			when(categoryRecommendRepository.findRecommendCountByCategoryIds(anyList()))
+				.thenReturn(Map.of(categoryId, 1L));
+			when(memberRepository.findMemberMapByIds(any()))
+				.thenReturn(Map.of(memberId, MemberTestHelper.generateMember(memberId)));
+
+			// when
+			List<SharedCategoryResponseDto> responseDtos = categoryInfoCombiner.findSharedCategoryResponse(
+				pageSize, null, categorySearchOption);
+
+			// then
+			Mockito.verify(categoryRepository, times(1))
+				.findCategories(anyInt(), any(), any(), anyBoolean());
+			Mockito.verify(cardRepository, times(1)).countCardsByCategoryIdIsDeletedFalse(anyList());
+			Mockito.verify(categoryRecommendRepository, times(1)).findRecommendCountByCategoryIds(anyList());
+			Mockito.verify(memberRepository, times(1)).findMemberMapByIds(any());
+			assertThat(responseDtos).isEmpty();
+		}
 	}
 
 	@Nested
@@ -196,6 +227,40 @@ class CategoryInfoCombinerTest {
 			Mockito.verify(categoryRepository, times(1))
 				.findSharedCategoriesByRecommend(anyInt(), any(), any(), any());
 			assertThat(responseDtos).isEmpty();
+		}
+
+		@Test
+		@DisplayName("categoryId의 카드 갯수가 0인 경우 응답에 사용하지 않는다")
+		void shouldNotUseCategoryIdWhenInnerCardCountIsZeroTest() {
+			// given
+			int pageSize = 1;
+			Id categoryId = Id.generateNextId();
+			Id memberId = Id.generateNextId();
+			CategorySearchOption categorySearchOption = CategorySearchOption.builder().build();
+			when(categoryRepository.findSharedCategoriesByRecommend(anyInt(), any(), any(), any()))
+				.thenReturn(List.of(CategoryTestHelper.generateSharedCategory("title", memberId, categoryId)));
+			when(cardRepository.countCardsByCategoryIdIsDeletedFalse(anyList()))
+				.thenReturn(Map.of(categoryId, 0L));
+			when(categoryRecommendRepository.findRecommendCountByCategoryIds(anyList()))
+				.thenReturn(Map.of(categoryId, 1L));
+			when(memberRepository.findMemberMapByIds(any()))
+				.thenReturn(Map.of(memberId, MemberTestHelper.generateMember(memberId)));
+			when(cardHistoryRepository.findCardHistoryScoresAvgAndCountsByCategoryIds(anyList()))
+				.thenReturn(Map.of(categoryId, Pair.of(1.0, 1L)));
+
+			// when
+			List<SharedCategoryWithStatisticsAndRecommendDto> responseDtos = categoryInfoCombiner.findSharedCategoryWithStatisticsResponse(
+				pageSize, null, categorySearchOption, memberId);
+
+			// then
+			Mockito.verify(categoryRepository, times(1))
+				.findSharedCategoriesByRecommend(anyInt(), any(), any(), any());
+			Mockito.verify(cardRepository, times(1)).countCardsByCategoryIdIsDeletedFalse(anyList());
+			Mockito.verify(categoryRecommendRepository, times(1)).findRecommendCountByCategoryIds(anyList());
+			Mockito.verify(memberRepository, times(1)).findMemberMapByIds(any());
+			Mockito.verify(cardHistoryRepository, times(1)).findCardHistoryScoresAvgAndCountsByCategoryIds(anyList());
+			assertThat(responseDtos).isEmpty();
+
 		}
 
 		@Test
