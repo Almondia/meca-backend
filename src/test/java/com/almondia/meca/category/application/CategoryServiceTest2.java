@@ -4,6 +4,8 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
+import java.util.Collections;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -11,6 +13,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.access.AccessDeniedException;
 
 import com.almondia.meca.card.domain.repository.CardRepository;
 import com.almondia.meca.cardhistory.domain.repository.CardHistoryRepository;
@@ -165,6 +168,47 @@ public class CategoryServiceTest2 {
 
 			// then
 			assertThat(categoryDto.isShared()).isEqualTo(updateRequestDto.getShared());
+		}
+	}
+
+	@Nested
+	@DisplayName("카테고리 삭제 테스트")
+	class DeleteCategoryTest {
+
+		@Test
+		@DisplayName("내 권한이 아닌 카테고리 요청시 예외 발생")
+		void shouldThrowWhenCallNotMyCategoryTest() {
+			// given
+			Id memberId = Id.generateNextId();
+			Id categoryId = Id.generateNextId();
+			when(categoryChecker.checkAuthority(any(Id.class), any(Id.class)))
+				.thenThrow(AccessDeniedException.class);
+
+			// expect
+			assertThatThrownBy(() -> categoryService.deleteCategory(memberId, categoryId))
+				.isInstanceOf(AccessDeniedException.class);
+		}
+
+		@Test
+		@DisplayName("내 권한인 카테고리 요청시 카테고리 삭제")
+		void shouldDeleteCategoryTest() {
+			// given
+			Id memberId = Id.generateNextId();
+			Id categoryId = Id.generateNextId();
+			when(categoryChecker.checkAuthority(any(Id.class), any(Id.class)))
+				.thenReturn(CategoryTestHelper.generateUnSharedCategory("title", memberId, categoryId));
+			when(cardRepository.findByCategoryIdAndIsDeleted(any(Id.class), anyBoolean()))
+				.thenReturn(Collections.emptyList());
+			when(cardHistoryRepository.findByCardIdInAndIsDeleted(anyList(), anyBoolean()))
+				.thenReturn(Collections.emptyList());
+
+			// when
+			categoryService.deleteCategory(memberId, categoryId);
+
+			// then
+			verify(categoryChecker, times(1)).checkAuthority(any(Id.class), any(Id.class));
+			verify(cardRepository, times(1)).findByCategoryIdAndIsDeleted(any(Id.class), anyBoolean());
+			verify(cardHistoryRepository, times(1)).findByCardIdInAndIsDeleted(anyList(), anyBoolean());
 		}
 	}
 }
