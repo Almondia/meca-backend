@@ -7,7 +7,10 @@ import com.almondia.meca.cardhistory.domain.vo.CardSnapShot;
 import com.almondia.meca.cardhistory.domain.vo.Score;
 import com.almondia.meca.common.domain.vo.Id;
 
-public class CardHistoryFactory {
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor(access = lombok.AccessLevel.PRIVATE)
+public final class CardHistoryFactory {
 
 	public static CardHistory makeCardHistory(CardHistoryRequestDto cardHistoryRequestDto, Card card, Id solvedMemberId,
 		Score score) {
