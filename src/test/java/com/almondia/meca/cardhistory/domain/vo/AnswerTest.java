@@ -17,4 +17,12 @@ class AnswerTest {
 		assertThatThrownBy(() -> new Answer("a".repeat(501))).isInstanceOf(IllegalArgumentException.class);
 	}
 
+	@Test
+	@DisplayName("toString 호출시 answer 반환")
+	void shouldReturnAnswerWhenCallToStringTest() {
+		Answer answer = new Answer("answer");
+		String result = answer.toString();
+		assertThat(result).isEqualTo("answer");
+	}
+
 }
