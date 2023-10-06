@@ -17,12 +17,14 @@ import org.springframework.context.annotation.Import;
 import com.almondia.meca.card.domain.entity.Card;
 import com.almondia.meca.card.domain.repository.CardRepository;
 import com.almondia.meca.cardhistory.controller.dto.CardHistoryRequestDto;
+import com.almondia.meca.cardhistory.controller.dto.CardHistoryWithCardAndMemberResponseDto;
 import com.almondia.meca.cardhistory.domain.entity.QCardHistory;
 import com.almondia.meca.cardhistory.domain.repository.CardHistoryRepository;
 import com.almondia.meca.cardhistory.domain.service.MorphemeAnalyzer;
 import com.almondia.meca.cardhistory.domain.vo.Answer;
 import com.almondia.meca.common.configuration.jpa.JpaAuditingConfiguration;
 import com.almondia.meca.common.configuration.jpa.QueryDslConfiguration;
+import com.almondia.meca.common.controller.dto.CursorPage;
 import com.almondia.meca.common.domain.vo.Id;
 import com.almondia.meca.helper.CardTestHelper;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -97,6 +99,54 @@ class CardHistoryServiceTest {
 				.from(cardHistory)
 				.fetchOne();
 			assertThat(fetch).isEqualTo(1L);
+		}
+	}
+
+	@Nested
+	@DisplayName("카드ID 기반 카드 히스토리 조회")
+	class FindCardHistoriesByCardIdTest {
+
+		@Test
+		@DisplayName("존재하는 카드 ID로 조회 요청한 경우 조회 결과 반환")
+		void findCardHistoriesByCardIdTest() {
+			// given
+			final int pageSize = 1;
+			final Id cardId = Id.generateNextId();
+			final Id memberId = Id.generateNextId();
+			final Id categoryId = Id.generateNextId();
+			Card card1 = CardTestHelper.genOxCard(memberId, categoryId, cardId);
+			em.persist(card1);
+
+			// when
+			CursorPage<CardHistoryWithCardAndMemberResponseDto> cursor = cardHistoryService.findCardHistoriesByCardId(
+				cardId, pageSize, null);
+
+			// then
+			assertThat(cursor.getContents()).isNotNull();
+		}
+	}
+
+	@Nested
+	@DisplayName("문제푼회원ID기반 카드 히스토리 조회")
+	class FindCardHistoriesBySolvedMemberIdTest {
+
+		@Test
+		@DisplayName("존재하는 문제푼회원 ID로 조회 요청한 경우 조회 결과 반환")
+		void findCardHistoriesBySolvedMemberIdTest() {
+			// given
+			final int pageSize = 1;
+			final Id cardId = Id.generateNextId();
+			final Id memberId = Id.generateNextId();
+			final Id categoryId = Id.generateNextId();
+			Card card1 = CardTestHelper.genOxCard(memberId, categoryId, cardId);
+			em.persist(card1);
+
+			// when
+			CursorPage<CardHistoryWithCardAndMemberResponseDto> cursor = cardHistoryService.findCardHistoriesBySolvedMemberId(
+				memberId, pageSize, null);
+
+			// then
+			assertThat(cursor.getContents()).isNotNull();
 		}
 	}
 }
