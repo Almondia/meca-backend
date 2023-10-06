@@ -22,4 +22,12 @@ class ScoreTest {
 	void scoreInstanceMustLessOrEqual100Test() {
 		assertThatThrownBy(() -> new Score(101)).isInstanceOf(IllegalArgumentException.class);
 	}
+
+	@Test
+	@DisplayName("toString 메서드는 Score 객체를 String으로 변환한다")
+	void toStringTest() {
+		Score score = new Score(100);
+		String result = score.toString();
+		assertThat(result).isEqualTo("100");
+	}
 }

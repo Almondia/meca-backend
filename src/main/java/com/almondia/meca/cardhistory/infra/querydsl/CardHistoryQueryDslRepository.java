@@ -14,9 +14,25 @@ import com.almondia.meca.common.domain.vo.Id;
 
 public interface CardHistoryQueryDslRepository {
 
+	/**
+	 * 동일한 카드 ID를 가진 히스토리 내림차순 커서 페이징
+	 *
+	 * @param cardId            카드 아이디
+	 * @param pageSize          페이지 사이즈
+	 * @param lastCardHistoryId 마지막 카드 히스토리 아이디
+	 * @return CardHistoryWithCardAndMemberResponseDto 기반 CursorPage
+	 */
 	CursorPage<CardHistoryWithCardAndMemberResponseDto> findCardHistoriesByCardId(Id cardId, int pageSize,
 		@Nullable Id lastCardHistoryId);
 
+	/**
+	 * 동일한 마지막 푼 사용자를 가진 히스토리 내림차순 커서 페이징
+	 *
+	 * @param solvedMemberId    문제를 푼 사용자
+	 * @param pageSize          페이지 사이즈
+	 * @param lastCardHistoryId 마지막 카드 히스토리 아이디
+	 * @return CardHistoryWithCardAndMemberResponseDto 기반 CursorPage
+	 */
 	CursorPage<CardHistoryWithCardAndMemberResponseDto> findCardHistoriesBySolvedMemberId(Id solvedMemberId,
 		int pageSize,
 		@Nullable Id lastCardHistoryId);
