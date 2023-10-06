@@ -2,6 +2,8 @@ package com.almondia.meca.card.domain.vo;
 
 import static org.assertj.core.api.Assertions.*;
 
+import java.lang.reflect.Field;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -29,4 +31,31 @@ class KeywordAnswerTest {
 		assertThat(KeywordAnswer.valueOf("test").toString()).isEqualTo("test");
 	}
 
+	@Test
+	@DisplayName("기본생성자로 생성된 answer의 경우, contains 호출시 자동 생성")
+	void containsTestWhen() throws NoSuchFieldException, IllegalAccessException {
+		// given
+		KeywordAnswer keywordAnswer = new KeywordAnswer();
+		Field field = keywordAnswer.getClass().getDeclaredField("keywordAnswer");
+		field.setAccessible(true);
+		field.set(keywordAnswer, "test");
+
+		// when
+		boolean test = keywordAnswer.contains("test");
+		assertThat(test).isTrue();
+	}
+
+	@Test
+	@DisplayName("기본생성자로 생성된 answer의 경우 containsIgnoreCase 호출시 keywords 자동 생성")
+	void containsIgnoreCaseTestWhen() throws NoSuchFieldException, IllegalAccessException {
+		// given
+		KeywordAnswer keywordAnswer = new KeywordAnswer();
+		Field field = keywordAnswer.getClass().getDeclaredField("keywordAnswer");
+		field.setAccessible(true);
+		field.set(keywordAnswer, "test");
+
+		// when
+		boolean test = keywordAnswer.containsIgnoreCase("TEST");
+		assertThat(test).isTrue();
+	}
 }
