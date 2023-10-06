@@ -31,9 +31,17 @@ class TitleTest {
 	}
 
 	@Test
+	@DisplayName("2글자 이상 입력 가능하다")
+	void shouldInputOver2Characters() {
+		String word = "a";
+		assertThatThrownBy(() -> new Title(word)).isInstanceOf(IllegalArgumentException.class);
+	}
+
+	@Test
 	@DisplayName("공백만 입력할 수 없다")
 	void notBlankTest() {
-		assertThatThrownBy(() -> new Title(" ".repeat(2))).isInstanceOf(IllegalArgumentException.class);
+		String blankWord = " ".repeat(2);
+		assertThatThrownBy(() -> new Title(blankWord)).isInstanceOf(IllegalArgumentException.class);
 	}
 
 	@Test
