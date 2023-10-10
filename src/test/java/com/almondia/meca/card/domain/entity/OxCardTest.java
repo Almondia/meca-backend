@@ -12,6 +12,8 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 
+import com.almondia.meca.card.domain.vo.OxAnswer;
+import com.almondia.meca.card.domain.vo.Question;
 import com.almondia.meca.common.configuration.jpa.QueryDslConfiguration;
 
 /**
@@ -37,5 +39,21 @@ class OxCardTest {
 				"images",
 				"createdAt",
 				"modifiedAt", "oxAnswer");
+	}
+
+	@Test
+	@DisplayName("답변 수정 테스트")
+	void shouldChangeAnswerTest() {
+		// given
+		OxCard oxCard = OxCard.builder()
+			.question(Question.of("질문"))
+			.oxAnswer(OxAnswer.O)
+			.build();
+
+		// when
+		oxCard.changeAnswer("X");
+
+		// then
+		assertThat(oxCard.getAnswer()).isEqualTo("X");
 	}
 }
