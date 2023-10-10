@@ -19,6 +19,7 @@ import org.springframework.security.access.AccessDeniedException;
 import com.almondia.meca.card.controller.dto.CardCountAndShareResponseDto;
 import com.almondia.meca.card.controller.dto.CardCursorPageWithCategory;
 import com.almondia.meca.card.controller.dto.CardDto;
+import com.almondia.meca.card.controller.dto.CardResponseDto;
 import com.almondia.meca.card.controller.dto.CardWithStatisticsDto;
 import com.almondia.meca.card.controller.dto.SaveCardRequestDto;
 import com.almondia.meca.card.controller.dto.UpdateCardRequestDto;
@@ -494,6 +495,61 @@ class CardServiceTest {
 			cardRepository.saveAll(List.of(
 				CardTestHelper.genMultiChoiceCard(memberId, categoryId, cardId1)
 			));
+		}
+	}
+
+	@Nested
+	@DisplayName("공유 카드 조회")
+	class FindSharedCardTest {
+
+		@Test
+		@DisplayName("공유 카드 조회시 카테고리가 공유되지 않았을 경우 예외 발생")
+		void shouldThrowExceptionWhenCategoryIsNotSharedTest() {
+			// given
+			Id memberId = Id.generateNextId();
+			Id categoryId = Id.generateNextId();
+			Id cardId = Id.generateNextId();
+			Category category = CategoryTestHelper.generateUnSharedCategory("title", memberId, categoryId);
+			persistAll(category);
+
+			// when
+			assertThatThrownBy(() -> cardService.findSharedCard(cardId))
+				.isInstanceOf(IllegalArgumentException.class).hasMessage("공유된 카테고리의 카드가 존재하지 않습니다");
+		}
+
+		@Test
+		@DisplayName("공유 카드 조회시 카테고리가 삭제되었을 경우 예외 발생")
+		void shouldThrowExceptionWhenCategoryIsDeletedTest() {
+			// given
+			Id memberId = Id.generateNextId();
+			Id categoryId = Id.generateNextId();
+			Id cardId = Id.generateNextId();
+			Category category = CategoryTestHelper.generateSharedCategory("title", memberId, categoryId);
+			category.delete();
+			persistAll(category);
+
+			// when
+			assertThatThrownBy(() -> cardService.findSharedCard(cardId))
+				.isInstanceOf(IllegalArgumentException.class).hasMessage("공유된 카테고리의 카드가 존재하지 않습니다");
+		}
+
+		@Test
+		@DisplayName("공유 카드 조회시 정상적인 dto 리턴해야함")
+		void shouldReturnCardDtoWhenCallFindSharedCardTest() {
+			// given
+			Id memberId = Id.generateNextId();
+			Id categoryId = Id.generateNextId();
+			Id cardId = Id.generateNextId();
+			Member member = MemberTestHelper.generateMember(memberId);
+			Category category = CategoryTestHelper.generateSharedCategory("title", memberId, categoryId);
+			Card card = CardTestHelper.genKeywordCard(memberId, categoryId, cardId);
+			persistAll(member, category, card);
+
+			// when
+			CardResponseDto result = cardService.findSharedCard(cardId);
+
+			// then
+			assertThat(result).isInstanceOf(CardResponseDto.class);
 		}
 	}
 
