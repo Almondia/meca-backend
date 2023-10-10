@@ -39,6 +39,7 @@ import com.almondia.meca.card.domain.vo.OxAnswer;
 import com.almondia.meca.card.domain.vo.Title;
 import com.almondia.meca.card.infra.querydsl.CardSearchOption;
 import com.almondia.meca.cardhistory.domain.entity.CardHistory;
+import com.almondia.meca.cardhistory.domain.repository.CardHistoryRepository;
 import com.almondia.meca.category.domain.entity.Category;
 import com.almondia.meca.category.domain.service.CategoryChecker;
 import com.almondia.meca.common.configuration.jpa.QueryDslConfiguration;
@@ -71,6 +72,9 @@ class CardServiceTest {
 
 	@Autowired
 	MultiChoiceCardRepository multiChoiceCardRepository;
+
+	@Autowired
+	CardHistoryRepository cardHistoryRepository;
 
 	@PersistenceContext
 	EntityManager em;
@@ -422,6 +426,31 @@ class CardServiceTest {
 
 			assertThatThrownBy(() -> cardService.deleteCard(randomCardId, randomMemberId))
 				.isInstanceOf(AccessDeniedException.class);
+		}
+
+		@Test
+		@DisplayName("카드 삭제시 카드 히스토리도 모두 삭제된다")
+		void shouldDeleteCardHistoriesAllRelatedCardTest() {
+			// given
+			Id memberId = Id.generateNextId();
+			Id memberId2 = Id.generateNextId();
+			Id categoryId = Id.generateNextId();
+			Id cardId = Id.generateNextId();
+			Card card = CardTestHelper.genKeywordCard(memberId, categoryId, cardId);
+			CardHistory cardHistory1 = CardHistoryTestHelper.generateCardHistory(cardId, memberId);
+			CardHistory cardHistory2 = CardHistoryTestHelper.generateCardHistory(cardId, memberId2);
+			persistAll(card, cardHistory1, cardHistory2);
+
+			// when
+			cardService.deleteCard(cardId, memberId);
+
+			// then
+			List<CardHistory> histories = cardHistoryRepository.findByCardId(cardId);
+			Card resultCard = cardRepository.findById(cardId).orElseThrow();
+			assertThat(resultCard).extracting("isDeleted").isEqualTo(true);
+			assertThat(histories.get(0)).extracting("isDeleted").isEqualTo(true);
+			assertThat(histories.get(1)).extracting("isDeleted").isEqualTo(true);
+
 		}
 	}
 
