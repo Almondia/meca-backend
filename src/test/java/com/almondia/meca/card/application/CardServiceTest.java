@@ -81,12 +81,6 @@ class CardServiceTest {
 		}
 	}
 
-	/**
-	 * 1. oxCard type정보가 들어가면 oxCard 정보가 저장되는지 검증
-	 * 2. keywordCard type 정보가 들어가면 keywordCard 정보가 저장되는지 검증
-	 * 3. multi choice card type 정보가 들어가면 MultiChoiceCard 정보가 저장되는 지 검증
-	 * 4. 요청시 editText 속성이 null이더라도 정삭 동작해야 함
-	 */
 	@Nested
 	@DisplayName("카드 저장 테스트")
 	class SaveCardTest {
@@ -161,17 +155,6 @@ class CardServiceTest {
 		}
 	}
 
-	/**
-	 * 1. 카드 업데이트시 업데이트가 성공적으로 반영되었는지 테스트
-	 * 2. 본인의 카테고리가 아닌 남의 카테고리로 카드 카테고리 업데이트시 권한 에러
-	 * 3. 본인의 카드가 아닌 다른 카드 ID를 가지고 요청한 경우 권한 에러
-	 * 4. title만 요청한 경우 title만 수정해야됨
-	 * 5. question만 요청한 경우 question만 수정해야됨
-	 * 6. editText만 요청한 경우 editText만 수정해야됨
-	 * 7. 정답 업데이트시 oxCard 타입에 맞게 validation되며 업데이트 되야함
-	 * 8. 정답 업데이트시 keywordCard 타입에 맞게 validation되며 업데이트 되야함
-	 * 9. 정답 업데이트시 multiChoiceCard 타입에 맞게 validation되며 업데이트 되야함
-	 */
 	@Nested
 	@DisplayName("카드 업데이트 테스트")
 	class UpdateCardTest {
@@ -376,10 +359,6 @@ class CardServiceTest {
 		}
 	}
 
-	/**
-	 * 1. 본인이 가진 카테고리가 아닐 시 권한 에러 출력
-	 * 2. 카드 커서 페이징 출력 형태 및 결과 테스트
-	 */
 	@Nested
 	@DisplayName("카드 커서 페이징 조회")
 	class SearchCardCursorPagingTest {
@@ -431,9 +410,6 @@ class CardServiceTest {
 		}
 	}
 
-	/**
-	 * 1. 권한 체크를 수행하는지 테스트
-	 */
 	@Nested
 	@DisplayName("카드 삭제")
 	class CardDeleteTest {
@@ -449,11 +425,6 @@ class CardServiceTest {
 		}
 	}
 
-	/**
-	 * 1. 권한 체크 수행 여부 테스트
-	 * 2. 종류별 카드 타입 변환이 잘 이루어지는지 확인
-	 * 3. 카드가 존재하지 않을 경우 예외 발생
-	 */
 	@Nested
 	@DisplayName("회원 카드 단일 조회")
 	class SearchCardOneTest {
@@ -497,10 +468,6 @@ class CardServiceTest {
 		}
 	}
 
-	/**
-	 * 1. 내 카테고리에 카드 갯수를 요청한 경우 정상적으로 카드 개수를 출력
-	 * 2. 내 카테고리가 아닌 카테고리에 카드 갯수를 요청한 경우 공유 상태의 카테고리가 아닌경우 권한 에러 발생
-	 */
 	@Nested
 	@DisplayName("카테고리별 카드 개수 조회 API")
 	class SearchCardsCountByCategoryIdTest {
@@ -557,12 +524,6 @@ class CardServiceTest {
 		}
 	}
 
-	/**
-	 * 공유 카테고리가 존재하지 않으면 예외를 발생한다
-	 * 카테고리가 삭제되어 있다면 예외를 발생한다
-	 * 삭제된 회원인 경우 예외를 발생한다
-	 * 통계 기록은 있으면 안되고 모두 null이여야 함
-	 */
 	@Nested
 	@DisplayName("searchCursorPagingSharedCard 테스트")
 	class SearchCursorPagingSharedCardTest {
