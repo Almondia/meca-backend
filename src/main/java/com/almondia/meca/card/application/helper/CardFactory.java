@@ -23,6 +23,9 @@ public final class CardFactory {
 
 	public static Card genCard(SaveCardRequestDto saveCardRequestDto, Id memberId) {
 		CardType cardType = saveCardRequestDto.getCardType();
+		if (cardType == null) {
+			throw new IllegalArgumentException("cardType은 null이 될 수 없습니다");
+		}
 		if (cardType.equals(CardType.OX_QUIZ)) {
 			return genOxCard(saveCardRequestDto, memberId);
 		}
