@@ -4,8 +4,6 @@ import static org.assertj.core.api.Assertions.*;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
 
 /**
  * 1. 2이상 글자 입력 가능하다
@@ -14,34 +12,28 @@ import org.junit.jupiter.params.provider.CsvSource;
  */
 class TitleTest {
 
-	@ParameterizedTest
-	@DisplayName("2이상 40 이하의 글자를 입력 가능하다")
-	@CsvSource({
-		"a"
-	})
-	void titleLengthTest(String input) {
-		assertThatThrownBy(() -> new Title(input)).isInstanceOf(IllegalArgumentException.class);
+	private static final int TITLE_MAX_LENGTH = 40;
+	private static final int TITLE_MIN_LENGTH = 2;
+
+	@Test
+	@DisplayName("한글자만 입력한 경우 예외 발생")
+	void titleLengthTest() {
+		String input = "a";
+		assertThatThrownBy(() -> Title.of(input)).isInstanceOf(IllegalArgumentException.class);
 	}
 
 	@Test
-	@DisplayName("40 이하의 글자를 입력 가능하다")
-	void shouldInputUnder40Characters() {
-		Title title = new Title("a".repeat(40));
-		assertThat(title).isNotNull();
-	}
-
-	@Test
-	@DisplayName("2글자 이상 입력 가능하다")
-	void shouldInputOver2Characters() {
-		String word = "a";
-		assertThatThrownBy(() -> new Title(word)).isInstanceOf(IllegalArgumentException.class);
+	@DisplayName("MAX_LENGTH를 초과한 경우 예외 발생")
+	void titleMaxLengthTest() {
+		String input = "a".repeat(TITLE_MAX_LENGTH + 1);
+		assertThatThrownBy(() -> Title.of(input)).isInstanceOf(IllegalArgumentException.class);
 	}
 
 	@Test
 	@DisplayName("공백만 입력할 수 없다")
 	void notBlankTest() {
 		String blankWord = " ".repeat(2);
-		assertThatThrownBy(() -> new Title(blankWord)).isInstanceOf(IllegalArgumentException.class);
+		assertThatThrownBy(() -> Title.of(blankWord)).isInstanceOf(IllegalArgumentException.class);
 	}
 
 	@Test
