@@ -53,6 +53,7 @@
  <td>
   <img src="https://img.shields.io/badge/Oracle-F80000?style=for-the-badge&logo=Oracle&logoColor=white"/>&nbsp;
   <img src="https://img.shields.io/badge/Mysql-4479A1?style=for-the-badge&logo=Mysql&logoColor=white"/>&nbsp;
+  <img src="https://img.shields.io/badge/h2-6E6E6E?style=for-the-badge&logo=h2&logoColor=white"/> &nbsp;
  </td>
 </tr>
 <tr>
