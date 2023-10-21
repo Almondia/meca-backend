@@ -32,6 +32,7 @@
 - [개발기록](https://velog.io/@e1psycongr00/series/Meca-project-%EA%B0%9C%EB%B0%9C-%EC%9D%BC%EC%A7%80)
 - [Figma 초안](https://www.figma.com/file/K5DFt69C1jpUrUVCa1CfZ4/Untitled?type=design&node-id=19-2127&mode=design)
 - [ERD](https://www.erdcloud.com/d/RYLru2JCjGJCSNLKK)
+
   <br>
 
 ### 📝 기술 스택
@@ -72,6 +73,14 @@
  </td>
 </tr>
 </table>
+
+<br>
+
+### 📝 아키텍처
+
+![](architecture.jpg)
+
+<br>
 
 ### 📝 주요 기능 소개
 
