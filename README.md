@@ -77,11 +77,8 @@
 
 **내 카테고리 관리**
 
-<div style='display:flex'>
-<img src="https://github.com/Almondia/meca_front/assets/76927397/22b0b020-275a-4792-b3d6-9a20c31e2df2" width=400/>
-<img src="https://github.com/Almondia/meca_front/assets/76927397/71450f65-0ef4-4b0e-8d52-eca2deb7cd26" width=400/>
-</div>
-
+| <p align="center"><img src="https://github.com/Almondia/meca_front/assets/76927397/22b0b020-275a-4792-b3d6-9a20c31e2df2" width=80%/></p> | <p align="center"><img src="https://github.com/Almondia/meca_front/assets/76927397/71450f65-0ef4-4b0e-8d52-eca2deb7cd26" width=80%/></p> |
+|------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------|
 
 퀴즈를 위한 카테고리를 등록/수정/삭제/공개설정 관리할 수 있어요
 
@@ -91,12 +88,11 @@
 
 **퀴즈 카드 관리**
 
-<div style='display:flex'>
-<img src="https://github.com/Almondia/meca_front/assets/76927397/ab7bedca-ba50-4dea-ba46-613dc43cc160" width=400/>
-<img src="https://github.com/Almondia/meca_front/assets/76927397/d7bd50fb-5a0f-4b99-a71d-b43d3426cd56" width=400/>
-<img src="https://github.com/Almondia/meca_front/assets/76927397/24b77b9c-37ab-4a06-8ece-8aa60d449b8d" width=400/>
-</div>
+| <p align="center"><img src="https://github.com/Almondia/meca_front/assets/76927397/ab7bedca-ba50-4dea-ba46-613dc43cc160" width=80%/></p> | <p align="center"><img src="https://github.com/Almondia/meca_front/assets/76927397/d7bd50fb-5a0f-4b99-a71d-b43d3426cd56" width=80%/></p> |
+|------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------|
 
+| <p align="center"><img src="https://github.com/Almondia/meca_front/assets/76927397/24b77b9c-37ab-4a06-8ece-8aa60d449b8d" width=80%/></p> | <p align="center">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p> |
+|------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 
 등록한 카테고리 하나에 대한 퀴즈 카드를 등록/수정/삭제 관리할 수 있어요
 
@@ -104,11 +100,11 @@
 
 **퀴즈 풀이하기**
 
-<div style='display:flex'>
-<img src="https://github.com/Almondia/meca_front/assets/76927397/640905e4-54d8-433e-9cea-a28678b51c48" width=400/>
-<img src="https://github.com/Almondia/meca_front/assets/76927397/7a9a15a6-13ba-4f73-bce5-2676cb597a09" width=400/>
-<img src="https://github.com/Almondia/meca_front/assets/76927397/f5d0986f-32ed-418a-894e-d0838286307d" width=400/>
-</div>
+| <p align="center"><img src="https://github.com/Almondia/meca_front/assets/76927397/640905e4-54d8-433e-9cea-a28678b51c48" width=80%/></p> | <p align="center"><img src="https://github.com/Almondia/meca_front/assets/76927397/7a9a15a6-13ba-4f73-bce5-2676cb597a09" width=80%/></p> |
+|------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------|
+
+| <p align="center"><img src="https://github.com/Almondia/meca_front/assets/76927397/f5d0986f-32ed-418a-894e-d0838286307d" width=80%/></p> | <p align="center">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p> |
+|------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 
 내 카테고리 또는 다른사람이 공유한 카테고리의 퀴즈를 풀이할 수 있어요.
 
@@ -116,12 +112,10 @@
 
 **퀴즈 결과보기**
 
-<div style='display:flex'>
-<img src="https://github.com/Almondia/meca_front/assets/76927397/14c64bdf-4fc2-49e3-a162-930525550f56" width=400/>
-<img src="https://github.com/Almondia/meca_front/assets/76927397/09efccce-609d-4dcf-af9c-f17c10048d36" width=400/>
-</div>
-
+| <p align="center"><img src="https://github.com/Almondia/meca_front/assets/76927397/14c64bdf-4fc2-49e3-a162-930525550f56" width=80%/></p> | <p align="center"><img src="https://github.com/Almondia/meca_front/assets/76927397/09efccce-609d-4dcf-af9c-f17c10048d36" width=80%/></p> |
+|------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------|
 
 퀴즈 모음을 모두 풀고 결과를 확인하고 다시 풀 수 있어요
 
 mypage에서 풀이했던 퀴즈 히스토리를 확인할 수 있어요
+
