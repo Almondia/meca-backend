@@ -2,7 +2,6 @@ package com.almondia.meca.card.domain.vo;
 
 import java.util.Arrays;
 import java.util.Set;
-import java.util.regex.PatternSyntaxException;
 import java.util.stream.Collectors;
 
 import javax.persistence.Embeddable;
@@ -59,12 +58,8 @@ public class KeywordAnswer implements Wrapper {
 	}
 
 	private void makeKeywords() {
-		try {
-			this.keywords = Arrays.stream(this.keywordAnswer.split(","))
-				.map(String::trim)
-				.collect(Collectors.toSet());
-		} catch (PatternSyntaxException patternSyntaxException) {
-			throw new IllegalArgumentException("키워드를 분리할 수 없습니다. 키워드는 ,로 구분되어야 합니다.");
-		}
+		this.keywords = Arrays.stream(this.keywordAnswer.split(","))
+			.map(String::trim)
+			.collect(Collectors.toSet());
 	}
 }

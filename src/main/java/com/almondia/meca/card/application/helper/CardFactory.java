@@ -16,14 +16,16 @@ import com.almondia.meca.card.domain.vo.OxAnswer;
 import com.almondia.meca.card.domain.vo.Question;
 import com.almondia.meca.common.domain.vo.Id;
 
-public class CardFactory {
+import lombok.NoArgsConstructor;
 
-	private CardFactory() {
-		throw new IllegalArgumentException("util class 입니다 ");
-	}
+@NoArgsConstructor(access = lombok.AccessLevel.PRIVATE)
+public final class CardFactory {
 
 	public static Card genCard(SaveCardRequestDto saveCardRequestDto, Id memberId) {
 		CardType cardType = saveCardRequestDto.getCardType();
+		if (cardType == null) {
+			throw new IllegalArgumentException("cardType은 null이 될 수 없습니다");
+		}
 		if (cardType.equals(CardType.OX_QUIZ)) {
 			return genOxCard(saveCardRequestDto, memberId);
 		}

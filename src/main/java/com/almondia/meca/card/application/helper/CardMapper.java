@@ -10,6 +10,9 @@ import com.almondia.meca.card.domain.entity.MultiChoiceCard;
 import com.almondia.meca.card.domain.entity.OxCard;
 import com.almondia.meca.card.domain.vo.CardType;
 
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor(access = lombok.AccessLevel.PRIVATE)
 public class CardMapper {
 
 	public static CardDto cardToDto(Card card) {
@@ -28,7 +31,7 @@ public class CardMapper {
 		throw new IllegalArgumentException(String.format("카드 타입은 %s 만 가능합니다", Arrays.toString(CardType.values())));
 	}
 
-	private static CardDto essayCardToDto(EssayCard essayCard) {
+	public static CardDto essayCardToDto(EssayCard essayCard) {
 		return CardDto.builder()
 			.cardId(essayCard.getCardId())
 			.title(essayCard.getTitle())

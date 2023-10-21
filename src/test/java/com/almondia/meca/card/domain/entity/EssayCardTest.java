@@ -64,4 +64,46 @@ class EssayCardTest {
 		assertThat(findKeywordCard.getQuestion().toString()).isEqualTo("question");
 		assertThat(findKeywordCard.getEssayAnswer()).isEqualTo(EssayAnswer.valueOf("keyword,Answer"));
 	}
+
+	@Test
+	@DisplayName("카드 질문 변환 테스트")
+	void shouldChangeQuestionTest() {
+		EssayCard essayCard = EssayCard.builder()
+			.cardId(Id.generateNextId())
+			.memberId(Id.generateNextId())
+			.categoryId(Id.generateNextId())
+			.title(Title.of("title"))
+			.description(Description.of("description"))
+			.question(Question.of("question"))
+			.essayAnswer(EssayAnswer.valueOf("keyword,Answer"))
+			.build();
+		entityManager.persist(essayCard);
+		entityManager.flush();
+		entityManager.clear();
+		EssayCard findKeywordCard = entityManager.find(EssayCard.class, essayCard.getCardId());
+		findKeywordCard.changeQuestion("changeQuestion");
+		EssayCard changedEssayCard = entityManager.find(EssayCard.class, essayCard.getCardId());
+		assertThat(changedEssayCard.getQuestion().toString()).isEqualTo("changeQuestion");
+	}
+
+	@Test
+	@DisplayName("카드 답변 변환 테스트")
+	void shouldChangeAnswerTest() {
+		EssayCard essayCard = EssayCard.builder()
+			.cardId(Id.generateNextId())
+			.memberId(Id.generateNextId())
+			.categoryId(Id.generateNextId())
+			.title(Title.of("title"))
+			.description(Description.of("description"))
+			.question(Question.of("question"))
+			.essayAnswer(EssayAnswer.valueOf("keyword,Answer"))
+			.build();
+		entityManager.persist(essayCard);
+		entityManager.flush();
+		entityManager.clear();
+		EssayCard findKeywordCard = entityManager.find(EssayCard.class, essayCard.getCardId());
+		findKeywordCard.changeAnswer("changeAnswer");
+		EssayCard changedEssayCard = entityManager.find(EssayCard.class, essayCard.getCardId());
+		assertThat(changedEssayCard.getEssayAnswer().toString()).isEqualTo("changeAnswer");
+	}
 }

@@ -66,4 +66,19 @@ class KeywordCardTest {
 		assertThat(findKeywordCard.getQuestion().toString()).isEqualTo("question");
 		assertThat(findKeywordCard.getKeywordAnswer()).isEqualTo(KeywordAnswer.valueOf("keyword,Answer"));
 	}
+
+	@Test
+	@DisplayName("getAnswer 요청시 answer 반환")
+	void shouldReturnAnswerTest() {
+		KeywordCard keywordCard = KeywordCard.builder()
+			.cardId(Id.generateNextId())
+			.memberId(Id.generateNextId())
+			.categoryId(Id.generateNextId())
+			.title(Title.of("title"))
+			.description(Description.of("description"))
+			.question(Question.of("question"))
+			.keywordAnswer(KeywordAnswer.valueOf("keyword,Answer"))
+			.build();
+		assertThat(keywordCard.getAnswer()).isEqualTo("keyword,Answer");
+	}
 }

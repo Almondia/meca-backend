@@ -19,6 +19,7 @@ import org.springframework.security.access.AccessDeniedException;
 import com.almondia.meca.card.controller.dto.CardCountAndShareResponseDto;
 import com.almondia.meca.card.controller.dto.CardCursorPageWithCategory;
 import com.almondia.meca.card.controller.dto.CardDto;
+import com.almondia.meca.card.controller.dto.CardResponseDto;
 import com.almondia.meca.card.controller.dto.CardWithStatisticsDto;
 import com.almondia.meca.card.controller.dto.SaveCardRequestDto;
 import com.almondia.meca.card.controller.dto.UpdateCardRequestDto;
@@ -39,6 +40,7 @@ import com.almondia.meca.card.domain.vo.OxAnswer;
 import com.almondia.meca.card.domain.vo.Title;
 import com.almondia.meca.card.infra.querydsl.CardSearchOption;
 import com.almondia.meca.cardhistory.domain.entity.CardHistory;
+import com.almondia.meca.cardhistory.domain.repository.CardHistoryRepository;
 import com.almondia.meca.category.domain.entity.Category;
 import com.almondia.meca.category.domain.service.CategoryChecker;
 import com.almondia.meca.common.configuration.jpa.QueryDslConfiguration;
@@ -72,6 +74,9 @@ class CardServiceTest {
 	@Autowired
 	MultiChoiceCardRepository multiChoiceCardRepository;
 
+	@Autowired
+	CardHistoryRepository cardHistoryRepository;
+
 	@PersistenceContext
 	EntityManager em;
 
@@ -81,12 +86,6 @@ class CardServiceTest {
 		}
 	}
 
-	/**
-	 * 1. oxCard type정보가 들어가면 oxCard 정보가 저장되는지 검증
-	 * 2. keywordCard type 정보가 들어가면 keywordCard 정보가 저장되는지 검증
-	 * 3. multi choice card type 정보가 들어가면 MultiChoiceCard 정보가 저장되는 지 검증
-	 * 4. 요청시 editText 속성이 null이더라도 정삭 동작해야 함
-	 */
 	@Nested
 	@DisplayName("카드 저장 테스트")
 	class SaveCardTest {
@@ -161,17 +160,6 @@ class CardServiceTest {
 		}
 	}
 
-	/**
-	 * 1. 카드 업데이트시 업데이트가 성공적으로 반영되었는지 테스트
-	 * 2. 본인의 카테고리가 아닌 남의 카테고리로 카드 카테고리 업데이트시 권한 에러
-	 * 3. 본인의 카드가 아닌 다른 카드 ID를 가지고 요청한 경우 권한 에러
-	 * 4. title만 요청한 경우 title만 수정해야됨
-	 * 5. question만 요청한 경우 question만 수정해야됨
-	 * 6. editText만 요청한 경우 editText만 수정해야됨
-	 * 7. 정답 업데이트시 oxCard 타입에 맞게 validation되며 업데이트 되야함
-	 * 8. 정답 업데이트시 keywordCard 타입에 맞게 validation되며 업데이트 되야함
-	 * 9. 정답 업데이트시 multiChoiceCard 타입에 맞게 validation되며 업데이트 되야함
-	 */
 	@Nested
 	@DisplayName("카드 업데이트 테스트")
 	class UpdateCardTest {
@@ -376,10 +364,6 @@ class CardServiceTest {
 		}
 	}
 
-	/**
-	 * 1. 본인이 가진 카테고리가 아닐 시 권한 에러 출력
-	 * 2. 카드 커서 페이징 출력 형태 및 결과 테스트
-	 */
 	@Nested
 	@DisplayName("카드 커서 페이징 조회")
 	class SearchCardCursorPagingTest {
@@ -431,9 +415,6 @@ class CardServiceTest {
 		}
 	}
 
-	/**
-	 * 1. 권한 체크를 수행하는지 테스트
-	 */
 	@Nested
 	@DisplayName("카드 삭제")
 	class CardDeleteTest {
@@ -447,13 +428,33 @@ class CardServiceTest {
 			assertThatThrownBy(() -> cardService.deleteCard(randomCardId, randomMemberId))
 				.isInstanceOf(AccessDeniedException.class);
 		}
+
+		@Test
+		@DisplayName("카드 삭제시 카드 히스토리도 모두 삭제된다")
+		void shouldDeleteCardHistoriesAllRelatedCardTest() {
+			// given
+			Id memberId = Id.generateNextId();
+			Id memberId2 = Id.generateNextId();
+			Id categoryId = Id.generateNextId();
+			Id cardId = Id.generateNextId();
+			Card card = CardTestHelper.genKeywordCard(memberId, categoryId, cardId);
+			CardHistory cardHistory1 = CardHistoryTestHelper.generateCardHistory(cardId, memberId);
+			CardHistory cardHistory2 = CardHistoryTestHelper.generateCardHistory(cardId, memberId2);
+			persistAll(card, cardHistory1, cardHistory2);
+
+			// when
+			cardService.deleteCard(cardId, memberId);
+
+			// then
+			List<CardHistory> histories = cardHistoryRepository.findByCardId(cardId);
+			Card resultCard = cardRepository.findById(cardId).orElseThrow();
+			assertThat(resultCard).extracting("isDeleted").isEqualTo(true);
+			assertThat(histories.get(0)).extracting("isDeleted").isEqualTo(true);
+			assertThat(histories.get(1)).extracting("isDeleted").isEqualTo(true);
+
+		}
 	}
 
-	/**
-	 * 1. 권한 체크 수행 여부 테스트
-	 * 2. 종류별 카드 타입 변환이 잘 이루어지는지 확인
-	 * 3. 카드가 존재하지 않을 경우 예외 발생
-	 */
 	@Nested
 	@DisplayName("회원 카드 단일 조회")
 	class SearchCardOneTest {
@@ -497,10 +498,61 @@ class CardServiceTest {
 		}
 	}
 
-	/**
-	 * 1. 내 카테고리에 카드 갯수를 요청한 경우 정상적으로 카드 개수를 출력
-	 * 2. 내 카테고리가 아닌 카테고리에 카드 갯수를 요청한 경우 공유 상태의 카테고리가 아닌경우 권한 에러 발생
-	 */
+	@Nested
+	@DisplayName("공유 카드 조회")
+	class FindSharedCardTest {
+
+		@Test
+		@DisplayName("공유 카드 조회시 카테고리가 공유되지 않았을 경우 예외 발생")
+		void shouldThrowExceptionWhenCategoryIsNotSharedTest() {
+			// given
+			Id memberId = Id.generateNextId();
+			Id categoryId = Id.generateNextId();
+			Id cardId = Id.generateNextId();
+			Category category = CategoryTestHelper.generateUnSharedCategory("title", memberId, categoryId);
+			persistAll(category);
+
+			// when
+			assertThatThrownBy(() -> cardService.findSharedCard(cardId))
+				.isInstanceOf(IllegalArgumentException.class).hasMessage("공유된 카테고리의 카드가 존재하지 않습니다");
+		}
+
+		@Test
+		@DisplayName("공유 카드 조회시 카테고리가 삭제되었을 경우 예외 발생")
+		void shouldThrowExceptionWhenCategoryIsDeletedTest() {
+			// given
+			Id memberId = Id.generateNextId();
+			Id categoryId = Id.generateNextId();
+			Id cardId = Id.generateNextId();
+			Category category = CategoryTestHelper.generateSharedCategory("title", memberId, categoryId);
+			category.delete();
+			persistAll(category);
+
+			// when
+			assertThatThrownBy(() -> cardService.findSharedCard(cardId))
+				.isInstanceOf(IllegalArgumentException.class).hasMessage("공유된 카테고리의 카드가 존재하지 않습니다");
+		}
+
+		@Test
+		@DisplayName("공유 카드 조회시 정상적인 dto 리턴해야함")
+		void shouldReturnCardDtoWhenCallFindSharedCardTest() {
+			// given
+			Id memberId = Id.generateNextId();
+			Id categoryId = Id.generateNextId();
+			Id cardId = Id.generateNextId();
+			Member member = MemberTestHelper.generateMember(memberId);
+			Category category = CategoryTestHelper.generateSharedCategory("title", memberId, categoryId);
+			Card card = CardTestHelper.genKeywordCard(memberId, categoryId, cardId);
+			persistAll(member, category, card);
+
+			// when
+			CardResponseDto result = cardService.findSharedCard(cardId);
+
+			// then
+			assertThat(result).isInstanceOf(CardResponseDto.class);
+		}
+	}
+
 	@Nested
 	@DisplayName("카테고리별 카드 개수 조회 API")
 	class SearchCardsCountByCategoryIdTest {
@@ -557,12 +609,6 @@ class CardServiceTest {
 		}
 	}
 
-	/**
-	 * 공유 카테고리가 존재하지 않으면 예외를 발생한다
-	 * 카테고리가 삭제되어 있다면 예외를 발생한다
-	 * 삭제된 회원인 경우 예외를 발생한다
-	 * 통계 기록은 있으면 안되고 모두 null이여야 함
-	 */
 	@Nested
 	@DisplayName("searchCursorPagingSharedCard 테스트")
 	class SearchCursorPagingSharedCardTest {

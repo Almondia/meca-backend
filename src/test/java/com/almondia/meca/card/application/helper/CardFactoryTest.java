@@ -121,6 +121,17 @@ class CardFactoryTest {
 			.hasFieldOrProperty("cardId");
 	}
 
+	@Test
+	@DisplayName("요청 카드 타입이 null인 경우 예외 발생")
+	void shouldThrowExceptionWhenCardTypeIsIllegalTest() {
+		assertThatThrownBy(() -> CardFactory.genCard(makeSaveCardRequest()
+			.cardType(null)
+			.answer("essayAnswer")
+			.build(), Id.generateNextId()))
+			.isInstanceOf(IllegalArgumentException.class)
+			.hasMessageContaining("cardType은 null이 될 수 없습니다");
+	}
+
 	private SaveCardRequestDto.SaveCardRequestDtoBuilder makeSaveCardRequestWithoutEditText() {
 		return SaveCardRequestDto.builder()
 			.title(new Title("title"))
