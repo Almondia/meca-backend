@@ -1,0 +1,26 @@
+name: java CD
+
+on:
+  pull_request:
+    branches:
+      - develop
+    types: [ closed ]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Deploy to ec2
+        if: github.event.pull_request.merged == true
+        uses: appleboy/ssh-actions@master
+        with:
+          host: ${{secrets.DEV_HOST}}
+          username: ${{secrets.DEV_USERNAME}}
+          password: ${{secrets.DEV_PASSWORD}}
+          script: |
+            cd /home/ubuntu/meca
+            docker-compose down
+            sudo docker image prune -f
+            sudo docker pull ${{secrets.DOCKERHUB_USERNAME}}/meca:latest
+            docker-compose up -d
